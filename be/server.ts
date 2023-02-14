@@ -5,23 +5,15 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import routes from "./routes";
-
-import { IAuth } from "./types/auth";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(cors());
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(morgan("common"));
 dotenv.config();
-
-declare global {
-  namespace Express {
-    interface Request {
-      user: IAuth;
-    }
-  }
-}
 
 mongoose.connect(process.env.MONGODB_CONNECT_DATABASE + "", (err) => {
   if (err) {
