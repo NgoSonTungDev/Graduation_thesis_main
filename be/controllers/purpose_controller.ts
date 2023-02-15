@@ -5,6 +5,12 @@ import { Request, Response, NextFunction } from "express";
 const purposeController = {
   addPurpose: async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const check = await Purposes.findOne({ name: req.body.name });
+
+      if (check) {
+        return res.status(400).json(errorFunction(true, 400, "Đã tồn tại !"));
+      }
+
       const data = await Purposes.create(req.body);
       res.json(errorFunction(false, 200, "Thêm thành công !", data));
     } catch (error) {

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import authController from "../controllers/authController";
+import authController from "../controllers/auth_controller";
 import { userValidation } from "../helpers/user";
 import { verifyToken } from "../middleware/checkCodeOtp";
 

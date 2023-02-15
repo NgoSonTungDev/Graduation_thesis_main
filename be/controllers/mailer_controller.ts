@@ -143,6 +143,59 @@ const mailerController = {
       });
     }
   },
+  sendCodeOtp: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email } = req.body;
+
+      const check = Math.floor(min + Math.random() * (max - min));
+
+      if (req.body.email === "") {
+        return res
+          .status(403)
+          .json(errorFunction(true, 403, "Không nhận được email !"));
+      }
+
+      const msg = {
+        from: process.env.USERMAIL,
+        to: `${email}`,
+        subject: "THÔNG BÁO TỪ HỆ THỐNG MAFLINE",
+        html: uiSendEmail(check),
+      };
+      nodemailer
+        .createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.USERMAIL,
+            pass: process.env.PASSMAIL,
+          },
+          port: 465,
+          host: "smtp.gmail.com",
+        })
+        .sendMail(msg, (err) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).json(err);
+          } else {
+            const token = generateToken(check, date);
+            res.cookie("CodeRegister", `${token}`, {
+              expires: new Date(Date.now() + 180 * 1000),
+            });
+            res.json(
+              errorFunction(
+                true,
+                200,
+                `Email sent ${email} with code : ${check} and Token : ${token}`
+              )
+            );
+          }
+        });
+    } catch (error) {
+      console.log("error: ", error);
+      res.status(400).json({
+        message: "Bad request",
+      });
+    }
+  },
 };
 
 export default mailerController;

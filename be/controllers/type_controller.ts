@@ -5,6 +5,12 @@ import { Request, Response, NextFunction } from "express";
 const typeController = {
   addType: async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const check = await Types.findOne({ name: req.body.name });
+
+      if (check) {
+        return res.status(400).json(errorFunction(true, 400, "Đã tồn tại !"));
+      }
+
       const data = await Types.create(req.body);
       res.json(errorFunction(false, 200, "Thêm thành công", data));
     } catch (error) {
