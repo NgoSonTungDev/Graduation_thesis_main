@@ -3,7 +3,6 @@ export interface IEValuate {
   userId: any;
   content: string;
   rating: number;
-  status: string;
   dateTime: number;
   placeId: string;
 }

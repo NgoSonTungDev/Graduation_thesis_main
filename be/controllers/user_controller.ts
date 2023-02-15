@@ -6,6 +6,13 @@ import { errorFunction } from "../utils/errorFunction";
 const userController = {
   getAnUser: async (req: Request, res: Response) => {
     try {
+      const id = await Users.findById(req.params.id);
+
+      if (!id)
+        return res
+          .status(404)
+          .json(errorFunction(true, 404, "Không tồn tại !"));
+
       const data = await Users.findById(req.params.id);
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {

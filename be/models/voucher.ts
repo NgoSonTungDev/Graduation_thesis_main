@@ -1,0 +1,42 @@
+import { IVoucher } from "./../types/voucher";
+import mongoose from "mongoose";
+
+const voucherSchema = new mongoose.Schema<IVoucher>({
+  codeVoucher: {
+    type: String,
+    required: true,
+  },
+  image: {
+    type: String,
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  startDate: {
+    type: Number,
+    required: true,
+  },
+  endDate: {
+    type: Number,
+    required: true,
+  },
+  public: {
+    type: Boolean,
+    required: false,
+    default: true,
+  },
+  placeId: {
+    type: String,
+    required: true,
+  },
+});
+
+const Vouchers = mongoose.model("Voucher", voucherSchema);
+
+export default Vouchers;

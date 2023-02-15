@@ -4,10 +4,12 @@ import { placeValidation } from "../helpers/place";
 
 export const placeRoute = (router: Router) => {
   router.post("/place/add", placeValidation, placeController.addPlace);
+
   router.get("/place/all", placeController.getAll);
-  router.post(
-    "/place/delete/:id",
-    placeValidation,
-    placeController.deletePlace
-  );
+
+  router.get("/place/an/:id", placeController.getAnPlace);
+
+  router.put("/place/update/:id", placeController.updatePlace);
+
+  router.delete("/place/delete/:id", placeController.deletePlace);
 };

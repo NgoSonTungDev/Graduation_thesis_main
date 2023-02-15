@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import Users from "../models/user";
 import { errorFunction } from "../utils/errorFunction";
 import bcrypt from "bcrypt";
-import { IUser } from "../types/user";
 
 const authController = {
   register: async (req: Request, res: Response, next: NextFunction) => {

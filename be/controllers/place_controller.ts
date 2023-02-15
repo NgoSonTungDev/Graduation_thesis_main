@@ -20,6 +20,21 @@ const placeController = {
       });
     }
   },
+  getAnPlace: async (req: Request, res: Response) => {
+    try {
+      const id = await Places.findById(req.params.id);
+
+      if (!id)
+        return res
+          .status(404)
+          .json(errorFunction(true, 404, "Không tồn tại !"));
+
+      const data = await Places.findById(req.params.id);
+      res.json(errorFunction(false, 200, "Lấy thành công !", data));
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const {

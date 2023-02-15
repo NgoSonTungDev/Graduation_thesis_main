@@ -8,20 +8,16 @@ const evaluateSchema = new mongoose.Schema<IEValuate>({
     type: String,
     required: true,
   },
-  status: {
-    type: String,
+  dateTime: {
+    type: Number,
     required: true,
   },
-  dateTime: {
+  rating: {
     type: Number,
     required: true,
   },
   placeId: {
     type: String,
-    required: true,
-  },
-  rating: {
-    type: Number,
     required: true,
   },
 });
