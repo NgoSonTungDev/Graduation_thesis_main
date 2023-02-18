@@ -20,7 +20,11 @@ const placeSchema = new mongoose.Schema<IPlace>(
       type: String,
       required: true,
     },
-    price: {
+    childTicket: {
+      type: Number,
+      required: true,
+    },
+    adultTicket: {
       type: Number,
       required: true,
     },
@@ -35,7 +39,7 @@ const placeSchema = new mongoose.Schema<IPlace>(
     rating: {
       type: Number,
       required: false,
-      default: 5,
+      default: 0,
     },
     closeTime: {
       type: Number,

@@ -97,6 +97,29 @@ const userController = {
       });
     }
   },
+  changePassword: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = await Users.findById(req.params.id);
+
+      if (!id)
+        return res
+          .status(404)
+          .json(errorFunction(true, 404, "Không tồn tại !"));
+
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      await Users.updateOne({
+        $set: {
+          password: hashedPassword,
+        },
+      });
+      res.json(errorFunction(true, 200, "Cập nhật mật khẩu thành công !"));
+    } catch (error) {
+      console.log("error: ", error);
+      res.status(400).json({
+        message: "Bad request",
+      });
+    }
+  },
   deleteUser: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = await Users.findById(req.params.id);

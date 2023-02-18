@@ -45,7 +45,6 @@ const placeController = {
         purpose,
         location,
         variability,
-        orderByColumn,
       } = req.query;
 
       const SkipNumber = (Number(pageNumber) - 1) * Number(limit);

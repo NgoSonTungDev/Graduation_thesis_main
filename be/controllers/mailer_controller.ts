@@ -73,11 +73,7 @@ const generateToken = (code: number, date: number) => {
 };
 
 const mailerController = {
-  sendCodeOtpRegister: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  sendCodeOtpRegister: async (req: Request, res: Response) => {
     try {
       const { email } = req.body;
 

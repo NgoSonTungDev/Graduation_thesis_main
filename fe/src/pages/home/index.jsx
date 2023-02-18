@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { userApi } from "../../api/auther";
+import { momentLocale } from "../../utils/common";
 
 const Home = () => {
   const fetchData = async () => {
@@ -11,7 +12,6 @@ const Home = () => {
     // khi thành công thi làm việc tiêp theo
 
     await userApi.getUser().then((res) => {
-      alert("thanh cong");
       console.log(res);
     });
   };
@@ -20,7 +20,7 @@ const Home = () => {
     fetchData();
   }, []);
 
-  return <div>abcxyz</div>;
+  return <div>{momentLocale(1676701905107)}</div>;
 };
 
 export default Home;

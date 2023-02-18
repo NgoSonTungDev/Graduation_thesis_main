@@ -51,24 +51,24 @@ const authController = {
 
       if (!user) {
         res.status(404).json(errorFunction(false, 404, "Sai tên đăng nhập !"));
-      }
-      const password = bcrypt.compare(req.body.password, user?.password + "");
+      } else {
+        const password = await bcrypt.compare(req.body.password, user.password);
 
-      if (!password) {
-        res.json(errorFunction(false, 200, "Sai mật khẩu"));
-      }
-      if (user && password + "") {
-        const { _id, userName, email, avt, isAdmin } = user;
+        if (!password) {
+          res.status(404).json(errorFunction(false, 404, "Sai mật khẩu !"));
+        } else {
+          const { _id, userName, email, avt, isAdmin } = user;
 
-        res.json(
-          errorFunction(false, 200, "Đăng nhập thành công !", {
-            _id,
-            userName,
-            email,
-            avt,
-            isAdmin,
-          })
-        );
+          res.json(
+            errorFunction(false, 200, "Đăng nhập thành công !", {
+              _id,
+              userName,
+              email,
+              avt,
+              isAdmin,
+            })
+          );
+        }
       }
     } catch (error) {
       console.log("error: ", error);

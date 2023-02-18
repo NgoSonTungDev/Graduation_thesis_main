@@ -11,5 +11,6 @@ export const userRoute = (router: Router) => {
     verifyToken,
     userController.updatePassword
   );
+  router.put("/user/change-password/:id", userController.changePassword);
   router.delete("/user/delete/:id", userController.deleteUser);
 };

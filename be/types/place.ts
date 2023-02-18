@@ -4,7 +4,8 @@ export interface IPlace {
   location: string;
   address: string;
   geographicalLocation: string;
-  price: number;
+  childTicket: number;
+  adultTicket: number;
   purpose: string;
   type: string;
   rating: number;

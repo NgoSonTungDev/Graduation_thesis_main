@@ -18,6 +18,11 @@ const fakeCode = (length: number) => {
 const deleteByIdEndTime = async (e: string) => {
   await Vouchers.findByIdAndDelete(e);
 };
+const updateByIdStartTime = async (e: string) => {
+  await Vouchers.findByIdAndUpdate(e, {
+    public: true,
+  });
+};
 
 const voucherController = {
   addVoucher: async (req: Request, res: Response, next: NextFunction) => {
@@ -25,6 +30,7 @@ const voucherController = {
       const data = await Vouchers.create({
         ...req.body,
         codeVoucher: String(fakeCode(6)),
+        public: Number(new Date()) < req.body.startDate ? false : true,
       });
       res.json(errorFunction(false, 200, "Thêm thành công", data));
     } catch (error) {
@@ -44,16 +50,27 @@ const voucherController = {
   },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await (
+      const dataEndTime = await (
         await Vouchers.find()
       ).filter((e) => {
-        return e.endDate > 18;
+        return e.endDate > Number(new Date());
       });
 
-      const list = data.map((e) => e._id);
+      const dataStartTime = await (
+        await Vouchers.find()
+      ).filter((e) => {
+        return e.startDate < Number(new Date());
+      });
 
-      if (list.length > 0) {
-        await Promise.all(list.map((e) => deleteByIdEndTime(e)));
+      const listEndTime = dataEndTime.map((e) => e._id);
+      const listStartTime = dataStartTime.map((e) => e._id);
+
+      if (listStartTime.length > 0) {
+        await Promise.all(listStartTime.map((e) => updateByIdStartTime(e)));
+      }
+
+      if (listEndTime.length > 0) {
+        await Promise.all(listEndTime.map((e) => deleteByIdEndTime(e)));
       }
 
       const newData = await Vouchers.find();
