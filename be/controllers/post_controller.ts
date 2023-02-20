@@ -52,6 +52,17 @@ const postController = {
       });
     }
   },
+  getByIdPost: async (req: Request, res: Response) => {
+    try {
+      const data = await Posts.find({ userId: req.params.id })
+        .populate("placeId", "name")
+        .populate("userId", "userName");
+
+      res.json(errorFunction(false, 200, "Lấy thành công !", data));
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   updatePublicPost: async (req: Request, res: Response) => {
     try {
       await Posts.findByIdAndUpdate(req.params.id, {

@@ -3,7 +3,7 @@ import authController from "../controllers/auth_controller";
 import { userValidation } from "../helpers/user";
 import { verifyToken } from "../middleware/checkCodeOtp";
 
-export const authRoute = (router: Router) => {
+export const authRouter = (router: Router) => {
   router.post(
     "/user/register",
     verifyToken,

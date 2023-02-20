@@ -2,7 +2,7 @@ import { Router } from "express";
 import voucherController from "../controllers/voucher_controller";
 import { voucherValidation } from "../helpers/voucher";
 
-export const voucherRoute = (router: Router) => {
+export const voucherRouter = (router: Router) => {
   router.post("/voucher/add", voucherValidation, voucherController.addVoucher);
 
   router.get("/voucher/get-all", voucherController.getAll);

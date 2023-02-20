@@ -2,7 +2,7 @@ import { Router } from "express";
 import evaluateController from "../controllers/evaluate_controller";
 import { evaluateValidation } from "../helpers/evaluate";
 
-export const evaluateRoute = (router: Router) => {
+export const evaluateRouter = (router: Router) => {
   router.post(
     "/evaluate/add",
     evaluateValidation,

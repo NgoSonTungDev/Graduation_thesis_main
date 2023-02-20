@@ -1,40 +1,49 @@
-import { favouriteRoute } from "./favourite_router";
 import express from "express";
-import { authRoute } from "./auth_router";
-import { evaluateRoute } from "./evaluate_router";
-import { mailerRoute } from "./mailer_router";
-import { notifyRoute } from "./notify_router";
-import { placeRoute } from "./place_router";
-import { postRoute } from "./post_router";
-import { purposeRoute } from "./purpose_router";
-import { typeRoute } from "./type_router";
-import { userRoute } from "./user_router";
-import { voucherRoute } from "./voucher_router";
+import { authRouter } from "./auth_router";
+import { commentRouter } from "./comment_router";
+import { evaluateRouter } from "./evaluate_router";
+import { favouriteRouter } from "./favourite_router";
+import { mailerRouter } from "./mailer_router";
+import { notifyRouter } from "./notify_router";
+import { orderRouter } from "./order_router";
+import { placeRouter } from "./place_router";
+import { postRouter } from "./post_router";
+import { purposeRouter } from "./purpose_router";
+import { repCommentRouter } from "./repComment_router";
+import { typeRouter } from "./type_router";
+import { userRouter } from "./user_router";
+import { voucherRouter } from "./voucher_router";
 
 const router = express.Router();
 
 const routes = () => {
-  purposeRoute(router);
+  purposeRouter(router);
 
-  typeRoute(router);
+  typeRouter(router);
 
-  authRoute(router);
+  authRouter(router);
 
-  mailerRoute(router);
+  mailerRouter(router);
 
-  userRoute(router);
+  userRouter(router);
 
-  placeRoute(router);
+  placeRouter(router);
 
-  evaluateRoute(router);
+  evaluateRouter(router);
 
-  voucherRoute(router);
+  voucherRouter(router);
 
-  notifyRoute(router);
+  notifyRouter(router);
 
-  postRoute(router);
+  postRouter(router);
 
-  favouriteRoute(router);
+  favouriteRouter(router);
+
+  orderRouter(router);
+
+  commentRouter(router);
+
+  repCommentRouter(router);
 
   return router;
 };

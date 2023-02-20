@@ -1,7 +1,7 @@
 import { Router } from "express";
 import favouritesController from "../controllers/favourite_controller";
 
-export const favouriteRoute = (router: Router) => {
+export const favouriteRouter = (router: Router) => {
   router.post("/favourite/add", favouritesController.addFavourites);
 
   router.get(

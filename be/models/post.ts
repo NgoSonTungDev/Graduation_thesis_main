@@ -12,7 +12,6 @@ const postSchema = new mongoose.Schema<IPost>({
     type: String,
     required: true,
   },
-  like: [{ type: String, required: false, default: [] }],
   image: {
     type: String,
     required: true,
@@ -22,6 +21,7 @@ const postSchema = new mongoose.Schema<IPost>({
     required: false,
     default: false,
   },
+  like: [{ type: String, required: false, default: [] }],
   rating: {
     type: Number,
     required: true,

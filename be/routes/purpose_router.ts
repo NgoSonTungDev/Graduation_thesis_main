@@ -2,7 +2,7 @@ import { Router } from "express";
 import purposeController from "../controllers/purpose_controller";
 import { purposeTypeValidation } from "../helpers/purpose_type";
 
-export const purposeRoute = (router: Router) => {
+export const purposeRouter = (router: Router) => {
   router.post(
     "/purpose/create",
     purposeTypeValidation,
