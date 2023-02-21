@@ -10,8 +10,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
-import Loading from "../../../components/loading";
 import { toastify } from "../../../utils/common";
+import Loading from "../../../components/Loading";
 import "./style.scss";
 
 const validationInput = yup.object().shape({
