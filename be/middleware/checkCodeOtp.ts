@@ -13,8 +13,6 @@ export const verifyToken = async (
     const cookie = req.cookies;
     const otp = req.body.codeOtp;
 
-    console.log(cookie);
-
     if (!otp)
       return res
         .status(403)
@@ -31,7 +29,6 @@ export const verifyToken = async (
       );
 
       const { code } = decode as any;
-      console.log(code, otp);
 
       if (Number(code) === Number(otp)) {
         next();

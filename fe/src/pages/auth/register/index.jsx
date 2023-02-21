@@ -1,18 +1,18 @@
-import React from "react";
-import "./style.scss";
-import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { Button, TextField } from "@mui/material";
-import axiosClient from "../../../api/axiosClient";
-import { toastify } from "../../../utils/common";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import LoadingButton from "@mui/lab/LoadingButton";
 import DialogTitle from "@mui/material/DialogTitle";
-import Loading from "../../../components/Loading";
+import React from "react";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import axiosClient from "../../../api/axiosClient";
+import Loading from "../../../components/loading";
+import { toastify } from "../../../utils/common";
+import "./style.scss";
 
 const validationInput = yup.object().shape({
   userName: yup
@@ -92,7 +92,10 @@ const Register = () => {
         })
         .then((res) => {
           console.log(res);
-          toastify("success", "Tên người dùng và email hợp lệ !");
+          toastify(
+            "success",
+            res.data.message || "Tạo tài khoảng thành công !"
+          );
           handleClose();
           setLoadingPage(false);
         })
