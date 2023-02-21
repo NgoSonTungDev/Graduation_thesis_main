@@ -4,6 +4,8 @@ import { errorFunction } from "../utils/errorFunction";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import Users from "../models/user";
+import { IUser } from "../types/user";
+
 var min = 100000;
 var max = 999999;
 const date = Number(new Date());
@@ -64,8 +66,8 @@ const uiSendEmail = (code: number) => {
   </div>`;
 };
 
-const generateToken = (code: number, date: number) => {
-  const token = jwt.sign({ code, date }, process.env.TOKEN_SECRET + "", {
+const generateToken = (code: number) => {
+  const token = jwt.sign({ code }, process.env.TOKEN_SECRET + "", {
     expiresIn: "180s",
   });
 
@@ -79,23 +81,29 @@ const mailerController = {
 
       const check = Math.floor(min + Math.random() * (max - min));
 
-      if (req.body.email === "" || req.body.username === "") {
+      if (!req.body.email || !req.body.userName) {
         return res
           .status(403)
           .json(errorFunction(true, 403, "Truyền thiếu username hoặc email"));
       }
 
-      const checkUserName = await Users.findOne({
+      const checkUserName = await Users.findOne<IUser>({
         userName: req.body.userName,
       });
-
+      // const checkExist = await Users.findOne<IUser>({$or: [
+      //   {userName: req.body.userName}, { email: req.body.email }
+      // ]})
       const checkEmail = await Users.findOne({ email: req.body.email });
 
       if (checkUserName)
-        return res.json(errorFunction(true, 400, "Tên này đã tồn tại !"));
+        return res
+          .status(400)
+          .json(errorFunction(true, 400, "Tên này đã tồn tại !"));
 
       if (checkEmail)
-        return res.json(errorFunction(true, 400, "Email này đã tồn tại !"));
+        return res
+          .status(400)
+          .json(errorFunction(true, 400, "Email này đã tồn tại !"));
 
       const msg = {
         from: process.env.USERMAIL,
@@ -113,21 +121,24 @@ const mailerController = {
           port: 465,
           host: "smtp.gmail.com",
         })
-        .sendMail(msg, (err) => {
+        .sendMail(msg, async (err) => {
           if (err) {
             console.log(err);
             return res.status(500).json(err);
           } else {
-            const token = generateToken(check, date);
+            const token = generateToken(check);
+
             res.cookie("CodeRegister", `${token}`, {
               // maxAge: 5000,
               expires: new Date(Date.now() + 180 * 1000),
+              httpOnly: true,
             });
             res.json(
               errorFunction(
-                true,
+                false,
                 200,
-                `Email sent ${email} with code : ${check} and Token : ${token}`
+                `Email sent ${email} with code : ${check} and Token : ${token}`,
+                token
               )
             );
           }
@@ -172,10 +183,11 @@ const mailerController = {
             console.log(err);
             return res.status(500).json(err);
           } else {
-            const token = generateToken(check, date);
-            res.cookie("CodeRegister", `${token}`, {
-              expires: new Date(Date.now() + 180 * 1000),
-            });
+            const token = generateToken(check);
+
+            // res.cookie("CodeRegister", `${token}`, {
+            //   expires: new Date(Date.now() + 180 * 1000),
+            // });
             res.json(
               errorFunction(
                 true,

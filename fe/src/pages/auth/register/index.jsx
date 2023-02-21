@@ -1,0 +1,209 @@
+import React from "react";
+import "./style.scss";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { Button, TextField } from "@mui/material";
+import axiosClient from "../../../api/axiosClient";
+import { toastify } from "../../../utils/common";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import LoadingButton from "@mui/lab/LoadingButton";
+import DialogTitle from "@mui/material/DialogTitle";
+import Loading from "../../../components/Loading";
+
+const validationInput = yup.object().shape({
+  userName: yup
+    .string()
+    .required("Tên tài khoản không được để trống.")
+    .min(5, "Tên tài khoản tối thiểu 5 ký tự.")
+    .max(30, "Tên tài khoản tối đa 30 ký tự."),
+  email: yup.string().required("Email không được để trống").email(),
+  password: yup.string().required("Mật khẩu không được để trống"),
+  confirmPassword: yup
+    .string()
+    .required("Xác nhận mật khẩu không được để trống")
+    .oneOf([yup.ref("password"), null], "Không trùng khớp."),
+});
+
+const Register = () => {
+  const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [loadingPage, setLoadingPage] = React.useState(false);
+  const [data, setData] = React.useState({});
+  const [OTP, setOTP] = React.useState(0);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      userName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      codeOTP: "",
+    },
+    resolver: yupResolver(validationInput),
+  });
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleSendEmailRegister = (data) => {
+    setData(data);
+    setLoading(true);
+    axiosClient
+      .post("/email/send-code-register", {
+        userName: data.userName,
+        email: data.email,
+      })
+      .then((res) => {
+        toastify("success", "Tên người dùng và email hợp lệ !");
+        handleClickOpen();
+        setLoading(false);
+      })
+      .catch((err) => {
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        setLoading(false);
+      });
+  };
+
+  const handleRegister = () => {
+    if (OTP < 100000 || OTP > 999999) {
+      alert("Mã OTP gồm 6 chữ số !");
+    } else {
+      setLoadingPage(true);
+
+      axiosClient
+        .post("/user/register", {
+          codeOtp: OTP,
+          userName: data.userName,
+          email: data.email,
+          password: data.password,
+        })
+        .then((res) => {
+          console.log(res);
+          toastify("success", "Tên người dùng và email hợp lệ !");
+          handleClose();
+          setLoadingPage(false);
+        })
+        .catch((err) => {
+          toastify("error", err.response.data.message || "Lỗi hệ thông !");
+          setLoadingPage(false);
+        });
+    }
+  };
+
+  console.log(OTP);
+
+  return (
+    <div className="register_container">
+      <div className="register_container_box">
+        <h3
+          style={{
+            fontSize: "20px",
+            textAlign: "center",
+            color: "#636e72",
+            textTransform: "capitalize",
+          }}
+        >
+          Chào mừng bạn gia nhập với cộng đồng MAFLINE
+        </h3>
+        <div style={{ display: "flex", gap: "25px", flexDirection: "column" }}>
+          <TextField
+            error={!!errors?.userName}
+            {...register("userName")}
+            type="text"
+            label="Tên đăng nhập của bạn"
+            size="small"
+            sx={{ width: "80%", marginLeft: "10%" }}
+            helperText={errors.userName?.message}
+          />
+          <TextField
+            error={!!errors?.email}
+            {...register("email")}
+            type="text"
+            label="Email của bạn"
+            size="small"
+            sx={{ width: "80%", marginLeft: "10%" }}
+            helperText={errors.email?.message}
+          />
+          <TextField
+            error={!!errors?.password}
+            {...register("password")}
+            type="password"
+            label="Nhập mật khẩu"
+            size="small"
+            sx={{ width: "80%", marginLeft: "10%" }}
+            helperText={errors.password?.message}
+          />
+          <TextField
+            error={!!errors?.confirmPassword}
+            {...register("confirmPassword")}
+            type="password"
+            label="Xác nhận mật khẩu"
+            size="small"
+            sx={{ width: "80%", marginLeft: "10%" }}
+            helperText={errors.confirmPassword?.message}
+          />
+        </div>
+        <div
+          style={{
+            width: "100%",
+            display: "grid",
+            placeItems: "center",
+            marginTop: "20px",
+          }}
+        >
+          <LoadingButton
+            loading={loading}
+            loadingIndicator="Loading…"
+            variant="outlined"
+            onClick={handleSubmit(handleSendEmailRegister)}
+          >
+            Đăng ký
+          </LoadingButton>
+        </div>
+      </div>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Nhập mã OTP</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Mã OTP sẽ được gửi về email của bạn dùng để xác thực email hoặc tài
+            khoản của bạn ! vì lí do bảo mật vui lòng không chia sẻ mã này dưới
+            bất kì hình thức nào. <b>MAFLINE</b> cảm ơn bạn đã sử dụng dịch vụ
+            của chung tôi 😉
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="OTP"
+            type="number"
+            fullWidth
+            variant="standard"
+            value={OTP}
+            onChange={(e) => {
+              setOTP(e.target.value);
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Hủy</Button>
+          <Button onClick={handleRegister}>Gửi</Button>
+        </DialogActions>
+      </Dialog>
+      <Loading loading={loadingPage} />
+    </div>
+  );
+};
+
+export default Register;

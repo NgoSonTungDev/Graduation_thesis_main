@@ -10,7 +10,12 @@ import http from "http";
 import { Server } from "socket.io";
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:3000",
+  })
+);
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.json());

@@ -1,20 +1,21 @@
 import bcrypt from "bcrypt";
 import { Request, Response, NextFunction } from "express";
 import Users from "../models/user";
+import { IUser } from "../types/user";
 import { errorFunction } from "../utils/errorFunction";
 
 const userController = {
   getAnUser: async (req: Request, res: Response) => {
     try {
-      const id = await Users.findById(req.params.id);
+      const user = await Users.findById<IUser>(req.params.id);
 
-      if (!id)
+      if (!user)
         return res
           .status(404)
           .json(errorFunction(true, 404, "Không tồn tại !"));
+      res.cookie("CodeRegister", `12333`);
 
-      const data = await Users.findById(req.params.id);
-      res.json(errorFunction(false, 200, "Lấy thành công !", data));
+      res.json(errorFunction(false, 200, "Lấy thành công !", user));
     } catch (error) {
       res.status(500).json(error);
     }
@@ -36,10 +37,9 @@ const userController = {
         .limit(Number(limit));
 
       let totalPage = 0;
-      if (allUser.length % Number(limit) === 0) {
-        totalPage = allUser.length / Number(limit);
-      } else {
-        totalPage = Math.floor(allUser.length / Number(limit) + 1);
+
+      if (allUser.length) {
+        totalPage = Math.ceil(allUser.length / Number(limit));
       }
 
       res.json(
