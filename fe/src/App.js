@@ -4,7 +4,7 @@ import { ToastContainer } from "react-toastify";
 import Home from "./pages/home";
 import Register from "./pages/auth/register";
 import "react-toastify/dist/ReactToastify.css";
-
+import NotFound from "./pages/notfound";
 const App = () => {
   return (
     <div>
@@ -24,7 +24,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
 
-          {/* <Route path="*" element={<PageNotFound />} /> */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </div>
