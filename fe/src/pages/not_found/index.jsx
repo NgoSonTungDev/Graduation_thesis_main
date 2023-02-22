@@ -6,16 +6,14 @@ import { useNavigate } from "react-router-dom";
 const NotFound = () => {
   const navigation = useNavigate();
   return (
-    <div
-      className="
-    Notfound-container"
-    >
+    <div className="notfound-container">
       <img
         src="https://img.lovepik.com/photo/45007/5333.jpg_wh300.jpg"
         alt="not-found"
       />
       <Button
         type="button"
+        variant="outlined"
         onClick={() => {
           navigation("/");
         }}
