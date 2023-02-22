@@ -1,6 +1,5 @@
 import "./index.scss";
 import React, { useState, useEffect } from "react";
-import { color, style } from "@mui/system";
 import {
   ExploreOutlined,
   LocalOfferOutlined,
@@ -153,7 +152,7 @@ const Navbar = () => {
                 class="material-icons"
                 style={{ fontSize: "18px", margin: "2px" }}
               >
-                edit{" "}
+                edit
               </span>
               Viết Review
             </Button>
@@ -205,13 +204,11 @@ const Navbar = () => {
                     }}
                   >
                     <Tooltip title="Account settings">
-                      <IconButton onClick={handleClick} size="small">
-                        <Avatar
-                          alt="Remy Sharp"
-                          src={logo1}
-                          sx={{ width: 40, height: 40 }}
-                        />
-                      </IconButton>
+                      <Avatar
+                        alt="Remy Sharp"
+                        src={logo1}
+                        sx={{ width: 40, height: 40 }}
+                      />
                     </Tooltip>
                   </Box>
                   <Menu
