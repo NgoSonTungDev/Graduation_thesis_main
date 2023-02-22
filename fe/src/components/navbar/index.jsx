@@ -1,28 +1,24 @@
-// import 'react-tabs/style/react-tabs.css';
 import "./index.scss"
-import logo from "./images/logo.png"
-import acount from "./images/acount.jpeg"
 import React, { useState, useEffect } from "react";
-import { Box, Tabs, Tab, Button, MenuItem } from '@mui/material';
 import { color, style } from "@mui/system";
-import { ExploreOutlined, LocalOfferOutlined, Home } from '@mui/icons-material';
+import { ExploreOutlined, LocalOfferOutlined, Home, Logout, Settings } from '@mui/icons-material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Notification from "./notification";
+import { Avatar, IconButton, ListItemIcon, Menu, MenuItem, Tooltip, Typography, Box, Tabs, Tab, Button } from '@mui/material';
+import { useNavigate } from "react-router-dom";
+import logo1 from "./images/acount.jpeg"
 const Navbar = () => {
 
     const [value, setValue] = useState('one');
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    const [showNotification, setShowNotification] = useState(false);
+    const [showNotification, setShowNotification] = React.useState(false);
 
-    const [showSetting, setShowSetting] = useState(false);
-
-    const [showNotificationSetting, setShowNotificationSetting] = useState(false)
+    const navigation = useNavigate();
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
-        setShowSetting(false)
         setShowNotification(false)
 
     };
@@ -35,24 +31,30 @@ const Navbar = () => {
         if (showNotification) {
             setShowNotification(false)
 
-
         } else {
             setShowNotification(true)
-            setShowSetting(false)
 
         }
     }
 
-    const handleSetting = () => {
-        if (!showSetting) {
-            setShowSetting(true)
-            setShowNotification(false)
+    const [anchorEl, setAnchorEl] = React.useState(null);
 
-        } else {
-            setShowSetting(false)
-        }
+    const open = Boolean(anchorEl);
+
+    const handleClick = (event) => {
+        setShowNotification(false)
+        setAnchorEl(event.currentTarget);
+        // setValue(URL.createObjectURL(file))
+
+    };
+
+    const handleClose1 = () => {
+        setShowNotification(false)
+
     }
-
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     return (
         <div>
@@ -77,29 +79,34 @@ const Navbar = () => {
                             aria-label="red tabs example"
                             TabProps={{ style: { color: 'red' } }}
                         >
-                            <Tab className="Tab_Navbar" value="one" label="Trang chủ" icon={<Home />} />
-                            <Tab className="Tab_Navbar" value="two" label="Địa điểm" icon={<LocationOnIcon />} />
-                            <Tab className="Tab_Navbar" value="three" label="Khám phá" icon={<ExploreOutlined />} />
-                            <Tab className="Tab_Navbar" value="four" label="Khuyến mãi" icon={<LocalOfferOutlined />} />
+                            <Tab className="Tab_Navbar" value="one" label={<Box sx={{ display: 'flex', alignItems: 'center' }}><Home /><Typography sx={{ ml: 1 }}>Trang Chủ</Typography></Box>} />
+                            <Tab className="Tab_Navbar" value="two" label={<Box sx={{ display: 'flex', alignItems: 'center' }}><LocationOnIcon /><Typography sx={{ ml: 1 }}>Địa Điểm</Typography></Box>} />
+                            <Tab className="Tab_Navbar" value="three" label={<Box sx={{ display: 'flex', alignItems: 'center' }}><ExploreOutlined /><Typography sx={{ ml: 1 }}>Khám Phá</Typography></Box>} />
+                            <Tab className="Tab_Navbar" value="four" label={<Box sx={{ display: 'flex', alignItems: 'center' }}><LocalOfferOutlined /><Typography sx={{ ml: 1 }}>Khuyến Mãi</Typography></Box>} />
+                            {/* <Tab className="Tab_Navbar" value="two" label="Địa điểm" icon={<LocationOnIcon />} /> */}
                         </Tabs>
                     </Box>
                 </div>
-                <div className="Navbar_Icon">
-                    <div className="Button">
-                        <Button variant="contained">
-                            <span class="material-icons" style={{ fontSize: "18px" }}>edit </span>
+                <div className="Navbar_Icon" >
+                    <div className="Button" >
+                        <Button variant="contained"
+                            onClick={() => {
+                                navigation("/review");
+                            }}
+                        >
+                            <span class="material-icons" style={{ fontSize: "18px",margin:"2px" }}>edit </span>
                             Viết Review
                         </Button>
                     </div>
-                    <div className="Icon" >
+                    <div className="Icon">
                         {isAuthenticated ? (
                             <>
-                                <span id="notificationButton" class="material-icons">favorite </span>
-                                <span id="notificationButton" class="material-icons">sms </span>
-                                <div className="Notification">
-                                    <div className="div">
+                                <span id="notificationButton" class="material-icons" onClick={handleClose1} >favorite </span>
+                                <span id="notificationButton" class="material-icons" onClick={handleClose1}>sms </span>
+                                <div className="Notification" >
+                                    {/* <div className="div"> */}
                                         <span id="profileButton" class="material-icons" onClick={handleNotification}>notifications </span>
-                                    </div>
+                                    {/* </div> */}
                                     {showNotification && (
                                         <div className="Contents">
                                             <span>Thông báo</span>
@@ -107,18 +114,73 @@ const Navbar = () => {
                                         </div>
                                     )}
                                 </div>
-                                <div id="notificationButton" class="dropdown">
-                                    <div className="anh">
-                                        <img className="Acount" src={acount} alt="Acount" onClick={handleSetting} />
-                                    </div>
-                                    {showSetting && (
-                                        <div class="noidung_dropdown">
-                                            <span>Xem hồ sơ</span>
-                                            <span>Cài đặt tài khoản</span>
-                                            <span>Đăng xuất</span>
-                                        </div>
-                                    )}
-                                </div>
+                                <React.Fragment>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', justifyContent:"center"}}>
+                                        <Tooltip title="Account settings">
+                                            <IconButton
+                                                onClick={handleClick}
+                                                size="small">
+                                                <Avatar
+                                                    alt="Remy Sharp"
+                                                    src={logo1}
+                                                    sx={{ width: 40, height: 40 }}
+                                                />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Box>
+                                    <Menu
+                                        anchorEl={anchorEl}
+                                        id="account-menu"
+                                        open={open}
+                                        onClose={handleClose}
+                                        // onClick={handleClose}
+                                        PaperProps={{
+                                            elevation: 0,
+                                            sx: {
+                                                overflow: 'visible',
+                                                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                                                mt: 1.5,
+                                                '& .MuiAvatar-root': {
+                                                    width: 32,
+                                                    height: 32,
+                                                    ml: -0.5,
+                                                    mr: 1,
+                                                },
+                                                '&:before': {
+                                                    content: '""',
+                                                    display: 'block',
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    right: 14,
+                                                    width: 10,
+                                                    height: 10,
+                                                    bgcolor: 'background.paper',
+                                                    transform: 'translateY(-50%) rotate(45deg)',
+                                                    zIndex: 0,
+                                                },
+                                            },
+                                        }}
+                                        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                                        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                                    >
+                                        <MenuItem onClick={handleClose}>
+                                            <Avatar /> Profile
+                                        </MenuItem>
+                                        <MenuItem onClick={handleClose}>
+                                            <ListItemIcon>
+                                                <Settings fontSize="small" />
+                                            </ListItemIcon>
+                                            Settings
+                                        </MenuItem>
+                                        <MenuItem onClick={handleClose}>
+                                            <ListItemIcon>
+                                                <Logout fontSize="small" />
+                                            </ListItemIcon>
+                                            Logout
+                                        </MenuItem>
+                                    </Menu>
+                                </React.Fragment>
+
                             </>
                         ) : (
                             <Button id="loginButton" variant="contained" onClick={handleLogin}>
