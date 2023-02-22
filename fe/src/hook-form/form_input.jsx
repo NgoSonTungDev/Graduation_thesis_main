@@ -36,7 +36,7 @@ function TextInputControl({
         field: { value, onChange },
         fieldState: { error, invalid },
       }) => (
-        <FormControl sx={{ display: "block", width: "400px", padding: "10px" }}>
+        <FormControl fullWidth sx={{ display: "block", padding: "10px" }}>
           <TextField
             disabled={disabled || false}
             label={label}
