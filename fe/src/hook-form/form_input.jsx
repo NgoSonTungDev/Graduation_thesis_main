@@ -16,7 +16,6 @@ function TextInputControl({
   disabled,
   type,
   size,
-  style,
 }) {
   const [isShowPassword, setIsShowPassword] = React.useState(false);
 
