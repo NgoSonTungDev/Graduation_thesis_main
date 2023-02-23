@@ -1,30 +1,34 @@
-import "./index.scss";
-import React, { useState, useEffect } from "react";
 import {
   ExploreOutlined,
-  LocalOfferOutlined,
   Home,
+  LocalOfferOutlined,
   Logout,
-  Settings,
 } from "@mui/icons-material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import Notification from "./notification";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import ManageHistoryIcon from "@mui/icons-material/ManageHistory";
+import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
 import {
   Avatar,
+  Box,
+  Button,
   IconButton,
   ListItemIcon,
   Menu,
   MenuItem,
+  Tab,
+  Tabs,
   Tooltip,
   Typography,
-  Box,
-  Tabs,
-  Tab,
-  Button,
 } from "@mui/material";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo1 from "./images/acount.jpeg";
 import BarLoader from "react-spinners/BarLoader";
+import logo1 from "./images/acount.jpeg";
+import "./index.scss";
 const Navbar = ({ loading }) => {
   const [value, setValue] = useState("one");
 
@@ -171,39 +175,15 @@ const Navbar = ({ loading }) => {
             <div className="Icon">
               {isAuthenticated ? (
                 <>
-                  <span
-                    id="notificationButton"
-                    class="material-icons"
-                    onClick={handleClose1}
-                  >
-                    favorite{" "}
-                  </span>
-                  <span
-                    id="notificationButton"
-                    class="material-icons"
-                    onClick={handleClose1}
-                  >
-                    sms{" "}
-                  </span>
-                  <div className="Notification">
-                    {/* <div className="div"> */}
-                    <span
-                      id="profileButton"
-                      class="material-icons"
-                      onClick={handleNotification}
-                    >
-                      notifications{" "}
-                    </span>
-                    {showNotification && (
-                      <div className="Contents">
-                        <span>Thông báo</span>
-                        <Notification
-                          type="success"
-                          message="Action succeeded!"
-                        />
-                      </div>
-                    )}
-                  </div>
+                  <IconButton>
+                    <FavoriteBorderIcon />
+                  </IconButton>
+                  <IconButton>
+                    <SmsOutlinedIcon />
+                  </IconButton>
+                  <IconButton>
+                    <NotificationsOutlinedIcon />
+                  </IconButton>
                   <React.Fragment>
                     <Box
                       sx={{
@@ -264,17 +244,26 @@ const Navbar = ({ loading }) => {
                       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                     >
                       <MenuItem onClick={handleClose}>
-                        <Avatar /> Profile
-                      </MenuItem>
-                      <MenuItem onClick={handleClose}>
                         <ListItemIcon>
-                          <Settings fontSize="small" />
+                          <AccountCircleIcon fontSize="medium" />
                         </ListItemIcon>
-                        Settings
+                        Trang cá nhân
                       </MenuItem>
                       <MenuItem onClick={handleClose}>
                         <ListItemIcon>
-                          <Logout fontSize="small" />
+                          <ManageHistoryIcon fontSize="medium" />
+                        </ListItemIcon>
+                        Quản lý đơn hàng
+                      </MenuItem>
+                      <MenuItem onClick={handleClose}>
+                        <ListItemIcon>
+                          <ManageAccountsIcon fontSize="medium" />
+                        </ListItemIcon>
+                        Quàn lý hệ thống
+                      </MenuItem>
+                      <MenuItem onClick={handleClose}>
+                        <ListItemIcon>
+                          <Logout fontSize="medium" />
                         </ListItemIcon>
                         Logout
                       </MenuItem>

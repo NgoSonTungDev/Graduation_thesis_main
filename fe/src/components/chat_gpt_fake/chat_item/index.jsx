@@ -15,9 +15,7 @@ const ChatItem = ({ data }) => {
       <div
         style={{
           maxWidth: "70%",
-          backgroundColor: `${
-            data.type ? "rgba(0, 0, 0, 0.3019607843)" : "#0084ff"
-          }`,
+          backgroundColor: `${data.type ? "#3e4042e0" : "#0084ff"}`,
           color: "#fff",
           padding: "4px 10px",
           borderRadius: "10px",
