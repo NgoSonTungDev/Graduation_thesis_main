@@ -13,6 +13,7 @@ import axiosClient from "../../../api/axiosClient";
 import { toastify } from "../../../utils/common";
 import Loading from "../../../components/loadding";
 import "./style.scss";
+import { useNavigate } from "react-router-dom";
 
 const validationInput = yup.object().shape({
   userName: yup
@@ -34,6 +35,7 @@ const Register = () => {
   const [loadingPage, setLoadingPage] = React.useState(false);
   const [data, setData] = React.useState({});
   const [OTP, setOTP] = React.useState(0);
+  const navigation = useNavigate();
 
   const {
     register,
@@ -161,12 +163,22 @@ const Register = () => {
         </div>
         <div
           style={{
-            width: "100%",
-            display: "grid",
-            placeItems: "center",
+            width: "80%",
+            display: "flex",
             marginTop: "20px",
+            marginLeft: "10%",
+            justifyContent: "space-around",
           }}
         >
+          <Button
+            variant="outlined"
+            sx={{ width: "80px" }}
+            onClick={() => {
+              navigation("/");
+            }}
+          >
+            Back
+          </Button>
           <LoadingButton
             loading={loading}
             loadingIndicator="Loading…"
