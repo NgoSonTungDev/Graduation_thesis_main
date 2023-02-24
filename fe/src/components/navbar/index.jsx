@@ -27,49 +27,52 @@ import {
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BarLoader from "react-spinners/BarLoader";
+import GetDataPlaceItem from "../modle_find_place";
 import logo1 from "./images/acount.jpeg";
 import "./index.scss";
+import NotificationItem from "./notification";
 const Navbar = ({ loading }) => {
   const [value, setValue] = useState("one");
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  const [showNotification, setShowNotification] = React.useState(false);
-
+  const [openModal, setOpenModal] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorElNotify, setAnchorElNotify] = React.useState(null);
+
+  const open = Boolean(anchorEl);
+  const openNotify = Boolean(anchorElNotify);
 
   const navigation = useNavigate();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    setShowNotification(false);
   };
 
   const handleLogin = () => {
     setIsAuthenticated(true);
   };
 
-  const handleNotification = () => {
-    if (showNotification) {
-      setShowNotification(false);
-    } else {
-      setShowNotification(true);
-    }
+  const handleClickShowNotify = (event) => {
+    setAnchorElNotify(event.currentTarget);
   };
 
-  const open = Boolean(anchorEl);
+  const handleCloseNotify = () => {
+    setAnchorElNotify(null);
+  };
 
   const handleClick = (event) => {
-    setShowNotification(false);
     setAnchorEl(event.currentTarget);
-    // setValue(URL.createObjectURL(file))
   };
 
-  const handleClose1 = () => {
-    setShowNotification(false);
-  };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
   };
 
   return (
@@ -178,10 +181,15 @@ const Navbar = ({ loading }) => {
                   <IconButton>
                     <FavoriteBorderIcon />
                   </IconButton>
-                  <IconButton>
+                  <IconButton onClick={handleOpenModal}>
                     <SmsOutlinedIcon />
                   </IconButton>
-                  <IconButton>
+                  <IconButton
+                    onClick={handleClickShowNotify}
+                    aria-controls={openNotify ? "notify" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={openNotify ? "true" : undefined}
+                  >
                     <NotificationsOutlinedIcon />
                   </IconButton>
                   <React.Fragment>
@@ -283,6 +291,54 @@ const Navbar = ({ loading }) => {
           </div>
         </div>
       </div>
+      <Menu
+        anchorEl={anchorElNotify}
+        id="notify"
+        open={openNotify}
+        onClose={handleCloseNotify}
+        onClick={handleCloseNotify}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: "visible",
+            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+            mt: 1.5,
+            "& .MuiAvatar-root": {
+              width: 32,
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            "&:before": {
+              content: '""',
+              display: "block",
+              position: "absolute",
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: "background.paper",
+              transform: "translateY(-50%) rotate(45deg)",
+              zIndex: 0,
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      >
+        <div
+          className="container_notify"
+          style={{ width: "350px", maxHeight: "500px" }}
+        >
+          <NotificationItem />
+          <NotificationItem />
+          <NotificationItem />
+          <NotificationItem />
+        </div>
+      </Menu>
+      {openModal && (
+        <GetDataPlaceItem openDialog={openModal} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };

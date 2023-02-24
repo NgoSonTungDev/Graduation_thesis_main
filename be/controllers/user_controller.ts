@@ -13,7 +13,6 @@ const userController = {
         return res
           .status(404)
           .json(errorFunction(true, 404, "Không tồn tại !"));
-      res.cookie("CodeRegister", `12333`);
 
       res.json(errorFunction(false, 200, "Lấy thành công !", user));
     } catch (error) {

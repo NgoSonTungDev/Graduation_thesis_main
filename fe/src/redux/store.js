@@ -1,8 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import ChatBoxReducer from "./Chatbot/ChatSlice";
+import ChatBoxReducer from "./chatbot/chatSlice";
+import PlaceReducer from "./place/placeSlice";
 
 export const Store = configureStore({
   reducer: {
-    DataChatBot: ChatBoxReducer,
+    ChatBot: ChatBoxReducer,
+    Place: PlaceReducer,
   },
 });

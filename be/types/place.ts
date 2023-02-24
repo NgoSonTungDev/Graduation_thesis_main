@@ -12,5 +12,6 @@ export interface IPlace {
   description: string;
   image: string[];
   openTime: number;
+  numberTickets: number;
   closeTime: number;
 }

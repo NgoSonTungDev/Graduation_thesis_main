@@ -108,8 +108,6 @@ const Register = () => {
     }
   };
 
-  console.log(OTP);
-
   return (
     <div className="register_container">
       <div className="register_container_box">

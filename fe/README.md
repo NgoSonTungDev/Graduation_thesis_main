@@ -44,10 +44,8 @@ email: data.email,
 })
 .then((res) => {
 toastify("success", "Tên người dùng và email hợp lệ !");
-handleClickOpen();
-setLoading(false);
 })
 .catch((err) => {
 toastify("error", err.response.data.message || "Lỗi hệ thông !");
-setLoading(false);
-}); -->
+});
+-->

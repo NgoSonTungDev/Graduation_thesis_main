@@ -10,6 +10,7 @@ const validation = joi.object<IPlace>({
   geographicalLocation: joi.string().required(),
   childTicket: joi.number().required(),
   adultTicket: joi.number().required(),
+  numberTickets: joi.number().required(),
   purpose: joi.string().required(),
   type: joi.string().required(),
   rating: joi.number().min(0).max(5),
