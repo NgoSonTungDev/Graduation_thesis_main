@@ -25,8 +25,10 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BarLoader from "react-spinners/BarLoader";
+import { openChatBox } from "../../redux/chat_box/chatBoxSlice";
 import GetDataPlaceItem from "../modle_find_place";
 import logo1 from "./images/acount.jpeg";
 import "./index.scss";
@@ -37,6 +39,8 @@ const Navbar = ({ loading }) => {
   const [openModal, setOpenModal] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElNotify, setAnchorElNotify] = React.useState(null);
+
+  const dispatch = useDispatch();
 
   const open = Boolean(anchorEl);
   const openNotify = Boolean(anchorElNotify);
@@ -178,10 +182,14 @@ const Navbar = ({ loading }) => {
             <div className="Icon">
               {isAuthenticated ? (
                 <>
-                  <IconButton>
+                  <IconButton onClick={handleOpenModal}>
                     <FavoriteBorderIcon />
                   </IconButton>
-                  <IconButton onClick={handleOpenModal}>
+                  <IconButton
+                    onClick={() => {
+                      dispatch(openChatBox());
+                    }}
+                  >
                     <SmsOutlinedIcon />
                   </IconButton>
                   <IconButton
