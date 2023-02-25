@@ -14,10 +14,14 @@ export const verifyToken = async (
     const otp = req.body.codeOtp;
 
     if (!otp)
-      return res.json(errorFunction(true, 403, "Chưa nhận được mã OTP !"));
+      return res
+        .status(403)
+        .json(errorFunction(true, 403, "Chưa nhận được mã OTP !"));
 
     if (!cookie.CodeRegister) {
-      return res.json(errorFunction(true, 403, "Mã OTP đã hết hạn !"));
+      return res
+        .status(403)
+        .json(errorFunction(true, 403, "Mã OTP đã hết hạn !"));
     } else {
       const decode = jwt.verify(
         cookie.CodeRegister,
@@ -26,10 +30,12 @@ export const verifyToken = async (
 
       const { code } = decode as any;
 
-      if (code === otp) {
+      if (Number(code) === Number(otp)) {
         next();
       } else {
-        res.json(errorFunction(true, 404, "Mã OTP không chính xác !"));
+        res
+          .status(404)
+          .json(errorFunction(true, 404, "Mã OTP không chính xác !"));
       }
     }
   } catch (error) {

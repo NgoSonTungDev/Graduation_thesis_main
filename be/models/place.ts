@@ -28,6 +28,10 @@ const placeSchema = new mongoose.Schema<IPlace>(
       type: Number,
       required: true,
     },
+    numberTickets: {
+      type: Number,
+      required: true,
+    },
     purpose: {
       type: String,
       required: true,

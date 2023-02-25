@@ -1,5 +1,6 @@
 import express from "express";
 import { authRouter } from "./auth_router";
+import { autoRepRouter } from "./autoRep_router";
 import { commentRouter } from "./comment_router";
 import { evaluateRouter } from "./evaluate_router";
 import { favouriteRouter } from "./favourite_router";
@@ -44,6 +45,8 @@ const routes = () => {
   commentRouter(router);
 
   repCommentRouter(router);
+
+  autoRepRouter(router);
 
   return router;
 };

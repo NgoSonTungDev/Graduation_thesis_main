@@ -36,3 +36,16 @@ email (note: tên đã dc đăng ký ở TextField): yup
     sx={{ width: "80%" }} //sx = scss (style như scss bth)
     helperText={errors.email?.message}
 /> -->
+<!--
+axiosClient
+.post("/email/send-code-register", {
+userName: data.userName,
+email: data.email,
+})
+.then((res) => {
+toastify("success", "Tên người dùng và email hợp lệ !");
+})
+.catch((err) => {
+toastify("error", err.response.data.message || "Lỗi hệ thông !");
+});
+-->

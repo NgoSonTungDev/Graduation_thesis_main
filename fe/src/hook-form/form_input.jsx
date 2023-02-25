@@ -16,7 +16,7 @@ function TextInputControl({
   disabled,
   type,
   size,
-  style,
+  padding,
 }) {
   const [isShowPassword, setIsShowPassword] = React.useState(false);
 
@@ -36,10 +36,14 @@ function TextInputControl({
         field: { value, onChange },
         fieldState: { error, invalid },
       }) => (
-        <FormControl sx={style}>
+        <FormControl
+          fullWidth
+          sx={{ display: "block", padding: `${padding || 0}` }}
+        >
           <TextField
             disabled={disabled || false}
             label={label}
+            fullWidth
             type={
               type !== "password" ? type : !isShowPassword ? "password" : "text"
             }
@@ -50,9 +54,6 @@ function TextInputControl({
               const value = e.target.value;
 
               onChange(value);
-              // if (handleChange) {
-              //   handleChange(name, value);
-              // }
             }}
             InputProps={{
               endAdornment: type === "password" && (

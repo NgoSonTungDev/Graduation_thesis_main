@@ -1,6 +1,8 @@
+import { IUser } from "./../types/user";
 import Notifications from "../models/notify";
 import { errorFunction } from "../utils/errorFunction";
 import { Request, Response, NextFunction } from "express";
+import Users from "../models/user";
 
 const notifyController = {
   addNotify: async (req: Request, res: Response, next: NextFunction) => {
@@ -16,6 +18,13 @@ const notifyController = {
   },
   getByIdNotify: async (req: Request, res: Response) => {
     try {
+      const user = await Users.findById<IUser>(req.params.id);
+
+      if (!user)
+        return res
+          .status(404)
+          .json(errorFunction(true, 404, "Không tồn tại !"));
+
       await Notifications.updateMany(
         { userId: req.params.id },
         {
