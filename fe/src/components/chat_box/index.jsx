@@ -1,6 +1,6 @@
 import CloseIcon from "@mui/icons-material/Close";
 import Avatar from "@mui/material/Avatar";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { closeChatBox } from "../../redux/chat_box/chatBoxSlice";
@@ -8,7 +8,14 @@ import ChatItem from "./chat_item";
 import "./style.scss";
 
 const ChatBox = ({ openBox }) => {
+  const [message, setMessage] = useState("");
   const dispatch = useDispatch();
+
+  const handleOnClickEnter = (e) => {
+    if (e.key === "Enter") {
+      console.log(message);
+    }
+  };
 
   return (
     <div
@@ -20,6 +27,7 @@ const ChatBox = ({ openBox }) => {
         bottom: 0,
         right: "110px",
         borderRadius: "5px 5px 0 0",
+        backgroundColor: "#fff",
         boxShadow:
           " rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
       }}
@@ -43,7 +51,6 @@ const ChatBox = ({ openBox }) => {
           />
 
           <span style={{ marginLeft: "10px", fontWeight: "500" }}>
-            {" "}
             Quản trị viên
           </span>
         </div>
@@ -65,6 +72,29 @@ const ChatBox = ({ openBox }) => {
         <ScrollToBottom className="container_box_chat">
           <ChatItem />
         </ScrollToBottom>
+      </div>
+      <div
+        style={{
+          width: "100%",
+          height: "10%",
+        }}
+      >
+        <input
+          type="text"
+          style={{
+            padding: "10px",
+            width: "93%",
+            marginTop: "3px",
+            fontSize: "14px",
+            outline: "none",
+            border: "none",
+          }}
+          placeholder={"Aa..."}
+          onKeyDown={handleOnClickEnter}
+          onChange={(e) => {
+            setMessage(e.target.value);
+          }}
+        />
       </div>
     </div>
   );

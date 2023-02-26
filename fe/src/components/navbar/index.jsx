@@ -79,6 +79,10 @@ const Navbar = ({ loading }) => {
     setOpenModal(false);
   };
 
+  const movePage = (path) => {
+    navigation(path);
+  };
+
   return (
     <div>
       <div className="Navbar_Container">
@@ -122,7 +126,12 @@ const Navbar = ({ loading }) => {
                   className="Tab_Navbar"
                   value="one"
                   label={
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center" }}
+                      onClick={() => {
+                        movePage("/");
+                      }}
+                    >
                       <Home />
                       <Typography sx={{ ml: 1 }}>Trang Chủ</Typography>
                     </Box>
@@ -132,7 +141,12 @@ const Navbar = ({ loading }) => {
                   className="Tab_Navbar"
                   value="two"
                   label={
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center" }}
+                      onClick={() => {
+                        movePage("/place");
+                      }}
+                    >
                       <LocationOnIcon />
                       <Typography sx={{ ml: 1 }}>Địa Điểm</Typography>
                     </Box>
@@ -167,7 +181,7 @@ const Navbar = ({ loading }) => {
               <Button
                 variant="contained"
                 onClick={() => {
-                  navigation("/review");
+                  movePage("/review");
                 }}
               >
                 <span

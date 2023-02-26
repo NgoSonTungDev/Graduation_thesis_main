@@ -22,7 +22,9 @@ const ChatItem = () => {
         }}
       >
         <p style={{ margin: 0, padding: 0 }}>
-          làm bớt cộc nhá thi ok hơn á bớt cộc nhá thi ok hơn á
+          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ab rerum,
+          nemo ducimus delectus suscipit qui! Eius cum fugiat, dicta deleniti
+          cumque iure, impedit perferendis nihil soluta velit tempore rem odit.
         </p>
         <span style={{ fontSize: "12px" }}>{momentLocale(1677311212432)}</span>
       </div>
