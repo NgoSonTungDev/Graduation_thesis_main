@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ScrollToBottom from "react-scroll-to-bottom";
 import PulseLoader from "react-spinners/PulseLoader";
 import axiosClient from "../../api/axiosClient";
-import { AddDataChat } from "../../redux/Chatbot/ChatSlice";
+import { AddDataChat } from "../../redux/chat_bot/chatSlice";
 import { DataChat } from "../../redux/selectors";
 import { toastify } from "../../utils/common";
 import ChatItem from "./chat_item";
