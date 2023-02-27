@@ -6,6 +6,7 @@ import axiosClient from "../../api/axiosClient";
 import qs from "query-string";
 import { toastify } from "../../utils/common";
 import PaginationCpn from "../../components/pagination";
+import PlaceSkeleton from "./place_skeleton";
 
 const Place = () => {
   const [loading, setLoading] = React.useState(false);
@@ -93,9 +94,10 @@ const Place = () => {
               marginTop: "10px",
             }}
           >
-            {data?.data?.map((item) => (
+            <PlaceSkeleton />
+            {/* {data?.data?.map((item) => (
               <PlaceItem data={item} />
-            ))}
+            ))} */}
           </div>
 
           <div>
