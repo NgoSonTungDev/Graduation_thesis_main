@@ -65,6 +65,8 @@ const authController = {
         } else {
           const { _id, userName, email, avt, isAdmin } = user;
 
+          const roomId = await Rooms.findOne({ userId: _id });
+
           res.json(
             errorFunction(false, 200, "Đăng nhập thành công !", {
               _id,
@@ -72,6 +74,7 @@ const authController = {
               email,
               avt,
               isAdmin,
+              roomId: roomId?._id,
             })
           );
         }
