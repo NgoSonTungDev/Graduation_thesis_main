@@ -2,13 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import Users from "../models/user";
 import { errorFunction } from "../utils/errorFunction";
 import bcrypt from "bcrypt";
+import Rooms from "../models/roomInbox";
 
 const authController = {
   register: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
-      console.log(hashedPassword);
 
       // const user: IUser = {
       //   userName: req.body.userName,
@@ -30,6 +29,11 @@ const authController = {
       });
 
       const { _id, userName, email, avt, isAdmin } = data;
+
+      await Rooms.create({
+        userId: _id,
+        listInbox: [],
+      });
 
       res.json(
         errorFunction(false, 200, "Tạo tài khoảng thành công !", {
