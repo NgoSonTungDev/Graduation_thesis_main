@@ -1,12 +1,13 @@
 import React from "react";
 import { momentLocale } from "../../../utils/common";
 
-const ChatItem = () => {
+const ChatItem = ({ data }) => {
   return (
     <div
       style={{
         width: "100%",
         display: "flex",
+        justifyContent: `${data.author ? "flex-start" : "flex-end"}`,
       }}
     >
       <div
@@ -19,14 +20,12 @@ const ChatItem = () => {
           fontSize: "14px",
           textAlign: "left",
           margin: "10px",
+          backgroundColor: `${data.type ? "#e4e6eb" : "#0084ff"}`,
+          color: `${data.type ? "#000" : "#fff"}`,
         }}
       >
-        <p style={{ margin: 0, padding: 0 }}>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ab rerum,
-          nemo ducimus delectus suscipit qui! Eius cum fugiat, dicta deleniti
-          cumque iure, impedit perferendis nihil soluta velit tempore rem odit.
-        </p>
-        <span style={{ fontSize: "12px" }}>{momentLocale(1677311212432)}</span>
+        <p style={{ margin: 0, padding: 0 }}>{data.message}</p>
+        <span style={{ fontSize: "12px" }}>{momentLocale(data.time)}</span>
       </div>
     </div>
   );

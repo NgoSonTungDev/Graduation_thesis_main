@@ -24,7 +24,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BarLoader from "react-spinners/BarLoader";
@@ -33,12 +33,15 @@ import GetDataPlaceItem from "../modle_find_place";
 import logo1 from "./images/acount.jpeg";
 import "./index.scss";
 import NotificationItem from "./notification";
+import ws from "../../socket";
+
 const Navbar = ({ loading }) => {
   const [value, setValue] = useState("one");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElNotify, setAnchorElNotify] = React.useState(null);
+  const [offset, setOffset] = useState(0);
 
   const dispatch = useDispatch();
 
@@ -83,9 +86,21 @@ const Navbar = ({ loading }) => {
     navigation(path);
   };
 
+  const joinRoom = () => {
+    ws.joinRoom();
+  };
+
+  useEffect(() => {
+    ws.initialize();
+    const onScroll = () => setOffset(window.pageYOffset);
+    window.removeEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <div>
-      <div className="Navbar_Container">
+      <div className={`Navbar_Container ${offset > 90 && "Navbar_fixed"} `}>
         <BarLoader
           color={"#d63031"}
           loading={loading || false}
@@ -183,10 +198,14 @@ const Navbar = ({ loading }) => {
                 onClick={() => {
                   movePage("/review");
                 }}
+                sx={{ whiteSpace: "pre" }}
               >
                 <span
                   class="material-icons"
-                  style={{ fontSize: "18px", paddingRight: "8px" }}
+                  style={{
+                    fontSize: "18px",
+                    paddingRight: "8px",
+                  }}
                 >
                   edit
                 </span>
@@ -202,6 +221,7 @@ const Navbar = ({ loading }) => {
                   <IconButton
                     onClick={() => {
                       dispatch(openChatBox());
+                      joinRoom();
                     }}
                   >
                     <SmsOutlinedIcon />
@@ -305,6 +325,7 @@ const Navbar = ({ loading }) => {
                   id="loginButton"
                   variant="contained"
                   onClick={handleLogin}
+                  sx={{ whiteSpace: "pre" }}
                 >
                   Đăng Nhập
                 </Button>

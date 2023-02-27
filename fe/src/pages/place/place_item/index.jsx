@@ -1,12 +1,10 @@
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
 import { IconButton } from "@mui/material";
 import Box from "@mui/material/Box";
 import Rating from "@mui/material/Rating";
 import React from "react";
-import { formatMoney, take_decimal_number } from "../../../utils/common";
+import { formatDate, formatMoney } from "../../../utils/common";
 import "./style.scss";
 
 const PlaceItem = ({ data }) => {
@@ -14,7 +12,7 @@ const PlaceItem = ({ data }) => {
     <div
       style={{
         width: "100%",
-        height: "200px",
+        padding: "15px 0",
         margin: "20px 0",
         boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
         display: "flex",
@@ -36,7 +34,14 @@ const PlaceItem = ({ data }) => {
           gap: "12px",
         }}
       >
-        <div style={{ fontSize: "20px", marginTop: "15px" }}>
+        <div
+          style={{
+            fontSize: "20px",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
           <b>{data.name}</b>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -59,18 +64,55 @@ const PlaceItem = ({ data }) => {
           <span>({data.rating.toFixed(1)})</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <PaidOutlinedIcon />
+          <span> Giá vé :</span>
           <span style={{ marginLeft: "5px" }}>
             {formatMoney(data.childTicket)} - {formatMoney(data.adultTicket)}
           </span>
         </div>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <LocationOnOutlinedIcon />
-          <span style={{ marginLeft: "5px" }}>{data.address}</span>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <span style={{ whiteSpace: "pre" }}>Địa chỉ :</span>
+          <span
+            style={{
+              marginLeft: "5px",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {data.address}
+          </span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <AccessTimeOutlinedIcon />
-          <span style={{ marginLeft: "5px" }}>50000</span>
+          <span> Trạng thái :</span>
+          {Number(new Date().getTime()) > data.openTime &&
+          Number(new Date().getTime()) < data.closeTime ? (
+            <span style={{ marginLeft: "5px", color: "#2ecc71" }}>
+              Đang mở cửa{" "}
+            </span>
+          ) : (
+            <span style={{ marginLeft: "5px", color: "#c0392b" }}>
+              Đang đóng cửa{" "}
+            </span>
+          )}
+          <span
+            style={{
+              marginLeft: "10px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <AccessTimeOutlinedIcon
+              fontSize="small"
+              sx={{ paddingRight: "5px" }}
+            />
+            {formatDate(data.openTime, "HH:MM")} -{" "}
+            {formatDate(data.closeTime, "HH:MM")}
+          </span>
         </div>
       </div>
       <div style={{ marginLeft: "8px" }}>

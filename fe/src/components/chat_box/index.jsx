@@ -1,21 +1,46 @@
 import CloseIcon from "@mui/icons-material/Close";
 import Avatar from "@mui/material/Avatar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { closeChatBox } from "../../redux/chat_box/chatBoxSlice";
 import ChatItem from "./chat_item";
 import "./style.scss";
+import io from "socket.io-client";
+
+import ws from "../../socket";
+import { toast } from "react-toastify";
+
+const roomId = "63eb395175a1b450e28d9665";
 
 const ChatBox = ({ openBox }) => {
   const [message, setMessage] = useState("");
+  const [messageList, setMessageList] = useState([]);
   const dispatch = useDispatch();
 
   const handleOnClickEnter = (e) => {
     if (e.key === "Enter") {
-      console.log(message);
+      sendMessage();
     }
   };
+
+  const sendMessage = async () => {
+    const messageData = {
+      room: "63eb395175a1b450e28d9665",
+      author: true,
+      message: message,
+      time: Number(new Date()),
+    };
+
+    ws.sendMessage(messageData);
+    setMessageList((list) => [...list, messageData]);
+  };
+
+  useEffect(() => {
+    ws.io.on("receive_message", (data) => {
+      setMessageList((list) => [...list, data]);
+    });
+  }, [ws]);
 
   return (
     <div
@@ -70,7 +95,9 @@ const ChatBox = ({ openBox }) => {
         }}
       >
         <ScrollToBottom className="container_box_chat">
-          <ChatItem />
+          {messageList.map((item) => {
+            return <ChatItem data={item} />;
+          })}
         </ScrollToBottom>
       </div>
       <div

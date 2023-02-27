@@ -13,7 +13,7 @@ const Place = () => {
   const [data, setData] = React.useState({});
   const [payload, setPayload] = React.useState({
     pageNumber: 1,
-    limit: 5,
+    limit: 4,
     placeName: "",
     type: "",
     variability: "",
@@ -44,6 +44,7 @@ const Place = () => {
   useEffect(() => {
     let url = `/place/all?${qs.stringify(payload)}`;
     fetchData(url);
+    window.scrollTo(0, 0);
   }, [payload]);
 
   return (

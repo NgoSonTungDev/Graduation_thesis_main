@@ -8,6 +8,8 @@ const authController = {
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
+      console.log(hashedPassword);
+
       // const user: IUser = {
       //   userName: req.body.userName,
       //   email: req.body.email,
