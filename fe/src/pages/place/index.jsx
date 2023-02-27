@@ -94,10 +94,9 @@ const Place = () => {
               marginTop: "10px",
             }}
           >
-            <PlaceSkeleton />
-            {/* {data?.data?.map((item) => (
-              <PlaceItem data={item} />
-            ))} */}
+            {loading
+              ? [1, 1, 1, 1].map((e) => <PlaceSkeleton />)
+              : data?.data?.map((item) => <PlaceItem data={item} />)}
           </div>
 
           <div>
