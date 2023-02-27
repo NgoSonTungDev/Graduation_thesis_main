@@ -6,12 +6,8 @@ import ScrollToBottom from "react-scroll-to-bottom";
 import { closeChatBox } from "../../redux/chat_box/chatBoxSlice";
 import ChatItem from "./chat_item";
 import "./style.scss";
-import io from "socket.io-client";
 
 import ws from "../../socket";
-import { toast } from "react-toastify";
-
-const roomId = "63eb395175a1b450e28d9665";
 
 const ChatBox = ({ openBox }) => {
   const [message, setMessage] = useState("");
