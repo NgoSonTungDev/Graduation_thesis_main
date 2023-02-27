@@ -1,3 +1,4 @@
+import { roomRouter } from "./room_router";
 import express from "express";
 import { authRouter } from "./auth_router";
 import { autoRepRouter } from "./autoRep_router";
@@ -47,6 +48,8 @@ const routes = () => {
   repCommentRouter(router);
 
   autoRepRouter(router);
+
+  roomRouter(router);
 
   return router;
 };
