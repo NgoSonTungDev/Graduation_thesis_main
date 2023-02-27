@@ -1,16 +1,13 @@
-import { IconButton } from "@mui/material";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import LocalAtmIcon from "@mui/icons-material/LocalAtm";
-import React from "react";
-import "./style.scss";
-import PlaceIcon from "@mui/icons-material/Place";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import Rating from "@mui/material/Rating";
-import Box from "@mui/material/Box";
-import StarIcon from "@mui/icons-material/Star";
-import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
-import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
+import { IconButton } from "@mui/material";
+import Box from "@mui/material/Box";
+import Rating from "@mui/material/Rating";
+import React from "react";
+import { formatMoney, take_decimal_number } from "../../../utils/common";
+import "./style.scss";
 
 const PlaceItem = ({ data }) => {
   return (
@@ -31,7 +28,7 @@ const PlaceItem = ({ data }) => {
       </div>
       <div
         style={{
-          marginLeft: "10px",
+          marginLeft: "15px",
           width: "60%",
           height: "100%",
           display: "flex",
@@ -59,11 +56,12 @@ const PlaceItem = ({ data }) => {
               size="small"
             />
           </Box>
+          <span>({take_decimal_number(data.rating, 1)})</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <PaidOutlinedIcon />
           <span style={{ marginLeft: "5px" }}>
-            {data.childTicket} - {data.adultTicket}
+            {formatMoney(data.childTicket)} - {formatMoney(data.adultTicket)}
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>

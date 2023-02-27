@@ -45,3 +45,15 @@ export const momentLocale = (date) => {
   moment.updateLocale("vi", {});
   return moment(date).fromNow();
 };
+
+export const formatMoney = (money) => {
+  return money.toLocaleString("vi", { style: "currency", currency: "VND" });
+};
+
+export const take_decimal_number = (number, n) => {
+  //number : số cần xử lý
+  //n: số chữ số sau dấu phẩy cần lấy
+  let base = 10 ** n;
+  let result = Math.round(number * base) / base;
+  return result;
+};
