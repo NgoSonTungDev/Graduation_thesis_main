@@ -56,7 +56,7 @@ const PlaceItem = ({ data }) => {
               size="small"
             />
           </Box>
-          <span>({take_decimal_number(data.rating, 1)})</span>
+          <span>({data.rating.toFixed(1)})</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <PaidOutlinedIcon />
