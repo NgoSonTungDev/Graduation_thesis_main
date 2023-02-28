@@ -1,3 +1,4 @@
+import { likeRouter } from "./like_router";
 import { statisticRouter } from "./statistic_router";
 import { paymentRouter } from "./payment_router";
 import { roomRouter } from "./room_router";
@@ -56,6 +57,8 @@ const routes = () => {
   paymentRouter(router);
 
   statisticRouter(router);
+
+  likeRouter(router);
 
   return router;
 };

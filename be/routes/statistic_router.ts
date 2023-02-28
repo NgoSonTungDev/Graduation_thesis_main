@@ -8,7 +8,12 @@ export const statisticRouter = (router: Router) => {
   );
 
   router.get(
-    "/statistic/payment-statistics",
-    statisticController.detailPaymentStatistics
+    "/statistic/payment-statistics-day",
+    statisticController.detailPaymentStatisticsForDay
+  );
+
+  router.get(
+    "/statistic/payment-statistics-about",
+    statisticController.detailPaymentStatisticsForAbout
   );
 };

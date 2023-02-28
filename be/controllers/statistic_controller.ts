@@ -80,7 +80,7 @@ const statisticController = {
     }
   },
 
-  detailPaymentStatistics: async (
+  detailPaymentStatisticsForAbout: async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -137,6 +137,82 @@ const statisticController = {
       ]);
 
       const arrNumber = result.map((e) => e.totalRevenue);
+
+      res.json(
+        errorFunction(false, 200, "Lấy thống kê thành công", {
+          detail: result,
+          total: arrNumber.reduce(sumTotal, sum),
+        })
+      );
+    } catch (error) {
+      console.log("error: ", error);
+      res.status(400).json({
+        message: "Bad request",
+      });
+    }
+  },
+
+  detailPaymentStatisticsForDay: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { dayTime } = req.query;
+      let sum = 0;
+
+      console.log(dayTime, moment(Number(dayTime)).format("YYYY-MM-DD"));
+
+      const result = await Payments.aggregate([
+        {
+          $project: {
+            orderId: 1,
+            dateTime: {
+              $toDate: "$dateTime",
+            },
+          },
+        },
+        {
+          $addFields: {
+            formatDateTime: {
+              $dateToString: {
+                format: "%Y-%m-%d",
+                date: "$dateTime",
+              },
+            },
+          },
+        },
+        {
+          $match: {
+            formatDateTime: {
+              $eq: moment(Number(dayTime)).format("YYYY-MM-DD"),
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "orders",
+            localField: "orderId",
+            foreignField: "_id",
+            as: "detail",
+          },
+        },
+        {
+          $unwind: "$detail",
+        },
+        {
+          $project: {
+            dateTime: 1,
+            detail: {
+              codeOrder: 1,
+              amount: 1,
+              total: 1,
+            },
+          },
+        },
+      ]);
+
+      const arrNumber = result.map((e) => e.detail?.total);
 
       res.json(
         errorFunction(false, 200, "Lấy thống kê thành công", {
