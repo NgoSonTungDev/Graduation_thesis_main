@@ -135,10 +135,9 @@ const mailerController = {
             });
             res.json(
               errorFunction(
-                false,
+                true,
                 200,
-                `Email sent ${email} with code : ${check} and Token : ${token}`,
-                token
+                `Email sent ${email} with code : ${check} and Token : ${token}`
               )
             );
           }
