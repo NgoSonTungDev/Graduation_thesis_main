@@ -6,6 +6,6 @@ export interface IPost {
   public: boolean;
   rating: number;
   like: string[];
-  time: string;
+  time: number;
   placeId: any;
 }

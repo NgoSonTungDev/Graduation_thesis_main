@@ -9,5 +9,10 @@ export const orderRouter = (router: Router) => {
 
   router.put("/order/update/:id", orderController.updateOrder);
 
+  router.put(
+    "/order/update-story-success/:id",
+    orderController.updateStoryOrderPaymentSuccessful
+  );
+
   router.delete("/order/delete/:id", orderController.deleteOrder);
 };

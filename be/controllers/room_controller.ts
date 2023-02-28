@@ -28,20 +28,6 @@ const roomController = {
       try {
         const { userName } = req.query;
 
-        const filter = {
-          $and: [
-            {
-              userName: {
-                $regex: userName,
-                $options: "$i",
-              },
-            },
-            {
-              public: true,
-            },
-          ],
-        };
-
         const result = await Rooms.aggregate([
           {
             $lookup: {
