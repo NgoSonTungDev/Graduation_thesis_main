@@ -4,7 +4,7 @@ import Navbar from "../../components/navbar";
 const Home = () => {
   return (
     <div>
-      <Navbar />
+      <Navbar loading={false} valueTab="one" />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import ChatItem from "./chat_item";
 import "./style.scss";
 
 import ws from "../../socket";
+import { toastify } from "../../utils/common";
 
 const ChatBox = ({ openBox }) => {
   const [message, setMessage] = useState("");
@@ -17,6 +18,7 @@ const ChatBox = ({ openBox }) => {
   const handleOnClickEnter = (e) => {
     if (e.key === "Enter") {
       sendMessage();
+      setMessage("");
     }
   };
 
@@ -35,6 +37,7 @@ const ChatBox = ({ openBox }) => {
   useEffect(() => {
     ws.io.on("receive_message", (data) => {
       setMessageList((list) => [...list, data]);
+      toastify("info", "Bạn có 1 tin nhắn mới");
     });
   }, [ws]);
 
@@ -112,6 +115,7 @@ const ChatBox = ({ openBox }) => {
             outline: "none",
             border: "none",
           }}
+          value={message}
           placeholder={"Aa..."}
           onKeyDown={handleOnClickEnter}
           onChange={(e) => {

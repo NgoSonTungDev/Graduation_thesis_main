@@ -14,7 +14,7 @@ const Place = () => {
   const [data, setData] = React.useState({});
   const [payload, setPayload] = React.useState({
     pageNumber: 1,
-    limit: 4,
+    limit: 6,
     placeName: "",
     type: "",
     variability: "",
@@ -25,6 +25,10 @@ const Place = () => {
   const handleChangePage = (page) => {
     setPage(page);
     setPayload({ ...payload, pageNumber: page });
+  };
+
+  const handleLoadingPlaceItem = (boolean) => {
+    setLoading(boolean);
   };
 
   const fetchData = (url) => {
@@ -50,7 +54,7 @@ const Place = () => {
 
   return (
     <div style={{ width: "100%" }}>
-      <Navbar loading={loading} />
+      <Navbar loading={loading} valueTab="two" />
       <div className="container_place">
         <div className="container_place_filter">
           <div
@@ -96,7 +100,12 @@ const Place = () => {
           >
             {loading
               ? [1, 1, 1, 1].map((e) => <PlaceSkeleton />)
-              : data?.data?.map((item) => <PlaceItem data={item} />)}
+              : data?.data?.map((item) => (
+                  <PlaceItem
+                    data={item}
+                    // checkLoading={handleLoadingPlaceItem}
+                  />
+                ))}
           </div>
 
           <div>

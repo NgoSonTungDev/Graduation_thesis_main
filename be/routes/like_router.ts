@@ -7,4 +7,8 @@ export const likeRouter = (router: Router) => {
   router.post("/like-comment/:id", likeController.likeComment);
 
   router.post("/like-rep-comment/:id", likeController.likeComment);
+
+  router.post("/favourite-place/:id", likeController.favouritePlace);
+
+  router.post("/dis-favourite-place/:id", likeController.disFavouritePlace);
 };
