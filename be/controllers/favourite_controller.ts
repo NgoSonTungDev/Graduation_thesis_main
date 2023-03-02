@@ -1,6 +1,7 @@
 import { errorFunction } from "../utils/errorFunction";
 import { Request, Response, NextFunction } from "express";
 import Favourites from "../models/favourite";
+import Places from "../models/place";
 
 const favouritesController = {
   addFavourites: async (req: Request, res: Response, next: NextFunction) => {
@@ -45,6 +46,11 @@ const favouritesController = {
         return res
           .status(404)
           .json(errorFunction(true, 404, "Không tồn tại !"));
+
+      await Places.updateMany(
+        { _id: id.placeId },
+        { $pull: { favourite: id.userId } }
+      );
 
       await Favourites.findByIdAndDelete(req.params.id);
       res.status(200).json(errorFunction(true, 200, "Xóa thành công !"));
