@@ -1,0 +1,108 @@
+.profile-container {
+  width: 100%;
+  height: 100vh;
+
+  .profile-header {
+    width: 100%;
+    height: auto;
+
+    .profile-bg {
+      background-image: url("https://png.pngtree.com/background/20210710/original/pngtree-may-day-travel-tour-poster-background-picture-image_1035753.jpg");
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      width: 80%;
+      height: 200px;
+      margin-left: 10%;
+      border-radius: 10px;
+
+      .profile-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin-top: 100px;
+        background-color: white;
+
+        img {
+          width: 150px;
+          height: 150px;
+          border-radius: 50%;
+        }
+      }
+    }
+
+    .profile-name {
+      width: 100%;
+      margin-top: 60px;
+      text-align: center;
+    }
+  }
+
+  .profile-body {
+    .profile-menu {
+      display: flex;
+      width: 70%;
+      height: auto;
+      margin-left: 15%;
+      justify-content: space-between;
+      font-weight: 600;
+
+      .select {
+        display: flex;
+        list-style: none;
+        margin-right: 10px;
+
+        .option {
+          padding: 0 20px;
+          cursor: pointer;
+
+          &:hover {
+            border-bottom: 1px solid red;
+            color: red;
+          }
+        }
+      }
+
+      .profile-edit {
+        width: 120px;
+        height: 40px;
+        margin: 10px;
+        font-weight: 600;
+        border-radius: 6px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+      }
+    }
+
+    .profile-main {
+      display: flex;
+      justify-content: space-between;
+      width: 70%;
+      height: auto;
+      margin-left: 15%;
+
+      .profile-information {
+        padding-top: 10px;
+        width: 35%;
+        height: auto;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        border-radius: 6px;
+
+        .text {
+          font-size: 20px;
+          font-weight: 600;
+          color: red;
+          margin: auto;
+          text-align: center;
+        }
+
+        .information-details {
+          font-size: 16px;
+          font-weight: 600;
+          padding-left: 20px;
+        }
+      }
+    }
+  }
+}

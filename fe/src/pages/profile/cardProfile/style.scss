@@ -1,0 +1,113 @@
+.card-profile-container {
+  width: 700px;
+  height: 850px;
+  margin: 30px 0;
+  margin-left: 100px;
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+
+  .card-profile-main {
+    width: 96%;
+    height: 100%;
+    margin-left: 2%;
+
+    .card-profile-header {
+      width: 100%;
+      height: 80px;
+      padding-top: 20px;
+      display: flex;
+      justify-content: center;
+
+      p {
+        font-size: 20px;
+        font-weight: 600;
+      }
+    }
+
+    .card-profile-status {
+      width: 100%;
+      height: auto;
+      padding-bottom: 10px;
+      input {
+        width: 100%;
+        border: none;
+        outline: none;
+      }
+    }
+
+    .card-profile-img {
+      width: 100%;
+      height: 600px;
+
+      img {
+        width: 100%;
+        height: 600px;
+      }
+    }
+
+    .card-profile-action {
+      width: 100%;
+      margin-top: 10px;
+      ul {
+        width: 100%;
+        display: flex;
+        list-style: none;
+
+        li {
+          padding: 5px 0;
+          width: 33.33333%;
+          border-radius: 6px;
+          justify-content: center;
+          text-align: center;
+
+          &:hover {
+            background-color: #ccc;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+
+    .card-profile-comment {
+      display: flex;
+      .logo {
+        width: 10%;
+        .avatar {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+
+          img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+          }
+        }
+      }
+      .comment {
+        position: relative;
+        width: 90%;
+        display: flex;
+
+        .input-comment {
+          width: 100%;
+          position: absolute;
+          padding: 5px;
+          border-radius: 6px;
+          outline: none;
+          padding-right: 40px;
+        }
+        .icon {
+          position: absolute;
+          top: 6px;
+          right: 6px;
+          cursor: pointer;
+          &:hover {
+            transform: scale(1.2);
+            transition: 500ms;
+          }
+        }
+      }
+    }
+  }
+}

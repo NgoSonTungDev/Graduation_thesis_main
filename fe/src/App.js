@@ -7,11 +7,12 @@ import ChatBox from "./components/chat_box";
 import ChatBot from "./components/chat_gpt_fake";
 import Register from "./pages/auth/register";
 import Home from "./pages/home";
+import Login from "./pages/login";
 import NotFound from "./pages/not_found";
 import Place from "./pages/place/index";
+import Profile from "./pages/profile";
 import Review from "./pages/review";
 import { OpenChatBox } from "./redux/selectors";
-
 const App = () => {
   const open = useSelector(OpenChatBox);
 
@@ -20,9 +21,11 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/place" element={<Place />} />
           <Route path="/review" element={<Review />} />
+          <Route path="/profile" element={<Profile />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
