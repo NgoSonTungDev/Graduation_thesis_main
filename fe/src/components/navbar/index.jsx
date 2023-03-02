@@ -293,13 +293,21 @@ const Navbar = ({ loading }) => {
                       transformOrigin={{ horizontal: "right", vertical: "top" }}
                       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                     >
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem
+                        onClick={() => {
+                          movePage("/profile");
+                        }}
+                      >
                         <ListItemIcon>
                           <AccountCircleIcon fontSize="medium" />
                         </ListItemIcon>
                         Trang cá nhân
                       </MenuItem>
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem
+                        onClick={() => {
+                          movePage("/login");
+                        }}
+                      >
                         <ListItemIcon>
                           <ManageHistoryIcon fontSize="medium" />
                         </ListItemIcon>
@@ -324,7 +332,10 @@ const Navbar = ({ loading }) => {
                 <Button
                   id="loginButton"
                   variant="contained"
-                  onClick={handleLogin}
+                  onClick={() => {
+                    movePage("/login");
+                    handleLogin();
+                  }}
                   sx={{ whiteSpace: "pre" }}
                 >
                   Đăng Nhập

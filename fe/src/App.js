@@ -7,7 +7,7 @@ import ChatBox from "./components/chat_box";
 import ChatBot from "./components/chat_gpt_fake";
 import Register from "./pages/auth/register";
 import Home from "./pages/home";
-import Login from "./pages/login";
+import Login from "./pages/auth/login";
 import NotFound from "./pages/not_found";
 import Place from "./pages/place/index";
 import Profile from "./pages/profile";

@@ -1,10 +1,12 @@
 import React from "react";
 import "./style.scss";
 import CardProfile from "../profile/cardProfile/index";
+import Navbar from "../../components/navbar";
 
 const Profile = () => {
   return (
     <div>
+      <Navbar />
       <div className="profile-container">
         <div className="profile-header">
           <div className="profile-bg">
