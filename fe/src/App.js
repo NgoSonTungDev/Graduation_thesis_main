@@ -28,9 +28,9 @@ const App = () => {
         </Routes>
 
         <ChatBot />
-        <ChatBox openBox={open} />
+        <ChatBox openBox={open || false} />
         <ToastContainer
-          autoClose={1000}
+          autoClose={800}
           hideProgressBar={false}
           newestOnTop={false}
           closeOnClick

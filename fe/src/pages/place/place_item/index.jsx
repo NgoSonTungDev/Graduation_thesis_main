@@ -8,43 +8,36 @@ import { formatDate, formatMoney, toastify } from "../../../utils/common";
 import "./style.scss";
 import axiosClient from "../../../api/axiosClient";
 
-const PlaceItem = ({ data, checkLoading }) => {
+const PlaceItem = ({ data }) => {
   const [check, setCheck] = useState(false);
 
-  const handleFavourite = () => {
-    // checkLoading(true);
+  const handleFavourite = (e) => {
+    e.stopPropagation();
     axiosClient
       .post(`/favourite-place/${data._id}`, {
         userId: "63fcc3b2ebe41cb6c68dd48e",
       })
       .then((res) => {
         setCheck(true);
-        // checkLoading(false);
-
         toastify("success", res.data.message);
       })
       .catch((err) => {
-        // checkLoading(false);
         setCheck(false);
-
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
 
-  const handleDisFavourite = () => {
-    // checkLoading(true);
-
+  const handleDisFavourite = (e) => {
+    e.stopPropagation();
     axiosClient
       .post(`/dis-favourite-place/${data._id}`, {
         userId: "63fcc3b2ebe41cb6c68dd48e",
       })
       .then((res) => {
-        // checkLoading(false);
         setCheck(false);
         toastify("success", res.data.message);
       })
       .catch((err) => {
-        // checkLoading(false);
         setCheck(false);
 
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -52,14 +45,12 @@ const PlaceItem = ({ data, checkLoading }) => {
   };
 
   useEffect(() => {
-    if (
-      data.favourite.find((e) => {
-        return e === "63fcc3b2ebe41cb6c68dd48e";
-      })
-    ) {
-      setCheck(true);
-    }
-  }, [check]);
+    data?.favourite?.find((e) => {
+      return e === "63fcc3b2ebe41cb6c68dd48e";
+    })
+      ? setCheck(true)
+      : setCheck(false);
+  }, []);
 
   return (
     <div
@@ -172,14 +163,18 @@ const PlaceItem = ({ data, checkLoading }) => {
         {check ? (
           <IconButton
             sx={{ backgroundColor: " #ff0000", color: "#fff" }}
-            onClick={handleDisFavourite}
+            onClick={(e) => {
+              handleDisFavourite(e);
+            }}
           >
             <FavoriteBorderIcon />
           </IconButton>
         ) : (
           <IconButton
             sx={{ border: "1px solid #ff0000", color: "#ff0000" }}
-            onClick={handleFavourite}
+            onClick={(e) => {
+              handleFavourite(e);
+            }}
           >
             <FavoriteBorderIcon />
           </IconButton>

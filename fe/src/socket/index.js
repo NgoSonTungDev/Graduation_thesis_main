@@ -1,4 +1,6 @@
 import { io } from "socket.io-client";
+import { addMessage } from "../redux/chat_box/chatBoxSlice";
+import store from "../redux/store";
 
 const RECONNECTION_ATTEMPTS = 10;
 const RECONNECTION_DELAY = 1000;
@@ -22,8 +24,9 @@ class WebsocketClient {
   }
 
   listen() {
+    const dispatch = store.dispatch;
     this.io.on("receive_message", (data) => {
-      console.log({ data });
+      dispatch(addMessage(data));
     });
   }
 
