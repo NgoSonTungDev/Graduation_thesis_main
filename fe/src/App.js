@@ -10,7 +10,7 @@ import Home from "./pages/home";
 import NotFound from "./pages/not_found";
 import Review from "./pages/review";
 import { OpenChatBox } from "./redux/selectors";
-
+import Explore from "./components/explore";
 const App = () => {
   const open = useSelector(OpenChatBox);
 
@@ -21,6 +21,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/review" element={<Review />} />
+          <Route path="/explore" element={<Explore />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
