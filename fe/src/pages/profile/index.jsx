@@ -1,6 +1,13 @@
 import React from "react";
 import "./style.scss";
-import CardProfile from "../profile/cardProfile/index";
+import WcIcon from "@mui/icons-material/Wc";
+import CreateIcon from "@mui/icons-material/Create";
+import CommentIcon from "@mui/icons-material/Comment";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import RssFeedIcon from "@mui/icons-material/RssFeed";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import CardProfile from "./cardProfile";
 import Navbar from "../../components/navbar";
 
 const Profile = () => {
@@ -21,7 +28,7 @@ const Profile = () => {
             <h2>tuanphuong2091@gmail.com</h2>
           </div>
         </div>
-        <hr style={{ width: "70%", color: "green" }} />
+        <hr style={{ width: "80%", marginLeft: "10%", color: "gray" }} />
         <div className="profile-body">
           <div className="profile-menu">
             <ul className="select">
@@ -33,20 +40,73 @@ const Profile = () => {
             </ul>
             <button className="profile-edit">Chỉnh sửa</button>
           </div>
+          <hr
+            style={{
+              width: "80%",
+              marginLeft: "10%",
+              color: "gray",
+            }}
+          />
 
           <div className="profile-main">
             <div className="profile-information">
               <p className="text">Bảng thông tin</p>
               <div className="information-details">
-                <p>
-                  <i class="fa-sharp fa-solid fa-circle-user"></i>Giới tính
-                </p>
-                <p>Đánh giá</p>
-                <p>Thảo luận</p>
-                <p>Đã lưu</p>
-                <p>Đang theo dõi</p>
-                <p>Người theo dõi</p>
-                <p>Ngày tham gia</p>
+                <div className="details">
+                  <span>
+                    <WcIcon className="icon" />
+                    Giới tính
+                  </span>
+                  <span className="text-detail">Nam</span>
+                </div>
+                <div className="details">
+                  <span>
+                    <CreateIcon className="icon" />
+                    Đánh giá
+                  </span>
+
+                  <span className="text-detail">Nam</span>
+                </div>
+                <div className="details">
+                  <span>
+                    <CommentIcon className="icon" />
+                    Bình luận
+                  </span>
+
+                  <span className="text-detail">Nam</span>
+                </div>
+                <div className="details">
+                  <span>
+                    <FavoriteIcon className="icon" />
+                    Đã lưu
+                  </span>
+
+                  <span className="text-detail">Nam</span>
+                </div>
+                <div className="details">
+                  <span>
+                    <PersonAddAlt1Icon className="icon" />
+                    Đang theo dõi
+                  </span>
+
+                  <span className="text-detail">Nam</span>
+                </div>
+                <div className="details">
+                  <span>
+                    <RssFeedIcon className="icon" />
+                    Người theo dõi
+                  </span>
+
+                  <span className="text-detail">Nam</span>
+                </div>
+                <div className="details">
+                  <span>
+                    <CalendarMonthIcon className="icon" />
+                    Ngày tham gia
+                  </span>
+
+                  <span className="text-detail">Nam</span>
+                </div>
               </div>
             </div>
             <div className="profile-content">

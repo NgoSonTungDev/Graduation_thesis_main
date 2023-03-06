@@ -1,21 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./style.scss";
-import axios from "axios";
-import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ToastContainer, toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useForm } from "react-hook-form";
-import { IconButton, InputAdornment, TextField } from "@mui/material";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { ToastContainer } from "react-toastify";
+import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
-import { toastify } from "../../../utils/common";
 import TextInputControl from "../../../hook-form/form_input";
+import { toastify } from "../../../utils/common";
 
 const validationInput = yup.object().shape({
-  username: yup.string().required("Tên đăng nhập không được để trống"),
+  userName: yup.string().required("Tên đăng nhập không được để trống"),
   password: yup
     .string()
     .min(6, "Mật khẩu ít nhất 6 ký tự !!!")
@@ -24,12 +20,8 @@ const validationInput = yup.object().shape({
 });
 
 const Login = () => {
-  const [showPassword, setShowPassword] = useState(false);
   const [check, setCheck] = useState(false);
   const navigation = useNavigate();
-
-  const handleClickShowPassword = () => setShowPassword(!showPassword);
-  const handleMouseDownPassword = () => setShowPassword(!showPassword);
 
   const {
     control,
@@ -38,33 +30,35 @@ const Login = () => {
     formState: { errors, isDirty, isValid },
   } = useForm({
     defaultValues: {
-      username: "",
+      userName: "",
       password: "",
     },
     mode: "all",
     resolver: yupResolver(validationInput),
   });
 
-  function onPress_ENTER(event) {
-    var keyPressed = event.keyCode || event.which;
-    if (keyPressed === 13) {
-      handleLogin();
-      keyPressed = null;
-    } else {
-      return false;
-    }
-  }
+  // function onPress_ENTER(event) {
+  //   var keyPressed = event.keyCode || event.which;
+  //   if (keyPressed === 13) {
+  //     handleLogin();
+  //     keyPressed = null;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
   const handleLogin = (data) => {
     setCheck(true);
     axiosClient
       .post("/user/login", {
-        username: data.userName,
+        userName: data.userName,
         password: data.password,
       })
       .then((res) => {
+        console.log("log", res.data);
         setCheck(false);
-        navigation("/");
+        navigation("/profile");
+        toastify("success", "Đăng nhập thành công!");
       })
       .catch((err) => {
         setCheck(false);
@@ -88,53 +82,21 @@ const Login = () => {
           >
             <TextInputControl
               control={control}
-              name="userName"
-              label="tên đăng nhập"
+              name="username"
+              label="Tên đăng nhập"
               type={"text"}
             />
             <TextInputControl
               control={control}
               name="password"
-              label="tên đăng nhập"
+              label="Mật khẩu"
               type={"password"}
             />
-            {/* <TextField
-              error={!!errors?.username}
-              {...register("username")}
-              type="text"
-              label="Tên đăng nhập của bạn"
-              size="small"
-              sx={{ width: "60%", marginLeft: "20%" }}
-              helperText={errors.username?.message}
-            />
-            <TextField
-              error={!!errors?.password}
-              {...register("password")}
-              type={showPassword ? "text" : "password"}
-              label="Mật khẩu của bạn"
-              size="small"
-              sx={{ width: "60%", marginLeft: "20%", marginTop: "20px" }}
-              helperText={errors.password?.message}
-              // onKeyDown={(e) => onPress_ENTER(e)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                    >
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            /> */}
           </div>
           <div className="back_home">
             <span
               onClick={() => {
-                navigation("/forgot-password");
+                navigation("/profile");
               }}
             >
               Quên mật khẩu
@@ -142,7 +104,7 @@ const Login = () => {
           </div>
           <LoadingButton
             className="buttonlogin"
-            onClick={handleSubmit(handleLogin)}
+            onClick={handleLogin}
             loading={check}
             variant="outlined"
             disabled={!isDirty && !isValid}

@@ -5,20 +5,31 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import MessageIcon from "@mui/icons-material/Message";
 import ReplyIcon from "@mui/icons-material/Reply";
 import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
 
 const CardProfile = () => {
   return (
     <div className="card-profile-container">
       <div className="card-profile-main">
         <div className="card-profile-header">
-          <p>user</p>
-          <ArrowRightIcon style={{ marginTop: "5px" }} />
-          <p>place</p>
+          <span>
+            <img
+              src="https://zoipet.com/wp-content/uploads/2022/12/Corgi-duc-trang-vang-thuan-chung-bo-me-nhap-2.png"
+              alt=""
+            />
+          </span>
+          <span>
+            <span style={{ display: "flex" }}>
+              <p>user</p>
+              <ArrowRightIcon style={{ marginTop: "25px", color: "#ccc" }} />
+              <p>place</p>
+            </span>
+            {/* <span style={{ marginBottom: "5px" }}>
+                <p>rating</p>
+              </span> */}
+          </span>
         </div>
         <div className="card-profile-status">
-          <input type="text" id="text-input" name="text-input" wrap />
+          <input type="text" placeholder="Nhập mô tả" />
         </div>
         <div className="card-profile-img">
           <img
@@ -27,21 +38,18 @@ const CardProfile = () => {
           />
         </div>
         <div className="card-profile-action">
-          <ul>
-            <li>
-              {" "}
-              <FavoriteIcon style={{ marginRight: "10px" }} />
-              Thích
-            </li>
-            <li>
-              <MessageIcon style={{ marginRight: "10px" }} />
-              Bình luận
-            </li>
-            <li>
-              <ReplyIcon style={{ marginRight: "10px" }} />
-              Chia sẻ
-            </li>
-          </ul>
+          <button className="btn-action">
+            <FavoriteIcon className="icon-action" />
+            <p>Thích</p>
+          </button>
+          <button className="btn-action">
+            <MessageIcon className="icon-action" />
+            <p>Bình luận</p>
+          </button>
+          <button className="btn-action">
+            <ReplyIcon className="icon-action" />
+            <p>Chia sẻ</p>
+          </button>
         </div>
         <div className="card-profile-comment">
           <div className="logo">
@@ -53,18 +61,11 @@ const CardProfile = () => {
           </div>
           <div className="comment">
             <div className="input-comment">
-              <Box component="form" noValidate autoComplete="off">
-                <div>
-                  <TextField
-                    id="outlined-multiline-flexible"
-                    label="Nhập bình luận của bạn!"
-                    multiline
-                    maxRows={4}
-                  />
-                </div>
-              </Box>
+              <input type="text" placeholder="Nhập bình luận của bạn!" />
             </div>
-            <ArrowCircleRightIcon className="icon" />
+            <div>
+              <ArrowCircleRightIcon className="icon" />
+            </div>
           </div>
         </div>
       </div>
