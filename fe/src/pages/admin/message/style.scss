@@ -1,0 +1,23 @@
+.container_boxInbox {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  .box_room_chat {
+    width: 25%;
+    height: 100vh;
+    border-right: 1px solid #dedede;
+    .box_room_chat_list {
+      margin-top: 10px;
+      width: 96%;
+      max-height: 84%;
+      overflow-y: scroll;
+      &::-webkit-scrollbar {
+        width: 0px;
+      }
+    }
+  }
+  .box_chat {
+    width: 75%;
+    height: 100vh;
+  }
+}

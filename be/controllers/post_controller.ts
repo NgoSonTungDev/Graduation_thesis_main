@@ -27,7 +27,7 @@ const postController = {
       const result = await Posts.find(condition)
         .skip(SkipNumber)
         .limit(Number(5))
-        .populate("userId", "userName")
+        .populate("userId", ["userName", "avt"])
         .populate("placeId", "name");
 
       let totalPage = 0;
