@@ -8,9 +8,10 @@ import routes from "./routes";
 import cookieParser from "cookie-parser";
 import http from "http";
 import { Server } from "socket.io";
+import Rooms from "./models/roomInbox";
 
 const app = express();
-// app.use(cors());
+
 app.use(
   cors({
     credentials: true,
@@ -32,8 +33,6 @@ const io = new Server(server, {
   },
 });
 
-// const io = new Server(server);
-
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
 
@@ -42,8 +41,23 @@ io.on("connection", (socket) => {
     console.log(`User with ID: ${socket.id} joined room: ${data}`);
   });
 
-  socket.on("send_message", (data) => {
+  socket.on("send_message", async (data) => {
     console.log(data);
+    const roomId = Rooms.findById(data.room);
+
+    if (!roomId) return;
+
+    await roomId.updateOne({
+      $push: {
+        listInbox: {
+          isAdmin: data.isAdmin,
+          message: data.message,
+          time: data.time,
+        },
+      },
+      public: true,
+    });
+
     socket.to(data.room).emit("receive_message", data);
   });
 

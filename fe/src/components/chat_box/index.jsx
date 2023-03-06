@@ -29,13 +29,14 @@ const ChatBox = ({ openBox }) => {
 
   const sendMessage = async () => {
     const messageData = {
+      room: "63fd6e153ac0f9d2d5e10309",
       isAdmin: false,
       message: message,
       time: Number(new Date()),
     };
 
-    // dispatch(addMessage(messageData));
     ws.sendMessage(messageData);
+    dispatch(addMessage(messageData));
   };
 
   // useEffect(() => {

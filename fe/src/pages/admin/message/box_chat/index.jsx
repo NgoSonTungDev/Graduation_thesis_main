@@ -23,13 +23,14 @@ const BoxChat = ({ data }) => {
 
   const sendMessage = () => {
     const messageData = {
+      room: data._id,
       isAdmin: true,
       message: message,
       time: Number(new Date()),
     };
 
+    dispatch(addMessage(messageData));
     ws.sendMessage(messageData);
-    // dispatch(addMessage(messageData));
   };
 
   return (
