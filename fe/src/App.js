@@ -11,6 +11,7 @@ import NotFound from "./pages/not_found";
 import Place from "./pages/place/index";
 import Review from "./pages/review";
 import { OpenChatBox } from "./redux/selectors";
+import Voucher from "./pages/voucher";
 
 const App = () => {
   const open = useSelector(OpenChatBox);
@@ -23,7 +24,7 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/place" element={<Place />} />
           <Route path="/review" element={<Review />} />
-
+          <Route path="/voucher" element={<Voucher />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
 
