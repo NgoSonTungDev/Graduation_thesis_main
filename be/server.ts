@@ -32,6 +32,8 @@ const io = new Server(server, {
   },
 });
 
+// const io = new Server(server);
+
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
 
@@ -41,6 +43,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send_message", (data) => {
+    console.log(data);
     socket.to(data.room).emit("receive_message", data);
   });
 

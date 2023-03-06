@@ -88,7 +88,7 @@ const Navbar = ({ loading, valueTab }) => {
   };
 
   const joinRoom = () => {
-    ws.joinRoom();
+    ws.joinRoom("63fd6e153ac0f9d2d5e10309");
   };
 
   useEffect(() => {
@@ -294,7 +294,11 @@ const Navbar = ({ loading, valueTab }) => {
                         </ListItemIcon>
                         Quản lý đơn hàng
                       </MenuItem>
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem
+                        onClick={() => {
+                          movePage("/admin/home");
+                        }}
+                      >
                         <ListItemIcon>
                           <ManageAccountsIcon fontSize="medium" />
                         </ListItemIcon>

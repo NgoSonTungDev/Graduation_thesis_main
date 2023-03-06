@@ -30,7 +30,7 @@ class WebsocketClient {
     });
   }
 
-  joinRoom(roomId = "63eb395175a1b450e28d9665") {
+  joinRoom(roomId) {
     this.io.emit("join_room", roomId);
   }
 

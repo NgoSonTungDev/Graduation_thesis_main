@@ -15,13 +15,17 @@ const ChatBoxSlice = createSlice({
     closeChatBox: (state) => {
       state.open = false;
     },
+    changeListInbox: (state, { payload }) => {
+      state.listChat = payload;
+    },
+
     addMessage: (state, { payload }) => {
-      console.log("ajsdhsakj", payload);
       state.listChat = [...state.listChat, payload];
     },
   },
 });
 
-export const { openChatBox, closeChatBox, addMessage } = ChatBoxSlice.actions;
+export const { openChatBox, closeChatBox, addMessage, changeListInbox } =
+  ChatBoxSlice.actions;
 
 export default ChatBoxSlice.reducer;

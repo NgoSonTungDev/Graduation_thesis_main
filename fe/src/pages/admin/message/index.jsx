@@ -11,10 +11,15 @@ import { toastify } from "../../../utils/common";
 import LoadingBar from "../../../components/loadding/loading_bar";
 import _ from "lodash";
 import ErrorEmpty from "../../../components/emty_data";
+import BoxChat from "./box_chat";
+import { useDispatch } from "react-redux";
+import { changeListInbox } from "../../../redux/chat_box/chatBoxSlice";
 
 const AdminMessage = () => {
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState([]);
+  const [dataChatBoxId, setDataChatBoxId] = React.useState({});
+  const dispatch = useDispatch();
   const [payload, setPayload] = React.useState({
     userName: "",
   });
@@ -25,6 +30,18 @@ const AdminMessage = () => {
     }, 500),
     []
   );
+
+  const callApiChatBoxById = (id) => {
+    axiosClient
+      .get(`/room/get-room-user/${id}`)
+      .then((res) => {
+        setDataChatBoxId(res.data.data);
+        dispatch(changeListInbox(res.data.data.listInbox));
+      })
+      .catch((err) => {
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
 
   const fetchData = (url) => {
     setLoading(true);
@@ -95,11 +112,46 @@ const AdminMessage = () => {
               ) : (
                 data
                   .sort((a, b) => a.price - b.price)
-                  .map((item, index) => <CardRoom data={item} key={index} />)
+                  .map((item, index) => (
+                    <CardRoom
+                      data={item}
+                      callBackFunction={callApiChatBoxById}
+                      key={index}
+                    />
+                  ))
               )}
             </div>
           </div>
-          <div className="box_chat">sáds</div>
+          <div className="box_chat">
+            {_.isEmpty(dataChatBoxId) ? (
+              <div
+                style={{
+                  width: "70%",
+                  height: "100vh",
+                  display: "grid",
+                  placeItems: "center",
+                }}
+              >
+                <span>
+                  Hãy chọn một đoạn chat hoặc bắt đầu cuộc trò chuyện mới
+                </span>
+              </div>
+            ) : (
+              <div style={{ width: "70%", height: "100vh" }}>
+                <BoxChat data={dataChatBoxId} />
+              </div>
+            )}
+
+            <div
+              style={{
+                width: "30%",
+                height: "100vh",
+                borderLeft: "1px solid #dedede",
+              }}
+            >
+              ddd
+            </div>
+          </div>
         </div>
       </>
     );

@@ -18,21 +18,24 @@ const ChatBox = ({ openBox }) => {
 
   const handleOnClickEnter = (e) => {
     if (e.key === "Enter") {
-      sendMessage();
-      setMessage("");
+      if (message === "") {
+        toastify("info", "Vui lòng nhập tin nhắn.");
+      } else {
+        sendMessage();
+        setMessage("");
+      }
     }
   };
 
   const sendMessage = async () => {
     const messageData = {
-      room: "63eb395175a1b450e28d9665",
-      author: true,
+      isAdmin: false,
       message: message,
       time: Number(new Date()),
     };
 
+    // dispatch(addMessage(messageData));
     ws.sendMessage(messageData);
-    dispatch(addMessage(messageData));
   };
 
   // useEffect(() => {
@@ -94,7 +97,7 @@ const ChatBox = ({ openBox }) => {
           borderBottom: "1px solid #dbdcdc",
         }}
       >
-        <ScrollToBottom className="container_box_chat">
+        <ScrollToBottom className="box_chat_list">
           {listChat?.map((item) => {
             return <ChatItem data={item} />;
           })}
@@ -104,6 +107,7 @@ const ChatBox = ({ openBox }) => {
         style={{
           width: "100%",
           height: "10%",
+          zIndex: 100,
         }}
       >
         <input
