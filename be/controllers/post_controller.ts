@@ -23,7 +23,6 @@ const postController = {
       const condition = placeID ? { placeId: placeID } : {};
 
       const allUser = await Posts.find({ condition });
-      console.log({ placeID, pageNumber });
 
       const result = await Posts.find(condition)
         .skip(SkipNumber)

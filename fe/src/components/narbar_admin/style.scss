@@ -1,0 +1,47 @@
+.body_scroll {
+  width: 100%;
+  height: 100vh;
+  overflow-y: scroll;
+  padding: 0 14px;
+  background-color: #1d1d1d;
+  border-left: 1px solid #dedede;
+  &::-webkit-scrollbar {
+    width: 0px;
+    background-color: #2d3436;
+  }
+}
+
+.information_admin {
+  margin-top: 10px;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  .information_item {
+    width: 120px;
+    .information_item_avt {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      img {
+        width: 100%;
+        object-fit: cover;
+      }
+    }
+    .information_item_name {
+      text-align: center;
+      font-size: 15px;
+    }
+  }
+}
+
+.menu_item {
+  width: 100%;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 0px;
+    background-color: #2d3436;
+  }
+}

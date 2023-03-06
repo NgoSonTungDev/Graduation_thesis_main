@@ -11,6 +11,39 @@ import axiosClient from "../../../api/axiosClient";
 const PlaceItem = ({ data }) => {
   const [check, setCheck] = useState(false);
 
+  const renderItemCheckTime = (open, close) => {
+    //   var hours = Number(item.split(":")[0]);
+    //   var minute = Number(item.split(":")[1]);
+    //   if (timeHours < hours) {
+    //     handleMove(item);
+    //   } else if (timeHours == hours && timeMinutes < minute) {
+    //     handleMove(item);
+    //   } else {
+    //     alert("Phim này đã được chiếu ở thời gian này !!!");
+    //   }
+    //   // console.log(timeHours < hours && timeMinutes < minute);
+    //   // console.log(timeHours, hours);
+    //   // console.log(timeMinutes, minute);
+    // };
+    if (new Date().getTime() > new Date(open).getTime()) {
+      return (
+        <span style={{ marginLeft: "5px", color: "#2ecc71" }}>
+          Đang mở cửa{" "}
+        </span>
+      );
+    } else if (new Date().getTime() > new Date(close).getTime()) {
+      return (
+        <span style={{ marginLeft: "5px", color: "#c0392b" }}>
+          Đang đóng cửa{" "}
+        </span>
+      );
+    }
+  };
+
+  console.log("date", new Date().getTime());
+  console.log("open", new Date(1677459600898).getTime());
+  console.log("close", new Date(1677861000172).getTime());
+
   const handleFavourite = (e) => {
     e.stopPropagation();
     axiosClient
@@ -38,8 +71,6 @@ const PlaceItem = ({ data }) => {
         toastify("success", res.data.message);
       })
       .catch((err) => {
-        setCheck(false);
-
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
@@ -133,8 +164,14 @@ const PlaceItem = ({ data }) => {
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <span> Trạng thái :</span>
-          {Number(new Date().getTime()) > data.openTime &&
-          Number(new Date().getTime()) < data.closeTime ? (
+          {renderItemCheckTime(data.openTime, data.closeTime)}
+          {/* {new Date(new Date()).getTime() <
+          new Date(data.openTime).getTime() ? (
+            <span style={{ marginLeft: "5px", color: "#c0392b" }}>
+              Đang đóng cửa{" "}
+            </span>
+          ) : new Date(new Date()).getTime() <
+            new Date(data.closeTime).getTime() ? (
             <span style={{ marginLeft: "5px", color: "#2ecc71" }}>
               Đang mở cửa{" "}
             </span>
@@ -142,7 +179,7 @@ const PlaceItem = ({ data }) => {
             <span style={{ marginLeft: "5px", color: "#c0392b" }}>
               Đang đóng cửa{" "}
             </span>
-          )}
+          )} */}
           <span
             style={{
               marginLeft: "10px",

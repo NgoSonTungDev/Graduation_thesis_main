@@ -12,6 +12,7 @@ import { payloadPlace } from "../../redux/selectors";
 import { changePayload, resetPayload } from "../../redux/place/placeSlice";
 import PlaceFilter from "./place_filter";
 import ErrorEmpty from "../../components/emty_data";
+import _ from "lodash";
 
 const Place = () => {
   const [loading, setLoading] = React.useState(false);
@@ -33,7 +34,6 @@ const Place = () => {
       .get(url)
       .then((res) => {
         setData(res.data.data);
-        console.log(res.data.data);
         setLoading(false);
       })
       .catch((err) => {
@@ -103,7 +103,7 @@ const Place = () => {
           >
             {loading ? (
               [1, 1, 1, 1].map((e) => <PlaceSkeleton />)
-            ) : data?.data?.length === 0 ? (
+            ) : _.isEmpty(data?.data) ? (
               <ErrorEmpty />
             ) : (
               data?.data?.map((item) => (
@@ -113,7 +113,7 @@ const Place = () => {
           </div>
 
           <div>
-            {data?.data?.length !== 0 && (
+            {data?.data && data?.data?.length > 0 && (
               <PaginationCpn
                 count={data.totalPage}
                 page={payload.pageNumber}
