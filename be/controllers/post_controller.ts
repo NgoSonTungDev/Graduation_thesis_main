@@ -23,12 +23,11 @@ const postController = {
       const condition = placeID ? { placeId: placeID } : {};
 
       const allUser = await Posts.find({ condition });
-      console.log({ placeID, pageNumber });
 
       const result = await Posts.find(condition)
         .skip(SkipNumber)
         .limit(Number(5))
-        .populate("userId", "userName")
+        .populate("userId", ["userName", "avt"])
         .populate("placeId", "name");
 
       let totalPage = 0;

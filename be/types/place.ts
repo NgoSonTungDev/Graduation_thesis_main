@@ -11,6 +11,7 @@ export interface IPlace {
   rating: number;
   description: string;
   image: string[];
+  favourite: string[];
   openTime: number;
   numberTickets: number;
   closeTime: number;

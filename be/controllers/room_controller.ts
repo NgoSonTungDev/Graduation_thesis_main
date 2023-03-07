@@ -28,13 +28,42 @@ const roomController = {
       try {
         const { userName } = req.query;
 
-        const condition = userName
-          ? { userName: { $regex: new RegExp(userName + ""), $options: "i" } }
-          : {};
-
-        const result = await Rooms.find(condition).populate("userId", [
-          "userName",
-          "avt",
+        const result = await Rooms.aggregate([
+          {
+            $lookup: {
+              from: "users",
+              localField: "userId",
+              foreignField: "_id",
+              as: "user",
+            },
+          },
+          {
+            $unwind: "$user",
+          },
+          {
+            $match: {
+              $and: [
+                {
+                  "user.userName": {
+                    $regex: userName,
+                    $options: "$i",
+                  },
+                },
+                {
+                  public: true,
+                },
+              ],
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              userId: 1,
+              listInbox: 1,
+              public: 1,
+              user: { _id: 1, userName: 1, email: 1, gender: 1, avt: 1 },
+            },
+          },
         ]);
 
         res.json(errorFunction(false, 200, "Lấy thành công !", result));

@@ -1,20 +1,19 @@
 import React, { CSSProperties } from "react";
 import BarLoader from "react-spinners/BarLoader";
 
-const Loading = ({ loading }) => {
+const LoadingBar = ({ loading }) => {
   return (
     <div
       style={{
         width: "100%",
-        height: "100vh",
-        position: "fixed",
+        padding: "15px 0",
         display: `${loading ? "grid" : "none"}`,
         placeItems: "center",
-        background: "#000000a3",
+        overflow: "hidden",
       }}
     >
       <BarLoader
-        color={"#36d7b7"}
+        color={"#ff0000"}
         loading={loading}
         width={500}
         aria-label="Loading Spinner"
@@ -24,4 +23,4 @@ const Loading = ({ loading }) => {
   );
 };
 
-export default Loading;
+export default LoadingBar;

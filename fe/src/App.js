@@ -5,6 +5,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ChatBox from "./components/chat_box";
 import ChatBot from "./components/chat_gpt_fake";
+import AdminHome from "./pages/admin/home";
+import AdminMessage from "./pages/admin/message";
 import Register from "./pages/auth/register";
 import Home from "./pages/home";
 import Login from "./pages/auth/login";
@@ -21,19 +23,22 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/place" element={<Place />} />
           <Route path="/review" element={<Review />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/admin/home" element={<AdminHome />} />
+          <Route path="/admin/message" element={<AdminMessage />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
 
         <ChatBot />
-        <ChatBox openBox={open} />
+        <ChatBox openBox={open || false} />
         <ToastContainer
-          autoClose={1000}
+          autoClose={800}
           hideProgressBar={false}
           newestOnTop={false}
           closeOnClick

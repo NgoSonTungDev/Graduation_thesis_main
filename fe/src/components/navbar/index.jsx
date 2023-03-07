@@ -34,10 +34,12 @@ import logo1 from "./images/acount.jpeg";
 import "./index.scss";
 import NotificationItem from "./notification";
 import ws from "../../socket";
+import { removeUserDataLocalStorage } from "../../utils/localstorage";
 
-const Navbar = ({ loading }) => {
+const Navbar = ({ loading, valueTab }) => {
+  const currrenUser = localStorage.getItem("user");
   const [value, setValue] = useState("one");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElNotify, setAnchorElNotify] = React.useState(null);
@@ -49,14 +51,6 @@ const Navbar = ({ loading }) => {
   const openNotify = Boolean(anchorElNotify);
 
   const navigation = useNavigate();
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-  };
 
   const handleClickShowNotify = (event) => {
     setAnchorElNotify(event.currentTarget);
@@ -97,17 +91,10 @@ const Navbar = ({ loading }) => {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
+  // ${offset > 60 && "Navbar_fixed"}
   return (
     <div>
-      <div className={`Navbar_Container ${offset > 90 && "Navbar_fixed"} `}>
-        <BarLoader
-          color={"#d63031"}
-          loading={loading || false}
-          width={"100%"}
-          aria-label="Loading Spinner"
-          data-testid="loader"
-        />
+      <div className={`Navbar_Container  `}>
         <div className="navbar_container_box">
           <div className="Navbar_Logo">
             <nav>
@@ -130,8 +117,7 @@ const Navbar = ({ loading }) => {
             >
               <Tabs
                 className="Tabs_Navbar"
-                value={value}
-                onChange={handleChange}
+                value={valueTab || "one"}
                 textColor="red"
                 indicatorColor="red"
                 aria-label="red tabs example"
@@ -141,31 +127,27 @@ const Navbar = ({ loading }) => {
                   className="Tab_Navbar"
                   value="one"
                   label={
-                    <Box
-                      sx={{ display: "flex", alignItems: "center" }}
-                      onClick={() => {
-                        movePage("/");
-                      }}
-                    >
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
                       <Home />
                       <Typography sx={{ ml: 1 }}>Trang Chủ</Typography>
                     </Box>
                   }
+                  onClick={() => {
+                    movePage("/");
+                  }}
                 />
                 <Tab
                   className="Tab_Navbar"
                   value="two"
                   label={
-                    <Box
-                      sx={{ display: "flex", alignItems: "center" }}
-                      onClick={() => {
-                        movePage("/place");
-                      }}
-                    >
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
                       <LocationOnIcon />
                       <Typography sx={{ ml: 1 }}>Địa Điểm</Typography>
                     </Box>
                   }
+                  onClick={() => {
+                    movePage("/place");
+                  }}
                 />
                 <Tab
                   className="Tab_Navbar"
@@ -213,7 +195,7 @@ const Navbar = ({ loading }) => {
               </Button>
             </div>
             <div className="Icon">
-              {isAuthenticated ? (
+              {currrenUser ? (
                 <>
                   <IconButton onClick={handleOpenModal}>
                     <FavoriteBorderIcon />
@@ -319,7 +301,12 @@ const Navbar = ({ loading }) => {
                         </ListItemIcon>
                         Quàn lý hệ thống
                       </MenuItem>
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem
+                        onClick={() => {
+                          handleClose();
+                          removeUserDataLocalStorage();
+                        }}
+                      >
                         <ListItemIcon>
                           <Logout fontSize="medium" />
                         </ListItemIcon>
@@ -334,7 +321,7 @@ const Navbar = ({ loading }) => {
                   variant="contained"
                   onClick={() => {
                     movePage("/login");
-                    handleLogin();
+                    // handleLogin();
                   }}
                   sx={{ whiteSpace: "pre" }}
                 >
@@ -344,6 +331,13 @@ const Navbar = ({ loading }) => {
             </div>
           </div>
         </div>
+        <BarLoader
+          color={"#d63031"}
+          loading={loading || false}
+          width={"100%"}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
       </div>
       <Menu
         anchorEl={anchorElNotify}

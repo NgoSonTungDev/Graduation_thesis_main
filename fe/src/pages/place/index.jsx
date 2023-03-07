@@ -7,24 +7,25 @@ import qs from "query-string";
 import { toastify } from "../../utils/common";
 import PaginationCpn from "../../components/pagination";
 import PlaceSkeleton from "./place_skeleton";
+import { useDispatch, useSelector } from "react-redux";
+import { payloadPlace } from "../../redux/selectors";
+import { changePayload, resetPayload } from "../../redux/place/placeSlice";
+import PlaceFilter from "./place_filter";
+import ErrorEmpty from "../../components/emty_data";
+import _ from "lodash";
 
 const Place = () => {
   const [loading, setLoading] = React.useState(false);
-  const [page, setPage] = React.useState(1);
   const [data, setData] = React.useState({});
-  const [payload, setPayload] = React.useState({
-    pageNumber: 1,
-    limit: 4,
-    placeName: "",
-    type: "",
-    variability: "",
-    purpose: "",
-    location: "",
-  });
+  const dispatch = useDispatch();
+  const payload = useSelector(payloadPlace);
 
   const handleChangePage = (page) => {
-    setPage(page);
-    setPayload({ ...payload, pageNumber: page });
+    dispatch(changePayload({ ...payload, pageNumber: page }));
+  };
+
+  const handleLoadingPlaceItem = (boolean) => {
+    setLoading(boolean);
   };
 
   const fetchData = (url) => {
@@ -33,7 +34,6 @@ const Place = () => {
       .get(url)
       .then((res) => {
         setData(res.data.data);
-        console.log(res.data.data);
         setLoading(false);
       })
       .catch((err) => {
@@ -48,9 +48,15 @@ const Place = () => {
     window.scrollTo(0, 0);
   }, [payload]);
 
+  useEffect(() => {
+    return () => {
+      dispatch(resetPayload());
+    };
+  }, []);
+
   return (
     <div style={{ width: "100%" }}>
-      <Navbar loading={loading} />
+      <Navbar loading={loading} valueTab="two" />
       <div className="container_place">
         <div className="container_place_filter">
           <div
@@ -72,6 +78,7 @@ const Place = () => {
               Lọc kết quả
             </p>
           </div>
+          <PlaceFilter />
         </div>
         <div className="container_place_box">
           <div>
@@ -94,17 +101,25 @@ const Place = () => {
               marginTop: "10px",
             }}
           >
-            {loading
-              ? [1, 1, 1, 1].map((e) => <PlaceSkeleton />)
-              : data?.data?.map((item) => <PlaceItem data={item} />)}
+            {loading ? (
+              [1, 1, 1, 1].map((e) => <PlaceSkeleton />)
+            ) : _.isEmpty(data?.data) ? (
+              <ErrorEmpty />
+            ) : (
+              data?.data?.map((item) => (
+                <PlaceItem data={item} checkLoading={handleLoadingPlaceItem} />
+              ))
+            )}
           </div>
 
           <div>
-            <PaginationCpn
-              count={data.totalPage}
-              page={page}
-              onChange={handleChangePage}
-            />
+            {data?.data && data?.data?.length > 0 && (
+              <PaginationCpn
+                count={data.totalPage}
+                page={payload.pageNumber}
+                onChange={handleChangePage}
+              />
+            )}
           </div>
         </div>
       </div>

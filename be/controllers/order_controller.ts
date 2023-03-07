@@ -1,6 +1,7 @@
 import { errorFunction } from "../utils/errorFunction";
 import { Request, Response, NextFunction } from "express";
 import Orders from "../models/order";
+import Payments from "../models/payment";
 
 const fakeCode = (length: number) => {
   let result = "";
@@ -78,6 +79,36 @@ const orderController = {
       await id.updateOne({ $set: req.body });
 
       res.json(errorFunction(false, 200, "Cập nhật thành công !", id._id));
+    } catch (error) {
+      res.status(400).json({
+        message: "Bad request",
+      });
+    }
+  },
+  updateStoryOrderPaymentSuccessful: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const orderId = await Orders.findById(req.params.id);
+
+      if (!orderId)
+        return res
+          .status(404)
+          .json(errorFunction(true, 404, "Không tồn tại !"));
+
+      await orderId.updateOne({
+        status: 4,
+      });
+
+      await Payments.create({
+        orderId: req.params.id,
+        userId: orderId.userId,
+        dateTime: Number(new Date()),
+      });
+
+      res.json(errorFunction(false, 200, "Cập nhật thành công !", orderId._id));
     } catch (error) {
       res.status(400).json({
         message: "Bad request",

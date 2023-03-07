@@ -1,7 +1,7 @@
-export const setUserData = (data) => {
-  return localStorage.setItem("user-data", JSON.stringify(data));
+export const setUserDataLocalStorage = (data) => {
+  return localStorage.setItem("user", JSON.stringify(data));
 };
 
-export const removeUser = () => {
-  return localStorage.removeItem("user-data");
+export const removeUserDataLocalStorage = () => {
+  return localStorage.removeItem("user");
 };

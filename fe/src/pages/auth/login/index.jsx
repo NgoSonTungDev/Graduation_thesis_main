@@ -1,15 +1,16 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./style.scss";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
-import TextInputControl from "../../../hook-form/form_input";
 import { toastify } from "../../../utils/common";
-import { TextField } from "@mui/material";
+import { setUserDataLocalStorage } from "../../../utils/localstorage";
+import "./style.scss";
 
 const validationInput = yup.object().shape({
   userName: yup.string().required("Tên đăng nhập không được để trống"),
@@ -22,10 +23,13 @@ const validationInput = yup.object().shape({
 
 const Login = () => {
   const [check, setCheck] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigation = useNavigate();
 
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleMouseDownPassword = () => setShowPassword(!showPassword);
+
   const {
-    control,
     register,
     handleSubmit,
     formState: { errors, isDirty, isValid },
@@ -50,22 +54,21 @@ const Login = () => {
 
   const handleLogin = (data) => {
     setCheck(true);
-    console.log("data", data);
-    // axiosClient
-    //   .post("/user/login", {
-    //     userName: data.userName,
-    //     password: data.password,
-    //   })
-    //   .then((res) => {
-    //     console.log("log", res.data);
-    //     setCheck(false);
-    //     navigation("/profile");
-    //     toastify("success", "Đăng nhập thành công!");
-    //   })
-    //   .catch((err) => {
-    //     setCheck(false);
-    //     toastify("error", err.response.data.message || "Lỗi hệ thông !");
-    //   });
+    axiosClient
+      .post("/user/login", {
+        userName: data.userName,
+        password: data.password,
+      })
+      .then((res) => {
+        console.log(res.data);
+        setUserDataLocalStorage(res.data.data);
+        setCheck(false);
+        navigation("/home");
+      })
+      .catch((err) => {
+        setCheck(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
   };
 
   return (
@@ -73,45 +76,39 @@ const Login = () => {
       <div className="container_Login">
         <div className={`container_Login_form `}>
           <h3>Đăng Nhập</h3>
-          <div
-            style={{
-              width: "80%",
-              marginLeft: "10%",
-              gap: "10px",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+          <div className="container_Login_form_text">
             <TextField
               error={!!errors?.userName}
               {...register("userName")}
               type="text"
-              label="Nhập email của bạn"
+              label="Tên đăng nhập của bạn"
               size="small"
-              sx={{ width: "80%" }} //sx = scss (style như scss bth)
+              sx={{ width: "80%", marginLeft: "10%" }}
               helperText={errors.userName?.message}
             />
             <TextField
               error={!!errors?.password}
               {...register("password")}
-              type="text"
-              label="Nhập email của bạn"
+              type={showPassword ? "text" : "password"}
+              label="Mật khẩu của bạn"
               size="small"
-              sx={{ width: "80%" }} //sx = scss (style như scss bth)
+              sx={{ width: "80%", marginLeft: "10%", marginTop: "20px" }}
               helperText={errors.password?.message}
+              // onKeyDown={(e) => onPress_ENTER(e)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
-            {/* <TextInputControl
-              control={control}
-              name="username"
-              label="Tên đăng nhập"
-              type={"text"}
-            />
-            <TextInputControl
-              control={control}
-              name="password"
-              label="Mật khẩu"
-              type={"password"}
-            /> */}
           </div>
           <div className="back_home">
             <span
@@ -124,9 +121,7 @@ const Login = () => {
           </div>
           <LoadingButton
             className="buttonlogin"
-            onClick={() => {
-              handleSubmit(handleLogin);
-            }}
+            onClick={handleSubmit(handleLogin)}
             loading={check}
             variant="outlined"
             disabled={!isDirty && !isValid}

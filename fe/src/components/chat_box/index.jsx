@@ -1,22 +1,25 @@
 import CloseIcon from "@mui/icons-material/Close";
 import Avatar from "@mui/material/Avatar";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ScrollToBottom from "react-scroll-to-bottom";
-import { closeChatBox } from "../../redux/chat_box/chatBoxSlice";
+import { addMessage, closeChatBox } from "../../redux/chat_box/chatBoxSlice";
 import ChatItem from "./chat_item";
 import "./style.scss";
 
 import ws from "../../socket";
+import { toastify } from "../../utils/common";
+import { listChatBox } from "../../redux/selectors";
 
 const ChatBox = ({ openBox }) => {
   const [message, setMessage] = useState("");
-  const [messageList, setMessageList] = useState([]);
   const dispatch = useDispatch();
+  const listChat = useSelector(listChatBox);
 
   const handleOnClickEnter = (e) => {
     if (e.key === "Enter") {
       sendMessage();
+      setMessage("");
     }
   };
 
@@ -29,14 +32,15 @@ const ChatBox = ({ openBox }) => {
     };
 
     ws.sendMessage(messageData);
-    setMessageList((list) => [...list, messageData]);
+    dispatch(addMessage(messageData));
   };
 
-  useEffect(() => {
-    ws.io.on("receive_message", (data) => {
-      setMessageList((list) => [...list, data]);
-    });
-  }, [ws]);
+  // useEffect(() => {
+  //   ws.io.on("receive_message", (data) => {
+  //     dispatch(addMessage(data));
+  //     toastify("info", "Bạn có 1 tin nhắn mới");
+  //   });
+  // }, [ws]);
 
   return (
     <div
@@ -91,7 +95,7 @@ const ChatBox = ({ openBox }) => {
         }}
       >
         <ScrollToBottom className="container_box_chat">
-          {messageList.map((item) => {
+          {listChat?.map((item) => {
             return <ChatItem data={item} />;
           })}
         </ScrollToBottom>
@@ -112,6 +116,7 @@ const ChatBox = ({ openBox }) => {
             outline: "none",
             border: "none",
           }}
+          value={message}
           placeholder={"Aa..."}
           onKeyDown={handleOnClickEnter}
           onChange={(e) => {
