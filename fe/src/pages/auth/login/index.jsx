@@ -9,6 +9,7 @@ import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
 import TextInputControl from "../../../hook-form/form_input";
 import { toastify } from "../../../utils/common";
+import { TextField } from "@mui/material";
 
 const validationInput = yup.object().shape({
   userName: yup.string().required("Tên đăng nhập không được để trống"),
@@ -49,21 +50,22 @@ const Login = () => {
 
   const handleLogin = (data) => {
     setCheck(true);
-    axiosClient
-      .post("/user/login", {
-        userName: data.userName,
-        password: data.password,
-      })
-      .then((res) => {
-        console.log("log", res.data);
-        setCheck(false);
-        navigation("/profile");
-        toastify("success", "Đăng nhập thành công!");
-      })
-      .catch((err) => {
-        setCheck(false);
-        toastify("error", err.response.data.message || "Lỗi hệ thông !");
-      });
+    console.log("data", data);
+    // axiosClient
+    //   .post("/user/login", {
+    //     userName: data.userName,
+    //     password: data.password,
+    //   })
+    //   .then((res) => {
+    //     console.log("log", res.data);
+    //     setCheck(false);
+    //     navigation("/profile");
+    //     toastify("success", "Đăng nhập thành công!");
+    //   })
+    //   .catch((err) => {
+    //     setCheck(false);
+    //     toastify("error", err.response.data.message || "Lỗi hệ thông !");
+    //   });
   };
 
   return (
@@ -80,7 +82,25 @@ const Login = () => {
               flexDirection: "column",
             }}
           >
-            <TextInputControl
+            <TextField
+              error={!!errors?.userName}
+              {...register("userName")}
+              type="text"
+              label="Nhập email của bạn"
+              size="small"
+              sx={{ width: "80%" }} //sx = scss (style như scss bth)
+              helperText={errors.userName?.message}
+            />
+            <TextField
+              error={!!errors?.password}
+              {...register("password")}
+              type="text"
+              label="Nhập email của bạn"
+              size="small"
+              sx={{ width: "80%" }} //sx = scss (style như scss bth)
+              helperText={errors.password?.message}
+            />
+            {/* <TextInputControl
               control={control}
               name="username"
               label="Tên đăng nhập"
@@ -91,7 +111,7 @@ const Login = () => {
               name="password"
               label="Mật khẩu"
               type={"password"}
-            />
+            /> */}
           </div>
           <div className="back_home">
             <span
@@ -104,7 +124,9 @@ const Login = () => {
           </div>
           <LoadingButton
             className="buttonlogin"
-            onClick={handleLogin}
+            onClick={() => {
+              handleSubmit(handleLogin);
+            }}
             loading={check}
             variant="outlined"
             disabled={!isDirty && !isValid}
