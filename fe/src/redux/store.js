@@ -6,7 +6,7 @@ import ChatBoxReducer from "./chat_box/chatBoxSlice";
 const store = configureStore({
   reducer: {
     ChatBot: ChatBotReducer,
-    Place: PlaceReducer,
+    PlaceById: PlaceReducer,
     ChatBox: ChatBoxReducer,
   },
 });

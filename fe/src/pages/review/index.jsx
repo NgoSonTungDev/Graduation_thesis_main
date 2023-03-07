@@ -1,39 +1,101 @@
-import {
-  CameraOutlined,
-  CloseOutlined,
-  EnvironmentOutlined,
-} from "@ant-design/icons";
-import { Button, Input, message, Rate } from "antd";
-import React, { useRef, useState } from "react";
+import { EnvironmentOutlined } from "@ant-design/icons";
+import { PhotoCamera } from "@mui/icons-material";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import { Button, IconButton } from "@mui/material";
+import { padding } from "@mui/system";
+import { Input, Rate, message } from "antd";
+import _ from "lodash";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import axiosClient from "../../api/axiosClient";
+import axiosDeploy from "../../api/axiosDeploy";
+import GetDataPlaceItem from "../../components/modle_find_place";
+import Navbar from "../../components/navbar/index";
+import { clearByIdPlace } from "../../redux/place/placeSlice";
+import { DataPlaceById } from "../../redux/selectors";
+import { toastify } from "../../utils/common";
 import "./index.scss";
-import PostModal from "./modal";
+
 const Review = () => {
   const desc = ["Tệ", "Khá tệ", "Trung bình", "Tốt", "Tuyệt vời"];
   const [content, setContent] = useState("");
-  const [images, setImages] = useState([]);
-  const [imageShow, setimageShow] = useState([]);
-  const [videoShow, setvideoShow] = useState([]);
-  const [placeSelected, setplaceSelected] = useState([]);
+  const dispatch = useDispatch();
+  const dataPlace = useSelector(DataPlaceById);
+  const [openModal, setOpenModal] = useState(false);
 
-  const fileRef = useRef([]);
+  console.log("dataplace", dataPlace);
+
+  const [file, setFile] = useState(null);
+
+  const [image, setImage] = useState("");
+
+  const [loading, setLoading] = useState(false);
 
   const [rate, setRate] = useState({
-    rateDrink: 5,
-    ratePosition: 5,
-    ratePrice: 5,
-    rateService: 5,
-    rateView: 5,
+    rate: 4,
   });
 
-  const [open, setOpen] = useState(false);
-
-  const handleOpen = () => {
-    setOpen(true);
+  const handleOpenModal = () => {
+    setOpenModal(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseModal = () => {
+    setOpenModal(false);
   };
+
+  const addPost = (value) => {
+    axiosClient
+      .post("/post/add", {
+        userId: "phan tan phu",
+        content: content,
+        image: value,
+        rating: rate.rate,
+        time: Number(new Date()),
+        placeId: dataPlace._id,
+      })
+      .then((res) => {
+        toastify("success", res.data.message || "Tạo bài thành công !");
+        setFile(null);
+        setRate("");
+        setImage("");
+        dispatch(clearByIdPlace());
+        setContent("");
+      })
+      .catch((err) => {
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
+
+  const handleSubmit = () => {
+    if (file && !content && dataPlace) {
+      message.error("Vui lòng điền đầy đủ thông tin!");
+      return;
+    }
+
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("photo", file);
+    axiosDeploy
+      .post("/upload/file", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((res) => {
+        setLoading(false);
+        addPost(res.data.path);
+
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleChangeFileImage = (e) => {
+    const file = e.target.files[0];
+    setImage(URL.createObjectURL(file));
+    setFile(file);
+  };
+
   const handleChange = (name, value) => {
     setRate((prev) => ({
       ...prev,
@@ -41,77 +103,28 @@ const Review = () => {
     }));
   };
 
-  const handleChangeImages = (e) => {
-    const files = [...e.target.files];
-    let error = "";
-    let newImages = [];
-    files.forEach((file) => {
-      if (!file) {
-        error = "File không tồn tại.";
-        return;
-      }
-      if (file.size > 1024 * 1024 * 5) {
-        // 1mb
-        error = "File có dùng lượng quá 5mb.";
-        return;
-      }
-
-      return newImages.push(file);
-    });
-
-    if (error) {
-      message.error(error);
-    }
-    setImages([...images, ...newImages]);
-  };
-
-  const deleteImages = (index) => {
-    const newArr = [...images];
-    newArr.splice(index, 1);
-
-    if (newArr.length === 0) {
-      if (fileRef.current) {
-        fileRef.current.value = null;
-      }
-    }
-
-    setImages(newArr);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (images.length === 0 && !content) {
-      message.error("Vui lòng điền đầy đủ thông tin!");
-      return;
-    }
-
-    if (!placeSelected) {
-      message.error("Vui lòng chọn địa điểm để review");
-      return;
-    }
-  };
   return (
     <div>
+      <Navbar loading={loading} />
       <div className="Review_Container" style={{ witdt: "50%" }}>
         <div className="header">
           <h1>Viết Review</h1>
         </div>
-        <PostModal open={open} />
 
         <div className="Review">
           <div className="review-input">
             <h3>Xếp hạng của bạn</h3>
             <div className="rate-item">
-              <div className="rate-item-cate">Vị trí</div>
+              <div className="rate-item-cate">Xếp hạng</div>
               <Rate
                 style={{ color: "red", fontSize: 32 }}
-                onChange={(value) => handleChange("ratePosition", value)}
-                value={rate.ratePosition}
+                onChange={(value) => handleChange("rate", value)}
+                value={rate.rate}
               />
-              {rate.ratePosition ? (
+              {rate.rate ? (
                 <div className="rate-type">
                   <div className="rate-type-text">
-                    <span>{desc[rate.ratePosition - 1]}</span>
+                    <span>{desc[rate.rate - 1]}</span>
                   </div>
                 </div>
               ) : (
@@ -122,173 +135,112 @@ const Review = () => {
                 </div>
               )}
             </div>
-            <div className="rate-item">
-              <div className="rate-item-cate">Không gian</div>
-              <Rate
-                style={{ color: "red", fontSize: 32 }}
-                onChange={(value) => handleChange("rateView", value)}
-                value={rate.rateView}
+            <div
+              className="review-input"
+              style={{ width: "90%", paddingTop: "40px" }}
+            >
+              <h3 className="title">Đánh giá của bạn</h3>
+              <Input.TextArea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Nhập nội dung đánh giá"
+                autoSize={{ minRows: 4, maxRows: 6 }}
               />
-              {rate.rateView ? (
-                <div className="rate-type">
-                  <div className="rate-type-text">
-                    <span>{desc[rate.rateView - 1]}</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="rate-type">
-                  <div className="rate-type-text">
-                    <span>Rất tệ</span>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="rate-item">
-              <div className="rate-item-cate">Đồ uống</div>
-              <Rate
-                style={{ color: "red", fontSize: 32 }}
-                onChange={(value) => handleChange("rateDrink", value)}
-                value={rate.rateDrink}
-              />
-              {rate.rateDrink ? (
-                <div className="rate-type">
-                  <div className="rate-type-text">
-                    <span>{desc[rate.rateDrink - 1]}</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="rate-type">
-                  <div className="rate-type-text">
-                    <span>Rất tệ</span>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="rate-item">
-              <div className="rate-item-cate">Phục vụ</div>
-              <Rate
-                style={{ color: "red", fontSize: 32 }}
-                onChange={(value) => handleChange("rateService", value)}
-                value={rate.rateService}
-              />
-              {rate.rateService ? (
-                <div className="rate-type">
-                  <div className="rate-type-text">
-                    <span>{desc[rate.rateService - 1]}</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="rate-type">
-                  <div className="rate-type-text">
-                    <span>Rất tệ</span>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="rate-item">
-              <div className="rate-item-cate">Giá cả</div>
-              <Rate
-                style={{ color: "red", fontSize: 32 }}
-                onChange={(value) => handleChange("ratePrice", value)}
-                value={rate.ratePrice}
-              />
-              {rate.ratePrice ? (
-                <div className="rate-type">
-                  <div className="rate-type-text">
-                    <span>{desc[rate.ratePrice - 1]}</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="rate-type">
-                  <div className="rate-type-text">
-                    <span>Rất tệ</span>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
+
           <div className="review_left">
-            <h3>Địa diểm</h3>
-            <div className="review-select-place">
-              <button onClick={handleOpen}>submit</button>
-
-              <span>
-                <EnvironmentOutlined /> Nhấn vào đây để chọn địa điểm
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="review-input" style={{ width: "50%" }}>
-          <h3 className="title">Đánh giá của bạn</h3>
-          <Input.TextArea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Nhập nội dung đánh giá"
-            autoSize={{ minRows: 4, maxRows: 6 }}
-          />
-        </div>
-        <div className="review-input">
-          <Button
-            onClick={() => {
-              if (fileRef.current) {
-                fileRef.current.click();
-              }
-            }}
-            icon={<CameraOutlined />}
-          >
-            Thêm ảnh
-          </Button>
-          <input
-            ref={fileRef}
-            type="file"
-            multiple
-            accept="image/*"
-            hidden
-            onChange={handleChangeImages}
-          />
-
-          <div className="show_images">
-            {images.map((img, index) => (
-              <div key={index} className="media-show">
-                {img.camera ? (
-                  imageShow(img.camera)
-                ) : img.url ? (
-                  <>
-                    {img.url.match(/video/i)
-                      ? videoShow(img.url)
-                      : imageShow(img.url)}
-                  </>
-                ) : (
-                  <>
-                    {img.type.match(/video/i)
-                      ? videoShow(URL.createObjectURL(img))
-                      : imageShow(URL.createObjectURL(img))}
-                  </>
-                )}
-                <div className="btn">
+            <div>
+              <h3>Địa diểm</h3>
+              {_.isEmpty(dataPlace) ? (
+                <div className="review-select-place" onClick={handleOpenModal}>
+                  <span>
+                    <EnvironmentOutlined /> Nhấn vào đây để chọn địa điểm
+                  </span>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    width: "100%",
+                    border: "0.1px solid #E5E5E5",
+                    borderRadius: "10px",
+                  }}
+                >
                   <Button
-                    icon={<CloseOutlined />}
-                    onClick={() => deleteImages(index)}
-                    type="primary"
-                    danger
+                    sx={{
+                      float: "right",
+                    }}
+                    component="label"
+                    onClick={() => {
+                      dispatch(clearByIdPlace());
+                    }}
+                  >
+                    <HighlightOffIcon sx={{ paddingLeft: "5px" }} />
+                  </Button>
+                  <div
+                    style={{
+                      display: "flex",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "47%",
+                      }}
+                    >
+                      <img
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          // paddingTop: "2px",
+                          borderBottomLeftRadius: "10px",
+                          borderTopLeftRadius: "10px",
+                        }}
+                        src={dataPlace.image[0]}
+                      />
+                    </div>
+                    <div style={{ width: "53%", paddingLeft: "10px" }}>
+                      <b>{dataPlace.name}</b>
+                      <br />
+                      <span>{dataPlace.address}</span>
+                      <br />
+                      <span>{dataPlace.rating}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="review-input" style={{ paddingTop: "20px" }}>
+              <div className="show_images">
+                {image && <img style={{ width: "225px" }} src={image} alt="" />}
+              </div>
+              <div style={{ display: "flex" }}>
+                <Button variant="outlined" component="label">
+                  Thêm ảnh
+                  <input
+                    type="file"
+                    hidden
+                    name="photo"
+                    accept="image/*"
+                    onChange={(e) => handleChangeFileImage(e)}
                   />
+                </Button>
+                <div style={{ marginLeft: "5px" }}>
+                  <Button
+                    variant="outlined"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                  >
+                    Gửi đánh giá
+                  </Button>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
-        <div>
-          <Button
-            style={{ backgroundColor: "red" }}
-            onClick={handleSubmit}
-            size="large"
-            type="primary"
-            shape="round"
-          >
-            Gửi đánh giá của bạn
-          </Button>
-        </div>
       </div>
+      {openModal && (
+        <GetDataPlaceItem openDialog={openModal} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };
