@@ -1,85 +1,271 @@
-import React, { useEffect } from "react";
+import SearchIcon from "@mui/icons-material/Search";
+import { IconButton, InputBase, Paper } from "@mui/material";
+import queryString from "query-string";
+import React, { useCallback, useEffect, useState } from "react";
+import axiosClient from "../../api/axiosClient";
+import { toastify } from "../../utils/common";
 import Navbar from "../navbar";
-import Footer from "../footer";
-import "./index.scss";
+import PaginationCpn from "../pagination";
+import CardPost from "./card_post";
+import ExploreHot from "./explore_hot";
+import ExploreUser from "./explore_user";
 import advertisement from "./images/advertisement.png";
-import { Button } from "@mui/material";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ReplyIcon from "@mui/icons-material/Reply";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-// import axiosClient from "../../api/axiosClient";
-// import { toastify } from "../../utils/common";
-// import queryString from "query-string";
-import GetDataPlace from "./data_place";
+import "./style.scss";
+import _debounce from "lodash/debounce";
 
-const Explore = ({data}) => {
+const Explore = () => {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+  const [dataUser, setDataUser] = useState([]);
+  const [dataPost, setDataPost] = useState({});
+  const [payloadPost, setpayLoadPost] = useState({
+    pageNumber: 1,
+    placeID: "",
+  });
+
+  const [payload1, setPayload] = useState({
+    pageNumber: 1,
+    limit: 5,
+    placeName: "",
+    type: "",
+    variability: "",
+    purpose: "",
+    location: "",
+  });
+
+  const debounceFn = useCallback(
+    _debounce((value) => {
+      setPayload({ ...payload1, placeName: value });
+    }, 500),
+    []
+  );
+  const handleChangePage = (page) => {
+    setpayLoadPost({ ...payloadPost, pageNumber: Number(page) });
+  };
+
+  const handleFindPostById = (id) => {
+    setpayLoadPost({ pageNumber: 1, placeID: id });
+  };
+
+  const getApiPlace = () => {
+    // setLoading(true);
+    axiosClient
+      .get(`/place/all?${queryString.stringify(payload1)}`)
+      .then((res) => {
+        setData(res.data.data.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
+
+  const getApiUser = () => {
+
+    axiosClient
+      .get(`/user/get-all?${queryString.stringify(payload1)}`)
+      .then((res) => {
+        setDataUser(res.data.data.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
+
+  const getApiAllPost = () => {
+    // setLoading(true);
+    axiosClient
+      .get(`post/all?${queryString.stringify(payloadPost)}`)
+      .then((res) => {
+        setDataPost(res.data.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
+
+  useEffect(() => {
+    
+    Promise.all([getApiUser(), getApiPlace(),getApiAllPost()])
+
+    return ()=>{
+      setLoading(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    getApiPlace();
+  }, [payload1]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    getApiAllPost();
+  }, [payloadPost]);
 
   return (
-    <div>
-      <Navbar />
-      <div className="explore_container">
-        <div className="explore_container_left">
-          <div className="explore_profile">
-            <h1
-            >thông tin cá nhân</h1>
-          </div>
-          <div className="explore_images">
-           <img src={advertisement} alt="" />
-          </div>
-          <div className="explore_button">
-            <div className="button">
-              <Button sx={{width:"100%"}} component="label">
-                <FavoriteIcon sx={{ padding: "7px" }} />
-                Thích
-              </Button>
+    <div style={{ width: "100%" }}>
+      <Navbar loading={loading} valueTab="three" />
+      <div className="container_explore">
+        <div className="container_explore_left">
+          <div className="container_explore_left_place">
+            <div
+              style={{
+                width: "100%",
+                // marginTop: "10px",
+              }}
+            >
+              {dataPost?.data?.map((item, index) => (
+                <CardPost data={item} key={index} />
+              ))}
             </div>
-            <div className="button">
-              <Button sx={{width:"100%"}} component="label">
-                <ChatBubbleOutlineIcon sx={{ padding: "7px" }} />
-                Bình luận
-              </Button>
-            </div>
-
-            <div className="button">
-              <Button sx={{width:"100%"}} component="label">
-                <ReplyIcon sx={{ padding: "7px" }} />
-                Chia sẻ
-              </Button>
+            <div>
+              {dataPost?.data?.length !== 0 && (
+                <PaginationCpn
+                  count={dataPost.totalPage}
+                  page={payloadPost.pageNumber}
+                  onChange={handleChangePage}
+                />
+              )}
             </div>
           </div>
         </div>
-        <div className="explore_container_right">
-          <div className="explore_place_hot">
-            <h1>Địa điểm nổi bật</h1>
-            <div className="explore_place_hot_container">
-              <div className="image_place">
-                <img src={advertisement} alt="" />
-              </div>
-              <div className="content_place">
-                <span>name:{data?.name}</span> <br />
-                <span>địa điểm</span>
-              </div>
+        <div className="container_explore_right">
+          <div className="container_explore_right_place">
+            <div
+              style={{
+                width: "100%",
+                textAlign: "center",
+                padding:"10px"
+              }}
+            >
+              <span
+                style={{
+                  textAlign: "center",
+                  padding: "7px",
+                  textTransform: "capitalize",
+                  fontSize: "20px",
+                  fontWeight: "500",
+                }}
+              >
+                Địa điểm nổi bật
+              </span>
+            </div>
+
+            <Paper
+              component="form"
+              sx={{
+                display: "flex",
+                marginLeft:"5%",
+                width: "90%",
+                boxShadow:
+                  "rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;",
+              }}
+            >
+              <InputBase
+                sx={{ ml: 1, flex: 1 }}
+                placeholder="Tên địa điểm"
+                inputProps={{ "aria-label": "Tên địa điểm" }}
+                onChange={(e) => {
+                  debounceFn(e.target.value);
+                }}
+              />
+              <IconButton
+                type="button"
+                sx={{ p: "10px" }}
+                aria-label="search"
+                disabled
+              >
+                <SearchIcon />
+              </IconButton>
+            </Paper>
+            <div
+              style={{
+                width: "100%",
+              }}
+            >
+              {data?.map((item, index) => (
+                <ExploreHot
+                  data={item}
+                  key={index}
+                  callbackfn={handleFindPostById}
+                />
+              ))}
             </div>
           </div>
-          <div className="explore_user_hot">
-            <h1>Người dùng tích cực</h1>
-            <div className="explore_user_hot_container">
-              <div className="image_user">
-                <img src={advertisement} alt="" />
-              </div>
-              <div className="content_user">
-                <span>name count</span> <br />
-                <span>đánh giá</span>
-              </div>
+          <div
+            className="container_explore_right_user"
+            style={{ marginTop: "30px" }}
+          >
+            <div
+              style={{
+                width: "100%",
+                padding:"10px",
+                textAlign: "center",
+              }}
+            >
+              <span
+                style={{
+                  textAlign: "center",
+                  padding: "7px",
+                  margin: "0",
+                  textTransform: "capitalize",
+                  fontSize: "20px",
+                  fontWeight: "500",
+                }}
+              >
+                Người dùng tích cực
+              </span>
+            </div>
+            <div
+              style={{
+                width: "100%",
+                marginTop: "10px",
+              }}
+            >
+              {dataUser?.map((item, index) => (
+                <ExploreUser dataUser={item} key={index} />
+              ))}
             </div>
           </div>
-          <div className="explore_advertisement">
-            <img src={advertisement} alt="" />
+          <div
+            className="container_explore_right_s"
+            style={{ marginTop: "30px" }}
+          >
+            <div
+              style={{
+                textAlign: "center",
+                padding: "10px",
+              }}
+            >
+              <span
+                style={{
+                  textAlign: "center",
+                  padding: "7px",
+                  margin: "0",
+                  textTransform: "capitalize",
+                  fontSize: "20px",
+                  fontWeight: "500",
+                }}
+              >
+                Quảng cáo
+              </span>
+              <div
+                style={{
+                  width: "100%",
+                  marginTop: "10px",
+                }}
+              >
+                <img style={{ width: "100%" }} src={advertisement} alt="" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <GetDataPlace/>
-      <Footer />
     </div>
   );
 };

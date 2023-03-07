@@ -1,0 +1,26 @@
+.container_place {
+  width: 80%;
+  margin-left: 10%;
+  margin-top: 20px;
+  padding-bottom: 15px;
+  display: flex;
+
+  .container_place_filter {
+    width: 25%;
+    height: 400px;
+    overflow: hidden;
+    border-radius: 2px;
+    background-color: #fff;
+    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+      rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+    padding: 10px;
+  }
+  .container_place_box {
+    width: 75%;
+    margin-left: 20px;
+    border-radius: 2px;
+    padding: 10px;
+    // box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    // rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  }
+}

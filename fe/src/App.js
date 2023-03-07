@@ -8,6 +8,7 @@ import ChatBot from "./components/chat_gpt_fake";
 import Register from "./pages/auth/register";
 import Home from "./pages/home";
 import NotFound from "./pages/not_found";
+import Place from "./pages/place/index";
 import Review from "./pages/review";
 import { OpenChatBox } from "./redux/selectors";
 import Explore from "./components/explore";
@@ -20,15 +21,17 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/place" element={<Place />} />
           <Route path="/review" element={<Review />} />
           <Route path="/explore" element={<Explore />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
+
         <ChatBot />
-        <ChatBox openBox={open} />
+        <ChatBox openBox={open || false} />
         <ToastContainer
-          autoClose={1000}
+          autoClose={800}
           hideProgressBar={false}
           newestOnTop={false}
           closeOnClick

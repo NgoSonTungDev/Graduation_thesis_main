@@ -18,6 +18,7 @@ const fakeCode = (length: number) => {
 const deleteByIdEndTime = async (e: string) => {
   await Vouchers.findByIdAndDelete(e);
 };
+
 const updateByIdStartTime = async (e: string) => {
   await Vouchers.findByIdAndUpdate(e, {
     public: true,

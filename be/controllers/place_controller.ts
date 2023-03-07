@@ -79,18 +79,9 @@ const placeController = {
       };
 
       const result = await Places.find(filter)
-        .sort(`${variability === "asc" ? "" : "-"}price`)
+        .sort(`${variability === "asc" ? "" : "-"}childTicket`)
         .skip(SkipNumber)
         .limit(Number(limit));
-
-      // const abc = await Places.aggregate([
-      //   {
-      //     $group: {
-      //       _id: "$created"
-      //       total: {$sum: 1}
-      //     }
-      //   }
-      // ])
 
       const allPlace = await Places.find(filter);
 

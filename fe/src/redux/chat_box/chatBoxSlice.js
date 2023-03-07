@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   open: false,
+  listChat: [],
 };
 
 const ChatBoxSlice = createSlice({
@@ -14,9 +15,13 @@ const ChatBoxSlice = createSlice({
     closeChatBox: (state) => {
       state.open = false;
     },
+    addMessage: (state, { payload }) => {
+      console.log("ajsdhsakj", payload);
+      state.listChat = [...state.listChat, payload];
+    },
   },
 });
 
-export const { openChatBox, closeChatBox } = ChatBoxSlice.actions;
+export const { openChatBox, closeChatBox, addMessage } = ChatBoxSlice.actions;
 
 export default ChatBoxSlice.reducer;

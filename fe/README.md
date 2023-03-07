@@ -43,7 +43,7 @@ userName: data.userName,
 email: data.email,
 })
 .then((res) => {
-toastify("success", "Tên người dùng và email hợp lệ !");
+toastify("success", res.data.message || "Tên người dùng và email hợp lệ !");
 })
 .catch((err) => {
 toastify("error", err.response.data.message || "Lỗi hệ thông !");

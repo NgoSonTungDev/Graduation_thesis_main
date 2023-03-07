@@ -1,0 +1,31 @@
+.container_explore {
+  width: 80%;
+  margin-left: 10%;
+  padding: 0px 16px;
+  display: flex;
+  .container_explore_left {
+    width: 66.66%;
+    overflow: hidden;
+    padding: 10px;
+  }
+  .container_explore_right {
+    padding-top: 20px;
+    width: 33.33%;
+    margin-left: 20px;
+    .container_explore_right_place {
+      background-color: rgb(255, 255, 255);
+      border-radius: 10px;
+      box-shadow: rgb(0 0 0 / 15%) 0px 2px 8px;
+    }
+    .container_explore_right_user {
+      background-color: rgb(255, 255, 255);
+      border-radius: 10px;
+      box-shadow: rgb(0 0 0 / 15%) 0px 2px 8px;
+    }
+    .container_explore_right_s {
+      background-color: rgb(255, 255, 255);
+      border-radius: 10px;
+      box-shadow: rgb(0 0 0 / 15%) 0px 2px 8px;
+    }
+  }
+}

@@ -24,7 +24,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BarLoader from "react-spinners/BarLoader";
@@ -33,12 +33,15 @@ import GetDataPlaceItem from "../modle_find_place";
 import logo1 from "./images/acount.jpeg";
 import "./index.scss";
 import NotificationItem from "./notification";
-const Navbar = ({ loading }) => {
+import ws from "../../socket";
+
+const Navbar = ({ loading, valueTab }) => {
   const [value, setValue] = useState("one");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElNotify, setAnchorElNotify] = React.useState(null);
+  const [offset, setOffset] = useState(0);
 
   const dispatch = useDispatch();
 
@@ -47,9 +50,10 @@ const Navbar = ({ loading }) => {
 
   const navigation = useNavigate();
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  // const handleChange = (event, newValue) => {
+  //   console.log(newValue);
+  //   setValue(newValue);
+  // };
 
   const handleLogin = () => {
     setIsAuthenticated(true);
@@ -79,16 +83,25 @@ const Navbar = ({ loading }) => {
     setOpenModal(false);
   };
 
+  const movePage = (path) => {
+    navigation(path);
+  };
+
+  const joinRoom = () => {
+    ws.joinRoom();
+  };
+
+  useEffect(() => {
+    ws.initialize();
+    const onScroll = () => setOffset(window.pageYOffset);
+    window.removeEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  // ${offset > 60 && "Navbar_fixed"}
   return (
     <div>
-      <div className="Navbar_Container">
-        <BarLoader
-          color={"#d63031"}
-          loading={loading || false}
-          width={"100%"}
-          aria-label="Loading Spinner"
-          data-testid="loader"
-        />
+      <div className={`Navbar_Container  `}>
         <div className="navbar_container_box">
           <div className="Navbar_Logo">
             <nav>
@@ -111,8 +124,7 @@ const Navbar = ({ loading }) => {
             >
               <Tabs
                 className="Tabs_Navbar"
-                value={value}
-                onChange={handleChange}
+                value={valueTab || "one"}
                 textColor="red"
                 indicatorColor="red"
                 aria-label="red tabs example"
@@ -127,6 +139,9 @@ const Navbar = ({ loading }) => {
                       <Typography sx={{ ml: 1 }}>Trang Chủ</Typography>
                     </Box>
                   }
+                  onClick={() => {
+                    movePage("/");
+                  }}
                 />
                 <Tab
                   className="Tab_Navbar"
@@ -137,6 +152,9 @@ const Navbar = ({ loading }) => {
                       <Typography sx={{ ml: 1 }}>Địa Điểm</Typography>
                     </Box>
                   }
+                  onClick={() => {
+                    movePage("/place");
+                  }}
                 />
                 <Tab
                   className="Tab_Navbar"
@@ -147,6 +165,9 @@ const Navbar = ({ loading }) => {
                       <Typography sx={{ ml: 1 }}>Khám Phá</Typography>
                     </Box>
                   }
+                  onClick={() => {
+                    movePage("/explore");
+                  }}
                 />
                 <Tab
                   className="Tab_Navbar"
@@ -167,12 +188,16 @@ const Navbar = ({ loading }) => {
               <Button
                 variant="contained"
                 onClick={() => {
-                  navigation("/review");
+                  movePage("/review");
                 }}
+                sx={{ whiteSpace: "pre" }}
               >
                 <span
                   class="material-icons"
-                  style={{ fontSize: "18px", paddingRight: "8px" }}
+                  style={{
+                    fontSize: "18px",
+                    paddingRight: "8px",
+                  }}
                 >
                   edit
                 </span>
@@ -188,6 +213,7 @@ const Navbar = ({ loading }) => {
                   <IconButton
                     onClick={() => {
                       dispatch(openChatBox());
+                      joinRoom();
                     }}
                   >
                     <SmsOutlinedIcon />
@@ -291,6 +317,7 @@ const Navbar = ({ loading }) => {
                   id="loginButton"
                   variant="contained"
                   onClick={handleLogin}
+                  sx={{ whiteSpace: "pre" }}
                 >
                   Đăng Nhập
                 </Button>
@@ -298,6 +325,13 @@ const Navbar = ({ loading }) => {
             </div>
           </div>
         </div>
+        <BarLoader
+          color={"#d63031"}
+          loading={loading || false}
+          width={"100%"}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
       </div>
       <Menu
         anchorEl={anchorElNotify}

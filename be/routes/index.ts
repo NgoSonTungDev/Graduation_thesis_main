@@ -1,3 +1,7 @@
+import { likeRouter } from "./like_router";
+import { statisticRouter } from "./statistic_router";
+import { paymentRouter } from "./payment_router";
+import { roomRouter } from "./room_router";
 import express from "express";
 import { authRouter } from "./auth_router";
 import { autoRepRouter } from "./autoRep_router";
@@ -47,6 +51,14 @@ const routes = () => {
   repCommentRouter(router);
 
   autoRepRouter(router);
+
+  roomRouter(router);
+
+  paymentRouter(router);
+
+  statisticRouter(router);
+
+  likeRouter(router);
 
   return router;
 };

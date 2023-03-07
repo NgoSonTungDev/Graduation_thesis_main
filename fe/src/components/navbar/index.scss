@@ -1,6 +1,8 @@
 .Navbar_Container {
   width: 100%;
   height: 60px;
+  background-color: #fff;
+  z-index: 50;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
     rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
 
@@ -135,5 +137,21 @@
         font-weight: 500px;
       }
     }
+  }
+}
+
+.Navbar_fixed {
+  position: fixed;
+  top: 0;
+  transition: all 1s;
+  animation: 1s animation 1;
+}
+
+@keyframes animation {
+  0% {
+    top: -60px;
+  }
+  100% {
+    top: 0;
   }
 }

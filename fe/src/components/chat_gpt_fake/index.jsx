@@ -33,7 +33,7 @@ const ChatBot = () => {
 
   const sendMessage = async (data) => {
     setLoading(true);
-    await dispatch(
+    dispatch(
       AddDataChat({
         type: false,
         content: data.question,

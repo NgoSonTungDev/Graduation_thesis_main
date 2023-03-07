@@ -3,10 +3,12 @@ import ChatBotReducer from "./chat_bot/chatSlice";
 import PlaceReducer from "./place/placeSlice";
 import ChatBoxReducer from "./chat_box/chatBoxSlice";
 
-export const Store = configureStore({
+const store = configureStore({
   reducer: {
     ChatBot: ChatBotReducer,
-    PlaceById: PlaceReducer,
+    Place: PlaceReducer,
     ChatBox: ChatBoxReducer,
   },
 });
+
+export default store;

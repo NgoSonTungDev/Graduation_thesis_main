@@ -54,6 +54,7 @@ const placeSchema = new mongoose.Schema<IPlace>(
       required: false,
     },
     image: [{ type: String, required: true }],
+    favourite: [{ type: String, required: true, default: [] }],
     description: {
       type: String,
       required: false,

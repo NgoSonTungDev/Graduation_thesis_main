@@ -2,6 +2,15 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   placeById: {},
+  payload: {
+    pageNumber: 1,
+    limit: 6,
+    placeName: "",
+    location: "",
+    type: "",
+    variability: "",
+    purpose: "",
+  },
 };
 
 const PlaceSlice = createSlice({
@@ -14,9 +23,16 @@ const PlaceSlice = createSlice({
     clearByIdPlace: (state, { payload }) => {
       state.placeById = {};
     },
+    changePayload: (state, { payload }) => {
+      state.payload = payload;
+    },
+    resetPayload: (state, { payload }) => {
+      state.payload = initialState.payload;
+    },
   },
 });
 
-export const { objectByIdPlace, clearByIdPlace } = PlaceSlice.actions;
+export const { objectByIdPlace, clearByIdPlace, changePayload, resetPayload } =
+  PlaceSlice.actions;
 
 export default PlaceSlice.reducer;

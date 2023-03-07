@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import Users from "../models/user";
 import { errorFunction } from "../utils/errorFunction";
 import bcrypt from "bcrypt";
+import Rooms from "../models/roomInbox";
 
 const authController = {
   register: async (req: Request, res: Response, next: NextFunction) => {
@@ -28,6 +29,11 @@ const authController = {
       });
 
       const { _id, userName, email, avt, isAdmin } = data;
+
+      await Rooms.create({
+        userId: _id,
+        listInbox: [],
+      });
 
       res.json(
         errorFunction(false, 200, "Tạo tài khoảng thành công !", {
@@ -59,6 +65,8 @@ const authController = {
         } else {
           const { _id, userName, email, avt, isAdmin } = user;
 
+          const roomId = await Rooms.findOne({ userId: _id });
+
           res.json(
             errorFunction(false, 200, "Đăng nhập thành công !", {
               _id,
@@ -66,6 +74,7 @@ const authController = {
               email,
               avt,
               isAdmin,
+              roomId: roomId?._id,
             })
           );
         }

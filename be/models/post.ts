@@ -9,7 +9,7 @@ const postSchema = new mongoose.Schema<IPost>({
     required: true,
   },
   time: {
-    type: String,
+    type: Number,
     required: true,
   },
   image: {

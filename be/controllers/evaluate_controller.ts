@@ -1,10 +1,39 @@
 import Evaluates from "../models/evaluate";
+import Places from "../models/place";
 import { errorFunction } from "../utils/errorFunction";
 import { Request, Response, NextFunction } from "express";
+
+const updateRatingById = async (e: string, rating: number) => {
+  await Places.findByIdAndUpdate(e, {
+    rating: rating,
+  });
+};
 
 const evaluateController = {
   addEvaluate: async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const group = await Evaluates.aggregate([
+        {
+          $group: {
+            _id: "$placeId",
+            avgRating: { $avg: "$rating" },
+          },
+        },
+      ]);
+
+      await Promise.all(group.map((e) => updateRatingById(e._id, e.avgRating)));
+
+      await Promise.all(
+        group.map((item) => {
+          Places.findByIdAndUpdate(
+            { _id: item._id },
+            {
+              rating: item.avgRating,
+            }
+          );
+        })
+      );
+
       const data = await Evaluates.create(req.body);
       res.json(errorFunction(false, 200, "Thêm thành công", data));
     } catch (error) {
