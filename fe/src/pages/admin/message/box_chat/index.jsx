@@ -9,7 +9,7 @@ import ws from "../../../../socket";
 import { useDispatch, useSelector } from "react-redux";
 import { listChatBox } from "../../../../redux/selectors";
 
-const BoxChat = ({ data }) => {
+const BoxChat = ({ data, openDetail }) => {
   const [message, setMessage] = useState("");
   const dispatch = useDispatch();
   const listChat = useSelector(listChatBox);
@@ -17,7 +17,6 @@ const BoxChat = ({ data }) => {
   const handleOnClickEnter = (e) => {
     if (e.key === "Enter") {
       sendMessage();
-      setMessage("");
     }
   };
 
@@ -30,6 +29,7 @@ const BoxChat = ({ data }) => {
     };
 
     dispatch(addMessage(messageData));
+    setMessage("");
     ws.sendMessage(messageData);
   };
 
@@ -61,6 +61,9 @@ const BoxChat = ({ data }) => {
           sx={{
             marginRight: "20px",
             color: "#0984e3",
+          }}
+          onClick={() => {
+            openDetail();
           }}
         >
           <InfoOutlinedIcon sx={{ fontSize: "25px" }} />

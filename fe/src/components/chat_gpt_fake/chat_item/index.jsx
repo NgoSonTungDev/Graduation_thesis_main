@@ -2,7 +2,6 @@ import React from "react";
 import { momentLocale } from "../../../utils/common";
 
 const ChatItem = ({ data }) => {
-  console.log(data);
   return (
     <div
       style={{

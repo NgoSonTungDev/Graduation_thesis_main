@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import React from "react";
 import { momentLocale } from "../../../../../utils/common";
 
@@ -24,7 +25,11 @@ const ChatItemMessage = ({ data }) => {
           color: `${!data.isAdmin ? "#000" : "#fff"}`,
         }}
       >
-        <p style={{ margin: 0, padding: 0 }}>{data.message}</p>
+        {/* <p style={{ margin: 0, padding: 0 }}>{data.message}</p> */}
+        <Typography
+          style={{ margin: 0, padding: 0 }}
+          dangerouslySetInnerHTML={{ __html: data.message }}
+        ></Typography>
         <span style={{ fontSize: "12px" }}>{momentLocale(data.time)}</span>
       </div>
     </div>

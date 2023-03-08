@@ -14,9 +14,11 @@ import ErrorEmpty from "../../../components/emty_data";
 import BoxChat from "./box_chat";
 import { useDispatch } from "react-redux";
 import { changeListInbox } from "../../../redux/chat_box/chatBoxSlice";
+import BoxInformation from "./box_infomation";
 
 const AdminMessage = () => {
   const [loading, setLoading] = React.useState(false);
+  const [openInformation, setOpenInformation] = React.useState(false);
   const [data, setData] = React.useState([]);
   const [dataChatBoxId, setDataChatBoxId] = React.useState({});
   const dispatch = useDispatch();
@@ -30,6 +32,10 @@ const AdminMessage = () => {
     }, 500),
     []
   );
+
+  const handleOpenInformation = () => {
+    setOpenInformation(!openInformation);
+  };
 
   const callApiChatBoxById = (id) => {
     axiosClient
@@ -48,7 +54,13 @@ const AdminMessage = () => {
     axiosClient
       .get(url)
       .then((res) => {
-        setData(res.data.data);
+        setData(
+          res.data.data.sort(
+            (a, b) =>
+              b.listInbox[b.listInbox.length - 1].time -
+              a.listInbox[a.listInbox.length - 1].time
+          )
+        );
         setLoading(false);
       })
       .catch((err) => {
@@ -110,15 +122,13 @@ const AdminMessage = () => {
               ) : _.isEmpty(data) ? (
                 <ErrorEmpty />
               ) : (
-                data
-                  .sort((a, b) => a.price - b.price)
-                  .map((item, index) => (
-                    <CardRoom
-                      data={item}
-                      callBackFunction={callApiChatBoxById}
-                      key={index}
-                    />
-                  ))
+                data.map((item, index) => (
+                  <CardRoom
+                    data={item}
+                    callBackFunction={callApiChatBoxById}
+                    key={index}
+                  />
+                ))
               )}
             </div>
           </div>
@@ -126,7 +136,7 @@ const AdminMessage = () => {
             {_.isEmpty(dataChatBoxId) ? (
               <div
                 style={{
-                  width: "70%",
+                  width: `${openInformation ? "70%" : "100%"}`,
                   height: "100vh",
                   display: "grid",
                   placeItems: "center",
@@ -137,20 +147,30 @@ const AdminMessage = () => {
                 </span>
               </div>
             ) : (
-              <div style={{ width: "70%", height: "100vh" }}>
-                <BoxChat data={dataChatBoxId} />
+              <div
+                style={{
+                  width: `${openInformation ? "70%" : "100%"}`,
+                  height: "100vh",
+                }}
+              >
+                <BoxChat
+                  data={dataChatBoxId}
+                  openDetail={handleOpenInformation}
+                />
               </div>
             )}
 
-            <div
-              style={{
-                width: "30%",
-                height: "100vh",
-                borderLeft: "1px solid #dedede",
-              }}
-            >
-              ddd
-            </div>
+            {openInformation && dataChatBoxId && (
+              <div
+                style={{
+                  width: "30%",
+                  height: "100vh",
+                  borderLeft: "1px solid #dedede",
+                }}
+              >
+                <BoxInformation data={dataChatBoxId} />
+              </div>
+            )}
           </div>
         </div>
       </>
