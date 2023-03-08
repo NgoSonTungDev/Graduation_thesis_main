@@ -18,6 +18,7 @@ const validation = joi.object<IPlace>({
   openTime: joi.number().required(),
   closeTime: joi.number().required(),
   description: joi.string().required(),
+  salesAgentId: joi.string().required(),
 });
 
 export const placeValidation = async (

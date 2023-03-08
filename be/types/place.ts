@@ -15,4 +15,6 @@ export interface IPlace {
   openTime: number;
   numberTickets: number;
   closeTime: number;
+  statisticCmt: { _id: string; rateComments: boolean }[];
+  salesAgentId: any;
 }
