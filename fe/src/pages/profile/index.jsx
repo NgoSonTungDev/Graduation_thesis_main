@@ -7,7 +7,6 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import RssFeedIcon from "@mui/icons-material/RssFeed";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import CardProfile from "./cardProfile";
 import Navbar from "../../components/navbar";
 import { Modal, Typography } from "@mui/material";
 import { Box, style } from "@mui/system";
@@ -117,33 +116,26 @@ const Profile = () => {
                 </div>
               </div>
             </div>
-            <div className="profile-content">
-              <CardProfile />
-            </div>
-            <div className="modal-edit">
-              <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-              >
-                <Box sx={style}>
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    component="h2"
-                  >
-                    Text in a modal
-                  </Typography>
-                  <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    Duis mollis, est non commodo luctus, nisi erat porttitor
-                    ligula.
-                  </Typography>
-                </Box>
-              </Modal>
-            </div>
+            <div className="profile-content"></div>
           </div>
         </div>
+
+        <Modal
+          open={open}
+          onClose={handleClose}
+          PaperProps={{ style: { margin: "auto", maxWidth: 500 } }}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Text in a modal
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+            </Typography>
+          </Box>
+        </Modal>
       </div>
     </div>
   );

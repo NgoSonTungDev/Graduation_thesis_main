@@ -7,7 +7,7 @@ const ChatItem = ({ data }) => {
       style={{
         width: "100%",
         display: "flex",
-        justifyContent: `${data.author ? "flex-start" : "flex-end"}`,
+        justifyContent: `${data.isAdmin ? "flex-start" : "flex-end"}`,
       }}
     >
       <div
@@ -20,8 +20,8 @@ const ChatItem = ({ data }) => {
           fontSize: "14px",
           textAlign: "left",
           margin: "10px",
-          backgroundColor: `${data.type ? "#e4e6eb" : "#0084ff"}`,
-          color: `${data.type ? "#000" : "#fff"}`,
+          backgroundColor: `${data.isAdmin ? "#e4e6eb" : "#0084ff"}`,
+          color: `${data.isAdmin ? "#000" : "#fff"}`,
         }}
       >
         <p style={{ margin: 0, padding: 0 }}>{data.message}</p>

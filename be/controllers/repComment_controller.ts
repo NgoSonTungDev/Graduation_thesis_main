@@ -9,8 +9,10 @@ const repCommentController = {
       const idComment = await Comments.findById(req.body.commentId);
 
       if (idComment) {
-        const data = await RepComments.create(req.body);
-        await idComment.updateOne({ $push: { listRep: data._id } });
+        const data = await (
+          await RepComments.create(req.body)
+        ).populate("userId", ["userName", "avt"]);
+
         return res.json(errorFunction(false, 200, "Thêm thành công", data));
       } else {
         return res

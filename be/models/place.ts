@@ -1,5 +1,6 @@
 import { IPlace } from "./../types/place";
 import mongoose from "mongoose";
+const Schema = mongoose.Schema;
 
 const placeSchema = new mongoose.Schema<IPlace>(
   {
@@ -59,6 +60,8 @@ const placeSchema = new mongoose.Schema<IPlace>(
       type: String,
       required: false,
     },
+    statisticCmt: [{ type: Object, required: true, default: [] }],
+    salesAgentId: { type: Schema.Types.ObjectId, ref: "SalesAgent" },
   },
   { timestamps: true }
 );

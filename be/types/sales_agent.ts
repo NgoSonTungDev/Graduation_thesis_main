@@ -1,13 +1,11 @@
-export interface IUser {
+export interface ISalesAgent {
   _id?: string;
-  codeOtp?: Number;
+  codeOtp?: number;
+  code: string;
   userName: string;
   avt: string;
   email: string;
   password: string;
   numberPhone: string;
   address: string;
-  gender: string;
-  description: string;
-  isAdmin: Boolean;
 }

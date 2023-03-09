@@ -1,6 +1,7 @@
 import { io } from "socket.io-client";
 import { addMessage } from "../redux/chat_box/chatBoxSlice";
 import store from "../redux/store";
+import { toastify } from "../utils/common";
 
 const RECONNECTION_ATTEMPTS = 10;
 const RECONNECTION_DELAY = 1000;
@@ -26,11 +27,12 @@ class WebsocketClient {
   listen() {
     const dispatch = store.dispatch;
     this.io.on("receive_message", (data) => {
+      toastify("info", "Bạn có 1 tin nhắn mới.");
       dispatch(addMessage(data));
     });
   }
 
-  joinRoom(roomId = "63eb395175a1b450e28d9665") {
+  joinRoom(roomId) {
     this.io.emit("join_room", roomId);
   }
 
