@@ -1,0 +1,16 @@
+.container_card_room {
+  width: 100%;
+  height: 70px;
+  margin-top: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  &:hover {
+    background-color: #dedede;
+  }
+
+  .information_user {
+    max-width: 78%;
+    margin-left: 10px;
+  }
+}

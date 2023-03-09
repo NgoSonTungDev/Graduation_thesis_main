@@ -1,11 +1,5 @@
-import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { IconButton } from "@mui/material";
-import Box from "@mui/material/Box";
-import Rating from "@mui/material/Rating";
-import React from "react";
-import { formatDate, formatMoney } from "../../../utils/common";
 import Skeleton from "@mui/material/Skeleton";
+import React from "react";
 
 const PlaceSkeleton = () => {
   return (

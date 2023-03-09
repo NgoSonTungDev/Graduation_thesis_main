@@ -51,6 +51,8 @@ const voucherController = {
   },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const { placeID } = req.query;
+
       const dataEndTime = await (
         await Vouchers.find()
       ).filter((e) => {
@@ -74,7 +76,9 @@ const voucherController = {
         await Promise.all(listEndTime.map((e) => deleteByIdEndTime(e)));
       }
 
-      const newData = await Vouchers.find();
+      const condition = placeID ? { placeId: placeID } : {};
+
+      const newData = await Vouchers.find(condition);
 
       res.json(errorFunction(false, 200, "Lấy thành công !", newData));
     } catch (error) {
