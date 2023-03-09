@@ -2,13 +2,22 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ReplyIcon from "@mui/icons-material/Reply";
-import { Button, InputBase, Paper, Rating } from "@mui/material";
+import {
+  Button,
+  IconButton,
+  InputBase,
+  Paper,
+  Rating,
+  TextField,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import React, { useEffect, useState } from "react";
 import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import Comment from "../comment";
+import TelegramIcon from "@mui/icons-material/Telegram";
+import { Image } from "antd";
 
 const CardPost = ({ data }) => {
   const [like, setLike] = useState(false);
@@ -16,14 +25,13 @@ const CardPost = ({ data }) => {
   const [expanded, setExpanded] = React.useState(false);
   const [dataComent, setDataComnet] = React.useState([]);
   const [content, setContent] = useState("");
-
+  const [isLike, setIsLike] = useState(false);
   const handleExpandClick = () => {
     setExpanded(!expanded);
     axiosClient
       .get(`/comment/get-by-id-post/${data._id}`)
       .then((res) => {
         setDataComnet(res.data.data);
-        console.log("datraa", res.data);
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -81,11 +89,10 @@ const CardPost = ({ data }) => {
       })
       .then((res) => {
         // toastify("success", res.data.message);
-        setDataComnet([...dataComent, res.data.data])
+        setDataComnet([...dataComent, res.data.data]);
         setContent("");
       })
       .catch((err) => {
-        console.log("dataa", err);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
@@ -110,6 +117,7 @@ const CardPost = ({ data }) => {
           boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
           padding: "15px 0",
           marginTop: "10px",
+          backgroundColor: "#ffffff",
 
           borderRadius: "10px",
         }}
@@ -183,13 +191,14 @@ const CardPost = ({ data }) => {
         <div
           className="image"
           style={{
-            width: "100%",
+            width: "92%",
             // height:"100%",
             marginLeft: "4%",
             paddingTop: "30px",
           }}
         >
-          <img src={data.image} style={{ width: "92%" }} />
+          <Image width={"100%"} src={data.image} style={{ width: "100%" }} />
+          {/* <img src={data.image} style={{ width: "92%" }} /> */}
         </div>
         <Box
           sx={{
@@ -248,7 +257,10 @@ const CardPost = ({ data }) => {
           <div
             style={{
               width: "100%",
-              // marginTop: "10px",
+              // height: "400px",
+              // overflow: "scroll",
+              // overflowX: "hidden",
+              marginTop: "10px",
             }}
           >
             {dataComent?.map((item, index) => (
@@ -256,7 +268,24 @@ const CardPost = ({ data }) => {
             ))}
           </div>
         </Collapse>
-        <div className="comment" style={{ display: "flex", width: "100%" }}>
+        {dataComent?.length > 0 && (
+          <div
+            onClick={() => setExpanded((isShow) => !isShow)}
+            style={{ textAlign: "center", cursor: "pointer" }}
+          >
+            <span>
+              {expanded
+                ? "Ẩn tất cả bình luận"
+                : `Xem tất cả ${dataComent?.length || 0} bình luận`
+                }
+            </span>
+          </div>
+        )}
+
+        <div
+          className="comment"
+          style={{ display: "flex", width: "100%", marginTop: "30px" }}
+        >
           <div
             className="avatar"
             style={{ width: "50px", height: "50px", marginLeft: "40px" }}
@@ -269,38 +298,42 @@ const CardPost = ({ data }) => {
           </div>
           <div
             style={{
-              paddingTop: "10px",
-              width: "80%",
+              width: "78%",
             }}
           >
             <Paper
               component="form"
               sx={{
                 marginLeft: "20px",
-                alignItems: "center",
                 width: "100%",
-                boxShadow:
-                  "rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;",
               }}
             >
-              <InputBase
-                sx={{ ml: 1, flex: 1 }}
+              <TextField
+                sx={{ width: "100%" }}
                 value={content}
-                placeholder="Viết bình luận"
+                size="small"
+                multiline
+                placeholder="Nhập bình luận công khai"
                 // onKeyDown={handleOnClickEnter}
                 onChange={(e) => {
                   setContent(e.target.value);
                 }}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton type="button">
+                      <TelegramIcon onClick={handleComnent} />
+                    </IconButton>
+                  ),
+                }}
               />
             </Paper>
-            <button onClick={handleComnent}>nhập</button>
           </div>
         </div>
-        {expanded && (
+        {/* {expanded && (
           <div style={{ textAlign: "center", cursor: "pointer" }}>
             <span onClick={handleExpandClick}>Ẩn tất cả bình luận</span>
           </div>
-        )}
+        )} */}
       </Box>
     </div>
   );

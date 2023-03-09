@@ -12,6 +12,7 @@ import ExploreUser from "./explore_user";
 import advertisement from "./images/advertisement.png";
 import "./style.scss";
 import _debounce from "lodash/debounce";
+import { LocalDiningRounded } from "@mui/icons-material";
 
 const Explore = () => {
   const [loading, setLoading] = useState(true);
@@ -108,7 +109,10 @@ const Explore = () => {
   }, [payloadPost]);
 
   return (
-    <div style={{ width: "100%" }}>
+    <div style={{ width: "100%",
+    background: "linear-gradient(rgb(255, 184, 184), rgb(251, 251, 251))"
+    
+    }}>
       <Navbar loading={loading} valueTab="three" />
       <div className="container_explore">
         <div className="container_explore_left">

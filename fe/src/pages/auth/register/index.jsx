@@ -8,12 +8,12 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
+import LoadingBar from "../../../components/loadding/loading_bar";
 import { toastify } from "../../../utils/common";
-import Loading from "../../../components/loadding";
 import "./style.scss";
-import { useNavigate } from "react-router-dom";
 
 const validationInput = yup.object().shape({
   userName: yup
@@ -186,6 +186,7 @@ const Register = () => {
             Đăng ký
           </LoadingButton>
         </div>
+        <LoadingBar loading={loadingPage} />
       </div>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Nhập mã OTP</DialogTitle>
@@ -211,10 +212,11 @@ const Register = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Hủy</Button>
-          <Button onClick={handleRegister}>Gửi</Button>
+          <LoadingButton loading={loadingPage} onClick={handleRegister}>
+            Gửi
+          </LoadingButton>
         </DialogActions>
       </Dialog>
-      <Loading loading={loadingPage} />
     </div>
   );
 };

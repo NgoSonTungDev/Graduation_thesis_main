@@ -5,7 +5,9 @@ import Comments from "../models/comment";
 const commentController = {
   addComment: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await Comments.create(req.body);
+      const data = await (
+        await Comments.create(req.body)
+      ).populate("userId", ["userName", "avt"]);
       res.json(errorFunction(false, 200, "Thêm thành công", data));
     } catch (error) {
       console.log("error: ", error);

@@ -1,13 +1,13 @@
 import React from "react";
-import { momentLocale } from "../../../utils/common";
+import { momentLocale } from "../../../../../utils/common";
 
-const ChatItem = ({ data }) => {
+const ChatItemMessage = ({ data }) => {
   return (
     <div
       style={{
         width: "100%",
         display: "flex",
-        justifyContent: `${data.isAdmin ? "flex-start" : "flex-end"}`,
+        justifyContent: `${!data.isAdmin ? "flex-start" : "flex-end"}`,
       }}
     >
       <div
@@ -19,9 +19,9 @@ const ChatItem = ({ data }) => {
           borderRadius: "10px",
           fontSize: "14px",
           textAlign: "left",
-          margin: "10px",
-          backgroundColor: `${data.isAdmin ? "#e4e6eb" : "#0084ff"}`,
-          color: `${data.isAdmin ? "#000" : "#fff"}`,
+          margin: "8px 20px",
+          backgroundColor: `${!data.isAdmin ? "#e4e6eb" : "#0084ff"}`,
+          color: `${!data.isAdmin ? "#000" : "#fff"}`,
         }}
       >
         <p style={{ margin: 0, padding: 0 }}>{data.message}</p>
@@ -31,4 +31,4 @@ const ChatItem = ({ data }) => {
   );
 };
 
-export default ChatItem;
+export default ChatItemMessage;
