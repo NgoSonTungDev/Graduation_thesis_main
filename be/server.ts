@@ -75,12 +75,16 @@ io.on("connection", (socket) => {
   });
 });
 
-mongoose.connect(process.env.MONGODB_CONNECT_DATABASE + "", (err) => {
-  if (err) {
-    console.log("Error : " + err);
-  } else {
-    console.log("Connect mongoose successfully !");
-  }
+mongoose.connect(process.env.MONGODB_CONNECT_DATABASE + "");
+
+const database = mongoose.connection;
+
+database.on("err", (err: any) => {
+  console.log(err);
+});
+
+database.once("connected", () => {
+  console.log("Database Connect successfully...");
 });
 
 app.use("/api", routes());
@@ -88,5 +92,5 @@ app.use("/api", routes());
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, function () {
-  console.log(`Server is running port ${PORT} ...`);
+  console.log(`Server is running port ${PORT}...`);
 });
