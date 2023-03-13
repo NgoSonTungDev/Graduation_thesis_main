@@ -9,9 +9,13 @@ import moment from "moment";
 import axiosClient from "../../../../api/axiosClient";
 import { toastify } from "../../../../utils/common";
 import { formatMoney } from "../../../../utils/common";
+import { grid } from "@mui/system";
 
-const ChartStatisticDay = () => {
-  const [value, setValue] = React.useState("");
+const ChartStatisticAbout = () => {
+  const [payload, setPayload] = React.useState({
+    startDay: "",
+    endDate: "",
+  });
   const [data, setData] = React.useState({});
 
   const options = {
@@ -21,13 +25,17 @@ const ChartStatisticDay = () => {
     },
     title: {
       text: `Số lượng mua và doanh thu trong ngày (${
-        value ? moment(value?.$d).format("DD/MM/yyyy") : "--/--/----"
+        payload.startDay
+          ? moment(payload.startDay.$d).format("DD/MM/yyyy")
+          : "--/--/----"
+      } - ${
+        payload.endDate
+          ? moment(payload.endDate.$d).format("DD/MM/yyyy")
+          : "--/--/----"
       })`,
     },
     xAxis: {
-      categories: data?.detail?.map((e) =>
-        moment(e.dateTime).format("dd/mm/yyyy HH:MM")
-      ),
+      categories: data?.detail?.map((e) => e._id),
     },
     yAxis: {
       opposite: false,
@@ -38,11 +46,12 @@ const ChartStatisticDay = () => {
     series: [
       {
         name: "Số lượng vé đã bán",
-        data: data?.detail?.map((e) => e.detail.amount),
+        data: data?.detail?.map((e) => e.sumTicked),
       },
       {
         name: "Danh thu",
-        data: data?.detail?.map((e) => e.detail.total),
+        data: data?.detail?.map((e) => e.totalRevenue),
+        // color: '#00FF00'
       },
     ],
   };
@@ -60,9 +69,11 @@ const ChartStatisticDay = () => {
   };
 
   useEffect(() => {
-    let url = `/statistic/payment-statistics-day?dayTime=${Number(value.$d)}`;
+    let url = `/statistic/payment-statistics-about?startDay=${Number(
+      payload.startDay.$d
+    )}&endDay=${Number(payload.endDate.$d)}`;
     fetchData(url);
-  }, [value]);
+  }, [payload]);
 
   return (
     <div style={{ width: "100%", height: "100%" }}>
@@ -75,22 +86,34 @@ const ChartStatisticDay = () => {
           justifyContent: "space-between",
         }}
       >
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            label="Ngày"
-            value={value}
-            onChange={(newValue) => setValue(newValue)}
-          />
-        </LocalizationProvider>
-
-        {value && (
-          <div>
-            Tổng doanh thu :{" "}
-            <span style={{ color: "#d63031" }}>
-              {formatMoney(Number(data?.total))}
-            </span>
-          </div>
-        )}
+        <div style={{ gap: "15px", display: "flex", flexDirection: "row" }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="Từ ngày"
+              value={payload.startDay}
+              onChange={(newValue) =>
+                setPayload({ endDate: "", startDay: newValue })
+              }
+            />
+            <DatePicker
+              label="Đến ngày"
+              value={payload.endDate}
+              minDate={payload.startDay}
+              onChange={(newValue) =>
+                setPayload({ ...payload, endDate: newValue })
+              }
+            />
+          </LocalizationProvider>
+        </div>
+        {payload.startDay ||
+          (payload.endDate && (
+            <div>
+              Tổng doanh thu :{" "}
+              <span style={{ color: "#d63031" }}>
+                {formatMoney(Number(data?.total))}
+              </span>
+            </div>
+          ))}
       </div>
       <div
         style={{
@@ -101,7 +124,7 @@ const ChartStatisticDay = () => {
           flexDirection: "column",
         }}
       >
-        {!value ? (
+        {!payload.startDay || !payload.endDate ? (
           <div
             style={{
               width: "100%",
@@ -110,7 +133,7 @@ const ChartStatisticDay = () => {
               placeItems: "center",
             }}
           >
-            <span>Hãy chọn ngày thống kê</span>
+            <span>Hãy chọn ngày bắt đầu và ngày kết thúc</span>
           </div>
         ) : (
           <HighchartsReact highcharts={Highcharts} options={options} />
@@ -120,4 +143,4 @@ const ChartStatisticDay = () => {
   );
 };
 
-export default ChartStatisticDay;
+export default ChartStatisticAbout;

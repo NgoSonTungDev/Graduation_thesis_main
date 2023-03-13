@@ -6,6 +6,7 @@ import React from "react";
 import SidebarAdmin from "../../../components/narbar_admin";
 import { Box } from "@mui/material";
 import ChartStatisticDay from "./chart_statistic_day";
+import ChartStatisticAbout from "./chart_statistic_about";
 
 const Statistic = () => {
   const [value, setValue] = React.useState("1");
@@ -29,7 +30,11 @@ const Statistic = () => {
               <ChartStatisticDay />
             </div>
           </TabPanel>
-          <TabPanel value="2">Item Two</TabPanel>
+          <TabPanel value="2">
+            <div style={{ width: "100%", height: "85vh" }}>
+              <ChartStatisticAbout />
+            </div>
+          </TabPanel>
         </TabContext>
       </Box>
     );
