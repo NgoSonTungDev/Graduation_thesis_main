@@ -1,26 +1,50 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import TelegramIcon from "@mui/icons-material/Telegram";
 import { Collapse, IconButton, Paper, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import Rep_Comment from "../rep_comment";
-import TelegramIcon from "@mui/icons-material/Telegram";
+
+const validationRepComment = yup.object().shape({
+  content: yup.string().required("Comment không được để trống"),
+});
 
 const Comment = ({ dataComent }) => {
   const [numberLike, setNumberLike] = useState();
   const [like, setLike] = useState(false);
-  const [datarepComent, setDataRepComnet] = React.useState([]);
+  const [datarepComent, setDataRepComment] = React.useState([]);
   const [expanded, setExpanded] = React.useState(false);
   const [content, setContent] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty, isValid },
+  } = useForm({
+    resolver: yupResolver(validationRepComment),
+  });
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
     axiosClient
       .get(`/rep-comment/get-by-id/${dataComent._id}`)
       .then((res) => {
-        setDataRepComnet(res.data.data);
+        setDataRepComment(res.data.data);
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
+  };
+
+  const handleOnClickEnter = (e) => {
+    e.stopPropagation();
+    if (e.key === "Enter") {
+      handleRepComment();
+      setContent("");
+    }
   };
 
   const handleLikeComment = (e) => {
@@ -49,7 +73,6 @@ const Comment = ({ dataComent }) => {
         setLike(false);
         toastify("success", res.data.message);
         setNumberLike(res.data.data);
-        console.log("loixx", res);
       })
       .catch((err) => {
         setLike(false);
@@ -71,7 +94,7 @@ const Comment = ({ dataComent }) => {
       });
   };
 
-  const handleRepComnent = (e) => {
+  const handleRepComment = (e) => {
     axiosClient
       .post(`/rep-comment/add`, {
         userId: "63fd6883ea9627ba24c33075",
@@ -81,14 +104,13 @@ const Comment = ({ dataComent }) => {
       })
       .then((res) => {
         toastify("success", res.data.message);
-        setDataRepComnet([...datarepComent, res.data.data]);
+        setDataRepComment([...datarepComent, res.data.data]);
         setContent("");
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
-
   const fetchData = () => {
     dataComent?.like?.find((e) => {
       return e === "63fd6883ea9627ba24c33075";
@@ -197,7 +219,6 @@ const Comment = ({ dataComent }) => {
             // overflowX: "hidden",
             marginTop: "10px",
             marginLeft: "15%",
-            backgroundColor: "red",
           }}
         >
           {datarepComent?.map((item, index) => (
@@ -210,23 +231,29 @@ const Comment = ({ dataComent }) => {
             }}
           >
             <TextField
-              sx={{ width: "100%", outline:'none', border:'none' }}
+              error={!!errors?.content}
+              {...register("content")}
+              sx={{ width: "100%", outline: "none", border: "none" }}
               value={content}
               size="small"
               multiline
               maxRows={4}
-              placeholder="Aa..."
+              placeholder="Aa...."
               // onKeyDown={handleOnClickEnter}
               onChange={(e) => {
                 setContent(e.target.value);
               }}
-              // InputProps={{
-              //   endAdornment: (
-              //     <IconButton type="button">
-              //       <TelegramIcon onClick={handleRepComnent} />
-              //     </IconButton>
-              //   ),
-              // }}
+              helperText={errors.content?.message}
+              InputProps={{
+                endAdornment: (
+                  <IconButton type="button">
+                    <TelegramIcon
+                      disabled={!isDirty && !isValid}
+                      onClick={handleSubmit(handleRepComment)}
+                    />
+                  </IconButton>
+                ),
+              }}
             />
           </Paper>
         </div>

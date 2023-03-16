@@ -1,23 +1,23 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ReplyIcon from "@mui/icons-material/Reply";
-import {
-  Button,
-  IconButton,
-  InputBase,
-  Paper,
-  Rating,
-  TextField,
-} from "@mui/material";
+import TelegramIcon from "@mui/icons-material/Telegram";
+import { Button, IconButton, Paper, Rating, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
+import { Image } from "antd";
 import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import Comment from "../comment";
-import TelegramIcon from "@mui/icons-material/Telegram";
-import { Image } from "antd";
+
+const validationComment = yup.object().shape({
+  content: yup.string().required("Comment không được để trống"),
+});
 
 const CardPost = ({ data }) => {
   const [like, setLike] = useState(false);
@@ -25,7 +25,15 @@ const CardPost = ({ data }) => {
   const [expanded, setExpanded] = React.useState(false);
   const [dataComent, setDataComnet] = React.useState([]);
   const [content, setContent] = useState("");
-  const [isLike, setIsLike] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty, isValid },
+  } = useForm({
+    resolver: yupResolver(validationComment),
+  });
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
     axiosClient
@@ -276,8 +284,7 @@ const CardPost = ({ data }) => {
             <span>
               {expanded
                 ? "Ẩn tất cả bình luận"
-                : `Xem tất cả ${dataComent?.length || 0} bình luận`
-                }
+                : `Xem tất cả ${dataComent?.length || 0} bình luận`}
             </span>
           </div>
         )}
@@ -309,19 +316,26 @@ const CardPost = ({ data }) => {
               }}
             >
               <TextField
+                error={!!errors?.content}
+                {...register("content")}
                 sx={{ width: "100%" }}
                 value={content}
                 size="small"
                 multiline
-                placeholder="Nhập bình luận công khai"
+                maxRows={4}
+                placeholder="Aa..."
                 // onKeyDown={handleOnClickEnter}
                 onChange={(e) => {
                   setContent(e.target.value);
                 }}
+                helperText={errors.content?.message}
                 InputProps={{
                   endAdornment: (
                     <IconButton type="button">
-                      <TelegramIcon onClick={handleComnent} />
+                      <TelegramIcon
+                        disabled={!isDirty && !isValid}
+                        onClick={handleSubmit(handleComnent)}
+                      />
                     </IconButton>
                   ),
                 }}
@@ -329,11 +343,6 @@ const CardPost = ({ data }) => {
             </Paper>
           </div>
         </div>
-        {/* {expanded && (
-          <div style={{ textAlign: "center", cursor: "pointer" }}>
-            <span onClick={handleExpandClick}>Ẩn tất cả bình luận</span>
-          </div>
-        )} */}
       </Box>
     </div>
   );

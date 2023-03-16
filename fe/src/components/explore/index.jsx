@@ -1,5 +1,5 @@
 import SearchIcon from "@mui/icons-material/Search";
-import { IconButton, InputBase, Paper } from "@mui/material";
+import { IconButton, InputBase, Paper, Skeleton } from "@mui/material";
 import queryString from "query-string";
 import React, { useCallback, useEffect, useState } from "react";
 import axiosClient from "../../api/axiosClient";
@@ -13,6 +13,7 @@ import advertisement from "./images/advertisement.png";
 import "./style.scss";
 import _debounce from "lodash/debounce";
 import { LocalDiningRounded } from "@mui/icons-material";
+import ErrorEmpty from "../emty_data";
 
 const Explore = () => {
   const [loading, setLoading] = useState(true);
@@ -63,7 +64,6 @@ const Explore = () => {
   };
 
   const getApiUser = () => {
-
     axiosClient
       .get(`/user/get-all?${queryString.stringify(payload1)}`)
       .then((res) => {
@@ -91,12 +91,11 @@ const Explore = () => {
   };
 
   useEffect(() => {
-    
-    Promise.all([getApiUser(), getApiPlace(),getApiAllPost()])
+    Promise.all([getApiUser(), getApiPlace(), getApiAllPost()]);
 
-    return ()=>{
+    return () => {
       setLoading(true);
-    }
+    };
   }, []);
 
   useEffect(() => {
@@ -109,10 +108,12 @@ const Explore = () => {
   }, [payloadPost]);
 
   return (
-    <div style={{ width: "100%",
-    background: "linear-gradient(rgb(255, 184, 184), rgb(251, 251, 251))"
-    
-    }}>
+    <div
+      style={{
+        width: "100%",
+        background: "linear-gradient(rgb(255, 184, 184), rgb(251, 251, 251))",
+      }}
+    >
       <Navbar loading={loading} valueTab="three" />
       <div className="container_explore">
         <div className="container_explore_left">
@@ -123,12 +124,26 @@ const Explore = () => {
                 // marginTop: "10px",
               }}
             >
-              {dataPost?.data?.map((item, index) => (
-                <CardPost data={item} key={index} />
-              ))}
+              {loading ? (
+                [1, 1].map((item, index) => (
+                  <Skeleton
+                    variant="rectangular"
+                    width={"100%"}
+                    height={70}
+                    sx={{ marginTop: 1 }}
+                    key={index}
+                  />
+                ))
+              ) : data.length === 0 ? (
+                <ErrorEmpty />
+              ) : (
+                dataPost?.data?.map((item, index) => {
+                  return <CardPost data={item} key={index} />;
+                })
+              )}
             </div>
             <div>
-              {dataPost?.data?.length !== 0 && (
+              {dataPost?.data && dataPost?.data?.length > 0 && (
                 <PaginationCpn
                   count={dataPost.totalPage}
                   page={payloadPost.pageNumber}
@@ -144,7 +159,7 @@ const Explore = () => {
               style={{
                 width: "100%",
                 textAlign: "center",
-                padding:"10px"
+                padding: "10px",
               }}
             >
               <span
@@ -164,7 +179,7 @@ const Explore = () => {
               component="form"
               sx={{
                 display: "flex",
-                marginLeft:"5%",
+                marginLeft: "5%",
                 width: "90%",
                 boxShadow:
                   "rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;",
@@ -192,13 +207,29 @@ const Explore = () => {
                 width: "100%",
               }}
             >
-              {data?.map((item, index) => (
-                <ExploreHot
-                  data={item}
-                  key={index}
-                  callbackfn={handleFindPostById}
-                />
-              ))}
+              {loading ? (
+                [1, 1].map((item, index) => (
+                  <Skeleton
+                    variant="rectangular"
+                    width={"100%"}
+                    height={70}
+                    sx={{ marginTop: 1 }}
+                    key={index}
+                  />
+                ))
+              ) : data.length === 0 ? (
+                <ErrorEmpty />
+              ) : (
+                data?.map((item, index) => {
+                  return (
+                    <ExploreHot
+                      data={item}
+                      key={index}
+                      callbackfn={handleFindPostById}
+                    />
+                  );
+                })
+              )}
             </div>
           </div>
           <div
@@ -208,7 +239,7 @@ const Explore = () => {
             <div
               style={{
                 width: "100%",
-                padding:"10px",
+                padding: "10px",
                 textAlign: "center",
               }}
             >
@@ -231,9 +262,23 @@ const Explore = () => {
                 marginTop: "10px",
               }}
             >
-              {dataUser?.map((item, index) => (
-                <ExploreUser dataUser={item} key={index} />
-              ))}
+              {loading ? (
+                [1, 1].map((item, index) => (
+                  <Skeleton
+                    variant="rectangular"
+                    width={"100%"}
+                    height={70}
+                    sx={{ marginTop: 1 }}
+                    key={index}
+                  />
+                ))
+              ) : data.length === 0 ? (
+                <ErrorEmpty />
+              ) : (
+                dataUser?.map((item, index) => {
+                  return <ExploreUser dataUser={item} key={index} />;
+                })
+              )}
             </div>
           </div>
           <div

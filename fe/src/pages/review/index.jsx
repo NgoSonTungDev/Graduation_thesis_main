@@ -103,7 +103,7 @@ const Review = () => {
   return (
     <div>
       <Navbar loading={loading} />
-      <div className="Review_Container" style={{ witdt: "50%" }}>
+      <div className="Review_Container">
         <div className="header">
           <h1>Viết Review</h1>
         </div>

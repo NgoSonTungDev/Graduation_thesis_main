@@ -1,4 +1,5 @@
 import React from "react";
+import ErrorEmpty from "../../emty_data";
 import "./style.scss";
 
 const ExploreHot = ({ data, callbackfn }) => {
@@ -25,16 +26,15 @@ const ExploreHot = ({ data, callbackfn }) => {
       </div>
       <div
         style={{
-          marginLeft: "15px",
+          padding: "10px",
           width: "60%",
-          height: "100%",
           display: "flex",
           flexDirection: "column",
-          // gap: "12px",
         }}
       >
         <div
           style={{
+            width: "90%",
             fontSize: "20px",
             overflow: "hidden",
             textOverflow: "ellipsis",
