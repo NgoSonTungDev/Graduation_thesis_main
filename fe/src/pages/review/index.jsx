@@ -19,21 +19,18 @@ import "./index.scss";
 const Review = () => {
   const desc = ["Tệ", "Khá tệ", "Trung bình", "Tốt", "Tuyệt vời"];
   const [content, setContent] = useState("");
-  const dispatch = useDispatch();
-  const dataPlace = useSelector(DataPlaceById);
   const [openModal, setOpenModal] = useState(false);
-
-  console.log("dataplace", dataPlace);
-
   const [file, setFile] = useState(null);
-
-  const [image, setImage] = useState("");
-
+  const [image, setImage] = useState(
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6at7RwZOM_yVpsUZWimO0o75bYbKAE1DaTg&usqp=CAU"
+  );
   const [loading, setLoading] = useState(false);
-
   const [rate, setRate] = useState({
     rate: 4,
   });
+
+  const dispatch = useDispatch();
+  const dataPlace = useSelector(DataPlaceById);
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -202,8 +199,7 @@ const Review = () => {
                       <b>{dataPlace.name}</b>
                       <br />
                       <span>{dataPlace.address}</span>
-                      <br />
-                      <span>{dataPlace.rating}</span>
+                     
                     </div>
                   </div>
                 </div>

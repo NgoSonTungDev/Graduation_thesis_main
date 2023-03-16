@@ -28,6 +28,7 @@ const postController = {
         .skip(SkipNumber)
         .limit(Number(5))
         .populate("userId", ["userName", "avt"])
+        .populate("userId",["userName","avt"])
         .populate("placeId", "name");
 
       let totalPage = 0;
@@ -55,7 +56,7 @@ const postController = {
     try {
       const data = await Posts.find({ userId: req.params.id })
         .populate("placeId", "name")
-        .populate("userId", "userName");
+        .populate("userId", ["userName","avt"]);
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {

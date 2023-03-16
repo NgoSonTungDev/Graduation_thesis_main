@@ -158,6 +158,9 @@ const Navbar = ({ loading, valueTab }) => {
                       <Typography sx={{ ml: 1 }}>Khám Phá</Typography>
                     </Box>
                   }
+                  onClick={() => {
+                    movePage("/explore");
+                  }}
                 />
                 <Tab
                   className="Tab_Navbar"
@@ -277,7 +280,7 @@ const Navbar = ({ loading, valueTab }) => {
                     >
                       <MenuItem
                         onClick={() => {
-                          movePage("/profile");
+                          movePage("/profile/63fd6848ea9627ba24c3306f");
                         }}
                       >
                         <ListItemIcon>
@@ -309,6 +312,7 @@ const Navbar = ({ loading, valueTab }) => {
                         onClick={() => {
                           handleClose();
                           removeUserDataLocalStorage();
+                          navigation("/");
                         }}
                       >
                         <ListItemIcon>
