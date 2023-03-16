@@ -140,7 +140,7 @@ const likeController = {
       } else {
         await id.updateOne({ $push: { like: req.body.userId } });
         res.json(
-          errorFunction(false, 200, "Đã like bài viết .", id.like?.length + 1)
+          errorFunction(false, 200, "Đã unlike bài viết .", id.like?.length + 1)
         );
       }
     } catch (error) {
@@ -204,7 +204,7 @@ const likeController = {
       } else {
         await id.updateOne({ $push: { like: req.body.userId } });
         res.json(
-          errorFunction(false, 200, "Đã like bài viết .", id.like?.length + 1)
+          errorFunction(false, 200, "Đã unlike bài viết .", id.like?.length + 1)
         );
       }
     } catch (error) {

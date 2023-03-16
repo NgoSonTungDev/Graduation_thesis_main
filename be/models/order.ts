@@ -30,6 +30,7 @@ const orderSchema = new mongoose.Schema<IOrder>({
     required: true,
   },
   placeId: { type: Schema.Types.ObjectId, ref: "Place" },
+  salesAgentId: { type: Schema.Types.ObjectId, ref: "SalesAgent" },
 });
 
 const Orders = mongoose.model("Order", orderSchema);

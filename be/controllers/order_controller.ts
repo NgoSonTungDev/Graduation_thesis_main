@@ -42,7 +42,8 @@ const orderController = {
         .skip(SkipNumber)
         .limit(Number(limit))
         .populate("userId", ["userName", "email"])
-        .populate("placeId", "name");
+        .populate("placeId", "name")
+        .populate("salesAgentId", ["code", "userName"]);
 
       const allOrder = await Orders.find(condition);
 
