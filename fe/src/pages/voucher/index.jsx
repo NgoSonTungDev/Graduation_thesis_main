@@ -11,11 +11,14 @@ import GetDataPlaceItem from "../../components/modle_find_place";
 import { useSelector } from "react-redux";
 import { DataPlaceById } from "../../redux/selectors";
 import qs from "query-string";
+import _ from "lodash";
+import ErrorEmpty from "../../components/emty_data";
 
 const Voucher = () => {
   const [openModal, setOpenModal] = useState(false);
-  const placeId = useSelector(DataPlaceById);
+  const [loading, setLoading] = useState(false);
   const [data, setData] = React.useState([]);
+  const placeId = useSelector(DataPlaceById);
 
   const handleOpenPlaceItem = () => {
     setOpenModal(true);
@@ -26,13 +29,15 @@ const Voucher = () => {
   };
 
   const getApiVocher = () => {
+    setLoading(true);
     axiosClient
       .get(`voucher/get-all?${qs.stringify({ placeID: placeId._id })}`)
       .then((res) => {
         setData(res.data.data);
-        console.log("vocher", res.data.data);
+        setLoading(false);
       })
       .catch((err) => {
+        setLoading(false);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
@@ -43,7 +48,7 @@ const Voucher = () => {
 
   return (
     <div>
-      <Navbar />
+      <Navbar loading={loading} valueTab={"four"} />
       <div
         style={{
           width: "100%",
@@ -54,14 +59,19 @@ const Voucher = () => {
           style={{
             display: "flex",
             width: "100%",
-            background: "rgb(215,0,22)",
-            background:
-              "linear-gradient(180deg, rgba(215,0,22,0.8352591036414566) 0%, rgba(215,0,6,0.7904411764705882) 31%, rgba(255,0,0,0.5691526610644257) 72%)",
+            backgroundColor: "rgb(244 74 110 / 20%)",
+            // backgroundColor: "rgb(215,0,22)",
+            // backgroundColor:
+            //   "linear-gradient(180deg, rgba(215,0,22,0.8352591036414566) 0%, rgba(215,0,6,0.7904411764705882) 31%, rgba(255,0,0,0.5691526610644257) 72%)",
           }}
         >
           <div
             className="left"
-            style={{ width: "80%", marginLeft: "10%", paddingTop: "60px" }}
+            style={{
+              width: "80%",
+              marginLeft: "10%",
+              paddingTop: "20px",
+            }}
           >
             <div>
               <b style={{ fontSize: 30 }}>Cập nhật khuyến mãi hiện hành</b>
@@ -76,29 +86,45 @@ const Voucher = () => {
                 Hãy tiết kiệm hơn với các chương trình khuyến mãi của chúng tôi
                 ở dưới đây.
               </span>
+              <div className="Button" style={{ paddingTop: "20px" }}>
+                <Button
+                  variant="contained"
+                  onClick={handleOpenPlaceItem}
+                  sx={{ whiteSpace: "pre" }}
+                >
+                  Tìm kiếm
+                </Button>
+              </div>
             </div>
           </div>
-          <div className="right" style={{ width: "35%", paddingTop: "20px" }}>
+          <div
+            className="right"
+            style={{
+              width: "25%",
+              paddingTop: "20px",
+            }}
+          >
             <img style={{ width: "80%", height: "60%" }} src={anh1} alt="" />
           </div>
         </div>
-        <div className="Button">
-          <Button
-            variant="contained"
-            onClick={handleOpenPlaceItem}
-            sx={{ whiteSpace: "pre" }}
-          >
-            Tìm kiếm
-          </Button>
-        </div>
-        <div className="card_voucher">
-          {data?.map((item, index) => (
-            <MapData data={item} key={index} />
-          ))}
+
+        <div
+          className="card_voucher"
+          style={{
+            width: "87%",
+            textTransform: "capitalize",
+            boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
+          }}
+        >
+          {_.isEmpty(data) ? (
+            <ErrorEmpty />
+          ) : (
+            data?.map((item, index) => <MapData data={item} key={index} />)
+          )}
         </div>
       </div>
-      <Footer />
       <GetDataPlaceItem openDialog={openModal} onClose={handleCloseModal} />
+      <Footer />
     </div>
   );
 };

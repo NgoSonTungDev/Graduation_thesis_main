@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { formatMoney } from "../../../utils/common";
 const MapData = ({ data }) => {
   return (
     <div className="datamap">
@@ -8,8 +9,8 @@ const MapData = ({ data }) => {
       <div>
         <span>{data.title}</span>
       </div>
-      <div>
-        <span>{data.price}</span>
+      <div style={{ color: "red" }}>
+        <span>{formatMoney(data.price)}</span>
       </div>
     </div>
   );

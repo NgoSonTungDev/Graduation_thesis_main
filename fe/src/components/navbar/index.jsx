@@ -175,6 +175,9 @@ const Navbar = ({ loading, valueTab }) => {
                       <Typography sx={{ ml: 1 }}>Khuyến Mãi</Typography>
                     </Box>
                   }
+                  onClick={() => {
+                    movePage("/voucher");
+                  }}
                 />
               </Tabs>
             </Box>
