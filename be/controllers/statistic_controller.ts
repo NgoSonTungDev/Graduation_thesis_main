@@ -65,11 +65,75 @@ const statisticController = {
         },
       ]);
 
+      const statisticComment = await Places.aggregate([
+        {
+          $project: {
+            name: "$name",
+            list: "$statisticCmt",
+          },
+        },
+        {
+          $unwind: "$list",
+        },
+        {
+          $group: {
+            _id: "$_id",
+            falseCount: {
+              $sum: {
+                $cond: {
+                  if: {
+                    $eq: ["$list.rateComments", false],
+                  },
+                  then: 1,
+                  else: 0,
+                },
+              },
+            },
+            trueCount: {
+              $sum: {
+                $cond: {
+                  if: {
+                    $eq: ["$list.rateComments", true],
+                  },
+                  then: 1,
+                  else: 0,
+                },
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "places",
+            localField: "_id",
+            foreignField: "_id",
+            as: "place",
+          },
+        },
+        {
+          $unwind: "$place",
+        },
+        {
+          $project: {
+            _id: 1,
+            name: "$place.name",
+            trueCount: 1,
+            falseCount: 1,
+          },
+        },
+        {
+          $sort: {
+            trueCount: 1,
+          },
+        },
+      ]);
+
       res.json(
         errorFunction(false, 200, "Lấy thống kê thành công", {
           account: account,
           evaluate: groupEvaluate,
           place: groupPlaceLocation,
+          comment: statisticComment,
         })
       );
     } catch (error) {

@@ -21,15 +21,11 @@ const placeSchema = new mongoose.Schema<IPlace>(
       type: String,
       required: true,
     },
-    childTicket: {
+    startingPrice: {
       type: Number,
       required: true,
     },
-    adultTicket: {
-      type: Number,
-      required: true,
-    },
-    numberTickets: {
+    LastPrice: {
       type: Number,
       required: true,
     },
@@ -61,7 +57,6 @@ const placeSchema = new mongoose.Schema<IPlace>(
       required: false,
     },
     statisticCmt: [{ type: Object, required: true, default: [] }],
-    salesAgentId: { type: Schema.Types.ObjectId, ref: "SalesAgent" },
   },
   { timestamps: true }
 );
