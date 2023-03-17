@@ -12,9 +12,11 @@ const ChatBoxSlice = createSlice({
     openChatBox: (state) => {
       state.open = true;
     },
+
     closeChatBox: (state) => {
       state.open = false;
     },
+
     changeListInbox: (state, { payload }) => {
       state.listChat = payload;
     },

@@ -132,9 +132,9 @@ const PlaceItem = ({ data }) => {
           <span>({data.rating.toFixed(1)})</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <span> Giá vé :</span>
+          <span> Khoảng giá :</span>
           <span style={{ marginLeft: "5px" }}>
-            {formatMoney(data.childTicket)} - {formatMoney(data.adultTicket)}
+            {formatMoney(data.startingPrice)} - {formatMoney(data.LastPrice)}
           </span>
         </div>
         <div
