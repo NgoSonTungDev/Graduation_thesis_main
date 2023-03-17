@@ -8,6 +8,11 @@ export const statisticRouter = (router: Router) => {
   );
 
   router.get(
+    "/statistic/comment-statistics",
+    statisticController.statisticCommentGoodOrBad
+  );
+
+  router.get(
     "/statistic/payment-statistics-day",
     statisticController.detailPaymentStatisticsForDay
   );

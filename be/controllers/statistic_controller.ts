@@ -227,6 +227,84 @@ const statisticController = {
       });
     }
   },
+
+  statisticCommentGoodOrBad: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const result = await Places.aggregate([
+        {
+          $project: {
+            name: "$name",
+            list: "$statisticCmt",
+          },
+        },
+        {
+          $unwind: "$list",
+        },
+        {
+          $group: {
+            _id: "$_id",
+            falseCount: {
+              $sum: {
+                $cond: {
+                  if: {
+                    $eq: ["$list.rateComments", false],
+                  },
+                  then: 1,
+                  else: 0,
+                },
+              },
+            },
+            trueCount: {
+              $sum: {
+                $cond: {
+                  if: {
+                    $eq: ["$list.rateComments", true],
+                  },
+                  then: 1,
+                  else: 0,
+                },
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "places",
+            localField: "_id",
+            foreignField: "_id",
+            as: "place",
+          },
+        },
+        {
+          $unwind: "$place",
+        },
+        {
+          $project: {
+            _id: 1,
+            name: "$place.name",
+            trueCount: 1,
+            falseCount: 1,
+          },
+        },
+        {
+          $sort: {
+            trueCount: 1,
+          },
+        },
+      ]);
+
+      res.json(errorFunction(false, 200, "Lấy thống kê thành công", result));
+    } catch (error) {
+      console.log("error: ", error);
+      res.status(400).json({
+        message: "Bad request",
+      });
+    }
+  },
 };
 
 export default statisticController;

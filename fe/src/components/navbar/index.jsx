@@ -37,13 +37,15 @@ import ws from "../../socket";
 import { removeUserDataLocalStorage } from "../../utils/localstorage";
 
 const Navbar = ({ loading, valueTab }) => {
-  const currrenUser = localStorage.getItem("user");
+  const currrenUser = JSON.parse(localStorage.getItem("user"));
   const [value, setValue] = useState("one");
   // const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElNotify, setAnchorElNotify] = React.useState(null);
   const [offset, setOffset] = useState(0);
+
+  console.log(currrenUser);
 
   const dispatch = useDispatch();
 
@@ -280,7 +282,7 @@ const Navbar = ({ loading, valueTab }) => {
                     >
                       <MenuItem
                         onClick={() => {
-                          movePage("/profile/63fd6848ea9627ba24c3306f");
+                          movePage(`/profile/${currrenUser?._id}`);
                         }}
                       >
                         <ListItemIcon>

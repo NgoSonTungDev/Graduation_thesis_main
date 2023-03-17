@@ -8,28 +8,45 @@ import Navbar from "../../components/navbar";
 import "./style.scss";
 import axiosClient from "../../api/axiosClient";
 import CardPost from "../../components/explore/card_post";
-import { toastify } from "../../utils/common";
+import { toastify, formatDate } from "../../utils/common";
 import _ from "lodash";
-import { useParams } from "react-router-dom";
-// import { formatDay } from "./utils";
-import { Box, Modal, styled, Typography } from "@mui/material";
+import { Form, useParams } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Modal,
+  Skeleton,
+  styled,
+  Typography,
+} from "@mui/material";
+import ErrorEmpty from "../../components/emty_data";
 
 const Profile = () => {
+  const currrenUser = JSON.parse(localStorage.getItem("user"));
+  const { id } = useParams();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [data, setData] = useState("");
   const [dataPost, setDataPost] = useState({});
   const [loading, setLoading] = useState(true);
-  const { id } = useParams();
-  // const formattedDate = formatDay(data.updatedAt);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [gender, setGender] = useState("");
+  const [showupdate, setShowUpdate] = useState(false);
+  const handleCloseUpdate = () => setShowUpdate(false);
+  const handleShowUpdate = () => setShowUpdate(true);
+  const [showupdatetb, setShowUpdateTB] = useState(false);
+  const handleCloseUpdateTB = () => setShowUpdateTB(false);
+  const handleShowUpdateTB = () => setShowUpdateTB(true);
+  const [showaddtb, setShowAddTB] = useState(false);
+  const handleCloseAddTB = () => setShowAddTB(false);
 
   const getApiAllPost = () => {
     setLoading(true);
     axiosClient
       .get(`/post/get-id-user/${id}`)
       .then((res) => {
-        // console.log("res", res);
         setDataPost(res.data.data);
         setLoading(false);
       })
@@ -42,7 +59,7 @@ const Profile = () => {
   const fetchData = async () => {
     setLoading(true);
     axiosClient
-      .get(`/user/get-an/63fcc3b2ebe41cb6c68dd48e`)
+      .get(`/user/get-an/${currrenUser?._id}`)
       .then((res) => {
         console.log("res", res);
         setData(res.data.data);
@@ -54,20 +71,20 @@ const Profile = () => {
       });
   };
 
-  // const handleEditUser = () => {
-  //   setLoading(true);
-  //   axiosClient
-  //     .put(`/user/update/${id}`)
-  //     .then((res) => {
-  //       console.log("res", res);
-  //       setData(res.data.data);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       setLoading(false);
-  //       toastify("error", err.response.data.message || "Lỗi hệ thông !");
-  //     });
-  // };
+  const handleUpdate = () => {
+    setLoading(true);
+    axiosClient
+      .put(`/user/update/${id}`)
+      .then((res) => {
+        console.log("res", res);
+        setData(res.data.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
 
   useEffect(() => {
     getApiAllPost();
@@ -145,38 +162,94 @@ const Profile = () => {
                     Ngày tham gia
                   </span>
 
-                  <span className="text-detail"></span>
+                  <span className="text-detail">
+                    {formatDate(data.createdAt, "DD/MM/yyyy")}
+                  </span>
                 </div>
               </div>
             </div>
-            <div className="profile-content">
-              <div className="card-post">
-                {_.isEmpty(dataPost) ? (
-                  <p>Không có dữ liệu</p>
-                ) : (
-                  dataPost?.map((item, index) => (
-                    <CardPost data={item} key={index} />
-                  ))
-                )}
+            {loading ? (
+              <div className="profile-content">
+                {[1, 2, 3, 4, 5, 6].map((item, index) => (
+                  <Skeleton
+                    variant="rectangular"
+                    sx={{ width: "300px", height: "385px", margin: "38px" }}
+                  />
+                ))}
               </div>
-            </div>
+            ) : (
+              <div className="profile-content">
+                <div className="card-post">
+                  {_.isEmpty(dataPost) ? (
+                    <ErrorEmpty />
+                  ) : (
+                    dataPost?.map((item, index) => (
+                      <CardPost data={item} key={index} />
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
-        <Modal
-          className="modal-edit"
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={styled}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Text in a modal
-            </Typography>
-            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-            </Typography>
-          </Box>
+        <Modal show={showupdate} onHide={handleCloseUpdate}>
+          <Modal.Header closeButton>
+            <Modal.Title>Cập Nhật Thông Tin</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Username </Form.Label>
+              <Form.Control
+                type="text"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                }}
+              />
+            </Form.Group>
+            <Form>
+              <Form.Group
+                className="mb-3"
+                controlId="exampleForm.ControlInput1"
+              >
+                <Form.Label>Giới tính </Form.Label>
+                <Form.Control
+                  type="text"
+                  value={gender}
+                  onChange={(e) => {
+                    setGender(e.target.value);
+                  }}
+                />
+              </Form.Group>
+              <Form.Group
+                className="mb-3"
+                controlId="exampleForm.ControlInput1"
+              >
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                  }}
+                />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseUpdate}>
+              Đóng
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                handleShowUpdateTB();
+                handleCloseUpdate();
+              }}
+            >
+              Cập nhật
+            </Button>
+          </Modal.Footer>
         </Modal>
       </div>
     </div>
