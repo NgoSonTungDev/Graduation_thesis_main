@@ -13,6 +13,8 @@ import Home from "./pages/home";
 import NotFound from "./pages/not_found";
 import Place from "./pages/place/index";
 import Review from "./pages/review";
+import HomeSaleAgent from "./pages/sale_agent/home";
+import OrderSaleAgent from "./pages/sale_agent/order";
 import { OpenChatBox } from "./redux/selectors";
 
 const App = () => {
@@ -26,9 +28,18 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/place" element={<Place />} />
           <Route path="/review" element={<Review />} />
+
+          {/* admin */}
           <Route path="/admin/home" element={<AdminHome />} />
           <Route path="/admin/message" element={<AdminMessage />} />
           <Route path="/admin/statistic" element={<Statistic />} />
+
+          {/* saleAgent */}
+          <Route path="/sale-agent/home" element={<HomeSaleAgent />} />
+          <Route
+            path="/sale-agent/order-management"
+            element={<OrderSaleAgent />}
+          />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

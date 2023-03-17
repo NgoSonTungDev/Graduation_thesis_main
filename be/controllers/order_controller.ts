@@ -70,6 +70,70 @@ const orderController = {
       });
     }
   },
+  getBySaleAgentId: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { pageNumber, limit, status } = req.query;
+
+      const SkipNumber = (Number(pageNumber) - 1) * Number(limit);
+
+      const filter = status
+        ? {
+            $and: [
+              {
+                status: status,
+              },
+              {
+                salesAgentId: req.params.saleAgentId,
+              },
+            ],
+          }
+        : { salesAgentId: req.params.saleAgentId };
+
+      const result = await Orders.find(filter)
+        .skip(SkipNumber)
+        .limit(Number(limit))
+        .populate("userId", ["userName", "email"])
+        .populate("placeId", "name")
+        .populate("salesAgentId", ["code", "userName"]);
+
+      const allOrder = await Orders.find(filter);
+
+      let totalPage = 0;
+      if (allOrder.length % Number(limit) === 0) {
+        totalPage = allOrder.length / Number(limit);
+      } else {
+        totalPage = Math.floor(allOrder.length / Number(limit) + 1);
+      }
+
+      res.json(
+        errorFunction(false, 200, "Lấy thành công !", {
+          totalPage: totalPage,
+          total: allOrder.length,
+          data: result,
+        })
+      );
+    } catch (error) {
+      res.status(400).json({
+        error: error,
+        message: "Bad request",
+      });
+    }
+  },
+  getOrderById: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await Orders.find({ userId: req.params.userId })
+        .populate("userId", ["userName", "email"])
+        .populate("placeId", "name")
+        .populate("salesAgentId", ["code", "userName"]);
+
+      res.json(errorFunction(false, 200, "Lấy thành công !", result));
+    } catch (error) {
+      res.status(400).json({
+        error: error,
+        message: "Bad request",
+      });
+    }
+  },
   updateOrder: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = await Orders.findById(req.params.id);
