@@ -13,6 +13,7 @@ import { changePayload, resetPayload } from "../../redux/place/placeSlice";
 import PlaceFilter from "./place_filter";
 import ErrorEmpty from "../../components/emty_data";
 import _ from "lodash";
+import Footer from "../../components/footer";
 
 const Place = () => {
   const [loading, setLoading] = React.useState(false);
@@ -123,6 +124,7 @@ const Place = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

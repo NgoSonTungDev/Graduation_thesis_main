@@ -159,7 +159,7 @@ const Header = ({ ReactNode }) => {
             </SidebarContent>
             <SidebarFooter>
               <Menu iconShape="square">
-                <MenuItem icon={<FiLogOut />}>Logout</MenuItem>
+                <MenuItem icon={<FiLogOut />}>Exit</MenuItem>
               </Menu>
             </SidebarFooter>
           </ProSidebar>

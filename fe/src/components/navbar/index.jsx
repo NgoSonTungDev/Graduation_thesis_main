@@ -185,6 +185,9 @@ const Navbar = ({ loading, valueTab }) => {
                       <Typography sx={{ ml: 1 }}>Khuyến Mãi</Typography>
                     </Box>
                   }
+                  onClick={() => {
+                    movePage("/voucher");
+                  }}
                 />
               </Tabs>
             </Box>
@@ -299,7 +302,11 @@ const Navbar = ({ loading, valueTab }) => {
                         </ListItemIcon>
                         Trang cá nhân
                       </MenuItem>
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem
+                        onClick={() => {
+                          movePage("/order/63fd6d8f3ac0f9d2d5e102fd");
+                        }}
+                      >
                         <ListItemIcon>
                           <ManageHistoryIcon fontSize="medium" />
                         </ListItemIcon>

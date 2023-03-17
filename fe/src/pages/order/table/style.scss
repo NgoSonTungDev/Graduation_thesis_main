@@ -1,0 +1,19 @@
+.button-check {
+  width: 100px;
+  border: 1px solid rgba(146, 144, 144, 0.867);
+  background-color: transparent;
+  margin-top: 5px;
+  cursor: pointer;
+  padding: 3px 0;
+  font-weight: 500;
+}
+
+.payment:hover {
+  color: #fff;
+  background-color: #3498db;
+}
+
+.cancel:hover {
+  color: #fff;
+  background-color: #c0392b;
+}
