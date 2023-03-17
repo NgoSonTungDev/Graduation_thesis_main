@@ -155,7 +155,7 @@ const PlaceFilter = () => {
         select
         fullWidth
         name="variability"
-        label="Giá"
+        label="Đánh giá"
         inputProps={register("variability")}
         onChange={handleChange}
         size="small"

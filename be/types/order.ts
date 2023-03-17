@@ -8,5 +8,4 @@ export interface IOrder {
   dateTime: number;
   userId: any;
   placeId: any;
-  salesAgentId: any;
 }

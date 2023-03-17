@@ -22,10 +22,7 @@ const placeController = {
   },
   getAnPlace: async (req: Request, res: Response) => {
     try {
-      const id = await Places.findById(req.params.id).populate("salesAgentId", [
-        "salesAgentId",
-        "userName",
-      ]);
+      const id = await Places.findById(req.params.id);
 
       if (!id)
         return res
@@ -82,10 +79,9 @@ const placeController = {
       };
 
       const result = await Places.find(filter)
-        .sort(`${variability === "asc" ? "" : "-"}childTicket`)
+        .sort(`${variability === "asc" ? "" : "-"}rating`)
         .skip(SkipNumber)
-        .limit(Number(limit))
-        .populate("salesAgentId", ["code", "userName"]);
+        .limit(Number(limit));
 
       const allPlace = await Places.find(filter);
 
