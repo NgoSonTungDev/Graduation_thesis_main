@@ -1,21 +1,17 @@
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { HighchartsReact } from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import moment from "moment";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axiosClient from "../../../../api/axiosClient";
 import { formatMoney, toastify } from "../../../../utils/common";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 
 const ChartStatisticAbout = () => {
-  const [startDay, setStartDay] = React.useState("");
-  const [endDate, setEndDay] = React.useState("");
+  const [payload, setPayload] = React.useState({
+    startDay: "",
+    endDate: "",
+  });
 
   const [data, setData] = React.useState({});
-
-  console.log(startDay, endDate);
 
   const options = {
     chart: {
@@ -23,11 +19,15 @@ const ChartStatisticAbout = () => {
       height: "35%",
     },
     title: {
-      text: `Số lượng mua và doanh thu trong ngày
-       (${startDay ? moment(startDay).format("DD/MM/yyyy") : "--/--/----"} - ${
-        endDate ? moment(endDate).format("DD/MM/yyyy") : "--/--/----"
-      })
-      `,
+      text: `Số lượng mua và doanh thu trong ngày (${
+        payload.startDay
+          ? moment(payload.startDay).format("DD/MM/yyyy")
+          : "--/--/----"
+      } - ${
+        payload.endDate
+          ? moment(payload.endDate).format("DD/MM/yyyy")
+          : "--/--/----"
+      })`,
     },
     xAxis: {
       categories: data?.detail?.map((e) => e._id),
@@ -64,10 +64,10 @@ const ChartStatisticAbout = () => {
 
   useEffect(() => {
     let url = `/statistic/payment-statistics-about?startDay=${Number(
-      startDay?.$d
-    )}&endDay=${Number(endDate?.$d)}`;
+      new Date(payload.startDay)
+    )}&endDay=${Number(new Date(payload.endDate))}`;
     fetchData(url);
-  }, [startDay, endDate]);
+  }, [payload]);
 
   return (
     <div style={{ width: "100%", height: "100%" }}>
@@ -80,31 +80,42 @@ const ChartStatisticAbout = () => {
           justifyContent: "space-between",
         }}
       >
-        <div style={{ gap: "15px", display: "flex", flexDirection: "row" }}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={["DatePicker", "DatePicker"]}>
-              <DatePicker
-                label="Controlled picker"
-                value={startDay}
-                onChange={(newValue) => setStartDay(newValue)}
-              />
-              <DatePicker
-                label="Controlled picker"
-                value={endDate}
-                onChange={(newValue) => setEndDay(newValue)}
-              />
-            </DemoContainer>
-          </LocalizationProvider>
+        <div
+          style={{
+            gap: "15px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <p>Từ ngày : </p>
+          <input
+            style={{ height: "30px", width: "200px" }}
+            type="date"
+            name="startDay"
+            onChange={(value) => {
+              setPayload({ startDay: value.target.value, endDate: "" });
+            }}
+          />
+          <p>Đến ngày : </p>
+          <input
+            style={{ height: "30px", width: "200px" }}
+            type="date"
+            name="endDate"
+            min={payload.startDay}
+            onChange={(value) => {
+              setPayload({ ...payload, endDate: value.target.value });
+            }}
+          />
         </div>
-        {startDay ||
-          (endDate && (
-            <div>
-              Tổng doanh thu :{" "}
-              <span style={{ color: "#d63031" }}>
-                {formatMoney(Number(data?.total))}
-              </span>
-            </div>
-          ))}
+        {data && (
+          <div>
+            Tổng doanh thu :{" "}
+            <span style={{ color: "#d63031" }}>
+              {formatMoney(Number(data?.total))}
+            </span>
+          </div>
+        )}
       </div>
       <div
         style={{
@@ -115,7 +126,7 @@ const ChartStatisticAbout = () => {
           flexDirection: "column",
         }}
       >
-        {!startDay || !endDate ? (
+        {!payload.startDay || !payload.endDate ? (
           <div
             style={{
               width: "100%",
