@@ -1,3 +1,4 @@
+import { IOrder } from "./../types/order";
 import { errorFunction } from "../utils/errorFunction";
 import { Request, Response, NextFunction } from "express";
 import Orders from "../models/order";
@@ -18,9 +19,10 @@ const fakeCode = (length: number) => {
 const orderController = {
   addOrder: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await Orders.create({
+      const data = await Orders.create<IOrder>({
         ...req.body,
         codeOrder: String(fakeCode(8)),
+        amount: req.body.adultTicket + req.body.childTicket,
       });
       res.json(errorFunction(false, 200, "Thêm thành công", data));
     } catch (error) {
@@ -42,7 +44,8 @@ const orderController = {
         .skip(SkipNumber)
         .limit(Number(limit))
         .populate("userId", ["userName", "email"])
-        .populate("placeId", "name");
+        .populate("placeId", "name")
+        .populate("salesAgentId", ["code", "userName"]);
 
       const allOrder = await Orders.find(condition);
 

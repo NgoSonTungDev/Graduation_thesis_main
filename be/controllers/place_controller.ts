@@ -79,7 +79,7 @@ const placeController = {
       };
 
       const result = await Places.find(filter)
-        .sort(`${variability === "asc" ? "" : "-"}childTicket`)
+        .sort(`${variability === "asc" ? "" : "-"}rating`)
         .skip(SkipNumber)
         .limit(Number(limit));
 

@@ -83,10 +83,12 @@ const roomController = {
 
   getByIdRoom: async (req: Request, res: Response) => {
     try {
-      const data = await Rooms.findOne({ userId: req.params.id }).populate(
-        "userId",
-        ["userName", "email", "avt", "gender"]
-      );
+      const data = await Rooms.findById(req.params.id).populate("userId", [
+        "userName",
+        "email",
+        "avt",
+        "gender",
+      ]);
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {

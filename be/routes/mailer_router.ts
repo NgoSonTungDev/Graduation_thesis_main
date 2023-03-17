@@ -6,5 +6,11 @@ export const mailerRouter = (router: Router) => {
     "/email/send-code-register",
     mailerController.sendCodeOtpRegister
   );
+
+  router.post(
+    "/email/send-code-register-sales-agent",
+    mailerController.sendCodeOtpRegisterSalesAgent
+  );
+
   router.post("/email/send-code", mailerController.sendCodeOtp);
 };

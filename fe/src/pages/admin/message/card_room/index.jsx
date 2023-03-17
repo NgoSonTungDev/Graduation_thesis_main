@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
+import ws from "../../../../socket";
 import { momentLocale } from "../../../../utils/common";
 import "./style.scss";
 
-const CardRoom = ({ data }) => {
+const CardRoom = ({ data, callBackFunction }) => {
   const [check, setCheck] = useState(false);
+
+  const joinRoom = (id) => {
+    ws.joinRoom(id);
+  };
 
   useEffect(() => {
     setCheck(!data?.listInbox[data.listInbox.length - 1].isAdmin);
@@ -13,6 +18,10 @@ const CardRoom = ({ data }) => {
     <div
       className=" container_card_room"
       style={{ backgroundColor: `${check && "#74b9ff"}` }}
+      onClick={() => {
+        callBackFunction(data._id);
+        joinRoom(data._id);
+      }}
     >
       <div style={{ width: "56px", height: "56px", marginLeft: "5px" }}>
         <img

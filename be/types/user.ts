@@ -9,5 +9,5 @@ export interface IUser {
   address: string;
   gender: string;
   description: string;
-  isAdmin: boolean;
+  isAdmin: Boolean;
 }

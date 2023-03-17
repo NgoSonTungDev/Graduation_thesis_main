@@ -1,3 +1,5 @@
+import { ticketRouter } from "./ticket_router";
+import { salesAgentRouter } from "./salesAgent_router";
 import { likeRouter } from "./like_router";
 import { statisticRouter } from "./statistic_router";
 import { paymentRouter } from "./payment_router";
@@ -59,6 +61,10 @@ const routes = () => {
   statisticRouter(router);
 
   likeRouter(router);
+
+  salesAgentRouter(router);
+
+  ticketRouter(router);
 
   return router;
 };

@@ -4,8 +4,8 @@ export interface IPlace {
   location: string;
   address: string;
   geographicalLocation: string;
-  childTicket: number;
-  adultTicket: number;
+  startingPrice: number;
+  LastPrice: number;
   purpose: string;
   type: string;
   rating: number;
@@ -13,6 +13,6 @@ export interface IPlace {
   image: string[];
   favourite: string[];
   openTime: number;
-  numberTickets: number;
   closeTime: number;
+  statisticCmt: { _id: string; rateComments: boolean }[];
 }

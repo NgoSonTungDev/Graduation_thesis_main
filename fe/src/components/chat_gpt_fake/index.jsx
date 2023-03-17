@@ -18,7 +18,8 @@ import "./style.scss";
 const ChatBot = () => {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [data, setData] = React.useState([]);
+  // const [data, setData] = React.useState([]);
+  const [message, setMessage] = React.useState("");
 
   const dispatch = useDispatch();
   const ListDataChat = useSelector(DataChat);
@@ -31,19 +32,26 @@ const ChatBot = () => {
     setOpen(false);
   };
 
-  const sendMessage = async (data) => {
+  const handleOnClickEnter = (e) => {
+    if (e.key === "Enter") {
+      sendMessage();
+      setMessage("");
+    }
+  };
+
+  const sendMessage = async () => {
     setLoading(true);
     dispatch(
       AddDataChat({
         type: false,
-        content: data.question,
+        content: message,
         dateTime: new Date(),
       })
     );
 
     await axiosClient
-      .post("/auto-rep/get-an", {
-        question: data.question,
+      .post("/auto-rep/get-message-chat-gpt", {
+        prompt: message,
       })
       .then((res) => {
         setLoading(false);
@@ -61,20 +69,20 @@ const ChatBot = () => {
       });
   };
 
-  const getDataChatBot = () => {
-    axiosClient
-      .get("/auto-rep/get-all")
-      .then((res) => {
-        setData(res.data.data.data);
-      })
-      .catch((err) => {
-        toastify("error", err.response.data.message || "Lỗi hệ thông !");
-      });
-  };
+  // const getDataChatBot = () => {
+  //   axiosClient
+  //     .get("/auto-rep/get-all")
+  //     .then((res) => {
+  //       setData(res.data.data.data);
+  //     })
+  //     .catch((err) => {
+  //       toastify("error", err.response.data.message || "Lỗi hệ thông !");
+  //     });
+  // };
 
-  useEffect(() => {
-    getDataChatBot();
-  }, []);
+  // useEffect(() => {
+  //   getDataChatBot();
+  // }, []);
 
   return (
     <div>
@@ -141,10 +149,11 @@ const ChatBot = () => {
         </DialogContent>
         <DialogActions>
           <div style={{ width: "100%", height: "50px", overflow: "hidden" }}>
-            <Carousel show={3} slide={3}>
+            {/* <Carousel show={3} slide={3}>
               {data.map((data, index) => {
                 return (
                   <div
+                    key={index}
                     style={{ fontSize: "13px", textAlign: "center" }}
                     onClick={(e) => {
                       sendMessage(data);
@@ -165,7 +174,30 @@ const ChatBot = () => {
                   </div>
                 );
               })}
-            </Carousel>
+            </Carousel> */}
+            <input
+              type="text"
+              style={{
+                padding: "10px",
+                width: "97%",
+                marginTop: "3px",
+                fontSize: "14px",
+                outline: "none",
+                border: "none",
+                borderBottom: "1px solid #dedede",
+                zIndex: "100",
+                backgroundColor: "#dedede",
+              }}
+              value={message}
+              disabled={loading}
+              placeholder={
+                loading ? "Đang trả lời câu hỏi của bạn ..." : "Aa..."
+              }
+              onKeyDown={handleOnClickEnter}
+              onChange={(e) => {
+                setMessage(e.target.value);
+              }}
+            />
           </div>
         </DialogActions>
       </Dialog>

@@ -148,6 +148,9 @@ const Header = ({ ReactNode }) => {
                   <MenuItem
                     active={pathName === "admin" && true}
                     icon={<AiOutlineBarChart />}
+                    onClick={() => {
+                      movePage("/admin/statistic");
+                    }}
                   >
                     statistic
                   </MenuItem>

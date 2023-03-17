@@ -1,8 +1,13 @@
 import React, { useState } from "react";
-import { formatMoney } from "../../../utils/common";
+import { formatMoney, toastify } from "../../../utils/common";
 const MapData = ({ data }) => {
+  const CopyText = () => {
+    navigator.clipboard.writeText(`${data.codeVoucher}`);
+    toastify("success", "Sao chép mã thành công !");
+  };
+
   return (
-    <div className="datamap">
+    <div className="datamap" onClick={CopyText}>
       <div>
         <img src={data.image} alt="" />
       </div>

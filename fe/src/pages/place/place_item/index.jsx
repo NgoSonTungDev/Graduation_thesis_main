@@ -7,31 +7,28 @@ import React, { useEffect, useState } from "react";
 import { formatDate, formatMoney, toastify } from "../../../utils/common";
 import "./style.scss";
 import axiosClient from "../../../api/axiosClient";
+import moment from "moment";
 
 const PlaceItem = ({ data }) => {
   const [check, setCheck] = useState(false);
 
   const renderItemCheckTime = (open, close) => {
-    //   var hours = Number(item.split(":")[0]);
-    //   var minute = Number(item.split(":")[1]);
-    //   if (timeHours < hours) {
-    //     handleMove(item);
-    //   } else if (timeHours == hours && timeMinutes < minute) {
-    //     handleMove(item);
-    //   } else {
-    //     alert("Phim này đã được chiếu ở thời gian này !!!");
-    //   }
-    //   // console.log(timeHours < hours && timeMinutes < minute);
-    //   // console.log(timeHours, hours);
-    //   // console.log(timeMinutes, minute);
-    // };
-    if (new Date().getTime() > new Date(open).getTime()) {
+    const start = moment(open).format("HH:mm");
+    const end = moment(close).format("HH:mm");
+    const check2 = moment(new Date()).format("HH:mm");
+
+    const isCheckBetweenStartAndEnd = moment(check2, "HH:mm").isBetween(
+      moment(start, "HH:mm"),
+      moment(end, "HH:mm")
+    );
+
+    if (isCheckBetweenStartAndEnd) {
       return (
         <span style={{ marginLeft: "5px", color: "#2ecc71" }}>
           Đang mở cửa{" "}
         </span>
       );
-    } else if (new Date().getTime() > new Date(close).getTime()) {
+    } else {
       return (
         <span style={{ marginLeft: "5px", color: "#c0392b" }}>
           Đang đóng cửa{" "}
@@ -39,10 +36,6 @@ const PlaceItem = ({ data }) => {
       );
     }
   };
-
-  console.log("date", new Date().getTime());
-  console.log("open", new Date(1677459600898).getTime());
-  console.log("close", new Date(1677861000172).getTime());
 
   const handleFavourite = (e) => {
     e.stopPropagation();
@@ -139,9 +132,9 @@ const PlaceItem = ({ data }) => {
           <span>({data.rating.toFixed(1)})</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <span> Giá vé :</span>
+          <span> Khoảng giá :</span>
           <span style={{ marginLeft: "5px" }}>
-            {formatMoney(data.childTicket)} - {formatMoney(data.adultTicket)}
+            {formatMoney(data.startingPrice)} - {formatMoney(data.LastPrice)}
           </span>
         </div>
         <div
@@ -165,21 +158,6 @@ const PlaceItem = ({ data }) => {
         <div style={{ display: "flex", alignItems: "center" }}>
           <span> Trạng thái :</span>
           {renderItemCheckTime(data.openTime, data.closeTime)}
-          {/* {new Date(new Date()).getTime() <
-          new Date(data.openTime).getTime() ? (
-            <span style={{ marginLeft: "5px", color: "#c0392b" }}>
-              Đang đóng cửa{" "}
-            </span>
-          ) : new Date(new Date()).getTime() <
-            new Date(data.closeTime).getTime() ? (
-            <span style={{ marginLeft: "5px", color: "#2ecc71" }}>
-              Đang mở cửa{" "}
-            </span>
-          ) : (
-            <span style={{ marginLeft: "5px", color: "#c0392b" }}>
-              Đang đóng cửa{" "}
-            </span>
-          )} */}
           <span
             style={{
               marginLeft: "10px",
@@ -191,8 +169,8 @@ const PlaceItem = ({ data }) => {
               fontSize="small"
               sx={{ paddingRight: "5px" }}
             />
-            {formatDate(data.openTime, "HH:MM")} -{" "}
-            {formatDate(data.closeTime, "HH:MM")}
+            {formatDate(data.openTime, "HH:mm")} -{" "}
+            {formatDate(data.closeTime, "HH:mm")}
           </span>
         </div>
       </div>

@@ -8,6 +8,11 @@ export const autoRepRouter = (router: Router) => {
 
   router.post("/auto-rep/get-an", autoRepController.getAn);
 
+  router.post(
+    "/auto-rep/get-message-chat-gpt",
+    autoRepController.getMessageChatGpt
+  );
+
   router.put("/auto-rep/update-by-id/:id", autoRepController.updateRep);
 
   router.delete("/auto-rep/delete/:id", autoRepController.deleteRep);

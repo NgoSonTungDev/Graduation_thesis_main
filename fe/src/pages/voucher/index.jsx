@@ -3,7 +3,6 @@ import "./style.scss";
 import axiosClient from "../../api/axiosClient";
 import MapData from "./data_vocher";
 import { toastify } from "../../utils/common";
-import anh1 from "./images/anh.svg";
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
 import { Button } from "@mui/material";
@@ -71,6 +70,7 @@ const Voucher = () => {
               width: "80%",
               marginLeft: "10%",
               paddingTop: "20px",
+              padding: "20px",
             }}
           >
             <div>
@@ -96,15 +96,6 @@ const Voucher = () => {
                 </Button>
               </div>
             </div>
-          </div>
-          <div
-            className="right"
-            style={{
-              width: "25%",
-              paddingTop: "20px",
-            }}
-          >
-            <img style={{ width: "80%", height: "60%" }} src={anh1} alt="" />
           </div>
         </div>
 
