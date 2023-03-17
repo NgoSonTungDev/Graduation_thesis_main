@@ -1,13 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
-import moment from "moment";
+import moment, { min } from "moment";
 import axiosClient from "../../../../api/axiosClient";
-import { toastify } from "../../../../utils/common";
+import { formatDate, toastify } from "../../../../utils/common";
 import { formatMoney } from "../../../../utils/common";
 import { grid } from "@mui/system";
 
@@ -16,7 +16,10 @@ const ChartStatisticAbout = () => {
     startDay: "",
     endDate: "",
   });
+
   const [data, setData] = React.useState({});
+
+  console.log(new Date(payload.startDay));
 
   const options = {
     chart: {
@@ -26,11 +29,11 @@ const ChartStatisticAbout = () => {
     title: {
       text: `Số lượng mua và doanh thu trong ngày (${
         payload.startDay
-          ? moment(payload.startDay.$d).format("DD/MM/yyyy")
+          ? moment(payload.startDay).format("DD/MM/yyyy")
           : "--/--/----"
       } - ${
         payload.endDate
-          ? moment(payload.endDate.$d).format("DD/MM/yyyy")
+          ? moment(payload.endDate).format("DD/MM/yyyy")
           : "--/--/----"
       })`,
     },
@@ -70,8 +73,8 @@ const ChartStatisticAbout = () => {
 
   useEffect(() => {
     let url = `/statistic/payment-statistics-about?startDay=${Number(
-      payload.startDay.$d
-    )}&endDay=${Number(payload.endDate.$d)}`;
+      new Date(payload.startDay)
+    )}&endDay=${Number(new Date(payload.endDate))}`;
     fetchData(url);
   }, [payload]);
 
@@ -86,24 +89,33 @@ const ChartStatisticAbout = () => {
           justifyContent: "space-between",
         }}
       >
-        <div style={{ gap: "15px", display: "flex", flexDirection: "row" }}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="Từ ngày"
-              value={payload.startDay}
-              onChange={(newValue) =>
-                setPayload({ endDate: "", startDay: newValue })
-              }
-            />
-            <DatePicker
-              label="Đến ngày"
-              value={payload.endDate}
-              minDate={payload.startDay}
-              onChange={(newValue) =>
-                setPayload({ ...payload, endDate: newValue })
-              }
-            />
-          </LocalizationProvider>
+        <div
+          style={{
+            gap: "15px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <p>Từ ngày : </p>
+          <input
+            style={{ height: "30px", width: "200px" }}
+            type="date"
+            name="startDay"
+            onChange={(value) => {
+              setPayload({ startDay: value.target.value, endDate: "" });
+            }}
+          />
+          <p>Đến ngày : </p>
+          <input
+            style={{ height: "30px", width: "200px" }}
+            type="date"
+            name="endDate"
+            min={payload.startDay}
+            onChange={(value) => {
+              setPayload({ ...payload, endDate: value.target.value });
+            }}
+          />
         </div>
         {payload.startDay ||
           (payload.endDate && (
