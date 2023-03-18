@@ -4,6 +4,7 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { Button, IconButton } from "@mui/material";
 import { padding } from "@mui/system";
 import { Input, Rate, message } from "antd";
+import axios from "axios";
 import _ from "lodash";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,13 +15,14 @@ import Navbar from "../../components/navbar/index";
 import { clearByIdPlace } from "../../redux/place/placeSlice";
 import { DataPlaceById } from "../../redux/selectors";
 import { toastify } from "../../utils/common";
+import { getUserDataLocalStorage } from "../../utils/localstorage";
 import "./index.scss";
 
 const Review = () => {
   const desc = ["Tệ", "Khá tệ", "Trung bình", "Tốt", "Tuyệt vời"];
   const [content, setContent] = useState("");
   const [openModal, setOpenModal] = useState(false);
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState("");
   const [image, setImage] = useState(
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6at7RwZOM_yVpsUZWimO0o75bYbKAE1DaTg&usqp=CAU"
   );
@@ -31,6 +33,7 @@ const Review = () => {
 
   const dispatch = useDispatch();
   const dataPlace = useSelector(DataPlaceById);
+  const userIdStorage = getUserDataLocalStorage();
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -43,7 +46,7 @@ const Review = () => {
   const addPost = (value) => {
     axiosClient
       .post("/post/add", {
-        userId: "phan tan phu",
+        userId: userIdStorage,
         content: content,
         image: value,
         rating: rate.rate,
@@ -64,7 +67,7 @@ const Review = () => {
   };
 
   const handleSubmit = () => {
-    if (file && !content && dataPlace) {
+    if (content==="" || file ===""||image==="") {
       message.error("Vui lòng điền đầy đủ thông tin!");
       return;
     }
@@ -72,8 +75,8 @@ const Review = () => {
     setLoading(true);
     const formData = new FormData();
     formData.append("photo", file);
-    axiosDeploy
-      .post("/upload/file", formData, {
+    axios
+      .post("https://api.imgur.com/3/image", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((res) => {
@@ -199,7 +202,6 @@ const Review = () => {
                       <b>{dataPlace.name}</b>
                       <br />
                       <span>{dataPlace.address}</span>
-                     
                     </div>
                   </div>
                 </div>
@@ -210,7 +212,7 @@ const Review = () => {
                 {image && <img style={{ width: "225px" }} src={image} alt="" />}
               </div>
               <div style={{ display: "flex" }}>
-                <Button variant="outlined" component="label">
+                <Button variant="outlined" component="label" disabled={loading}>
                   Thêm ảnh
                   <input
                     type="file"

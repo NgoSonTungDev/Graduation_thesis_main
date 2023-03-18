@@ -1,31 +1,46 @@
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogTitle from "@mui/material/DialogTitle";
 import React, { useEffect, useState } from "react";
 import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
+import { getUserDataLocalStorage } from "../../../utils/localstorage";
 
-const Rep_Comment = ({ datarepComent }) => {
+const Rep_Comment = ({ datarepComent,callBackApi }) => {
   const [datarepComent1, setDataRepComment] = React.useState([]);
   const [numberLike, setNumberLike] = useState(0);
   const [like, setLike] = useState(false);
+  const userIdStorage = getUserDataLocalStorage();
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleDeleteRepComment = (e) => {
-    axiosClient
-      .delete(`/rep-comment/delete/${datarepComent._id}`, {
-        userId: "63fd6883ea9627ba24c33075",
-      })
-      .then((res) => {
-        setDataRepComment(
-          datarepComent1.filter((datarepComent) => datarepComent._id !== datarepComent._id)
-        );
-        toastify("success", res.data.message);
-      })
-      .catch((err) => {
-        toastify("error", err.response.data.message || "Lỗi hệ thông !");
-      });
+      axiosClient
+        .delete(`/rep-comment/delete/${datarepComent._id}`, {
+          userId: userIdStorage._id,
+        })
+        .then((res) => {
+          toastify("success", res.data.message);
+          handleClose();
+          callBackApi(datarepComent._id)
+
+        })
+        .catch((err) => {
+          toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        });
+    
   };
   const handleLikeRepComment = (e) => {
     axiosClient
       .post(`/like-rep-comment/${datarepComent._id}`, {
-        userId: "63fd6883ea9627ba24c33075",
+        userId: userIdStorage._id,
       })
       .then((res) => {
         setLike(true);
@@ -42,7 +57,7 @@ const Rep_Comment = ({ datarepComent }) => {
   const handleUnlikeRepComment = (e) => {
     axiosClient
       .post(`/dis-like-rep-comment/${datarepComent._id}`, {
-        userId: "63fd6883ea9627ba24c33075",
+        userId: userIdStorage._id,
       })
       .then((res) => {
         setLike(false);
@@ -56,11 +71,15 @@ const Rep_Comment = ({ datarepComent }) => {
   };
 
   const fetchData = () => {
-    datarepComent?.like?.find((e) => {
-      return e === "63fd6883ea9627ba24c33075";
-    })
-      ? setLike(true)
-      : setLike(false);
+    if (userIdStorage) {
+      datarepComent?.like?.find((e) => {
+        return e === userIdStorage._id;
+      })
+        ? setLike(true)
+        : setLike(false);
+    } else {
+      setLike(false);
+    }
   };
 
   useEffect(() => {
@@ -89,7 +108,11 @@ const Rep_Comment = ({ datarepComent }) => {
             alt=""
           />
         </div>
-        <div style={{}}>
+        <div
+          style={{
+            maxWidth: "85%",
+          }}
+        >
           <div
             style={{
               //   width: "90%",
@@ -141,18 +164,30 @@ const Rep_Comment = ({ datarepComent }) => {
                 </span>
               )}
             </div>
-            <div style={{ marginLeft: "10%", cursor: "pointer" }}>
-              <span
-                onClick={(e) => {
-                  handleDeleteRepComment(e);
-                }}
-              >
-                xóa
-              </span>
-            </div>
+            {userIdStorage?._id === datarepComent?.userId?._id && (
+              <div style={{ marginLeft: "10%", cursor: "pointer" }}>
+                <span onClick={handleClickOpen}>Xóa</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Bạn có chắc muốn xóa ?"}
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handleDeleteRepComment}>xóa</Button>
+          <Button onClick={handleClose} autoFocus>
+            thoát
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

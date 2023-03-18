@@ -1,3 +1,4 @@
+import moment from "moment";
 import React from "react";
 import "./style.scss";
 const ExploreUser = ({ dataUser }) => {
@@ -5,7 +6,7 @@ const ExploreUser = ({ dataUser }) => {
     <div
       style={{
         width: "100%",
-        padding: "5px 0",
+        padding: "10px 0",
         margin: "10px 0",
         boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
         display: "flex",
@@ -19,8 +20,7 @@ const ExploreUser = ({ dataUser }) => {
       </div>
       <div
         style={{
-          marginLeft: "15px",
-          width: "60%",
+          width: "70%",
           height: "100%",
           display: "flex",
           flexDirection: "column",
@@ -55,6 +55,17 @@ const ExploreUser = ({ dataUser }) => {
             {dataUser?.email}
           </span>
         </div>
+        <div> <span style={{ whiteSpace: "pre" }}>Ngày tạo :</span>
+          <span
+            style={{
+              marginLeft: "5px",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {moment(dataUser?.createdAt).format("DD/MM/YYYY")}
+          </span></div>
       </div>
     </div>
   );

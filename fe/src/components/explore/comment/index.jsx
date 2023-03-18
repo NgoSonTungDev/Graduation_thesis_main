@@ -1,23 +1,41 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import TelegramIcon from "@mui/icons-material/Telegram";
 import { Collapse, IconButton, Paper, TextField } from "@mui/material";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogTitle from "@mui/material/DialogTitle";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
+import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Rep_Comment from "../rep_comment";
 
 const validationRepComment = yup.object().shape({
   content: yup.string().required("Comment không được để trống"),
 });
 
-const Comment = ({ dataComent }) => {
+const Comment = ({ dataComent, callBackApi }) => {
   const [numberLike, setNumberLike] = useState();
   const [like, setLike] = useState(false);
   const [datarepComent, setDataRepComment] = React.useState([]);
   const [expanded, setExpanded] = React.useState(false);
   const [content, setContent] = useState("");
+  const navigation = useNavigate();
+  const userIdStorage = getUserDataLocalStorage();
+  const [data, setData] = useState([]);
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const {
     register,
@@ -25,6 +43,7 @@ const Comment = ({ dataComent }) => {
     formState: { errors, isDirty, isValid },
   } = useForm({
     resolver: yupResolver(validationRepComment),
+    mode: "all",
   });
 
   const handleExpandClick = () => {
@@ -39,6 +58,14 @@ const Comment = ({ dataComent }) => {
       });
   };
 
+  const handelRepDeleteComment = (id) => {
+    setDataRepComment(
+      datarepComent.filter((e) => {
+        return e._id !== id;
+      })
+    );
+  };
+
   const handleOnClickEnter = (e) => {
     e.stopPropagation();
     if (e.key === "Enter") {
@@ -50,13 +77,12 @@ const Comment = ({ dataComent }) => {
   const handleLikeComment = (e) => {
     axiosClient
       .post(`/like-comment/${dataComent._id}`, {
-        userId: "63fd6883ea9627ba24c33075",
+        userId: userIdStorage._id,
       })
       .then((res) => {
         setLike(true);
         toastify("success", res.data.message);
         setNumberLike(res.data.data);
-        console.log("resssss", res);
       })
       .catch((err) => {
         setLike(false);
@@ -67,7 +93,7 @@ const Comment = ({ dataComent }) => {
   const handleUnlikeComment = (e) => {
     axiosClient
       .post(`/dis-like-comment/${dataComent._id}`, {
-        userId: "63fd6883ea9627ba24c33075",
+        userId: userIdStorage._id,
       })
       .then((res) => {
         setLike(false);
@@ -76,28 +102,29 @@ const Comment = ({ dataComent }) => {
       })
       .catch((err) => {
         setLike(false);
-        // toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
 
   const handleDeleteComment = (e) => {
-    // setcnmt(cmt.filter(item => {return item._id !== "ấđâsdasdasd"}))
     axiosClient
       .delete(`/comment/delete/${dataComent._id}`, {
-        userId: "63fd6883ea9627ba24c33075",
+        userId: userIdStorage._id,
       })
       .then((res) => {
         toastify("success", res.data.message);
+        handleClose();
+        callBackApi(dataComent._id);
       })
       .catch((err) => {
-        // toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
 
   const handleRepComment = (e) => {
     axiosClient
       .post(`/rep-comment/add`, {
-        userId: "63fd6883ea9627ba24c33075",
+        userId: userIdStorage._id,
         content: content,
         dateTime: Number(new Date()),
         commentId: dataComent._id,
@@ -111,18 +138,24 @@ const Comment = ({ dataComent }) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
+
   const fetchData = () => {
-    dataComent?.like?.find((e) => {
-      return e === "63fd6883ea9627ba24c33075";
-    })
-      ? setLike(true)
-      : setLike(false);
+    if (userIdStorage && userIdStorage._id) {
+      dataComent?.like?.find((e) => {
+        return e === userIdStorage._id;
+      })
+        ? setLike(true)
+        : setLike(false);
+    } else {
+      setLike(false);
+    }
   };
 
   useEffect(() => {
     fetchData();
     setNumberLike(Number(dataComent?.like.length));
   }, []);
+
   return (
     <div>
       <div
@@ -144,10 +177,14 @@ const Comment = ({ dataComent }) => {
             alt=""
           />
         </div>
-        <div style={{}}>
+        <div
+          style={{
+            maxWidth: "85%",
+          }}
+        >
           <div
             style={{
-              width: "auto",
+              // width: "auto",
               boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
               marginLeft: "30px",
               padding: "5px",
@@ -192,15 +229,11 @@ const Comment = ({ dataComent }) => {
                 </span>
               )}
             </div>
-            <div style={{ marginLeft: "10%", cursor: "pointer" }}>
-              <span
-                onClick={(e) => {
-                  handleDeleteComment(e);
-                }}
-              >
-                xóa
-              </span>
-            </div>
+            {userIdStorage?._id === dataComent?.userId?._id && (
+              <div style={{ marginLeft: "10%", cursor: "pointer" }}>
+                <span onClick={handleClickOpen}>Xóa</span>
+              </div>
+            )}
             <div
               style={{ marginLeft: "10%", cursor: "pointer" }}
               onClick={handleExpandClick}
@@ -222,42 +255,65 @@ const Comment = ({ dataComent }) => {
           }}
         >
           {datarepComent?.map((item, index) => (
-            <Rep_Comment datarepComent={item} key={index} />
-          ))}
-          <Paper
-            component="form"
-            sx={{
-              width: "100%",
-            }}
-          >
-            <TextField
-              error={!!errors?.content}
-              {...register("content")}
-              sx={{ width: "100%", outline: "none", border: "none" }}
-              value={content}
-              size="small"
-              multiline
-              maxRows={4}
-              placeholder="Aa...."
-              // onKeyDown={handleOnClickEnter}
-              onChange={(e) => {
-                setContent(e.target.value);
-              }}
-              helperText={errors.content?.message}
-              InputProps={{
-                endAdornment: (
-                  <IconButton type="button">
-                    <TelegramIcon
-                      disabled={!isDirty && !isValid}
-                      onClick={handleSubmit(handleRepComment)}
-                    />
-                  </IconButton>
-                ),
-              }}
+            <Rep_Comment
+              datarepComent={item}
+              callBackApi={handelRepDeleteComment}
+              key={index}
             />
-          </Paper>
+          ))}
+          {userIdStorage && (
+            <Paper
+              component="form"
+              sx={{
+                width: "100%",
+              }}
+            >
+              <TextField
+                error={!!errors?.content}
+                {...register("content")}
+                sx={{ width: "100%", outline: "none", border: "none" }}
+                value={content}
+                size="small"
+                multiline
+                maxRows={4}
+                placeholder="Aa...."
+                onKeyDown={handleOnClickEnter}
+                onChange={(e) => {
+                  setContent(e.target.value);
+                }}
+                helperText={errors.content?.message}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton type="button">
+                      <TelegramIcon
+                        disabled={!isDirty && !isValid}
+                        onClick={handleSubmit(handleRepComment)}
+                      />
+                    </IconButton>
+                  ),
+                }}
+              />
+            </Paper>
+          )}
         </div>
       </Collapse>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Bạn có chắc muốn xóa ?"}
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handleDeleteComment}>xóa</Button>
+          <Button onClick={handleClose} autoFocus>
+            thoát
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

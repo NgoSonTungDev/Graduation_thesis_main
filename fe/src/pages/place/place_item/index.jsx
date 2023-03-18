@@ -38,7 +38,7 @@ const PlaceItem = ({ data }) => {
   };
 
   const handleFavourite = (e) => {
-    e.stopPropagation();
+    // e.stopPropagation();
     axiosClient
       .post(`/favourite-place/${data._id}`, {
         userId: "63fcc3b2ebe41cb6c68dd48e",
@@ -54,7 +54,7 @@ const PlaceItem = ({ data }) => {
   };
 
   const handleDisFavourite = (e) => {
-    e.stopPropagation();
+    // e.stopPropagation();
     axiosClient
       .post(`/dis-favourite-place/${data._id}`, {
         userId: "63fcc3b2ebe41cb6c68dd48e",

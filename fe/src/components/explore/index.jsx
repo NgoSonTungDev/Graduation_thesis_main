@@ -19,7 +19,7 @@ const Explore = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [dataUser, setDataUser] = useState([]);
-  const [dataPost, setDataPost] = useState({});
+  const [dataPost, setDataPost] = useState([]);
   const [payloadPost, setpayLoadPost] = useState({
     pageNumber: 1,
     placeID: "",
@@ -41,6 +41,7 @@ const Explore = () => {
     }, 500),
     []
   );
+
   const handleChangePage = (page) => {
     setpayLoadPost({ ...payloadPost, pageNumber: Number(page) });
   };
@@ -111,7 +112,6 @@ const Explore = () => {
     <div
       style={{
         width: "100%",
-        background: "linear-gradient(rgb(255, 184, 184), rgb(251, 251, 251))",
       }}
     >
       <Navbar loading={loading} valueTab="three" />
@@ -134,7 +134,7 @@ const Explore = () => {
                     key={index}
                   />
                 ))
-              ) : data.length === 0 ? (
+              ) : dataPost.length === 0 ? (
                 <ErrorEmpty />
               ) : (
                 dataPost?.data?.map((item, index) => {
@@ -272,7 +272,7 @@ const Explore = () => {
                     key={index}
                   />
                 ))
-              ) : data.length === 0 ? (
+              ) : dataUser.length === 0 ? (
                 <ErrorEmpty />
               ) : (
                 dataUser?.map((item, index) => {

@@ -34,10 +34,12 @@ import logo1 from "./images/acount.jpeg";
 import "./index.scss";
 import NotificationItem from "./notification";
 import ws from "../../socket";
+import { removeUserDataLocalStorage } from "../../utils/localstorage";
 
 const Navbar = ({ loading, valueTab }) => {
+  const currrenUser = localStorage.getItem("user");
   const [value, setValue] = useState("one");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElNotify, setAnchorElNotify] = React.useState(null);
@@ -49,15 +51,6 @@ const Navbar = ({ loading, valueTab }) => {
   const openNotify = Boolean(anchorElNotify);
 
   const navigation = useNavigate();
-
-  // const handleChange = (event, newValue) => {
-  //   console.log(newValue);
-  //   setValue(newValue);
-  // };
-
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-  };
 
   const handleClickShowNotify = (event) => {
     setAnchorElNotify(event.currentTarget);
@@ -205,7 +198,7 @@ const Navbar = ({ loading, valueTab }) => {
               </Button>
             </div>
             <div className="Icon">
-              {isAuthenticated ? (
+              {currrenUser ? (
                 <>
                   <IconButton onClick={handleOpenModal}>
                     <FavoriteBorderIcon />
@@ -285,13 +278,21 @@ const Navbar = ({ loading, valueTab }) => {
                       transformOrigin={{ horizontal: "right", vertical: "top" }}
                       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                     >
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem
+                        onClick={() => {
+                          movePage("/profile");
+                        }}
+                      >
                         <ListItemIcon>
                           <AccountCircleIcon fontSize="medium" />
                         </ListItemIcon>
                         Trang cá nhân
                       </MenuItem>
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem
+                        onClick={() => {
+                          movePage("/login");
+                        }}
+                      >
                         <ListItemIcon>
                           <ManageHistoryIcon fontSize="medium" />
                         </ListItemIcon>
@@ -307,7 +308,12 @@ const Navbar = ({ loading, valueTab }) => {
                         </ListItemIcon>
                         Quàn lý hệ thống
                       </MenuItem>
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem
+                        onClick={() => {
+                          handleClose();
+                          removeUserDataLocalStorage();
+                        }}
+                      >
                         <ListItemIcon>
                           <Logout fontSize="medium" />
                         </ListItemIcon>
@@ -320,7 +326,10 @@ const Navbar = ({ loading, valueTab }) => {
                 <Button
                   id="loginButton"
                   variant="contained"
-                  onClick={handleLogin}
+                  onClick={() => {
+                    movePage("/login");
+                    // handleLogin();
+                  }}
                   sx={{ whiteSpace: "pre" }}
                 >
                   Đăng Nhập

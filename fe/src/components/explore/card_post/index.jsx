@@ -13,7 +13,9 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
+import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Comment from "../comment";
+import { useNavigate } from "react-router-dom";
 
 const validationComment = yup.object().shape({
   content: yup.string().required("Comment không được để trống"),
@@ -25,7 +27,10 @@ const CardPost = ({ data }) => {
   const [expanded, setExpanded] = React.useState(false);
   const [dataComent, setDataComnet] = React.useState([]);
   const [content, setContent] = useState("");
+  const userIdStorage = getUserDataLocalStorage();
+  const navigation = useNavigate();
 
+  // const id = userId._id;
   const {
     register,
     handleSubmit,
@@ -46,11 +51,19 @@ const CardPost = ({ data }) => {
       });
   };
 
+  const handelDeleteComment = (id) => {
+    setDataComnet(
+      dataComent.filter((e) => {
+        return e._id !== id;
+      })
+    );
+  };
+
   const handleLikeReview = (e) => {
-    e.stopPropagation();
+    // e.stopPropagation();
     axiosClient
       .post(`/like-post/${data._id}`, {
-        userId: "63fd6883ea9627ba24c33075",
+        userId: userIdStorage._id,
       })
       .then((res) => {
         setLike(true);
@@ -63,10 +76,9 @@ const CardPost = ({ data }) => {
       });
   };
   const handleUnlikeReview = (e) => {
-    e.stopPropagation();
     axiosClient
       .post(`/dis-like-post/${data._id}`, {
-        userId: "63fd6883ea9627ba24c33075",
+        userId: userIdStorage._id,
       })
       .then((res) => {
         setLike(false);
@@ -88,9 +100,11 @@ const CardPost = ({ data }) => {
   // };
 
   const handleComnent = () => {
+    // if (userId) {
+
     axiosClient
       .post(`/comment/add/`, {
-        userId: "63fd6883ea9627ba24c33075",
+        userId: userIdStorage._id,
         content: content,
         dateTime: Number(new Date()),
         postId: data._id,
@@ -103,14 +117,24 @@ const CardPost = ({ data }) => {
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
+    // } else {
+    // navigation("/home");
+
+    // }
   };
 
   const fetchData = () => {
-    data?.like?.find((e) => {
-      return e === "63fd6883ea9627ba24c33075";
-    })
-      ? setLike(true)
-      : setLike(false);
+    if (userIdStorage) {
+      data?.like?.find((e) => {
+        return e === userIdStorage._id;
+      })
+        ? setLike(true)
+        : setLike(false);
+    } else {
+      console.log("nmdsnfdsf");
+      // navigation("/home");
+      setLike(false);
+    }
   };
 
   useEffect(() => {
@@ -218,7 +242,7 @@ const CardPost = ({ data }) => {
           <div style={{ width: "100%" }}>
             {like ? (
               <Button
-                sx={{ kgroundColor: " green", color: "red", width: "100%" }}
+                sx={{ color: "red", width: "100%" }}
                 onClick={(e) => {
                   handleUnlikeReview(e);
                 }}
@@ -233,7 +257,7 @@ const CardPost = ({ data }) => {
               </Button>
             ) : (
               <Button
-                sx={{ width: "100%" }}
+                sx={{ width: "100%", color: "#000000" }}
                 onClick={(e) => {
                   handleLikeReview(e);
                 }}
@@ -241,6 +265,7 @@ const CardPost = ({ data }) => {
                 <FavoriteIcon
                   sx={{
                     padding: "7px",
+                    color: "#000000",
                   }}
                 />
                 <span>{data ? `${numberLike} Thích` : "Thích"}</span>
@@ -248,15 +273,15 @@ const CardPost = ({ data }) => {
             )}
           </div>
           <Button
-            sx={{ width: "100%" }}
+            sx={{ width: "100%", color: "#000000" }}
             component="label"
             onClick={handleExpandClick}
           >
-            <ChatBubbleOutlineIcon sx={{ padding: "7px" }} />
+            <ChatBubbleOutlineIcon sx={{ padding: "7px", color: "#000000" }} />
             Bình luận
           </Button>
-          <Button sx={{ width: "100%" }} component="label">
-            <ReplyIcon sx={{ padding: "7px" }} />
+          <Button sx={{ width: "100%", color: "#000000" }} component="label">
+            <ReplyIcon sx={{ padding: "7px", color: "#000000" }} />
             Chia sẻ
           </Button>
         </Box>
@@ -268,11 +293,16 @@ const CardPost = ({ data }) => {
               // height: "400px",
               // overflow: "scroll",
               // overflowX: "hidden",
-              marginTop: "10px",
+              // marginTop: "10px",
+              marginBottom: "10px",
             }}
           >
             {dataComent?.map((item, index) => (
-              <Comment dataComent={item} key={index} />
+              <Comment
+                dataComent={item}
+                callBackApi={handelDeleteComment}
+                key={index}
+              />
             ))}
           </div>
         </Collapse>
@@ -284,65 +314,68 @@ const CardPost = ({ data }) => {
             <span>
               {expanded
                 ? "Ẩn tất cả bình luận"
-                : `Xem tất cả ${dataComent?.length || 0} bình luận`}
+                : // : `Xem tất cả ${dataComent?.length || 0} bình luận`}
+                  ``}
             </span>
           </div>
         )}
 
-        <div
-          className="comment"
-          style={{ display: "flex", width: "100%", marginTop: "30px" }}
-        >
+        {userIdStorage && (
           <div
-            className="avatar"
-            style={{ width: "50px", height: "50px", marginLeft: "40px" }}
+            className="comment"
+            style={{ display: "flex", width: "100%", marginTop: "30px" }}
           >
-            <img
-              style={{ width: "100%", height: "100%", borderRadius: "50%" }}
-              src={data?.userId?.avt}
-              alt=""
-            />
-          </div>
-          <div
-            style={{
-              width: "78%",
-            }}
-          >
-            <Paper
-              component="form"
-              sx={{
-                marginLeft: "20px",
-                width: "100%",
+            <div
+              className="avatar"
+              style={{ width: "50px", height: "50px", marginLeft: "40px" }}
+            >
+              <img
+                style={{ width: "100%", height: "100%", borderRadius: "50%" }}
+                src={data?.userId?.avt}
+                alt=""
+              />
+            </div>
+            <div
+              style={{
+                width: "78%",
               }}
             >
-              <TextField
-                error={!!errors?.content}
-                {...register("content")}
-                sx={{ width: "100%" }}
-                value={content}
-                size="small"
-                multiline
-                maxRows={4}
-                placeholder="Aa..."
-                // onKeyDown={handleOnClickEnter}
-                onChange={(e) => {
-                  setContent(e.target.value);
+              <Paper
+                component="form"
+                sx={{
+                  marginLeft: "20px",
+                  width: "100%",
                 }}
-                helperText={errors.content?.message}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton type="button">
-                      <TelegramIcon
-                        disabled={!isDirty && !isValid}
-                        onClick={handleSubmit(handleComnent)}
-                      />
-                    </IconButton>
-                  ),
-                }}
-              />
-            </Paper>
+              >
+                <TextField
+                  error={!!errors?.content}
+                  {...register("content")}
+                  sx={{ width: "100%" }}
+                  value={content}
+                  size="small"
+                  multiline
+                  maxRows={4}
+                  placeholder="Aa..."
+                  // onKeyDown={handleOnClickEnter}
+                  onChange={(e) => {
+                    setContent(e.target.value);
+                  }}
+                  helperText={errors.content?.message}
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton type="button">
+                        <TelegramIcon
+                          disabled={!isDirty && !isValid}
+                          onClick={handleSubmit(handleComnent)}
+                        />
+                      </IconButton>
+                    ),
+                  }}
+                />
+              </Paper>
+            </div>
           </div>
-        </div>
+        )}
       </Box>
     </div>
   );

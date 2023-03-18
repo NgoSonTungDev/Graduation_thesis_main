@@ -9,11 +9,13 @@ import AdminHome from "./pages/admin/home";
 import AdminMessage from "./pages/admin/message";
 import Register from "./pages/auth/register";
 import Home from "./pages/home";
+import Login from "./pages/auth/login";
 import NotFound from "./pages/not_found";
 import Place from "./pages/place/index";
+import Profile from "./pages/profile";
 import Review from "./pages/review";
+import Explore from "./components/explore"
 import { OpenChatBox } from "./redux/selectors";
-import Explore from "./components/explore";
 const App = () => {
   const open = useSelector(OpenChatBox);
 
@@ -22,10 +24,13 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/place" element={<Place />} />
           <Route path="/review" element={<Review />} />
           <Route path="/explore" element={<Explore />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/admin/home" element={<AdminHome />} />
           <Route path="/admin/message" element={<AdminMessage />} />
 

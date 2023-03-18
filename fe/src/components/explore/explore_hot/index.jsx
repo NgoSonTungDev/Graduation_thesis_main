@@ -12,7 +12,7 @@ const ExploreHot = ({ data, callbackfn }) => {
       onClick={getByIdPlace}
       style={{
         width: "100%",
-        padding: "5px 0",
+        padding: "10px 0",
         margin: "10px 0",
         boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
         display: "flex",
@@ -27,7 +27,7 @@ const ExploreHot = ({ data, callbackfn }) => {
       <div
         style={{
           padding: "10px",
-          width: "60%",
+          width: "70%",
           display: "flex",
           flexDirection: "column",
         }}
