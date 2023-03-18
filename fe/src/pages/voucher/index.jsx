@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "./style.scss";
 import axiosClient from "../../api/axiosClient";
 import MapData from "./data_vocher";
 import { toastify } from "../../utils/common";
@@ -97,11 +96,14 @@ const Voucher = () => {
         </div>
 
         <div
-          className="card_voucher"
           style={{
-            width: "87%",
-            textTransform: "capitalize",
+            width: "80%",
+            marginLeft: "10%",
+            marginTop: "15px",
+            display: "flex",
+            flexWrap: "wrap",
             boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
+            justifyContent: "space-around",
           }}
         >
           {_.isEmpty(data) ? (

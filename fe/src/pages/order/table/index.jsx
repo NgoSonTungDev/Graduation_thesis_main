@@ -113,7 +113,11 @@ const TableOrderUser = ({
     } else if (number === 3) {
       return <p style={{ color: "#c0392b" }}>Đã hủy</p>;
     } else {
-      return <p style={{ color: "#3498db" }}>Đã thanh Toán</p>;
+      return (
+        <button className="button-check Evaluate" disabled={loading}>
+          Đánh giá
+        </button>
+      );
     }
   };
   return (

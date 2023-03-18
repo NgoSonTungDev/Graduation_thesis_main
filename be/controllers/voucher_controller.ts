@@ -59,7 +59,7 @@ const voucherController = {
         ],
       };
 
-      const data = await Vouchers.find(filter);
+      const data = await Vouchers.find(filter).populate("placeId", "name");
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {
@@ -95,7 +95,10 @@ const voucherController = {
 
       const condition = placeID ? { placeId: placeID } : {};
 
-      const newData = await Vouchers.find(condition);
+      const newData = await Vouchers.find(condition).populate(
+        "placeId",
+        "name"
+      );
 
       res.json(errorFunction(false, 200, "Lấy thành công !", newData));
     } catch (error) {
