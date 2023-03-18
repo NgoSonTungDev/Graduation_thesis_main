@@ -15,6 +15,8 @@ import moment from "moment";
 import React from "react";
 import axiosClient from "../../../api/axiosClient";
 import { formatMoney, toastify } from "../../../utils/common";
+import { setOrderLocalStorage } from "../../../utils/localstorage";
+import ModalEvaluate from "../model_evaluate";
 import "./style.scss";
 
 const style = {
@@ -36,8 +38,17 @@ const TableOrderUser = ({
   handleCloseLoading,
   loading,
 }) => {
+  const [description, setDescription] = React.useState({});
   const [open, setOpen] = React.useState(false);
-  const [description, setDescription] = React.useState("");
+  const [openEvaluate, setOpenEvaluate] = React.useState(false);
+
+  const handleClickOpenEvaluate = () => {
+    setOpenEvaluate(true);
+  };
+
+  const handleCloseEvaluate = () => {
+    setOpenEvaluate(false);
+  };
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -84,7 +95,15 @@ const TableOrderUser = ({
     }
   };
 
-  const renderButton = (number, id, codeOrder, total) => {
+  const renderButton = (
+    number,
+    id,
+    codeOrder,
+    total,
+    amount,
+    numberTickets,
+    email
+  ) => {
     if (number === 1) {
       return (
         <div style={{ color: "#2ecc71" }}>
@@ -93,6 +112,7 @@ const TableOrderUser = ({
             onClick={() => {
               handleCancel(id);
             }}
+            disabled={loading}
           >
             Hủy
           </button>
@@ -100,21 +120,32 @@ const TableOrderUser = ({
       );
     } else if (number === 2) {
       return (
-        <button
-          className="button-check payment"
-          onClick={() => {
-            handlePaymentVnPay(codeOrder, total);
-          }}
-          disabled={loading}
-        >
-          Thanh toán
-        </button>
+        <>
+          {amount > numberTickets ? (
+            <p style={{ color: "#d63031" }}>Hết vé</p>
+          ) : (
+            <button
+              className="button-check payment"
+              onClick={() => {
+                handlePaymentVnPay(codeOrder, total);
+                setOrderLocalStorage({ orderId: id, email: email });
+              }}
+              disabled={loading}
+            >
+              Thanh toán
+            </button>
+          )}
+        </>
       );
     } else if (number === 3) {
       return <p style={{ color: "#c0392b" }}>Đã hủy</p>;
     } else {
       return (
-        <button className="button-check Evaluate" disabled={loading}>
+        <button
+          className="button-check Evaluate"
+          disabled={loading}
+          onClick={handleClickOpenEvaluate}
+        >
           Đánh giá
         </button>
       );
@@ -133,7 +164,7 @@ const TableOrderUser = ({
               <TableCell align="center">Vé người lớn</TableCell>
               <TableCell align="center">Vé trẻ em</TableCell>
               <TableCell align="center">Ngày đi</TableCell>
-              <TableCell align="center">Mô tả</TableCell>
+              <TableCell align="center">Chi tiết</TableCell>
               <TableCell align="center">Ngày đặt</TableCell>
               <TableCell align="center">Tổng vé</TableCell>
               <TableCell align="center">Trạng thái</TableCell>
@@ -174,7 +205,13 @@ const TableOrderUser = ({
                   {item.description ? (
                     <Button
                       onClick={() => {
-                        setDescription(item.description);
+                        setDescription({
+                          name: item?.userId?.userName,
+                          email: item?.userId?.email,
+                          address: item?.userId?.address,
+                          numberPhone: item?.userId?.numberPhone,
+                          description: item.description,
+                        });
                         handleOpen();
                       }}
                     >
@@ -201,7 +238,10 @@ const TableOrderUser = ({
                     item.status,
                     item._id,
                     item.codeOrder,
-                    item.total
+                    item.total,
+                    item.amount,
+                    item?.ticketId?.numberTickets,
+                    item?.userId?.email
                   )}
                 </TableCell>
               </TableRow>
@@ -224,18 +264,53 @@ const TableOrderUser = ({
       >
         <Fade in={open}>
           <Box sx={style}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
+            <Typography
+              id="transition-modal-title"
+              variant="h6"
+              component="h2"
+              fontWeight={600}
+            >
               Mô tả
             </Typography>
             <Typography
               id="transition-modal-description"
               sx={{ mt: 2, textTransform: "capitalize" }}
             >
-              {description}
+              <span style={{ fontWeight: "bold" }}>Tên </span> :{" "}
+              {description.name}
+            </Typography>
+            <Typography
+              id="transition-modal-description"
+              sx={{ mt: 2, textTransform: "capitalize" }}
+            >
+              <span style={{ fontWeight: "bold" }}>Email </span> :{" "}
+              {description.email}
+            </Typography>
+            <Typography
+              id="transition-modal-description"
+              sx={{ mt: 2, textTransform: "capitalize" }}
+            >
+              <span style={{ fontWeight: "bold" }}>Địa chỉ </span> :{" "}
+              {description.address}
+            </Typography>
+            <Typography
+              id="transition-modal-description"
+              sx={{ mt: 2, textTransform: "capitalize" }}
+            >
+              <span style={{ fontWeight: "bold" }}>Số điện thoại </span> :{" "}
+              {description.numberPhone}
+            </Typography>
+            <Typography
+              id="transition-modal-description"
+              sx={{ mt: 2, textTransform: "capitalize" }}
+            >
+              <span style={{ fontWeight: "bold" }}> Ghi chú</span> :{" "}
+              {description.description}
             </Typography>
           </Box>
         </Fade>
       </Modal>
+      <ModalEvaluate open={openEvaluate} handleClose={handleCloseEvaluate} />
     </div>
   );
 };

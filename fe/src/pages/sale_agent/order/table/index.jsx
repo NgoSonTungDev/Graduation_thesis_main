@@ -30,7 +30,7 @@ const style = {
 
 const OrderTable = ({ data, callBackApi }) => {
   const [open, setOpen] = React.useState(false);
-  const [description, setDescription] = React.useState("");
+  const [description, setDescription] = React.useState({});
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -146,7 +146,7 @@ const OrderTable = ({ data, callBackApi }) => {
               <TableCell align="left">Vé người lớn</TableCell>
               <TableCell align="left">Vé trẻ em</TableCell>
               <TableCell align="left">Ngày đi</TableCell>
-              <TableCell align="left">Mô tả</TableCell>
+              <TableCell align="left">Chi tiết</TableCell>
               <TableCell align="left">Ngày đặt</TableCell>
               <TableCell align="left">Tổng vé</TableCell>
               <TableCell align="left">Trạng thái</TableCell>
@@ -187,7 +187,13 @@ const OrderTable = ({ data, callBackApi }) => {
                   {item.description ? (
                     <Button
                       onClick={() => {
-                        setDescription(item.description);
+                        setDescription({
+                          name: item?.userId?.userName,
+                          email: item?.userId?.email,
+                          address: item?.userId?.address,
+                          numberPhone: item?.userId?.numberPhone,
+                          description: item.description,
+                        });
                         handleOpen();
                       }}
                     >
@@ -232,14 +238,50 @@ const OrderTable = ({ data, callBackApi }) => {
       >
         <Fade in={open}>
           <Box sx={style}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
+            <Typography
+              id="transition-modal-title"
+              variant="h6"
+              component="h2"
+              fontWeight={600}
+            >
               Mô tả
             </Typography>
             <Typography
               id="transition-modal-description"
               sx={{ mt: 2, textTransform: "capitalize" }}
             >
-              {description}
+              <span style={{ fontWeight: "bold" }}>Tên khách hàng</span> :{" "}
+              {description.name}
+            </Typography>
+            <Typography
+              id="transition-modal-description"
+              sx={{ mt: 2, textTransform: "capitalize" }}
+            >
+              <span style={{ fontWeight: "bold" }}>Email khách hàng</span> :{" "}
+              {description.email}
+            </Typography>
+            <Typography
+              id="transition-modal-description"
+              sx={{ mt: 2, textTransform: "capitalize" }}
+            >
+              <span style={{ fontWeight: "bold" }}>Địa chỉ khách hàng</span> :{" "}
+              {description.address}
+            </Typography>
+            <Typography
+              id="transition-modal-description"
+              sx={{ mt: 2, textTransform: "capitalize" }}
+            >
+              <span style={{ fontWeight: "bold" }}>
+                Số điện thoại khách hàng
+              </span>{" "}
+              : {description.numberPhone}
+            </Typography>
+            <Typography
+              id="transition-modal-description"
+              sx={{ mt: 2, textTransform: "capitalize" }}
+            >
+              <span style={{ fontWeight: "bold" }}> Ghi chú</span> :{" "}
+              {description.description}
             </Typography>
           </Box>
         </Fade>

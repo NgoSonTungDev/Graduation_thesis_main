@@ -158,7 +158,12 @@ const Header = ({ ReactNode }) => {
               </div>
             </SidebarContent>
             <SidebarFooter>
-              <Menu iconShape="square">
+              <Menu
+                iconShape="square"
+                onClick={() => {
+                  navigation("/home");
+                }}
+              >
                 <MenuItem icon={<FiLogOut />}>Exit</MenuItem>
               </Menu>
             </SidebarFooter>
