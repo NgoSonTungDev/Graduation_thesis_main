@@ -3,74 +3,44 @@ import React from "react";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import "./style.scss";
 
-const ExploreUser = ({ dataUser,getIdMovePage }) => {
-  const userIdStorage = getUserDataLocalStorage();
-
+const ExploreUser = ({ dataUser, getIdMovePage }) => {
   return (
     <div
+      onClick={() => {
+        getIdMovePage(dataUser?._id);
+      }}
       style={{
-        width: "100%",
-        padding: "10px 0",
-        margin: "10px 0",
-        boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
         display: "flex",
         alignItems: "center",
-        overflow: "hidden",
-        cursor: "pointer",
+        height: "60px",
+        width: "300px",
+        border: "1px solid #ccc",
+        borderRadius: "5px",
+        padding: "10px",
       }}
-      onClick={()=>{getIdMovePage(dataUser?._id)}}
     >
-      <div className="user_image">
-        <img src={userIdStorage?.avt} alt="" />
-      </div>
-      <div
+      <img
+        src={dataUser?.avt}
+        alt="user avatar"
         style={{
-          width: "70%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          // gap: "12px",
+          width: "40px",
+          height: "40px",
+          borderRadius: "50%",
+          marginRight: "10px",
         }}
-      >
-        <div
-          style={{
-            fontSize: "20px",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
-          <b>{dataUser?.userName}</b>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <span style={{ whiteSpace: "pre" }}>Địa chỉ :</span>
-          <span
-            style={{
-              marginLeft: "5px",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {dataUser?.email}
-          </span>
-        </div>
-        <div> <span style={{ whiteSpace: "pre" }}>Ngày tạo :</span>
-          <span
-            style={{
-              marginLeft: "5px",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {moment(dataUser?.createdAt).format("DD/MM/YYYY")}
-          </span></div>
+      />
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <span style={{ fontWeight: "bold", fontSize: "16px" }}>
+          {" "}
+          {dataUser?.userName}
+        </span>
+        <span style={{ fontSize: "14px", color: "#777" }}>
+          {" "}
+          {dataUser?.email}
+        </span>
+        <span style={{ fontSize: "14px", color: "#777" }}>
+          {moment(dataUser?.createdAt).format("DD/MM/YYYY")}
+        </span>
       </div>
     </div>
   );

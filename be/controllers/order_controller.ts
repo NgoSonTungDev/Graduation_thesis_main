@@ -45,7 +45,7 @@ const orderController = {
       const result = await Orders.find(condition)
         .skip(SkipNumber)
         .limit(Number(limit))
-        .populate("userId", ["userName", "email"])
+        .populate("userId", ["userName", "email", "address", "numberPhone"])
         .populate("placeId", "name")
         .populate("salesAgentId", ["code", "userName"])
         .populate("ticketId", ["adultTicket", "childTicket", "numberTickets"]);
@@ -95,7 +95,7 @@ const orderController = {
       const result = await Orders.find(filter)
         .skip(SkipNumber)
         .limit(Number(limit))
-        .populate("userId", ["userName", "email"])
+        .populate("userId", ["userName", "email", "address", "numberPhone"])
         .populate("placeId", "name")
         .populate("salesAgentId", ["code", "userName"])
         .populate("ticketId", ["adultTicket", "childTicket", "numberTickets"]);
@@ -145,7 +145,7 @@ const orderController = {
       const result = await Orders.find(filter)
         .skip(SkipNumber)
         .limit(Number(limit))
-        .populate("userId", ["userName", "email"])
+        .populate("userId", ["userName", "email", "address", "numberPhone"])
         .populate("placeId", "name")
         .populate("salesAgentId", ["code", "userName"])
         .populate("ticketId", ["adultTicket", "childTicket", "numberTickets"]);

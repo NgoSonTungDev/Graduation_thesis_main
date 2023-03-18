@@ -26,7 +26,7 @@ const ChartStatisticDay = () => {
     },
     xAxis: {
       categories: data?.detail?.map((e) =>
-        moment(e.dateTime).format("dd/mm/yyyy HH:MM")
+        moment(e.dateTime).format("DD/mm/yyyy HH:mm")
       ),
     },
     yAxis: {

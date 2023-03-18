@@ -22,7 +22,7 @@ const postController = {
 
       const condition = placeID ? { placeId: placeID } : {};
 
-      const allUser = await Posts.find({ condition });
+      const allPost = await Posts.find({ condition });
 
       const result = await Posts.find(condition)
         .skip(SkipNumber)
@@ -32,16 +32,17 @@ const postController = {
         .populate("placeId", "name");
 
       let totalPage = 0;
-      if (allUser.length % Number(5) === 0) {
-        totalPage = allUser.length / Number(5);
+
+      if (allPost.length % Number(5) === 0) {
+        totalPage = allPost.length / Number(5);
       } else {
-        totalPage = Math.floor(allUser.length / Number(5) + 1);
+        totalPage = Math.floor(allPost.length / Number(5) + 1);
       }
 
       res.json(
         errorFunction(false, 200, "Lấy thành công !", {
           totalPage: totalPage,
-          total: allUser.length,
+          total: allPost.length,
           data: result,
         })
       );

@@ -37,11 +37,6 @@ const MapData = ({ data }) => {
   };
 
   return (
-    // <div style={styles.card}>
-    //   <div style={styles.placeName}>{data.placeId?.name}</div>
-    //   <div style={styles.discount}>Giảm giá {formatMoney(data.price)}</div>
-    //   <div style={styles.code}>Mã code: {data.codeVoucher}</div>
-    // </div>
     <div
       style={{
         backgroundColor: "#fff",
@@ -76,6 +71,7 @@ const MapData = ({ data }) => {
           fontSize: "18px",
         }}
       >
+        <div style={styles.discount}>Địa điểm: {data.placeId?.name}</div>
         <div style={styles.discount}>Sự kiện: {data.title}</div>
         <div style={styles.discount}>Giảm giá: {formatMoney(data.price)}</div>
       </p>
