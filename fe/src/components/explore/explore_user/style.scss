@@ -1,0 +1,22 @@
+.user_image {
+    width: 30%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    // margin-left: 10px;
+    &:hover img {
+      transition: 1s all;
+      transform: scale(1.1);
+    }
+  
+    img {
+      width: 56px;
+      border-radius: 50%;
+      height: 56px;
+      transition: 0.5s all;
+      // width: 100%;
+    }
+  }
+  

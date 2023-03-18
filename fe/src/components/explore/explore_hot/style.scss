@@ -1,0 +1,18 @@
+.explore_image {
+  width: 30%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  &:hover img {
+    transition: 1s all;
+    transform: scale(1.1);
+  }
+
+  img {
+    transition: 0.5s all;
+    width: 56px;
+    height: 56px;
+  }
+}

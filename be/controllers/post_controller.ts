@@ -28,6 +28,7 @@ const postController = {
         .skip(SkipNumber)
         .limit(Number(5))
         .populate("userId", ["userName", "avt"])
+        .populate("userId",["userName","avt"])
         .populate("placeId", "name");
 
       let totalPage = 0;

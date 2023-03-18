@@ -10,12 +10,15 @@ import AdminMessage from "./pages/admin/message";
 import Statistic from "./pages/admin/statistic";
 import Register from "./pages/auth/register";
 import Home from "./pages/home";
+import Login from "./pages/auth/login";
 import NotFound from "./pages/not_found";
 import Place from "./pages/place/index";
+import Profile from "./pages/profile";
 import Review from "./pages/review";
+import Explore from "./components/explore"
+import { OpenChatBox } from "./redux/selectors";
 import HomeSaleAgent from "./pages/sale_agent/home";
 import OrderSaleAgent from "./pages/sale_agent/order";
-import { OpenChatBox } from "./redux/selectors";
 import Voucher from "./pages/voucher";
 import Order from "./pages/order";
 import ThankCustomer from "./pages/thank_customer";
@@ -29,9 +32,12 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/place" element={<Place />} />
           <Route path="/review" element={<Review />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/profile/:id" element={<Profile />} />
           <Route path="/voucher" element={<Voucher />} />
           <Route path="/order/:id" element={<Order />} />
           <Route path="/page/thank-customer" element={<ThankCustomer />} />
