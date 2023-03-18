@@ -19,6 +19,7 @@ const validationRepComment = yup.object().shape({
 });
 
 const Comment = ({ dataComment, callBackApi }) => {
+  console.log("dsads", dataComment);
   const [numberLike, setNumberLike] = useState();
   const [like, setLike] = useState(false);
   const [datarepComent, setDataRepComment] = React.useState([]);
@@ -82,7 +83,7 @@ const Comment = ({ dataComment, callBackApi }) => {
         })
         .then((res) => {
           setLike(true);
-          toastify("success", res.data.message);
+          // toastify("success", res.data.message);
           setNumberLike(res.data.data);
         })
         .catch((err) => {
@@ -100,7 +101,7 @@ const Comment = ({ dataComment, callBackApi }) => {
         })
         .then((res) => {
           setLike(false);
-          toastify("success", res.data.message);
+          // toastify("success", res.data.message);
           setNumberLike(res.data.data);
         })
         .catch((err) => {
@@ -166,41 +167,38 @@ const Comment = ({ dataComment, callBackApi }) => {
         style={{
           width: "100%",
           display: "flex",
+          marginTop: "5px",
         }}
       >
         <div
           style={{
-            width: "40px",
-            height: "40px",
-            marginLeft: "40px",
+            width: "50px",
+            height: "50px",
           }}
         >
           <img
             style={{ width: "100%", height: "100%", borderRadius: "50%" }}
-            src={userIdStorage?.avt}
+            src={dataComment?.userId?.avt}
             alt=""
           />
         </div>
         <div
           style={{
-            maxWidth: "85%",
+            width: "100%",
           }}
         >
           <div
             style={{
-              // width: "auto",
               boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
-              marginLeft: "30px",
+              marginLeft: "10px",
               padding: "5px",
-              marginTop: "10px",
               borderRadius: "10px",
             }}
           >
             <div style={{ display: "flex", padding: "5px" }}>
-              <div>{dataComment?.userId?.userName}</div>
-              <div style={{ marginLeft: "40px" }}>
-                {momentLocale(dataComment?.dateTime)}
-              </div>
+              <b style={{ textTransform: "capitalize" }}>
+                {dataComment?.userId?.userName}
+              </b>
             </div>
             <div style={{ padding: "5px" }}>
               <span>{dataComment?.content}</span>
@@ -208,20 +206,24 @@ const Comment = ({ dataComment, callBackApi }) => {
           </div>
           <div
             style={{
+              width: "40%",
               paddingBottom: "3%",
+              marginLeft: "15px",
               display: "flex",
               padding: "5px",
-              marginLeft: "10%",
+              justifyContent: "space-between",
+              fontSize: 13,
             }}
           >
             <div style={{ cursor: "pointer" }}>
               {like ? (
                 <span
+                  style={{ color: "#3498db" }}
                   onClick={(e) => {
                     handleUnlikeComment(e);
                   }}
                 >
-                  <span>{dataComment ? `${numberLike} thích` : "thích"}</span>
+                  Đã thích ({numberLike})
                 </span>
               ) : (
                 <span
@@ -229,35 +231,32 @@ const Comment = ({ dataComment, callBackApi }) => {
                     handleLikeComment(e);
                   }}
                 >
-                  <span>{dataComment ? `${numberLike} thích` : "thích"}</span>
+                  thích ({numberLike})
                 </span>
               )}
             </div>
+
             {userIdStorage?._id === dataComment?.userId?._id && (
-              <div style={{ marginLeft: "10%", cursor: "pointer" }}>
+              <div style={{ cursor: "pointer" }}>
                 <span onClick={handleClickOpen}>Xóa</span>
               </div>
             )}
+
             {userIdStorage && (
-              <div
-                style={{ marginLeft: "10%", cursor: "pointer" }}
-                onClick={handleExpandClick}
-              >
+              <div style={{ cursor: "pointer" }} onClick={handleExpandClick}>
                 <span>phản hồi</span>
               </div>
             )}
+            <span>{momentLocale(dataComment?.dateTime)}</span>
           </div>
         </div>
       </div>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <div
           style={{
-            width: "80%",
-            // height: "400px",
-            // overflow: "scroll",
-            // overflowX: "hidden",
+            width: "90%",
             marginTop: "10px",
-            marginLeft: "15%",
+            marginLeft: "10%",
           }}
         >
           {datarepComent?.map((item, index) => (

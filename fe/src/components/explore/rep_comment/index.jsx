@@ -8,7 +8,6 @@ import { momentLocale, toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 
 const Rep_Comment = ({ datarepComent, callBackApi }) => {
-  const [datarepComent1, setDataRepComment] = React.useState([]);
   const [numberLike, setNumberLike] = useState(0);
   const [like, setLike] = useState(false);
   const userIdStorage = getUserDataLocalStorage();
@@ -27,7 +26,7 @@ const Rep_Comment = ({ datarepComent, callBackApi }) => {
         userId: userIdStorage._id,
       })
       .then((res) => {
-        toastify("success", res.data.message);
+        // toastify("success", res.data.message);
         handleClose();
         callBackApi(datarepComent._id);
       })
@@ -35,6 +34,7 @@ const Rep_Comment = ({ datarepComent, callBackApi }) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
+
   const handleLikeRepComment = (e) => {
     if (userIdStorage) {
       axiosClient
@@ -43,7 +43,7 @@ const Rep_Comment = ({ datarepComent, callBackApi }) => {
         })
         .then((res) => {
           setLike(true);
-          toastify("success", res.data.message);
+          // toastify("success", res.data.message);
           setNumberLike(res.data.data);
           console.log("resssss", res);
         })
@@ -62,7 +62,7 @@ const Rep_Comment = ({ datarepComent, callBackApi }) => {
         })
         .then((res) => {
           setLike(false);
-          toastify("success", res.data.message);
+          // toastify("success", res.data.message);
           setNumberLike(res.data.data);
         })
         .catch((err) => {
@@ -88,12 +88,12 @@ const Rep_Comment = ({ datarepComent, callBackApi }) => {
     fetchData();
     setNumberLike(Number(datarepComent?.like.length));
   }, []);
+
   return (
     <div>
       <div
         style={{
-          width: "90%",
-          marginLeft: "10%",
+          width: "100%",
           display: "flex",
         }}
       >
@@ -101,7 +101,6 @@ const Rep_Comment = ({ datarepComent, callBackApi }) => {
           style={{
             width: "40px",
             height: "40px",
-            marginLeft: "40px",
           }}
         >
           <img
@@ -112,24 +111,21 @@ const Rep_Comment = ({ datarepComent, callBackApi }) => {
         </div>
         <div
           style={{
-            maxWidth: "85%",
+            width: "100%",
           }}
         >
           <div
             style={{
-              //   width: "90%",
               boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
-              marginLeft: "30px",
-              marginTop: "10px",
+              marginLeft: "10px",
               padding: "5px",
               borderRadius: "10px",
             }}
           >
             <div style={{ display: "flex", padding: "5px" }}>
-              <div>{datarepComent?.userId?.userName}</div>
-              <div style={{ marginLeft: "20px" }}>
-                {momentLocale(datarepComent?.dateTime)}
-              </div>
+              <b style={{ textTransform: "capitalize" }}>
+                {datarepComent?.userId?.userName}
+              </b>
             </div>
             <div style={{ padding: "5px" }}>
               <span>{datarepComent?.content}</span>
@@ -137,22 +133,24 @@ const Rep_Comment = ({ datarepComent, callBackApi }) => {
           </div>
           <div
             style={{
+              width: "35%",
               paddingBottom: "3%",
+              marginLeft: "15px",
               display: "flex",
               padding: "5px",
-              marginLeft: "10%",
+              justifyContent: "space-between",
+              fontSize: 13,
             }}
           >
             <div style={{ cursor: "pointer" }}>
               {like ? (
                 <span
+                  style={{ color: "#3498db" }}
                   onClick={(e) => {
                     handleUnlikeRepComment(e);
                   }}
                 >
-                  <span>
-                    {datarepComent1 ? `${numberLike} Thích` : "Thích"}
-                  </span>
+                  Đã thích ({numberLike})
                 </span>
               ) : (
                 <span
@@ -160,17 +158,16 @@ const Rep_Comment = ({ datarepComent, callBackApi }) => {
                     handleLikeRepComment(e);
                   }}
                 >
-                  <span>
-                    {datarepComent1 ? `${numberLike} Thích` : "Thích"}
-                  </span>
+                  thích ({numberLike})
                 </span>
               )}
             </div>
             {userIdStorage?._id === datarepComent?.userId?._id && (
-              <div style={{ marginLeft: "10%", cursor: "pointer" }}>
+              <div style={{ cursor: "pointer" }}>
                 <span onClick={handleClickOpen}>Xóa</span>
               </div>
             )}
+            <span>{momentLocale(datarepComent?.dateTime)}</span>
           </div>
         </div>
       </div>

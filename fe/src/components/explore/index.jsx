@@ -12,7 +12,7 @@ import CardPost from "./card_post";
 import ExploreHot from "./explore_hot";
 import ExploreUser from "./explore_user";
 import advertisement from "./images/advertisement.png";
-import _ from "lodash"
+import _ from "lodash";
 import "./style.scss";
 import { useNavigate } from "react-router-dom";
 
@@ -21,7 +21,7 @@ const Explore = () => {
   const [data, setData] = useState([]);
   const [dataUser, setDataUser] = useState([]);
   const [dataPost, setDataPost] = useState([]);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [payloadPost, setpayLoadPost] = useState({
     pageNumber: 1,
     placeID: "",
@@ -51,7 +51,6 @@ const Explore = () => {
   const handleFindPostById = (id) => {
     setpayLoadPost({ pageNumber: 1, placeID: id });
   };
-
 
   const getApiPlace = () => {
     // setLoading(true);
@@ -102,9 +101,9 @@ const Explore = () => {
     };
   }, []);
 
-  const getByIdUserMoveProfile = (id)=>{
-    navigate(`/profile/${id}`)
-  }
+  const getByIdUserMoveProfile = (id) => {
+    navigate(`/profile/${id}`);
+  };
 
   useEffect(() => {
     getApiPlace();
@@ -128,7 +127,6 @@ const Explore = () => {
             <div
               style={{
                 width: "100%",
-                // marginTop: "10px",
               }}
             >
               {loading ? (
@@ -141,7 +139,7 @@ const Explore = () => {
                     key={index}
                   />
                 ))
-              ) : _.isEmpty(dataPost.data)  ? (
+              ) : _.isEmpty(dataPost.data) ? (
                 <ErrorEmpty />
               ) : (
                 dataPost?.data?.map((item, index) => {
@@ -183,7 +181,6 @@ const Explore = () => {
             </div>
 
             <Paper
-              component="form"
               sx={{
                 display: "flex",
                 marginLeft: "5%",
@@ -197,22 +194,15 @@ const Explore = () => {
                 placeholder="Tên địa điểm"
                 inputProps={{ "aria-label": "Tên địa điểm" }}
                 onChange={(e) => {
-                  e.preventDefault()
+                  e.preventDefault();
                   debounceFn(e.target.value);
                 }}
               />
-              {/* <IconButton
-                type="button"
-                sx={{ p: "10px" }}
-                aria-label="search"
-                disabled
-              >
-                <SearchIcon />
-              </IconButton> */}
             </Paper>
             <div
               style={{
                 width: "100%",
+                paddingBottom: "10px",
               }}
             >
               {loading ? (
@@ -268,6 +258,7 @@ const Explore = () => {
               style={{
                 width: "100%",
                 marginTop: "10px",
+                paddingBottom: "15px",
               }}
             >
               {loading ? (
@@ -284,7 +275,13 @@ const Explore = () => {
                 <ErrorEmpty />
               ) : (
                 dataUser?.map((item, index) => {
-                  return <ExploreUser dataUser={item} key={index} getIdMovePage={getByIdUserMoveProfile}/>;
+                  return (
+                    <ExploreUser
+                      dataUser={item}
+                      key={index}
+                      getIdMovePage={getByIdUserMoveProfile}
+                    />
+                  );
                 })
               )}
             </div>

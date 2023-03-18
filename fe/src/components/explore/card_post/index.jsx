@@ -1,7 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ReplyIcon from "@mui/icons-material/Reply";
 import TelegramIcon from "@mui/icons-material/Telegram";
@@ -19,6 +18,7 @@ import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Comment from "../comment";
+
 const validationComment = yup.object().shape({
   content: yup.string().required("Comment không được để trống"),
 });
@@ -31,6 +31,7 @@ const CardPost = ({ data }) => {
   const [content, setContent] = useState("");
   const userIdStorage = getUserDataLocalStorage();
   const [open, setOpen] = useState(false);
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -97,15 +98,16 @@ const CardPost = ({ data }) => {
       });
   };
 
-  // const handleOnClickEnter = (e) => {
-  //   e.stopPropagation()
-  //   if (e.key === "Enter") {
-  //     // handleComnent();
-  //     setContent("");
-  //   }
-  // };
+  const handleOnClickEnter = (e) => {
+    e.stopPropagation();
+    if (e.key === "Enter") {
+      handleComment();
+      setContent("");
+      setExpanded(true);
+    }
+  };
 
-  const handleComnent = () => {
+  const handleComment = () => {
     axiosClient
       .post(`/comment/add/`, {
         userId: userIdStorage._id,
@@ -159,6 +161,7 @@ const CardPost = ({ data }) => {
     fetchData();
     setNumberLike(Number(data?.like.length));
   }, []);
+
   return (
     <div style={{ width: "100%" }}>
       <Box
@@ -194,7 +197,9 @@ const CardPost = ({ data }) => {
             >
               <div>
                 <span style={{ textTransform: "capitalize" }}>
-                  {data?.userId?.userName}
+                  {data?.userId?.userName
+                    ? data?.userId?.userName
+                    : "Người dùng Mafline"}
                 </span>
               </div>
               <div>
@@ -241,13 +246,11 @@ const CardPost = ({ data }) => {
           className="image"
           style={{
             width: "92%",
-            // height:"100%",
             marginLeft: "4%",
             paddingTop: "30px",
           }}
         >
           <Image width={"100%"} src={data.image} style={{ width: "100%" }} />
-          {/* <img src={data.image} style={{ width: "92%" }} /> */}
         </div>
         <Box
           sx={{
@@ -310,12 +313,9 @@ const CardPost = ({ data }) => {
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <div
             style={{
-              width: "100%",
-              // height: "400px",
-              // overflow: "scroll",
-              // overflowX: "hidden",
-              // marginTop: "10px",
-              marginBottom: "10px",
+              width: "93%",
+              marginLeft: "3.5%",
+              paddingBottom: 5,
             }}
           >
             {dataComment?.map((item, index) => (
@@ -332,19 +332,18 @@ const CardPost = ({ data }) => {
             onClick={() => setExpanded((isShow) => !isShow)}
             style={{ textAlign: "center", cursor: "pointer" }}
           >
-            <span>
-              {expanded
-                ? "Ẩn tất cả bình luận"
-                : // : `Xem tất cả ${dataComment?.length || 0} bình luận`}
-                  ``}
-            </span>
+            <span>{expanded && "Ẩn tất cả bình luận"}</span>
           </div>
         )}
 
         {userIdStorage && (
           <div
             className="comment"
-            style={{ display: "flex", width: "100%", marginTop: "30px" }}
+            style={{
+              display: "flex",
+              width: "100%",
+              alignItems: "center",
+            }}
           >
             <div
               className="avatar"
@@ -362,7 +361,6 @@ const CardPost = ({ data }) => {
               }}
             >
               <Paper
-                component="form"
                 sx={{
                   marginLeft: "20px",
                   width: "100%",
@@ -371,13 +369,11 @@ const CardPost = ({ data }) => {
                 <TextField
                   error={!!errors?.content}
                   {...register("content")}
-                  sx={{ width: "100%" }}
+                  sx={{ width: "100%", border: "none", outline: "none" }}
                   value={content}
                   size="small"
-                  multiline
-                  maxRows={4}
                   placeholder="Aa..."
-                  // onKeyDown={handleOnClickEnter}
+                  onKeyDown={handleOnClickEnter}
                   onChange={(e) => {
                     setContent(e.target.value);
                   }}
@@ -387,7 +383,7 @@ const CardPost = ({ data }) => {
                       <IconButton type="button">
                         <TelegramIcon
                           disabled={!isDirty && !isValid}
-                          onClick={handleSubmit(handleComnent)}
+                          onClick={handleSubmit(handleComment)}
                         />
                       </IconButton>
                     ),

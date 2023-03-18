@@ -6,41 +6,18 @@ import "./style.scss";
 const ExploreUser = ({ dataUser, getIdMovePage }) => {
   return (
     <div
+      className="card"
       onClick={() => {
         getIdMovePage(dataUser?._id);
       }}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        height: "60px",
-        width: "300px",
-        border: "1px solid #ccc",
-        borderRadius: "5px",
-        padding: "10px",
-      }}
     >
-      <img
-        src={dataUser?.avt}
-        alt="user avatar"
-        style={{
-          width: "40px",
-          height: "40px",
-          borderRadius: "50%",
-          marginRight: "10px",
-        }}
-      />
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <span style={{ fontWeight: "bold", fontSize: "16px" }}>
-          {" "}
-          {dataUser?.userName}
-        </span>
-        <span style={{ fontSize: "14px", color: "#777" }}>
-          {" "}
-          {dataUser?.email}
-        </span>
-        <span style={{ fontSize: "14px", color: "#777" }}>
-          {moment(dataUser?.createdAt).format("DD/MM/YYYY")}
-        </span>
+      <img src={dataUser?.avt} className="card-image" />
+      <div className="card-content">
+        <h3 className="card-title">{dataUser?.userName}</h3>
+        <p className="card-description">Giới tính : {dataUser.gender}</p>
+        <p className="card-location">
+          Ngày tham gia : {moment(dataUser?.createdAt).format("DD/MM/YYYY")}
+        </p>
       </div>
     </div>
   );

@@ -18,7 +18,11 @@ const ModalEvaluate = ({ open, handleClose }) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Đánh giá địa điểm"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          <Typography sx={{ fontWeight: 600, fontSize: "22px" }}>
+            Đánh giá địa điểm
+          </Typography>
+        </DialogTitle>
         <DialogContent style={{ width: 550 }}>
           <DialogContentText id="alert-dialog-description">
             <Box
@@ -52,13 +56,13 @@ const ModalEvaluate = ({ open, handleClose }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
+          <Button onClick={handleClose}>Hủy</Button>
           <LoadingButton
             loading={false}
             loadingIndicator="Loading…"
-            variant="outlined"
+            variant="text"
           >
-            Fetch data
+            Gửi đánh giá
           </LoadingButton>
         </DialogActions>
       </Dialog>
