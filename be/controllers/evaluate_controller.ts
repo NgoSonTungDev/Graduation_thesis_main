@@ -86,7 +86,7 @@ const evaluateController = {
           },
         });
         res.json(
-          errorFunction(false, 200, "Có 2 ý tốt trong bình luận này", {
+          errorFunction(false, 200, "Ghi nhận đánh giá của bạn.", {
             data,
             message: response.data.choices[0].text + "Tích cực",
           })
@@ -122,9 +122,10 @@ const evaluateController = {
   },
   getByIdEvaluate: async (req: Request, res: Response) => {
     try {
-      const data = await Evaluates.find({ placeId: req.params.id })
-        .populate("userId", "userName")
-        .populate("userId", "avt");
+      const data = await Evaluates.find({ placeId: req.params.id }).populate(
+        "userId",
+        ["userName", "avt"]
+      );
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {
       res.status(500).json(error);
@@ -132,9 +133,11 @@ const evaluateController = {
   },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await Evaluates.find()
-        .populate("userId", "userName")
-        .populate("userId", "avt");
+      const data = await Evaluates.find().populate("userId", [
+        "userName",
+        "avt",
+      ]);
+
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {
       res.status(400).json({

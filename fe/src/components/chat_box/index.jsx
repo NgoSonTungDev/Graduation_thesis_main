@@ -10,11 +10,13 @@ import "./style.scss";
 import ws from "../../socket";
 import { toastify } from "../../utils/common";
 import { listChatBox } from "../../redux/selectors";
+import { getUserDataLocalStorage } from "../../utils/localstorage";
 
 const ChatBox = ({ openBox }) => {
   const [message, setMessage] = useState("");
-  const dispatch = useDispatch();
   const listChat = useSelector(listChatBox);
+  const dispatch = useDispatch();
+  const userIdStorage = getUserDataLocalStorage();
 
   const handleOnClickEnter = (e) => {
     if (e.key === "Enter") {
@@ -29,7 +31,7 @@ const ChatBox = ({ openBox }) => {
 
   const sendMessage = async () => {
     const messageData = {
-      room: "63fd6e153ac0f9d2d5e10309",
+      room: userIdStorage.roomId,
       isAdmin: false,
       message: message,
       time: Number(new Date()),

@@ -45,7 +45,6 @@ import "./index.scss";
 import NotificationItem from "./notification";
 
 const Navbar = ({ loading, valueTab }) => {
-  const currrenUser = JSON.parse(localStorage.getItem("user"));
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -62,7 +61,7 @@ const Navbar = ({ loading, valueTab }) => {
 
   const handleGetDataInbox = (event, newValue) => {
     axiosClient
-      .get(`/room/get-room-user/63fd6e153ac0f9d2d5e10309`)
+      .get(`/room/get-room-user/${userIdStorage?._id}`)
       .then((res) => {
         dispatch(changeListInbox(res.data.data.listInbox));
       })
@@ -104,7 +103,7 @@ const Navbar = ({ loading, valueTab }) => {
   };
 
   const joinRoom = () => {
-    ws.joinRoom("63fd6e153ac0f9d2d5e10309");
+    ws.joinRoom(userIdStorage?.roomId);
   };
 
   useEffect(() => {
@@ -226,7 +225,7 @@ const Navbar = ({ loading, valueTab }) => {
               </div>
             )}
             <div className="Icon">
-              {currrenUser ? (
+              {userIdStorage ? (
                 <>
                   <IconButton onClick={handleOpenModal}>
                     <FavoriteBorderIcon />

@@ -8,8 +8,12 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
+import ws from "../../../socket";
 import { toastify } from "../../../utils/common";
-import { setUserDataLocalStorage } from "../../../utils/localstorage";
+import {
+  getUserDataLocalStorage,
+  setUserDataLocalStorage,
+} from "../../../utils/localstorage";
 import "./style.scss";
 
 const validationInput = yup.object().shape({
@@ -24,6 +28,7 @@ const validationInput = yup.object().shape({
 const Login = () => {
   const [check, setCheck] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const userIdStorage = getUserDataLocalStorage();
   const navigation = useNavigate();
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
@@ -52,6 +57,10 @@ const Login = () => {
   //   }
   // }
 
+  const joinRoom = (id) => {
+    ws.joinRoom(id);
+  };
+
   const handleLogin = (data) => {
     setCheck(true);
     axiosClient
@@ -60,10 +69,10 @@ const Login = () => {
         password: data.password,
       })
       .then((res) => {
-        console.log(res.data);
         setUserDataLocalStorage(res.data.data);
         setCheck(false);
         navigation("/home");
+        joinRoom(res.data.data.roomId);
       })
       .catch((err) => {
         setCheck(false);

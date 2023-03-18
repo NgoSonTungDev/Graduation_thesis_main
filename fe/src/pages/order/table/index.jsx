@@ -40,6 +40,7 @@ const TableOrderUser = ({
 }) => {
   const [description, setDescription] = React.useState({});
   const [open, setOpen] = React.useState(false);
+  const [placeId, setPlaceId] = React.useState("");
   const [openEvaluate, setOpenEvaluate] = React.useState(false);
 
   const handleClickOpenEvaluate = () => {
@@ -102,7 +103,8 @@ const TableOrderUser = ({
     total,
     amount,
     numberTickets,
-    email
+    email,
+    placeId
   ) => {
     if (number === 1) {
       return (
@@ -144,7 +146,10 @@ const TableOrderUser = ({
         <button
           className="button-check Evaluate"
           disabled={loading}
-          onClick={handleClickOpenEvaluate}
+          onClick={() => {
+            handleClickOpenEvaluate();
+            setPlaceId(placeId);
+          }}
         >
           Đánh giá
         </button>
@@ -241,7 +246,8 @@ const TableOrderUser = ({
                     item.total,
                     item.amount,
                     item?.ticketId?.numberTickets,
-                    item?.userId?.email
+                    item?.userId?.email,
+                    item?.placeId?._id
                   )}
                 </TableCell>
               </TableRow>
@@ -310,7 +316,11 @@ const TableOrderUser = ({
           </Box>
         </Fade>
       </Modal>
-      <ModalEvaluate open={openEvaluate} handleClose={handleCloseEvaluate} />
+      <ModalEvaluate
+        open={openEvaluate}
+        handleClose={handleCloseEvaluate}
+        placeId={placeId}
+      />
     </div>
   );
 };
