@@ -4,7 +4,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Box, Button, Typography } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import Rating from "@mui/material/Rating";
 
 const ModalEvaluate = ({ open, handleClose }) => {
@@ -18,7 +19,7 @@ const ModalEvaluate = ({ open, handleClose }) => {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">{"Đánh giá địa điểm"}</DialogTitle>
-        <DialogContent>
+        <DialogContent style={{ width: 550 }}>
           <DialogContentText id="alert-dialog-description">
             <Box
               sx={{
@@ -39,15 +40,26 @@ const ModalEvaluate = ({ open, handleClose }) => {
             </Box>
           </DialogContentText>
           <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending
-            anonymous location data to Google, even when no apps are running.
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Đánh giá của bạn"
+              type="email"
+              fullWidth
+              variant="standard"
+            />
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose} autoFocus>
-            Agree
-          </Button>
+          <LoadingButton
+            loading={false}
+            loadingIndicator="Loading…"
+            variant="outlined"
+          >
+            Fetch data
+          </LoadingButton>
         </DialogActions>
       </Dialog>
     </div>
