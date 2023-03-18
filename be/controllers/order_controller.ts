@@ -1,8 +1,10 @@
+import { ITicket } from "./../types/ticket";
 import { IOrder } from "./../types/order";
 import { errorFunction } from "../utils/errorFunction";
 import { Request, Response, NextFunction } from "express";
 import Orders from "../models/order";
 import Payments from "../models/payment";
+import Tickets from "../models/ticket";
 
 const fakeCode = (length: number) => {
   let result = "";
@@ -45,7 +47,8 @@ const orderController = {
         .limit(Number(limit))
         .populate("userId", ["userName", "email"])
         .populate("placeId", "name")
-        .populate("salesAgentId", ["code", "userName"]);
+        .populate("salesAgentId", ["code", "userName"])
+        .populate("ticketId", ["adultTicket", "childTicket", "numberTickets"]);
 
       const allOrder = await Orders.find(condition);
 
@@ -94,7 +97,8 @@ const orderController = {
         .limit(Number(limit))
         .populate("userId", ["userName", "email"])
         .populate("placeId", "name")
-        .populate("salesAgentId", ["code", "userName"]);
+        .populate("salesAgentId", ["code", "userName"])
+        .populate("ticketId", ["adultTicket", "childTicket", "numberTickets"]);
 
       const allOrder = await Orders.find(filter);
 
@@ -143,7 +147,8 @@ const orderController = {
         .limit(Number(limit))
         .populate("userId", ["userName", "email"])
         .populate("placeId", "name")
-        .populate("salesAgentId", ["code", "userName"]);
+        .populate("salesAgentId", ["code", "userName"])
+        .populate("ticketId", ["adultTicket", "childTicket", "numberTickets"]);
 
       const allOrder = await Orders.find(filter);
 
@@ -200,9 +205,21 @@ const orderController = {
           .status(404)
           .json(errorFunction(true, 404, "Không tồn tại !"));
 
-      await orderId.updateOne({
-        status: 4,
-      });
+      const findTicket = await Tickets.findById<ITicket>(orderId.ticketId);
+
+      if (Number(findTicket?.numberTickets) < orderId.amount) {
+        return res
+          .status(404)
+          .json(errorFunction(true, 404, "Số lượng vé còn lại không đủ !"));
+      } else {
+        await orderId.updateOne({
+          status: 4,
+        });
+
+        await Tickets.updateOne({
+          numberTickets: Number(findTicket?.numberTickets) - orderId.amount,
+        });
+      }
 
       await Payments.create({
         orderId: req.params.id,

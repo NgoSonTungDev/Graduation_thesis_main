@@ -29,7 +29,13 @@ const style = {
   p: 4,
 };
 
-const TableOrderUser = ({ data, callBackApi }) => {
+const TableOrderUser = ({
+  data,
+  callBackApi,
+  handleOpenLoading,
+  handleCloseLoading,
+  loading,
+}) => {
   const [open, setOpen] = React.useState(false);
   const [description, setDescription] = React.useState("");
   const handleOpen = () => setOpen(true);
@@ -49,16 +55,19 @@ const TableOrderUser = ({ data, callBackApi }) => {
       });
   };
 
-  const handlePaymentVnPay = (orderId, amount) => {
+  const handlePaymentVnPay = (orderId, total) => {
+    handleOpenLoading();
     axios
       .post("https://mafline-vnpay.onrender.com/api/vnPay/create-url", {
         orderId: orderId,
-        amount: amount,
+        amount: total,
       })
       .then((res) => {
         window.location.href = res.data.url;
+        handleCloseLoading();
       })
       .catch((err) => {
+        handleCloseLoading();
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
@@ -75,7 +84,7 @@ const TableOrderUser = ({ data, callBackApi }) => {
     }
   };
 
-  const renderButton = (number, id) => {
+  const renderButton = (number, id, codeOrder, total) => {
     if (number === 1) {
       return (
         <div style={{ color: "#2ecc71" }}>
@@ -90,7 +99,17 @@ const TableOrderUser = ({ data, callBackApi }) => {
         </div>
       );
     } else if (number === 2) {
-      return <button className="button-check payment">Thanh toán</button>;
+      return (
+        <button
+          className="button-check payment"
+          onClick={() => {
+            handlePaymentVnPay(codeOrder, total);
+          }}
+          disabled={loading}
+        >
+          Thanh toán
+        </button>
+      );
     } else if (number === 3) {
       return <p style={{ color: "#c0392b" }}>Đã hủy</p>;
     } else {
@@ -174,7 +193,12 @@ const TableOrderUser = ({ data, callBackApi }) => {
                   {formatMoney(item.total)}
                 </TableCell>
                 <TableCell align="center" size="medium">
-                  {renderButton(item.status, item._id)}
+                  {renderButton(
+                    item.status,
+                    item._id,
+                    item.codeOrder,
+                    item.total
+                  )}
                 </TableCell>
               </TableRow>
             ))}

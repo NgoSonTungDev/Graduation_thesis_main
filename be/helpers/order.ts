@@ -14,6 +14,7 @@ const validation = joi.object<IOrder>({
   dateTime: joi.number().required(),
   placeId: joi.string().required(),
   salesAgentId: joi.string().required(),
+  ticketId: joi.string().required(),
 });
 
 export const orderValidation = async (

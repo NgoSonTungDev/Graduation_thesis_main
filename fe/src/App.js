@@ -18,6 +18,7 @@ import OrderSaleAgent from "./pages/sale_agent/order";
 import { OpenChatBox } from "./redux/selectors";
 import Voucher from "./pages/voucher";
 import Order from "./pages/order";
+import ThankCustomer from "./pages/thank_customer";
 
 const App = () => {
   const open = useSelector(OpenChatBox);
@@ -32,6 +33,7 @@ const App = () => {
           <Route path="/review" element={<Review />} />
           <Route path="/voucher" element={<Voucher />} />
           <Route path="/order/:id" element={<Order />} />
+          <Route path="/page/thank-customer" element={<ThankCustomer />} />
 
           {/* admin */}
           <Route path="/admin/home" element={<AdminHome />} />

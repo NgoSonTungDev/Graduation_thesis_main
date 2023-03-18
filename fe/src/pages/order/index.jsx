@@ -24,6 +24,9 @@ const Order = () => {
     status: "",
   });
 
+  const handleOpenLoading = () => setLoading(true);
+  const handleCloseLoading = () => setLoading(false);
+
   const { id } = useParams();
 
   const handleChangeTab = (e, newValue) => {
@@ -119,7 +122,13 @@ const Order = () => {
                 {!loading && _.isEmpty(data) ? (
                   <ErrorEmpty />
                 ) : (
-                  <TableOrderUser data={data?.data} callBackApi={fetchData} />
+                  <TableOrderUser
+                    data={data?.data}
+                    callBackApi={fetchData}
+                    handleOpenLoading={handleOpenLoading}
+                    handleCloseLoading={handleCloseLoading}
+                    loading={loading}
+                  />
                 )}
               </div>
               {!loading && _.isEmpty(data) ? (
