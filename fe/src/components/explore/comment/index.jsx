@@ -18,7 +18,7 @@ const validationRepComment = yup.object().shape({
   content: yup.string().required("Comment không được để trống"),
 });
 
-const Comment = ({ dataComent, callBackApi }) => {
+const Comment = ({ dataComment, callBackApi }) => {
   const [numberLike, setNumberLike] = useState();
   const [like, setLike] = useState(false);
   const [datarepComent, setDataRepComment] = React.useState([]);
@@ -49,7 +49,7 @@ const Comment = ({ dataComent, callBackApi }) => {
   const handleExpandClick = () => {
     setExpanded(!expanded);
     axiosClient
-      .get(`/rep-comment/get-by-id/${dataComent._id}`)
+      .get(`/rep-comment/get-by-id/${dataComment._id}`)
       .then((res) => {
         setDataRepComment(res.data.data);
       })
@@ -75,46 +75,50 @@ const Comment = ({ dataComent, callBackApi }) => {
   };
 
   const handleLikeComment = (e) => {
-    axiosClient
-      .post(`/like-comment/${dataComent._id}`, {
-        userId: userIdStorage._id,
-      })
-      .then((res) => {
-        setLike(true);
-        toastify("success", res.data.message);
-        setNumberLike(res.data.data);
-      })
-      .catch((err) => {
-        setLike(false);
-        toastify("error", err.response.data.message || "Lỗi hệ thông !");
-      });
+    if (userIdStorage) {
+      axiosClient
+        .post(`/like-comment/${dataComment._id}`, {
+          userId: userIdStorage?._id,
+        })
+        .then((res) => {
+          setLike(true);
+          toastify("success", res.data.message);
+          setNumberLike(res.data.data);
+        })
+        .catch((err) => {
+          setLike(false);
+          toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        });
+    }
   };
 
   const handleUnlikeComment = (e) => {
-    axiosClient
-      .post(`/dis-like-comment/${dataComent._id}`, {
-        userId: userIdStorage._id,
-      })
-      .then((res) => {
-        setLike(false);
-        toastify("success", res.data.message);
-        setNumberLike(res.data.data);
-      })
-      .catch((err) => {
-        setLike(false);
-        toastify("error", err.response.data.message || "Lỗi hệ thông !");
-      });
+    if (userIdStorage) {
+      axiosClient
+        .post(`/dis-like-comment/${dataComment._id}`, {
+          userId: userIdStorage?._id,
+        })
+        .then((res) => {
+          setLike(false);
+          toastify("success", res.data.message);
+          setNumberLike(res.data.data);
+        })
+        .catch((err) => {
+          setLike(false);
+          toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        });
+    }
   };
 
   const handleDeleteComment = (e) => {
     axiosClient
-      .delete(`/comment/delete/${dataComent._id}`, {
+      .delete(`/comment/delete/${dataComment._id}`, {
         userId: userIdStorage._id,
       })
       .then((res) => {
         toastify("success", res.data.message);
         handleClose();
-        callBackApi(dataComent._id);
+        callBackApi(dataComment._id);
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -127,7 +131,7 @@ const Comment = ({ dataComent, callBackApi }) => {
         userId: userIdStorage._id,
         content: content,
         dateTime: Number(new Date()),
-        commentId: dataComent._id,
+        commentId: dataComment._id,
       })
       .then((res) => {
         toastify("success", res.data.message);
@@ -141,7 +145,7 @@ const Comment = ({ dataComent, callBackApi }) => {
 
   const fetchData = () => {
     if (userIdStorage && userIdStorage._id) {
-      dataComent?.like?.find((e) => {
+      dataComment?.like?.find((e) => {
         return e === userIdStorage._id;
       })
         ? setLike(true)
@@ -153,7 +157,7 @@ const Comment = ({ dataComent, callBackApi }) => {
 
   useEffect(() => {
     fetchData();
-    setNumberLike(Number(dataComent?.like.length));
+    setNumberLike(Number(dataComment?.like.length));
   }, []);
 
   return (
@@ -173,7 +177,7 @@ const Comment = ({ dataComent, callBackApi }) => {
         >
           <img
             style={{ width: "100%", height: "100%", borderRadius: "50%" }}
-            src={dataComent?.userId?.avt}
+            src={userIdStorage?.avt}
             alt=""
           />
         </div>
@@ -193,13 +197,13 @@ const Comment = ({ dataComent, callBackApi }) => {
             }}
           >
             <div style={{ display: "flex", padding: "5px" }}>
-              <div>{dataComent?.userId?.userName}</div>
+              <div>{dataComment?.userId?.userName}</div>
               <div style={{ marginLeft: "40px" }}>
-                {momentLocale(dataComent?.dateTime)}
+                {momentLocale(dataComment?.dateTime)}
               </div>
             </div>
             <div style={{ padding: "5px" }}>
-              <span>{dataComent?.content}</span>
+              <span>{dataComment?.content}</span>
             </div>
           </div>
           <div
@@ -217,7 +221,7 @@ const Comment = ({ dataComent, callBackApi }) => {
                     handleUnlikeComment(e);
                   }}
                 >
-                  <span>{dataComent ? `${numberLike} thích` : "thích"}</span>
+                  <span>{dataComment ? `${numberLike} thích` : "thích"}</span>
                 </span>
               ) : (
                 <span
@@ -225,21 +229,23 @@ const Comment = ({ dataComent, callBackApi }) => {
                     handleLikeComment(e);
                   }}
                 >
-                  <span>{dataComent ? `${numberLike} thích` : "thích"}</span>
+                  <span>{dataComment ? `${numberLike} thích` : "thích"}</span>
                 </span>
               )}
             </div>
-            {userIdStorage?._id === dataComent?.userId?._id && (
+            {userIdStorage?._id === dataComment?.userId?._id && (
               <div style={{ marginLeft: "10%", cursor: "pointer" }}>
                 <span onClick={handleClickOpen}>Xóa</span>
               </div>
             )}
-            <div
-              style={{ marginLeft: "10%", cursor: "pointer" }}
-              onClick={handleExpandClick}
-            >
-              <span>phản hồi</span>
-            </div>
+            {userIdStorage && (
+              <div
+                style={{ marginLeft: "10%", cursor: "pointer" }}
+                onClick={handleExpandClick}
+              >
+                <span>phản hồi</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -28,22 +28,30 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BarLoader from "react-spinners/BarLoader";
-import { openChatBox } from "../../redux/chat_box/chatBoxSlice";
+import axiosClient from "../../api/axiosClient";
+import {
+  changeListInbox,
+  openChatBox,
+} from "../../redux/chat_box/chatBoxSlice";
+import ws from "../../socket";
+import { toastify } from "../../utils/common";
+import {
+  getUserDataLocalStorage,
+  removeUserDataLocalStorage,
+} from "../../utils/localstorage";
 import GetDataPlaceItem from "../modle_find_place";
 import logo1 from "./images/acount.jpeg";
 import "./index.scss";
 import NotificationItem from "./notification";
-import ws from "../../socket";
-import { removeUserDataLocalStorage } from "../../utils/localstorage";
 
 const Navbar = ({ loading, valueTab }) => {
-  const currrenUser = localStorage.getItem("user");
-  const [value, setValue] = useState("one");
-  // const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const currrenUser = JSON.parse(localStorage.getItem("user"));
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElNotify, setAnchorElNotify] = React.useState(null);
   const [offset, setOffset] = useState(0);
+  const userIdStorage = getUserDataLocalStorage();
 
   const dispatch = useDispatch();
 
@@ -51,6 +59,21 @@ const Navbar = ({ loading, valueTab }) => {
   const openNotify = Boolean(anchorElNotify);
 
   const navigation = useNavigate();
+
+  const handleGetDataInbox = (event, newValue) => {
+    axiosClient
+      .get(`/room/get-room-user/63fd6e153ac0f9d2d5e10309`)
+      .then((res) => {
+        dispatch(changeListInbox(res.data.data.listInbox));
+      })
+      .catch((err) => {
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
 
   const handleClickShowNotify = (event) => {
     setAnchorElNotify(event.currentTarget);
@@ -171,32 +194,37 @@ const Navbar = ({ loading, valueTab }) => {
                       <Typography sx={{ ml: 1 }}>Khuyến Mãi</Typography>
                     </Box>
                   }
+                  onClick={() => {
+                    movePage("/voucher");
+                  }}
                 />
               </Tabs>
             </Box>
           </div>
 
           <div className="Navbar_Icon">
-            <div className="Button">
-              <Button
-                variant="contained"
-                onClick={() => {
-                  movePage("/review");
-                }}
-                sx={{ whiteSpace: "pre" }}
-              >
-                <span
-                  class="material-icons"
-                  style={{
-                    fontSize: "18px",
-                    paddingRight: "8px",
+            {userIdStorage && (
+              <div className="Button">
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    movePage("/review");
                   }}
+                  sx={{ whiteSpace: "pre" }}
                 >
-                  edit
-                </span>
-                Viết Review
-              </Button>
-            </div>
+                  <span
+                    class="material-icons"
+                    style={{
+                      fontSize: "18px",
+                      paddingRight: "8px",
+                    }}
+                  >
+                    edit
+                  </span>
+                  Viết Review
+                </Button>
+              </div>
+            )}
             <div className="Icon">
               {currrenUser ? (
                 <>
@@ -207,6 +235,7 @@ const Navbar = ({ loading, valueTab }) => {
                     onClick={() => {
                       dispatch(openChatBox());
                       joinRoom();
+                      handleGetDataInbox();
                     }}
                   >
                     <SmsOutlinedIcon />
@@ -290,7 +319,7 @@ const Navbar = ({ loading, valueTab }) => {
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          movePage("/login");
+                          movePage("/order/63fd6d8f3ac0f9d2d5e102fd");
                         }}
                       >
                         <ListItemIcon>
@@ -312,6 +341,7 @@ const Navbar = ({ loading, valueTab }) => {
                         onClick={() => {
                           handleClose();
                           removeUserDataLocalStorage();
+                          navigation("/home");
                         }}
                       >
                         <ListItemIcon>
@@ -328,7 +358,6 @@ const Navbar = ({ loading, valueTab }) => {
                   variant="contained"
                   onClick={() => {
                     movePage("/login");
-                    // handleLogin();
                   }}
                   sx={{ whiteSpace: "pre" }}
                 >

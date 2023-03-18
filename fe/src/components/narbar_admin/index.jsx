@@ -148,6 +148,9 @@ const Header = ({ ReactNode }) => {
                   <MenuItem
                     active={pathName === "admin" && true}
                     icon={<AiOutlineBarChart />}
+                    onClick={() => {
+                      movePage("/admin/statistic");
+                    }}
                   >
                     statistic
                   </MenuItem>
@@ -156,7 +159,7 @@ const Header = ({ ReactNode }) => {
             </SidebarContent>
             <SidebarFooter>
               <Menu iconShape="square">
-                <MenuItem icon={<FiLogOut />}>Logout</MenuItem>
+                <MenuItem icon={<FiLogOut />}>Exit</MenuItem>
               </Menu>
             </SidebarFooter>
           </ProSidebar>

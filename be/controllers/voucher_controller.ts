@@ -43,7 +43,24 @@ const voucherController = {
   },
   getByIdVoucher: async (req: Request, res: Response) => {
     try {
-      const data = await Vouchers.find({ placeId: req.params.id });
+      const { codeVoucher } = req.query;
+
+      const filter = {
+        $and: [
+          {
+            codeVoucher: {
+              $regex: codeVoucher,
+              $options: "$i",
+            },
+          },
+          {
+            placeId: req.params.id,
+          },
+        ],
+      };
+
+      const data = await Vouchers.find(filter).populate("placeId", "name");
+
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {
       res.status(500).json(error);
@@ -78,7 +95,10 @@ const voucherController = {
 
       const condition = placeID ? { placeId: placeID } : {};
 
-      const newData = await Vouchers.find(condition);
+      const newData = await Vouchers.find(condition).populate(
+        "placeId",
+        "name"
+      );
 
       res.json(errorFunction(false, 200, "Lấy thành công !", newData));
     } catch (error) {

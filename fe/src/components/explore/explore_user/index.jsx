@@ -1,7 +1,11 @@
 import moment from "moment";
 import React from "react";
+import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import "./style.scss";
-const ExploreUser = ({ dataUser }) => {
+
+const ExploreUser = ({ dataUser,getIdMovePage }) => {
+  const userIdStorage = getUserDataLocalStorage();
+
   return (
     <div
       style={{
@@ -14,9 +18,10 @@ const ExploreUser = ({ dataUser }) => {
         overflow: "hidden",
         cursor: "pointer",
       }}
+      onClick={()=>{getIdMovePage(dataUser?._id)}}
     >
       <div className="user_image">
-        <img src={dataUser?.avt} alt="" />
+        <img src={userIdStorage?.avt} alt="" />
       </div>
       <div
         style={{

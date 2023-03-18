@@ -12,5 +12,11 @@ export const mailerRouter = (router: Router) => {
     mailerController.sendCodeOtpRegisterSalesAgent
   );
 
+  router.post("/email/send-confirm", mailerController.sendEmailConfirm);
+
+  router.post("/email/send-payment", mailerController.sendEmailPayment);
+
+  router.post("/email/send-cancel", mailerController.sendEmailCancel);
+
   router.post("/email/send-code", mailerController.sendCodeOtp);
 };

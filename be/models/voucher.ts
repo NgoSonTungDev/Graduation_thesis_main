@@ -1,12 +1,8 @@
 import { IVoucher } from "./../types/voucher";
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const voucherSchema = new mongoose.Schema<IVoucher>({
   codeVoucher: {
-    type: String,
-    required: true,
-  },
-  image: {
     type: String,
     required: true,
   },
@@ -31,10 +27,7 @@ const voucherSchema = new mongoose.Schema<IVoucher>({
     required: false,
     default: true,
   },
-  placeId: {
-    type: String,
-    required: true,
-  },
+  placeId: { type: Schema.Types.ObjectId, ref: "Place" },
 });
 
 const Vouchers = mongoose.model("Voucher", voucherSchema);

@@ -1,12 +1,16 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ReplyIcon from "@mui/icons-material/Reply";
 import TelegramIcon from "@mui/icons-material/Telegram";
 import { Button, IconButton, Paper, Rating, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogTitle from "@mui/material/DialogTitle";
 import { Image } from "antd";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -15,8 +19,6 @@ import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Comment from "../comment";
-import { useNavigate } from "react-router-dom";
-
 const validationComment = yup.object().shape({
   content: yup.string().required("Comment không được để trống"),
 });
@@ -25,12 +27,17 @@ const CardPost = ({ data }) => {
   const [like, setLike] = useState(false);
   const [numberLike, setNumberLike] = useState(0);
   const [expanded, setExpanded] = React.useState(false);
-  const [dataComent, setDataComnet] = React.useState([]);
+  const [dataComment, setDataComment] = React.useState([]);
   const [content, setContent] = useState("");
   const userIdStorage = getUserDataLocalStorage();
-  const navigation = useNavigate();
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-  // const id = userId._id;
   const {
     register,
     handleSubmit,
@@ -44,7 +51,7 @@ const CardPost = ({ data }) => {
     axiosClient
       .get(`/comment/get-by-id-post/${data._id}`)
       .then((res) => {
-        setDataComnet(res.data.data);
+        setDataComment(res.data.data);
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -52,42 +59,41 @@ const CardPost = ({ data }) => {
   };
 
   const handelDeleteComment = (id) => {
-    setDataComnet(
-      dataComent.filter((e) => {
+    setDataComment(
+      dataComment.filter((e) => {
         return e._id !== id;
       })
     );
   };
 
   const handleLikeReview = (e) => {
-    // e.stopPropagation();
-    axiosClient
-      .post(`/like-post/${data._id}`, {
-        userId: userIdStorage._id,
-      })
-      .then((res) => {
-        setLike(true);
-        // toastify("success", res.data.message);
-        setNumberLike(res.data.data);
-      })
-      .catch((err) => {
-        setLike(false);
-        // toastify("error", err.response.data.message || "Lỗi hệ thông !");
-      });
+    if (userIdStorage) {
+      axiosClient
+        .post(`/like-post/${data._id}`, {
+          userId: userIdStorage?._id,
+        })
+        .then((res) => {
+          setLike(true);
+          setNumberLike(res.data.data);
+        })
+        .catch((err) => {
+          setLike(false);
+          toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        });
+    }
   };
   const handleUnlikeReview = (e) => {
     axiosClient
       .post(`/dis-like-post/${data._id}`, {
-        userId: userIdStorage._id,
+        userId: userIdStorage?._id,
       })
       .then((res) => {
         setLike(false);
-        // toastify("success", res.data.message);
         setNumberLike(res.data.data);
       })
       .catch((err) => {
         setLike(false);
-        // toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
 
@@ -100,8 +106,6 @@ const CardPost = ({ data }) => {
   // };
 
   const handleComnent = () => {
-    // if (userId) {
-
     axiosClient
       .post(`/comment/add/`, {
         userId: userIdStorage._id,
@@ -111,16 +115,31 @@ const CardPost = ({ data }) => {
       })
       .then((res) => {
         // toastify("success", res.data.message);
-        setDataComnet([...dataComent, res.data.data]);
+        setDataComment([...dataComment, res.data.data]);
         setContent("");
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
-    // } else {
-    // navigation("/home");
+  };
 
-    // }
+  const handleShare = () => {
+    axiosClient
+      .post("/post/add", {
+        userId: userIdStorage._id,
+        content: data.content,
+        image: data.image,
+        rating: data.rating,
+        time: Number(new Date()),
+        placeId: data.placeId._id,
+      })
+      .then((res) => {
+        handleClose();
+        toastify("success", res.data.message || "Tạo bài thành công !");
+      })
+      .catch((err) => {
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
   };
 
   const fetchData = () => {
@@ -132,7 +151,6 @@ const CardPost = ({ data }) => {
         : setLike(false);
     } else {
       console.log("nmdsnfdsf");
-      // navigation("/home");
       setLike(false);
     }
   };
@@ -150,7 +168,6 @@ const CardPost = ({ data }) => {
           padding: "15px 0",
           marginTop: "10px",
           backgroundColor: "#ffffff",
-
           borderRadius: "10px",
         }}
       >
@@ -161,7 +178,7 @@ const CardPost = ({ data }) => {
           >
             <img
               style={{ width: "100%", height: "100%", borderRadius: "50%" }}
-              src={data?.userId?.avt}
+              src={userIdStorage?.avt}
               alt=""
             />
           </div>
@@ -280,7 +297,11 @@ const CardPost = ({ data }) => {
             <ChatBubbleOutlineIcon sx={{ padding: "7px", color: "#000000" }} />
             Bình luận
           </Button>
-          <Button sx={{ width: "100%", color: "#000000" }} component="label">
+          <Button
+            sx={{ width: "100%", color: "#000000" }}
+            component="label"
+            onClick={handleClickOpen}
+          >
             <ReplyIcon sx={{ padding: "7px", color: "#000000" }} />
             Chia sẻ
           </Button>
@@ -297,16 +318,16 @@ const CardPost = ({ data }) => {
               marginBottom: "10px",
             }}
           >
-            {dataComent?.map((item, index) => (
+            {dataComment?.map((item, index) => (
               <Comment
-                dataComent={item}
+                dataComment={item}
                 callBackApi={handelDeleteComment}
                 key={index}
               />
             ))}
           </div>
         </Collapse>
-        {dataComent?.length > 0 && (
+        {dataComment?.length > 0 && (
           <div
             onClick={() => setExpanded((isShow) => !isShow)}
             style={{ textAlign: "center", cursor: "pointer" }}
@@ -314,7 +335,7 @@ const CardPost = ({ data }) => {
             <span>
               {expanded
                 ? "Ẩn tất cả bình luận"
-                : // : `Xem tất cả ${dataComent?.length || 0} bình luận`}
+                : // : `Xem tất cả ${dataComment?.length || 0} bình luận`}
                   ``}
             </span>
           </div>
@@ -327,11 +348,11 @@ const CardPost = ({ data }) => {
           >
             <div
               className="avatar"
-              style={{ width: "50px", height: "50px", marginLeft: "40px" }}
+              style={{ width: "56px", height: "56px", marginLeft: "40px" }}
             >
               <img
                 style={{ width: "100%", height: "100%", borderRadius: "50%" }}
-                src={data?.userId?.avt}
+                src={userIdStorage?.avt}
                 alt=""
               />
             </div>
@@ -377,6 +398,22 @@ const CardPost = ({ data }) => {
           </div>
         )}
       </Box>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Bạn có chắc muốn chia sẻ ?"}
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handleShare}>chia sẻ</Button>
+          <Button onClick={handleClose} autoFocus>
+            thoát
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

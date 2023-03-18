@@ -7,7 +7,7 @@ import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 
-const Rep_Comment = ({ datarepComent,callBackApi }) => {
+const Rep_Comment = ({ datarepComent, callBackApi }) => {
   const [datarepComent1, setDataRepComment] = React.useState([]);
   const [numberLike, setNumberLike] = useState(0);
   const [like, setLike] = useState(false);
@@ -22,52 +22,54 @@ const Rep_Comment = ({ datarepComent,callBackApi }) => {
   };
 
   const handleDeleteRepComment = (e) => {
-      axiosClient
-        .delete(`/rep-comment/delete/${datarepComent._id}`, {
-          userId: userIdStorage._id,
-        })
-        .then((res) => {
-          toastify("success", res.data.message);
-          handleClose();
-          callBackApi(datarepComent._id)
-
-        })
-        .catch((err) => {
-          toastify("error", err.response.data.message || "Lỗi hệ thông !");
-        });
-    
-  };
-  const handleLikeRepComment = (e) => {
     axiosClient
-      .post(`/like-rep-comment/${datarepComent._id}`, {
+      .delete(`/rep-comment/delete/${datarepComent._id}`, {
         userId: userIdStorage._id,
       })
       .then((res) => {
-        setLike(true);
         toastify("success", res.data.message);
-        setNumberLike(res.data.data);
-        console.log("resssss", res);
+        handleClose();
+        callBackApi(datarepComent._id);
       })
       .catch((err) => {
-        setLike(false);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
+  };
+  const handleLikeRepComment = (e) => {
+    if (userIdStorage) {
+      axiosClient
+        .post(`/like-rep-comment/${datarepComent._id}`, {
+          userId: userIdStorage?._id,
+        })
+        .then((res) => {
+          setLike(true);
+          toastify("success", res.data.message);
+          setNumberLike(res.data.data);
+          console.log("resssss", res);
+        })
+        .catch((err) => {
+          setLike(false);
+          toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        });
+    }
   };
 
   const handleUnlikeRepComment = (e) => {
-    axiosClient
-      .post(`/dis-like-rep-comment/${datarepComent._id}`, {
-        userId: userIdStorage._id,
-      })
-      .then((res) => {
-        setLike(false);
-        toastify("success", res.data.message);
-        setNumberLike(res.data.data);
-      })
-      .catch((err) => {
-        setLike(false);
-        toastify("error", err.response.data.message || "Lỗi hệ thông !");
-      });
+    if (userIdStorage) {
+      axiosClient
+        .post(`/dis-like-rep-comment/${datarepComent._id}`, {
+          userId: userIdStorage?._id,
+        })
+        .then((res) => {
+          setLike(false);
+          toastify("success", res.data.message);
+          setNumberLike(res.data.data);
+        })
+        .catch((err) => {
+          setLike(false);
+          toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        });
+    }
   };
 
   const fetchData = () => {

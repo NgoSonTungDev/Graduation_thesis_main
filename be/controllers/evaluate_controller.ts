@@ -18,6 +18,34 @@ const updateRatingById = async (e: string, rating: number) => {
   });
 };
 
+const checkCommentPositiveOrNegative = (text: string) => {
+  const positiveKeywords = ["đẹp", "tuyệt vời", "tốt"];
+  const negativeKeywords = ["giá cao", "xấu", "tệ"];
+
+  let positiveCount = 0;
+  let negativeCount = 0;
+
+  const words = text.split(" ");
+
+  words.forEach((word) => {
+    if (positiveKeywords.includes(word)) {
+      positiveCount++;
+    }
+
+    if (negativeKeywords.includes(word)) {
+      negativeCount++;
+    }
+  });
+
+  if (positiveCount > negativeCount) {
+    return "Tích cực";
+  } else if (positiveCount < negativeCount) {
+    return "Tiêu cực";
+  } else {
+    return "Trung lập";
+  }
+};
+
 const evaluateController = {
   addEvaluate: async (req: Request, res: Response, next: NextFunction) => {
     try {

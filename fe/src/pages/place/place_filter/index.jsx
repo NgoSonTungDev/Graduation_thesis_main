@@ -107,6 +107,7 @@ const PlaceFilter = () => {
         label="Tên địa điểm"
         fullWidth
         size="small"
+        inputProps={register("placeName")}
         onChange={(e) => {
           debounceFnPlaceName(e.target.value);
         }}
@@ -116,15 +117,16 @@ const PlaceFilter = () => {
         type="text"
         label="Khu vực"
         fullWidth
+        inputProps={register("location")}
         size="small"
         onChange={(e) => {
           debounceFnLocation(e.target.value);
         }}
       />
-
       <TextField
         select
         fullWidth
+        name="purpose"
         label="Mục đích"
         inputProps={register("purpose")}
         onChange={handleChange}
@@ -139,6 +141,7 @@ const PlaceFilter = () => {
         select
         fullWidth
         label="Loại hình"
+        name="type"
         inputProps={register("type")}
         onChange={handleChange}
         size="small"
@@ -151,7 +154,8 @@ const PlaceFilter = () => {
       <TextField
         select
         fullWidth
-        label="Giá"
+        name="variability"
+        label="Đánh giá"
         inputProps={register("variability")}
         onChange={handleChange}
         size="small"
@@ -170,13 +174,13 @@ const PlaceFilter = () => {
       >
         <IconButton
           onClick={() => {
-            // reset({
-            //   placeName: "",
-            //   location: "",
-            //   purpose: "",
-            //   variability: "",
-            //   type: "",
-            // });
+            reset({
+              placeName: "",
+              location: "",
+              purpose: "",
+              variability: "",
+              type: "",
+            });
             dispatch(resetPayload());
           }}
           size="small"

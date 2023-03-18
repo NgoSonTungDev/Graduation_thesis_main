@@ -1,15 +1,12 @@
 import { EnvironmentOutlined } from "@ant-design/icons";
-import { PhotoCamera } from "@mui/icons-material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { Button, IconButton } from "@mui/material";
-import { padding } from "@mui/system";
-import { Input, Rate, message } from "antd";
+import { Button } from "@mui/material";
+import { Input, message, Rate } from "antd";
 import axios from "axios";
 import _ from "lodash";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axiosClient from "../../api/axiosClient";
-import axiosDeploy from "../../api/axiosDeploy";
 import GetDataPlaceItem from "../../components/modle_find_place";
 import Navbar from "../../components/navbar/index";
 import { clearByIdPlace } from "../../redux/place/placeSlice";
@@ -22,7 +19,7 @@ const Review = () => {
   const desc = ["Tệ", "Khá tệ", "Trung bình", "Tốt", "Tuyệt vời"];
   const [content, setContent] = useState("");
   const [openModal, setOpenModal] = useState(false);
-  const [file, setFile] = useState("");
+  const [file, setFile] = useState(null);
   const [image, setImage] = useState(
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6at7RwZOM_yVpsUZWimO0o75bYbKAE1DaTg&usqp=CAU"
   );
@@ -66,34 +63,66 @@ const Review = () => {
       });
   };
 
-  const handleSubmit = () => {
-    if (content==="" || file ===""||image==="") {
+  const handleSubmit = async () => {
+    if (file === "" || content === "" || image === "") {
       message.error("Vui lòng điền đầy đủ thông tin!");
       return;
     }
 
-    setLoading(true);
     const formData = new FormData();
-    formData.append("photo", file);
-    axios
-      .post("https://api.imgur.com/3/image", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((res) => {
-        setLoading(false);
-        addPost(res.data.path);
+    formData.append("image", file);
 
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    const clientId = "90792b277ce19e4";
+
+    const response = await axios.post(
+      "https://api.imgur.com/3/image",
+      formData,
+      {
+        headers: {
+          Authorization: `Client-ID ${clientId}`,
+          "Content-Type": "multipart/form-data"
+        },
+      }
+    );
+
+    console.log(response.data.data.link);
+
+    // setLoading(true);
+    // const formData = new FormData();
+    // formData.append("image", file);
+    // axios.post("https://api.imgur.com/3/image", formData, {
+    //   headers: {
+    //     Authorization: `Client-ID 90792b277ce19e4`,
+    //   },
+    // })
+    //   .then((res) => {
+    //     setLoading(false);
+    //     // addPost(res.data.data.link);
+
+    //     console.log(res.data);
+    //   })
+    //   .catch((error) => {
+    //     setLoading(false);
+    //     console.log(error);
+    //   });
+    // axiosDeploy
+    //   .post("/upload/file", formData, {
+    //     headers: { "Content-Type": "multipart/form-data" },
+    //   })
+    //   .then((res) => {
+    //     setLoading(false);
+    //     addPost(res.data.path);
+
+    //     console.log(res);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   };
 
   const handleChangeFileImage = (e) => {
-    const file = e.target.files[0];
-    setImage(URL.createObjectURL(file));
-    setFile(file);
+    setImage(URL.createObjectURL(e.target.files[0]));
+    setFile(e.target.files[0]);
   };
 
   const handleChange = (name, value) => {
@@ -219,7 +248,7 @@ const Review = () => {
                     hidden
                     name="photo"
                     accept="image/*"
-                    onChange={(e) => handleChangeFileImage(e)}
+                    onChange={handleChangeFileImage}
                   />
                 </Button>
                 <div style={{ marginLeft: "5px" }}>

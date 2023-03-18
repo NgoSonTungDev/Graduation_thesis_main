@@ -1,25 +1,27 @@
 import SearchIcon from "@mui/icons-material/Search";
 import { IconButton, InputBase, Paper, Skeleton } from "@mui/material";
+import _debounce from "lodash/debounce";
 import queryString from "query-string";
 import React, { useCallback, useEffect, useState } from "react";
 import axiosClient from "../../api/axiosClient";
 import { toastify } from "../../utils/common";
+import ErrorEmpty from "../emty_data";
 import Navbar from "../navbar";
 import PaginationCpn from "../pagination";
 import CardPost from "./card_post";
 import ExploreHot from "./explore_hot";
 import ExploreUser from "./explore_user";
 import advertisement from "./images/advertisement.png";
+import _ from "lodash"
 import "./style.scss";
-import _debounce from "lodash/debounce";
-import { LocalDiningRounded } from "@mui/icons-material";
-import ErrorEmpty from "../emty_data";
+import { useNavigate } from "react-router-dom";
 
 const Explore = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [dataUser, setDataUser] = useState([]);
   const [dataPost, setDataPost] = useState([]);
+  const navigate = useNavigate()
   const [payloadPost, setpayLoadPost] = useState({
     pageNumber: 1,
     placeID: "",
@@ -49,6 +51,7 @@ const Explore = () => {
   const handleFindPostById = (id) => {
     setpayLoadPost({ pageNumber: 1, placeID: id });
   };
+
 
   const getApiPlace = () => {
     // setLoading(true);
@@ -99,6 +102,10 @@ const Explore = () => {
     };
   }, []);
 
+  const getByIdUserMoveProfile = (id)=>{
+    navigate(`/profile/${id}`)
+  }
+
   useEffect(() => {
     getApiPlace();
   }, [payload1]);
@@ -134,7 +141,7 @@ const Explore = () => {
                     key={index}
                   />
                 ))
-              ) : dataPost.length === 0 ? (
+              ) : _.isEmpty(dataPost.data)  ? (
                 <ErrorEmpty />
               ) : (
                 dataPost?.data?.map((item, index) => {
@@ -190,17 +197,18 @@ const Explore = () => {
                 placeholder="Tên địa điểm"
                 inputProps={{ "aria-label": "Tên địa điểm" }}
                 onChange={(e) => {
+                  e.preventDefault()
                   debounceFn(e.target.value);
                 }}
               />
-              <IconButton
+              {/* <IconButton
                 type="button"
                 sx={{ p: "10px" }}
                 aria-label="search"
                 disabled
               >
                 <SearchIcon />
-              </IconButton>
+              </IconButton> */}
             </Paper>
             <div
               style={{
@@ -276,7 +284,7 @@ const Explore = () => {
                 <ErrorEmpty />
               ) : (
                 dataUser?.map((item, index) => {
-                  return <ExploreUser dataUser={item} key={index} />;
+                  return <ExploreUser dataUser={item} key={index} getIdMovePage={getByIdUserMoveProfile}/>;
                 })
               )}
             </div>
