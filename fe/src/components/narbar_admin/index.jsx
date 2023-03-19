@@ -136,6 +136,9 @@ const Header = ({ ReactNode }) => {
                   <MenuItem
                     active={pathName === "admin" && true}
                     icon={<GoPackage />}
+                    onClick={() => {
+                      movePage("/admin/order");
+                    }}
                   >
                     Order management
                   </MenuItem>

@@ -28,7 +28,6 @@ const validationInput = yup.object().shape({
 const Login = () => {
   const [check, setCheck] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const userIdStorage = getUserDataLocalStorage();
   const navigation = useNavigate();
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
@@ -71,8 +70,12 @@ const Login = () => {
       .then((res) => {
         setUserDataLocalStorage(res.data.data);
         setCheck(false);
-        navigation("/home");
         joinRoom(res.data.data.roomId);
+        if (res.data.data.isAdmin === 1 || res.data.data.isAdmin === 3) {
+          navigation("/home");
+        } else {
+          navigation("/sale-agent/home");
+        }
       })
       .catch((err) => {
         setCheck(false);

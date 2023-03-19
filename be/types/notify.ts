@@ -2,8 +2,8 @@ export interface INotify {
   _id?: string;
   userId: any;
   content: string;
-  time: number;
+  dateTime: number;
   status: boolean;
-  postId: string;
-  placeId: string;
+  // postId: string;
+  // placeId: string;
 }

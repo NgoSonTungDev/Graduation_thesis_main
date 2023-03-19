@@ -15,6 +15,7 @@ import BoxChat from "./box_chat";
 import { useDispatch } from "react-redux";
 import { changeListInbox } from "../../../redux/chat_box/chatBoxSlice";
 import BoxInformation from "./box_infomation";
+import RotateLeftOutlinedIcon from "@mui/icons-material/RotateLeftOutlined";
 
 const AdminMessage = () => {
   const [loading, setLoading] = React.useState(false);
@@ -24,6 +25,7 @@ const AdminMessage = () => {
   const dispatch = useDispatch();
   const [payload, setPayload] = React.useState({
     userName: "",
+    isAdmin: 2,
   });
 
   const debounceFn = useCallback(
@@ -49,10 +51,10 @@ const AdminMessage = () => {
       });
   };
 
-  const fetchData = (url) => {
+  const fetchData = () => {
     setLoading(true);
     axiosClient
-      .get(url)
+      .get(`/room/get-all?${qs.stringify(payload)}`)
       .then((res) => {
         setData(
           res.data.data.sort(
@@ -70,8 +72,7 @@ const AdminMessage = () => {
   };
 
   useEffect(() => {
-    let url = `/room/get-all?${qs.stringify(payload)}`;
-    fetchData(url);
+    fetchData();
   }, [payload]);
 
   const renderForm = () => {
@@ -89,7 +90,7 @@ const AdminMessage = () => {
               messenger
             </p>
             <Paper
-              component="form"
+              // component="form"
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -101,6 +102,7 @@ const AdminMessage = () => {
               <InputBase
                 size="small"
                 sx={{ ml: 1, flex: 1, fontSize: "14px", mt: 0.5 }}
+                // value={payload.userName}
                 placeholder="Tìm kiếm trên messenger"
                 inputProps={{ "aria-label": "tìm kiếm trên messenger" }}
                 onChange={(e) => {
@@ -111,9 +113,12 @@ const AdminMessage = () => {
                 type="button"
                 sx={{ p: "5px" }}
                 aria-label="search"
-                disabled
+                onClick={() => {
+                  fetchData();
+                  // setPayload({ ...payload, userName: "" });
+                }}
               >
-                <SearchIcon />
+                <RotateLeftOutlinedIcon />
               </IconButton>
             </Paper>
             <div className="box_room_chat_list">

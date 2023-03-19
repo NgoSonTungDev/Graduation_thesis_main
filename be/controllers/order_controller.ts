@@ -36,7 +36,7 @@ const orderController = {
   },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pageNumber, limit, status } = req.query;
+      const { pageNumber, limit, status, salesAgentId } = req.query;
 
       const SkipNumber = (Number(pageNumber) - 1) * Number(limit);
 
@@ -47,7 +47,7 @@ const orderController = {
         .limit(Number(limit))
         .populate("userId", ["userName", "email", "address", "numberPhone"])
         .populate("placeId", "name")
-        .populate("salesAgentId", ["code", "userName"])
+        .populate("salesAgentId", ["userName", "email"])
         .populate("ticketId", ["adultTicket", "childTicket", "numberTickets"]);
 
       const allOrder = await Orders.find(condition);
@@ -97,7 +97,7 @@ const orderController = {
         .limit(Number(limit))
         .populate("userId", ["userName", "email", "address", "numberPhone"])
         .populate("placeId", "name")
-        .populate("salesAgentId", ["code", "userName"])
+        .populate("salesAgentId", ["userName", "email"])
         .populate("ticketId", ["adultTicket", "childTicket", "numberTickets"]);
 
       const allOrder = await Orders.find(filter);
@@ -147,7 +147,7 @@ const orderController = {
         .limit(Number(limit))
         .populate("userId", ["userName", "email", "address", "numberPhone"])
         .populate("placeId", "name")
-        .populate("salesAgentId", ["code", "userName"])
+        .populate("salesAgentId", ["userName", "email"])
         .populate("ticketId", ["adultTicket", "childTicket", "numberTickets"]);
 
       const allOrder = await Orders.find(filter);

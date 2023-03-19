@@ -61,7 +61,7 @@ const Navbar = ({ loading, valueTab }) => {
 
   const handleGetDataInbox = (event, newValue) => {
     axiosClient
-      .get(`/room/get-room-user/${userIdStorage?._id}`)
+      .get(`/room/get-room-user/${userIdStorage?.roomId}`)
       .then((res) => {
         dispatch(changeListInbox(res.data.data.listInbox));
       })

@@ -15,13 +15,14 @@ import NotFound from "./pages/not_found";
 import Place from "./pages/place/index";
 import Profile from "./pages/profile";
 import Review from "./pages/review";
-import Explore from "./components/explore"
+import Explore from "./components/explore";
 import { OpenChatBox } from "./redux/selectors";
 import HomeSaleAgent from "./pages/sale_agent/home";
 import OrderSaleAgent from "./pages/sale_agent/order";
 import Voucher from "./pages/voucher";
 import Order from "./pages/order";
 import ThankCustomer from "./pages/thank_customer";
+import OrderManagement from "./pages/admin/order";
 
 const App = () => {
   const open = useSelector(OpenChatBox);
@@ -46,6 +47,7 @@ const App = () => {
           <Route path="/admin/home" element={<AdminHome />} />
           <Route path="/admin/message" element={<AdminMessage />} />
           <Route path="/admin/statistic" element={<Statistic />} />
+          <Route path="/admin/order" element={<OrderManagement />} />
 
           {/* saleAgent */}
           <Route path="/sale-agent/home" element={<HomeSaleAgent />} />

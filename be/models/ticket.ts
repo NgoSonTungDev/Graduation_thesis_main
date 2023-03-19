@@ -3,8 +3,7 @@ import { ITicket } from "./../types/ticket";
 const Schema = mongoose.Schema;
 
 const ticketSchema = new mongoose.Schema<ITicket>({
-  placeId: { type: Schema.Types.ObjectId, ref: "Place" },
-  salesAgentId: { type: Schema.Types.ObjectId, ref: "SalesAgent" },
+  salesAgentId: { type: Schema.Types.ObjectId, ref: "User" },
   adultTicket: {
     type: Number,
     required: true,
@@ -17,6 +16,7 @@ const ticketSchema = new mongoose.Schema<ITicket>({
     type: Number,
     required: true,
   },
+  placeId: { type: Schema.Types.ObjectId, ref: "Place" },
 });
 
 const Tickets = mongoose.model("Ticket", ticketSchema);

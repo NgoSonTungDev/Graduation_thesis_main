@@ -26,7 +26,7 @@ const roomController = {
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
       try {
-        const { userName } = req.query;
+        const { userName, isAdmin } = req.query;
 
         const result = await Rooms.aggregate([
           {
@@ -50,6 +50,9 @@ const roomController = {
                   },
                 },
                 {
+                  "user.isAdmin": Number(isAdmin),
+                },
+                {
                   public: true,
                 },
               ],
@@ -61,7 +64,14 @@ const roomController = {
               userId: 1,
               listInbox: 1,
               public: 1,
-              user: { _id: 1, userName: 1, email: 1, gender: 1, avt: 1 },
+              user: {
+                _id: 1,
+                userName: 1,
+                email: 1,
+                gender: 1,
+                avt: 1,
+                isAdmin: 1,
+              },
             },
           },
         ]);
@@ -88,6 +98,7 @@ const roomController = {
         "email",
         "avt",
         "gender",
+        "isAdmin",
       ]);
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
