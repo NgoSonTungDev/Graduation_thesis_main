@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -23,9 +23,16 @@ import Voucher from "./pages/voucher";
 import Order from "./pages/order";
 import ThankCustomer from "./pages/thank_customer";
 import OrderManagement from "./pages/admin/order";
+import VoucherManagement from "./pages/admin/voucher";
+import TicketSaleAgent from "./pages/sale_agent/ticket";
+import ws from "./socket";
 
 const App = () => {
   const open = useSelector(OpenChatBox);
+
+  useEffect(() => {
+    ws.initialize();
+  }, []);
 
   return (
     <div>
@@ -48,12 +55,17 @@ const App = () => {
           <Route path="/admin/message" element={<AdminMessage />} />
           <Route path="/admin/statistic" element={<Statistic />} />
           <Route path="/admin/order" element={<OrderManagement />} />
+          <Route path="/admin/voucher" element={<VoucherManagement />} />
 
           {/* saleAgent */}
           <Route path="/sale-agent/home" element={<HomeSaleAgent />} />
           <Route
             path="/sale-agent/order-management"
             element={<OrderSaleAgent />}
+          />
+          <Route
+            path="/sale-agent/ticket-management"
+            element={<TicketSaleAgent />}
           />
 
           <Route path="*" element={<NotFound />} />
