@@ -8,9 +8,8 @@ const validation = joi.object<IPlace>({
   location: joi.string().required().min(1).max(50),
   address: joi.string().required().min(1).max(100),
   geographicalLocation: joi.string().required(),
-  childTicket: joi.number().required(),
-  adultTicket: joi.number().required(),
-  numberTickets: joi.number().required(),
+  startingPrice: joi.number().required(),
+  LastPrice: joi.number().required(),
   purpose: joi.string().required(),
   type: joi.string().required(),
   rating: joi.number().min(0).max(5),
@@ -18,7 +17,6 @@ const validation = joi.object<IPlace>({
   openTime: joi.number().required(),
   closeTime: joi.number().required(),
   description: joi.string().required(),
-  salesAgentId: joi.string().required(),
 });
 
 export const placeValidation = async (
