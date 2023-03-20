@@ -1,4 +1,3 @@
-import Types from "../models/type";
 import { errorFunction } from "../utils/errorFunction";
 import { Request, Response, NextFunction } from "express";
 import Users from "../models/user";
@@ -356,7 +355,7 @@ const statisticController = {
         },
         {
           $sort: {
-            trueCount: 1,
+            trueCount: -1,
           },
         },
       ]);
