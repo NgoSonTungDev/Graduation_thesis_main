@@ -1,57 +1,39 @@
+import React, { useEffect, useState } from "react";
+import axiosClient from "../../../api/axiosClient";
+import SidebarAdmin from "../../../components/narbar_admin";
+import { toastify } from "../../../utils/common";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import _ from "lodash";
 import qs from "query-string";
-import React, { useEffect } from "react";
-import axiosClient from "../../../api/axiosClient";
-import ErrorEmpty from "../../../components/emty_data";
 import LoadingBar from "../../../components/loadding/loading_bar";
-import MenuSaleAgent from "../../../components/navbar_sale_agent";
-import PaginationCpn from "../../../components/pagination";
-import { toastify } from "../../../utils/common";
-import OrderTable from "./table";
+import ErrorEmpty from "../../../components/emty_data";
+import GetDataPlaceItem from "../../../components/modle_find_place";
+import VoucherItem from "./voucher_item";
 
-const OrderSaleAgent = () => {
-  const [value, setValue] = React.useState("0");
+const VoucherManagement = () => {
+  const [value, setValue] = React.useState("true");
   const [loading, setLoading] = React.useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [data, setData] = React.useState({});
   const [payload, setPayload] = React.useState({
-    pageNumber: 1,
-    limit: 5,
-    status: "",
+    placeID: "",
+    active: true,
   });
 
   const handleChangeTab = (e, newValue) => {
     setValue(newValue);
-
-    if (newValue === "0") {
-      return setPayload({
-        ...payload,
-        status: "",
-        pageNumber: 1,
-      });
-    }
-
     setPayload({
       ...payload,
-      status: Number(newValue),
-      pageNumber: 1,
+      active: newValue,
     });
-  };
-
-  const handleChangePage = (page) => {
-    setPayload({ ...payload, pageNumber: page });
   };
 
   const fetchData = () => {
     axiosClient
-      .get(
-        `/order/get-id-sale-agent/63fd6883ea9627ba24c33075?${qs.stringify(
-          payload
-        )}`
-      )
+      .get(`/voucher/get-all?${qs.stringify(payload)}`)
       .then((res) => {
         setLoading(false);
         setData(res.data.data);
@@ -68,22 +50,42 @@ const OrderSaleAgent = () => {
     window.scrollTo(0, 0);
   }, [payload]);
 
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
   const renderForm = () => {
     return (
       <div>
         <Box sx={{ width: "100%", height: "100vh", overflow: "hidden" }}>
           <TabContext value={value}>
-            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Box
+              sx={{
+                borderBottom: 1,
+                borderColor: "divider",
+                marginTop: 1,
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
               <TabList
                 onChange={handleChangeTab}
                 aria-label="lab API tabs example"
               >
-                <Tab label="Tất cả" value="0" />
-                <Tab label="Chờ xác nhận" value="1" />
-                <Tab label="Đã xác nhận" value="2" />
-                <Tab label="Đã hủy" value="3" />
-                <Tab label="Đã thanh toán" value="4" />
+                <Tab label="Đang mở" value="true" />
+                <Tab label="Đang đóng" value="false" />
               </TabList>
+              <Button
+                size="medium"
+                sx={{ marginRight: "30px" }}
+                onClick={handleOpenModal}
+              >
+                Tìm kiếm Đại điểm
+              </Button>
             </Box>
             <div
               style={{
@@ -95,8 +97,8 @@ const OrderSaleAgent = () => {
               <div
                 style={{
                   width: "100%",
-                  height: "93%",
-                  overflow: "hidden",
+                  height: "98%",
+                  overflowY: "scroll",
                 }}
               >
                 {loading ? (
@@ -104,7 +106,8 @@ const OrderSaleAgent = () => {
                 ) : _.isEmpty(data) ? (
                   <ErrorEmpty />
                 ) : (
-                  <OrderTable data={data.data} callBackApi={fetchData} />
+                  <VoucherItem />
+                  //   <OrderTableAdmin data={data.data} callBackApi={fetchData} />
                 )}
               </div>
               <div
@@ -112,25 +115,22 @@ const OrderSaleAgent = () => {
                   width: "100%",
                   height: "6%",
                 }}
-              >
-                <PaginationCpn
-                  count={data.totalPage}
-                  page={payload.pageNumber}
-                  onChange={handleChangePage}
-                />
-              </div>
+              ></div>
             </div>
           </TabContext>
         </Box>
+        {openModal && (
+          <GetDataPlaceItem openDialog={openModal} onClose={handleCloseModal} />
+        )}
       </div>
     );
   };
 
   return (
     <div>
-      <MenuSaleAgent ReactNode={renderForm()} />
+      <SidebarAdmin ReactNode={renderForm()} />
     </div>
   );
 };
 
-export default OrderSaleAgent;
+export default VoucherManagement;

@@ -68,32 +68,34 @@ const voucherController = {
   },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { placeID } = req.query;
+      const { placeID, active } = req.query;
 
-      const dataEndTime = await (
-        await Vouchers.find()
-      ).filter((e) => {
-        return e.endDate > Number(new Date());
-      });
+      // const dataEndTime = await (
+      //   await Vouchers.find()
+      // ).filter((e) => {
+      //   return e.endDate > Number(new Date());
+      // });
 
-      const dataStartTime = await (
-        await Vouchers.find()
-      ).filter((e) => {
-        return e.startDate < Number(new Date());
-      });
+      // const dataStartTime = await (
+      //   await Vouchers.find()
+      // ).filter((e) => {
+      //   return e.startDate < Number(new Date());
+      // });
 
-      const listEndTime = dataEndTime.map((e) => e._id);
-      const listStartTime = dataStartTime.map((e) => e._id);
+      // const listEndTime = dataEndTime.map((e) => e._id);
+      // const listStartTime = dataStartTime.map((e) => e._id);
 
-      if (listStartTime.length > 0) {
-        await Promise.all(listStartTime.map((e) => updateByIdStartTime(e)));
-      }
+      // if (listStartTime.length > 0) {
+      //   await Promise.all(listStartTime.map((e) => updateByIdStartTime(e)));
+      // }
 
-      if (listEndTime.length > 0) {
-        await Promise.all(listEndTime.map((e) => deleteByIdEndTime(e)));
-      }
+      // if (listEndTime.length > 0) {
+      //   await Promise.all(listEndTime.map((e) => deleteByIdEndTime(e)));
+      // }
 
-      const condition = placeID ? { placeId: placeID } : {};
+      const condition = placeID
+        ? { placeId: placeID, public: active }
+        : { public: active };
 
       const newData = await Vouchers.find(condition).populate(
         "placeId",

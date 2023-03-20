@@ -107,7 +107,7 @@ const Navbar = ({ loading, valueTab }) => {
   };
 
   useEffect(() => {
-    ws.initialize();
+    // ws.initialize();
     const onScroll = () => setOffset(window.pageYOffset);
     window.removeEventListener("scroll", onScroll);
     window.addEventListener("scroll", onScroll, { passive: true });

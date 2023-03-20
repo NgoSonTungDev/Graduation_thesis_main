@@ -29,7 +29,12 @@ const Voucher = () => {
   const getApiVoucher = () => {
     setLoading(true);
     axiosClient
-      .get(`voucher/get-all?${qs.stringify({ placeID: placeId._id })}`)
+      .get(
+        `voucher/get-all?${qs.stringify({
+          placeID: placeId._id,
+          active: true,
+        })}`
+      )
       .then((res) => {
         setData(res.data.data);
         setLoading(false);
