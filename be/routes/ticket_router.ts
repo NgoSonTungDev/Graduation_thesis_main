@@ -9,6 +9,8 @@ export const ticketRouter = (router: Router) => {
     ticketController.addTicket
   );
 
+  router.get("/ticket/get-by-id/:id", ticketController.getByIdTicket);
+
   router.get("/ticket/get-by-id-place/:id", ticketController.getPlaceId);
 
   router.get(

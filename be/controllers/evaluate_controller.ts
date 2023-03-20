@@ -91,6 +91,7 @@ const evaluateController = {
             message: response.data.choices[0].text + "Tích cực",
           })
         );
+        console.log("Tich cuc !");
       } else if (
         response.data.choices[0].text?.includes("\n\nTiêu cực.") ||
         response.data.choices[0].text?.includes("tiêu cực") ||
@@ -110,6 +111,7 @@ const evaluateController = {
             message: response.data.choices[0].text + "Tiêu cực",
           })
         );
+        console.log("tieu cuc !");
       } else {
         res.json(errorFunction(true, 200, `${response.data.choices[0].text}`));
       }

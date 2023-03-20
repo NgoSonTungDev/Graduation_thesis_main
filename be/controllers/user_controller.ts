@@ -79,7 +79,7 @@ const userController = {
 
       await userId.updateOne({ $set: req.body });
 
-      res.json(errorFunction(true, 200, "Cập nhật thành công !"));
+      res.json(errorFunction(false, 200, "Cập nhật thành công !"));
     } catch (error) {
       res.status(400).json({
         message: "Bad request",
@@ -101,6 +101,7 @@ const userController = {
           password: hashedPassword,
         },
       });
+
       res.json(errorFunction(true, 200, "Cập nhật mật khẩu thành công !"));
     } catch (error) {
       console.log("error: ", error);

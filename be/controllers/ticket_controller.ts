@@ -52,6 +52,22 @@ const ticketController = {
       res.status(500).json(error);
     }
   },
+  getByIdTicket: async (req: Request, res: Response) => {
+    try {
+      const ticket = await Tickets.findById<ITicket>(req.params.id)
+        .populate("placeId", ["name", "location"])
+        .populate("salesAgentId", ["userName", "email"]);
+
+      if (!ticket)
+        return res
+          .status(404)
+          .json(errorFunction(true, 404, "Không tồn tại !"));
+
+      res.json(errorFunction(false, 200, "Lấy thành công !", ticket));
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   getPlaceId: async (req: Request, res: Response) => {
     try {
       const data = await Tickets.find<ITicket[]>({
