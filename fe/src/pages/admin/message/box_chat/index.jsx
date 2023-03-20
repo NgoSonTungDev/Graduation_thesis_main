@@ -9,7 +9,7 @@ import ws from "../../../../socket";
 import { useDispatch, useSelector } from "react-redux";
 import { listChatBox } from "../../../../redux/selectors";
 
-const BoxChat = ({ data, openDetail }) => {
+const BoxChat = ({ data, openDetail, callBackFunction }) => {
   const [message, setMessage] = useState("");
   const dispatch = useDispatch();
   const listChat = useSelector(listChatBox);
@@ -17,6 +17,7 @@ const BoxChat = ({ data, openDetail }) => {
   const handleOnClickEnter = (e) => {
     if (e.key === "Enter") {
       sendMessage();
+      callBackFunction();
     }
   };
 

@@ -25,6 +25,7 @@ const Explore = () => {
   const [payloadPost, setpayLoadPost] = useState({
     pageNumber: 1,
     placeID: "",
+    active: true,
   });
 
   const [payload1, setPayload] = useState({

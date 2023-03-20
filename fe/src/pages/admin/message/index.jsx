@@ -15,18 +15,32 @@ import BoxChat from "./box_chat";
 import { useDispatch } from "react-redux";
 import { changeListInbox } from "../../../redux/chat_box/chatBoxSlice";
 import BoxInformation from "./box_infomation";
+import Tab from "@mui/material/Tab";
+import TabList from "@mui/lab/TabList";
 import RotateLeftOutlinedIcon from "@mui/icons-material/RotateLeftOutlined";
+import TabContext from "@mui/lab/TabContext";
 
 const AdminMessage = () => {
   const [loading, setLoading] = React.useState(false);
   const [openInformation, setOpenInformation] = React.useState(false);
   const [data, setData] = React.useState([]);
   const [dataChatBoxId, setDataChatBoxId] = React.useState({});
+  const [valueTab, setValueTab] = React.useState(1);
+
   const dispatch = useDispatch();
   const [payload, setPayload] = React.useState({
     userName: "",
     isAdmin: 2,
   });
+
+  const handleChangeTab = (e, newValue) => {
+    setValueTab(newValue);
+
+    setPayload({
+      userName: "",
+      isAdmin: newValue,
+    });
+  };
 
   const debounceFn = useCallback(
     _debounce((value) => {
@@ -45,6 +59,23 @@ const AdminMessage = () => {
       .then((res) => {
         setDataChatBoxId(res.data.data);
         dispatch(changeListInbox(res.data.data.listInbox));
+      })
+      .catch((err) => {
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
+
+  const callBackApiChat = () => {
+    axiosClient
+      .get(`/room/get-all?${qs.stringify(payload)}`)
+      .then((res) => {
+        setData(
+          res.data.data.sort(
+            (a, b) =>
+              b.listInbox[b.listInbox.length - 1].time -
+              a.listInbox[a.listInbox.length - 1].time
+          )
+        );
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -121,6 +152,23 @@ const AdminMessage = () => {
                 <RotateLeftOutlinedIcon />
               </IconButton>
             </Paper>
+            <div
+              style={{
+                width: "96%",
+                height: "50px",
+                marginTop: "5px",
+              }}
+            >
+              <TabContext value={valueTab}>
+                <TabList
+                  onChange={handleChangeTab}
+                  aria-label="lab API tabs example"
+                >
+                  <Tab label="Khách hàng" value={1} />
+                  <Tab label="Đại Ly" value={2} />
+                </TabList>
+              </TabContext>
+            </div>
             <div className="box_room_chat_list">
               {loading ? (
                 <LoadingBar loading={true} />
@@ -161,6 +209,7 @@ const AdminMessage = () => {
                 <BoxChat
                   data={dataChatBoxId}
                   openDetail={handleOpenInformation}
+                  callBackFunction={callBackApiChat}
                 />
               </div>
             )}
