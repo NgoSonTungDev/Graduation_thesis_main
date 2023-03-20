@@ -31,8 +31,12 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState("");
   const [gender, setGender] = useState("");
-  const [email, setEmail] = useState("");
   const [open, setOpen] = React.useState(false);
+  const [file, setFile] = useState(null);
+
+  const [image, setImage] = useState(
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6at7RwZOM_yVpsUZWimO0o75bYbKAE1DaTg&usqp=CAU"
+  );
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -87,6 +91,11 @@ const Profile = () => {
         setLoading(false);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
+  };
+
+  const handleChangeFileImage = (e) => {
+    setImage(URL.createObjectURL(e.target.files[0]));
+    setFile(e.target.files[0]);
   };
 
   useEffect(() => {

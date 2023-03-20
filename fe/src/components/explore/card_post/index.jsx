@@ -1,95 +1,123 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ReplyIcon from "@mui/icons-material/Reply";
-import {
-  Button,
-  IconButton,
-  InputBase,
-  Paper,
-  Rating,
-  TextField,
-} from "@mui/material";
+import TelegramIcon from "@mui/icons-material/Telegram";
+import { Button, IconButton, Paper, Rating, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogTitle from "@mui/material/DialogTitle";
+import { Image } from "antd";
 import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
+import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Comment from "../comment";
-import TelegramIcon from "@mui/icons-material/Telegram";
-import { Image } from "antd";
+
+const validationComment = yup.object().shape({
+  content: yup.string().required("Comment không được để trống"),
+});
 
 const CardPost = ({ data }) => {
   const [like, setLike] = useState(false);
   const [numberLike, setNumberLike] = useState(0);
   const [expanded, setExpanded] = React.useState(false);
-  const [dataComent, setDataComnet] = React.useState([]);
+  const [dataComment, setDataComment] = React.useState([]);
   const [content, setContent] = useState("");
-  const [isLike, setIsLike] = useState(false);
+  const userIdStorage = getUserDataLocalStorage();
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty, isValid },
+  } = useForm({
+    resolver: yupResolver(validationComment),
+  });
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
     axiosClient
       .get(`/comment/get-by-id-post/${data._id}`)
       .then((res) => {
-        setDataComnet(res.data.data);
+        setDataComment(res.data.data);
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
 
+  const handelDeleteComment = (id) => {
+    setDataComment(
+      dataComment.filter((e) => {
+        return e._id !== id;
+      })
+    );
+  };
+
   const handleLikeReview = (e) => {
-    e.stopPropagation();
-    axiosClient
-      .post(`/like-post/${data._id}`, {
-        userId: "63fd6883ea9627ba24c33075",
-      })
-      .then((res) => {
-        setLike(true);
-        // toastify("success", res.data.message);
-        setNumberLike(res.data.data);
-      })
-      .catch((err) => {
-        setLike(false);
-        // toastify("error", err.response.data.message || "Lỗi hệ thông !");
-      });
+    if (userIdStorage) {
+      axiosClient
+        .post(`/like-post/${data._id}`, {
+          userId: userIdStorage?._id,
+        })
+        .then((res) => {
+          setLike(true);
+          setNumberLike(res.data.data);
+        })
+        .catch((err) => {
+          setLike(false);
+          toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        });
+    }
   };
   const handleUnlikeReview = (e) => {
-    e.stopPropagation();
     axiosClient
       .post(`/dis-like-post/${data._id}`, {
-        userId: "63fd6883ea9627ba24c33075",
+        userId: userIdStorage?._id,
       })
       .then((res) => {
         setLike(false);
-        // toastify("success", res.data.message);
         setNumberLike(res.data.data);
       })
       .catch((err) => {
         setLike(false);
-        // toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
 
-  // const handleOnClickEnter = (e) => {
-  //   e.stopPropagation()
-  //   if (e.key === "Enter") {
-  //     // handleComnent();
-  //     setContent("");
-  //   }
-  // };
+  const handleOnClickEnter = (e) => {
+    e.stopPropagation();
+    if (e.key === "Enter") {
+      handleComment();
+      setContent("");
+      setExpanded(true);
+    }
+  };
 
-  const handleComnent = () => {
+  const handleComment = () => {
     axiosClient
       .post(`/comment/add/`, {
-        userId: "63fd6883ea9627ba24c33075",
+        userId: userIdStorage._id,
         content: content,
         dateTime: Number(new Date()),
         postId: data._id,
       })
       .then((res) => {
         // toastify("success", res.data.message);
-        setDataComnet([...dataComent, res.data.data]);
+        setDataComment([...dataComment, res.data.data]);
         setContent("");
       })
       .catch((err) => {
@@ -97,18 +125,43 @@ const CardPost = ({ data }) => {
       });
   };
 
+  const handleShare = () => {
+    axiosClient
+      .post("/post/add", {
+        userId: userIdStorage._id,
+        content: data.content,
+        image: data.image,
+        rating: data.rating,
+        time: Number(new Date()),
+        placeId: data.placeId._id,
+      })
+      .then((res) => {
+        handleClose();
+        toastify("success", res.data.message || "Tạo bài thành công !");
+      })
+      .catch((err) => {
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
+
   const fetchData = () => {
-    data?.like?.find((e) => {
-      return e === "63fd6883ea9627ba24c33075";
-    })
-      ? setLike(true)
-      : setLike(false);
+    if (userIdStorage) {
+      data?.like?.find((e) => {
+        return e === userIdStorage._id;
+      })
+        ? setLike(true)
+        : setLike(false);
+    } else {
+      console.log("nmdsnfdsf");
+      setLike(false);
+    }
   };
 
   useEffect(() => {
     fetchData();
     setNumberLike(Number(data?.like.length));
   }, []);
+
   return (
     <div style={{ width: "100%" }}>
       <Box
@@ -118,7 +171,6 @@ const CardPost = ({ data }) => {
           padding: "15px 0",
           marginTop: "10px",
           backgroundColor: "#ffffff",
-
           borderRadius: "10px",
         }}
       >
@@ -129,7 +181,7 @@ const CardPost = ({ data }) => {
           >
             <img
               style={{ width: "100%", height: "100%", borderRadius: "50%" }}
-              src={data?.userId?.avt}
+              src={userIdStorage?.avt}
               alt=""
             />
           </div>
@@ -145,7 +197,9 @@ const CardPost = ({ data }) => {
             >
               <div>
                 <span style={{ textTransform: "capitalize" }}>
-                  {data?.userId?.userName}
+                  {data?.userId?.userName
+                    ? data?.userId?.userName
+                    : "Người dùng Mafline"}
                 </span>
               </div>
               <div>
@@ -192,13 +246,11 @@ const CardPost = ({ data }) => {
           className="image"
           style={{
             width: "92%",
-            // height:"100%",
             marginLeft: "4%",
             paddingTop: "30px",
           }}
         >
           <Image width={"100%"} src={data.image} style={{ width: "100%" }} />
-          {/* <img src={data.image} style={{ width: "92%" }} /> */}
         </div>
         <Box
           sx={{
@@ -210,7 +262,7 @@ const CardPost = ({ data }) => {
           <div style={{ width: "100%" }}>
             {like ? (
               <Button
-                sx={{ kgroundColor: " green", color: "red", width: "100%" }}
+                sx={{ color: "red", width: "100%" }}
                 onClick={(e) => {
                   handleUnlikeReview(e);
                 }}
@@ -225,7 +277,7 @@ const CardPost = ({ data }) => {
               </Button>
             ) : (
               <Button
-                sx={{ width: "100%" }}
+                sx={{ width: "100%", color: "#000000" }}
                 onClick={(e) => {
                   handleLikeReview(e);
                 }}
@@ -233,6 +285,7 @@ const CardPost = ({ data }) => {
                 <FavoriteIcon
                   sx={{
                     padding: "7px",
+                    color: "#000000",
                   }}
                 />
                 <span>{data ? `${numberLike} Thích` : "Thích"}</span>
@@ -240,15 +293,19 @@ const CardPost = ({ data }) => {
             )}
           </div>
           <Button
-            sx={{ width: "100%" }}
+            sx={{ width: "100%", color: "#000000" }}
             component="label"
             onClick={handleExpandClick}
           >
-            <ChatBubbleOutlineIcon sx={{ padding: "7px" }} />
+            <ChatBubbleOutlineIcon sx={{ padding: "7px", color: "#000000" }} />
             Bình luận
           </Button>
-          <Button sx={{ width: "100%" }} component="label">
-            <ReplyIcon sx={{ padding: "7px" }} />
+          <Button
+            sx={{ width: "100%", color: "#000000" }}
+            component="label"
+            onClick={handleClickOpen}
+          >
+            <ReplyIcon sx={{ padding: "7px", color: "#000000" }} />
             Chia sẻ
           </Button>
         </Box>
@@ -256,84 +313,103 @@ const CardPost = ({ data }) => {
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <div
             style={{
-              width: "100%",
-              // height: "400px",
-              // overflow: "scroll",
-              // overflowX: "hidden",
-              marginTop: "10px",
+              width: "93%",
+              marginLeft: "3.5%",
+              paddingBottom: 5,
             }}
           >
-            {dataComent?.map((item, index) => (
-              <Comment dataComent={item} key={index} />
+            {dataComment?.map((item, index) => (
+              <Comment
+                dataComment={item}
+                callBackApi={handelDeleteComment}
+                key={index}
+              />
             ))}
           </div>
         </Collapse>
-        {dataComent?.length > 0 && (
+        {dataComment?.length > 0 && (
           <div
             onClick={() => setExpanded((isShow) => !isShow)}
             style={{ textAlign: "center", cursor: "pointer" }}
           >
-            <span>
-              {expanded
-                ? "Ẩn tất cả bình luận"
-                : `Xem tất cả ${dataComent?.length || 0} bình luận`}
-            </span>
+            <span>{expanded && "Ẩn tất cả bình luận"}</span>
           </div>
         )}
 
-        <div
-          className="comment"
-          style={{ display: "flex", width: "100%", marginTop: "30px" }}
-        >
+        {userIdStorage && (
           <div
-            className="avatar"
-            style={{ width: "50px", height: "50px", marginLeft: "40px" }}
-          >
-            <img
-              style={{ width: "100%", height: "100%", borderRadius: "50%" }}
-              src={data?.userId?.avt}
-              alt=""
-            />
-          </div>
-          <div
+            className="comment"
             style={{
-              width: "78%",
+              display: "flex",
+              width: "100%",
+              alignItems: "center",
             }}
           >
-            <Paper
-              component="form"
-              sx={{
-                marginLeft: "20px",
-                width: "100%",
+            <div
+              className="avatar"
+              style={{ width: "56px", height: "56px", marginLeft: "40px" }}
+            >
+              <img
+                style={{ width: "100%", height: "100%", borderRadius: "50%" }}
+                src={userIdStorage?.avt}
+                alt=""
+              />
+            </div>
+            <div
+              style={{
+                width: "78%",
               }}
             >
-              <TextField
-                sx={{ width: "100%" }}
-                value={content}
-                size="small"
-                multiline
-                placeholder="Nhập bình luận công khai"
-                // onKeyDown={handleOnClickEnter}
-                onChange={(e) => {
-                  setContent(e.target.value);
+              <Paper
+                sx={{
+                  marginLeft: "20px",
+                  width: "100%",
                 }}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton type="button">
-                      <TelegramIcon onClick={handleComnent} />
-                    </IconButton>
-                  ),
-                }}
-              />
-            </Paper>
+              >
+                <TextField
+                  error={!!errors?.content}
+                  {...register("content")}
+                  sx={{ width: "100%", border: "none", outline: "none" }}
+                  value={content}
+                  size="small"
+                  placeholder="Aa..."
+                  onKeyDown={handleOnClickEnter}
+                  onChange={(e) => {
+                    setContent(e.target.value);
+                  }}
+                  helperText={errors.content?.message}
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton type="button">
+                        <TelegramIcon
+                          disabled={!isDirty && !isValid}
+                          onClick={handleSubmit(handleComment)}
+                        />
+                      </IconButton>
+                    ),
+                  }}
+                />
+              </Paper>
+            </div>
           </div>
-        </div>
-        {/* {expanded && (
-          <div style={{ textAlign: "center", cursor: "pointer" }}>
-            <span onClick={handleExpandClick}>Ẩn tất cả bình luận</span>
-          </div>
-        )} */}
+        )}
       </Box>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Bạn có chắc muốn chia sẻ ?"}
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handleShare}>chia sẻ</Button>
+          <Button onClick={handleClose} autoFocus>
+            thoát
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

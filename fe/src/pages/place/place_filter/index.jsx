@@ -16,7 +16,7 @@ const PlaceFilter = () => {
   const dispatch = useDispatch();
   const payload = useSelector(payloadPlace);
 
-  const { watch, register, reset, getValues } = useForm({
+  const { watch, register, reset } = useForm({
     defaultValues: {
       placeName: "",
       location: "",

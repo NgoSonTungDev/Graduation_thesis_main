@@ -40,6 +40,7 @@ const orderSchema = new mongoose.Schema<IOrder>(
     },
     placeId: { type: Schema.Types.ObjectId, ref: "Place" },
     salesAgentId: { type: Schema.Types.ObjectId, ref: "SalesAgent" },
+    ticketId: { type: Schema.Types.ObjectId, ref: "Ticket" },
   },
   { timestamps: true }
 );

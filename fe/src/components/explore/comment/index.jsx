@@ -1,87 +1,142 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import TelegramIcon from "@mui/icons-material/Telegram";
 import { Collapse, IconButton, Paper, TextField } from "@mui/material";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogTitle from "@mui/material/DialogTitle";
 import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
+import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Rep_Comment from "../rep_comment";
-import TelegramIcon from "@mui/icons-material/Telegram";
 
-const Comment = ({ dataComent }) => {
+const validationRepComment = yup.object().shape({
+  content: yup.string().required("Comment không được để trống"),
+});
+
+const Comment = ({ dataComment, callBackApi }) => {
+  console.log("dsads", dataComment);
   const [numberLike, setNumberLike] = useState();
   const [like, setLike] = useState(false);
-  const [datarepComent, setDataRepComnet] = React.useState([]);
+  const [datarepComent, setDataRepComment] = React.useState([]);
   const [expanded, setExpanded] = React.useState(false);
   const [content, setContent] = useState("");
+  const navigation = useNavigate();
+  const userIdStorage = getUserDataLocalStorage();
+  const [data, setData] = useState([]);
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty, isValid },
+  } = useForm({
+    resolver: yupResolver(validationRepComment),
+    mode: "all",
+  });
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
     axiosClient
-      .get(`/rep-comment/get-by-id/${dataComent._id}`)
+      .get(`/rep-comment/get-by-id/${dataComment._id}`)
       .then((res) => {
-        setDataRepComnet(res.data.data);
+        setDataRepComment(res.data.data);
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
+  };
+
+  const handelRepDeleteComment = (id) => {
+    setDataRepComment(
+      datarepComent.filter((e) => {
+        return e._id !== id;
+      })
+    );
+  };
+
+  const handleOnClickEnter = (e) => {
+    e.stopPropagation();
+    if (e.key === "Enter") {
+      handleRepComment();
+      setContent("");
+    }
   };
 
   const handleLikeComment = (e) => {
+    if (userIdStorage) {
+      axiosClient
+        .post(`/like-comment/${dataComment._id}`, {
+          userId: userIdStorage?._id,
+        })
+        .then((res) => {
+          setLike(true);
+          // toastify("success", res.data.message);
+          setNumberLike(res.data.data);
+        })
+        .catch((err) => {
+          setLike(false);
+          toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        });
+    }
+  };
+
+  const handleUnlikeComment = (e) => {
+    if (userIdStorage) {
+      axiosClient
+        .post(`/dis-like-comment/${dataComment._id}`, {
+          userId: userIdStorage?._id,
+        })
+        .then((res) => {
+          setLike(false);
+          // toastify("success", res.data.message);
+          setNumberLike(res.data.data);
+        })
+        .catch((err) => {
+          setLike(false);
+          toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        });
+    }
+  };
+
+  const handleDeleteComment = (e) => {
     axiosClient
-      .post(`/like-comment/${dataComent._id}`, {
-        userId: "63fd6883ea9627ba24c33075",
+      .delete(`/comment/delete/${dataComment._id}`, {
+        userId: userIdStorage._id,
       })
       .then((res) => {
-        setLike(true);
         toastify("success", res.data.message);
-        setNumberLike(res.data.data);
-        console.log("resssss", res);
+        handleClose();
+        callBackApi(dataComment._id);
       })
       .catch((err) => {
-        setLike(false);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
 
-  const handleUnlikeComment = (e) => {
-    axiosClient
-      .post(`/dis-like-comment/${dataComent._id}`, {
-        userId: "63fd6883ea9627ba24c33075",
-      })
-      .then((res) => {
-        setLike(false);
-        toastify("success", res.data.message);
-        setNumberLike(res.data.data);
-        console.log("loixx", res);
-      })
-      .catch((err) => {
-        setLike(false);
-        // toastify("error", err.response.data.message || "Lỗi hệ thông !");
-      });
-  };
-
-  const handleDeleteComment = (e) => {
-    // setcnmt(cmt.filter(item => {return item._id !== "ấđâsdasdasd"}))
-    axiosClient
-      .delete(`/comment/delete/${dataComent._id}`, {
-        userId: "63fd6883ea9627ba24c33075",
-      })
-      .then((res) => {
-        toastify("success", res.data.message);
-      })
-      .catch((err) => {
-        // toastify("error", err.response.data.message || "Lỗi hệ thông !");
-      });
-  };
-
-  const handleRepComnent = (e) => {
+  const handleRepComment = (e) => {
     axiosClient
       .post(`/rep-comment/add`, {
-        userId: "63fd6883ea9627ba24c33075",
+        userId: userIdStorage._id,
         content: content,
         dateTime: Number(new Date()),
-        commentId: dataComent._id,
+        commentId: dataComment._id,
       })
       .then((res) => {
         toastify("success", res.data.message);
-        setDataRepComnet([...datarepComent, res.data.data]);
+        setDataRepComment([...datarepComent, res.data.data]);
         setContent("");
       })
       .catch((err) => {
@@ -90,75 +145,85 @@ const Comment = ({ dataComent }) => {
   };
 
   const fetchData = () => {
-    dataComent?.like?.find((e) => {
-      return e === "63fd6883ea9627ba24c33075";
-    })
-      ? setLike(true)
-      : setLike(false);
+    if (userIdStorage && userIdStorage._id) {
+      dataComment?.like?.find((e) => {
+        return e === userIdStorage._id;
+      })
+        ? setLike(true)
+        : setLike(false);
+    } else {
+      setLike(false);
+    }
   };
 
   useEffect(() => {
     fetchData();
-    setNumberLike(Number(dataComent?.like.length));
+    setNumberLike(Number(dataComment?.like.length));
   }, []);
+
   return (
     <div>
       <div
         style={{
           width: "100%",
           display: "flex",
+          marginTop: "5px",
         }}
       >
         <div
           style={{
-            width: "40px",
-            height: "40px",
-            marginLeft: "40px",
+            width: "50px",
+            height: "50px",
           }}
         >
           <img
             style={{ width: "100%", height: "100%", borderRadius: "50%" }}
-            src={dataComent?.userId?.avt}
+            src={dataComment?.userId?.avt}
             alt=""
           />
         </div>
-        <div style={{}}>
+        <div
+          style={{
+            width: "100%",
+          }}
+        >
           <div
             style={{
-              width: "auto",
               boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
-              marginLeft: "30px",
+              marginLeft: "10px",
               padding: "5px",
-              marginTop: "10px",
               borderRadius: "10px",
             }}
           >
             <div style={{ display: "flex", padding: "5px" }}>
-              <div>{dataComent?.userId?.userName}</div>
-              <div style={{ marginLeft: "40px" }}>
-                {momentLocale(dataComent?.dateTime)}
-              </div>
+              <b style={{ textTransform: "capitalize" }}>
+                {dataComment?.userId?.userName}
+              </b>
             </div>
             <div style={{ padding: "5px" }}>
-              <span>{dataComent?.content}</span>
+              <span>{dataComment?.content}</span>
             </div>
           </div>
           <div
             style={{
+              width: "40%",
               paddingBottom: "3%",
+              marginLeft: "15px",
               display: "flex",
               padding: "5px",
-              marginLeft: "10%",
+              justifyContent: "space-between",
+              fontSize: 13,
             }}
           >
             <div style={{ cursor: "pointer" }}>
               {like ? (
                 <span
+                  style={{ color: "#3498db" }}
                   onClick={(e) => {
                     handleUnlikeComment(e);
                   }}
                 >
-                  <span>{dataComent ? `${numberLike} thích` : "thích"}</span>
+                  Đã thích ({numberLike})
                 </span>
               ) : (
                 <span
@@ -166,71 +231,94 @@ const Comment = ({ dataComent }) => {
                     handleLikeComment(e);
                   }}
                 >
-                  <span>{dataComent ? `${numberLike} thích` : "thích"}</span>
+                  thích ({numberLike})
                 </span>
               )}
             </div>
-            <div style={{ marginLeft: "10%", cursor: "pointer" }}>
-              <span
-                onClick={(e) => {
-                  handleDeleteComment(e);
-                }}
-              >
-                xóa
-              </span>
-            </div>
-            <div
-              style={{ marginLeft: "10%", cursor: "pointer" }}
-              onClick={handleExpandClick}
-            >
-              <span>phản hồi</span>
-            </div>
+
+            {userIdStorage?._id === dataComment?.userId?._id && (
+              <div style={{ cursor: "pointer" }}>
+                <span onClick={handleClickOpen}>Xóa</span>
+              </div>
+            )}
+
+            {userIdStorage && (
+              <div style={{ cursor: "pointer" }} onClick={handleExpandClick}>
+                <span>phản hồi</span>
+              </div>
+            )}
+            <span>{momentLocale(dataComment?.dateTime)}</span>
           </div>
         </div>
       </div>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <div
           style={{
-            width: "80%",
-            // height: "400px",
-            // overflow: "scroll",
-            // overflowX: "hidden",
+            width: "90%",
             marginTop: "10px",
-            marginLeft: "15%",
-            backgroundColor: "red",
+            marginLeft: "10%",
           }}
         >
           {datarepComent?.map((item, index) => (
-            <Rep_Comment datarepComent={item} key={index} />
-          ))}
-          <Paper
-            component="form"
-            sx={{
-              width: "100%",
-            }}
-          >
-            <TextField
-              sx={{ width: "100%", outline:'none', border:'none' }}
-              value={content}
-              size="small"
-              multiline
-              maxRows={4}
-              placeholder="Aa..."
-              // onKeyDown={handleOnClickEnter}
-              onChange={(e) => {
-                setContent(e.target.value);
-              }}
-              // InputProps={{
-              //   endAdornment: (
-              //     <IconButton type="button">
-              //       <TelegramIcon onClick={handleRepComnent} />
-              //     </IconButton>
-              //   ),
-              // }}
+            <Rep_Comment
+              datarepComent={item}
+              callBackApi={handelRepDeleteComment}
+              key={index}
             />
-          </Paper>
+          ))}
+          {userIdStorage && (
+            <Paper
+              component="form"
+              sx={{
+                width: "100%",
+              }}
+            >
+              <TextField
+                error={!!errors?.content}
+                {...register("content")}
+                sx={{ width: "100%", outline: "none", border: "none" }}
+                value={content}
+                size="small"
+                multiline
+                maxRows={4}
+                placeholder="Aa...."
+                onKeyDown={handleOnClickEnter}
+                onChange={(e) => {
+                  setContent(e.target.value);
+                }}
+                helperText={errors.content?.message}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton type="button">
+                      <TelegramIcon
+                        disabled={!isDirty && !isValid}
+                        onClick={handleSubmit(handleRepComment)}
+                      />
+                    </IconButton>
+                  ),
+                }}
+              />
+            </Paper>
+          )}
         </div>
       </Collapse>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Bạn có chắc muốn xóa ?"}
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handleDeleteComment}>xóa</Button>
+          <Button onClick={handleClose} autoFocus>
+            thoát
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

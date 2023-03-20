@@ -1,60 +1,23 @@
+import moment from "moment";
 import React from "react";
+import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import "./style.scss";
-const ExploreUser = ({ dataUser }) => {
+
+const ExploreUser = ({ dataUser, getIdMovePage }) => {
   return (
     <div
-      style={{
-        width: "100%",
-        padding: "5px 0",
-        margin: "10px 0",
-        boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
-        display: "flex",
-        alignItems: "center",
-        overflow: "hidden",
-        cursor: "pointer",
+      className="card"
+      onClick={() => {
+        getIdMovePage(dataUser?._id);
       }}
     >
-      <div className="user_image">
-        <img src={dataUser?.avt} alt="" />
-      </div>
-      <div
-        style={{
-          marginLeft: "15px",
-          width: "60%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          // gap: "12px",
-        }}
-      >
-        <div
-          style={{
-            fontSize: "20px",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
-          <b>{dataUser?.userName}</b>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <span style={{ whiteSpace: "pre" }}>Địa chỉ :</span>
-          <span
-            style={{
-              marginLeft: "5px",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {dataUser?.email}
-          </span>
-        </div>
+      <img src={dataUser?.avt} className="card-image" />
+      <div className="card-content">
+        <h3 className="card-title">{dataUser?.userName}</h3>
+        <p className="card-description">Giới tính : {dataUser.gender}</p>
+        <p className="card-location">
+          Ngày tham gia : {moment(dataUser?.createdAt).format("DD/MM/YYYY")}
+        </p>
       </div>
     </div>
   );

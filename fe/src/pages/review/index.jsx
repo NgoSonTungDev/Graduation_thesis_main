@@ -1,19 +1,18 @@
 import { EnvironmentOutlined } from "@ant-design/icons";
-import { PhotoCamera } from "@mui/icons-material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { Button, IconButton } from "@mui/material";
-import { padding } from "@mui/system";
-import { Input, Rate, message } from "antd";
+import { Button } from "@mui/material";
+import { Input, message, Rate } from "antd";
+import axios from "axios";
 import _ from "lodash";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axiosClient from "../../api/axiosClient";
-import axiosDeploy from "../../api/axiosDeploy";
 import GetDataPlaceItem from "../../components/modle_find_place";
 import Navbar from "../../components/navbar/index";
 import { clearByIdPlace } from "../../redux/place/placeSlice";
 import { DataPlaceById } from "../../redux/selectors";
 import { toastify } from "../../utils/common";
+import { getUserDataLocalStorage } from "../../utils/localstorage";
 import "./index.scss";
 
 const Review = () => {
@@ -31,6 +30,7 @@ const Review = () => {
 
   const dispatch = useDispatch();
   const dataPlace = useSelector(DataPlaceById);
+  const userIdStorage = getUserDataLocalStorage();
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -43,7 +43,7 @@ const Review = () => {
   const addPost = (value) => {
     axiosClient
       .post("/post/add", {
-        userId: "phan tan phu",
+        userId: userIdStorage,
         content: content,
         image: value,
         rating: rate.rate,
@@ -63,34 +63,66 @@ const Review = () => {
       });
   };
 
-  const handleSubmit = () => {
-    if (file && !content && dataPlace) {
+  const handleSubmit = async () => {
+    if (file === "" || content === "" || image === "") {
       message.error("Vui lòng điền đầy đủ thông tin!");
       return;
     }
 
-    setLoading(true);
     const formData = new FormData();
-    formData.append("photo", file);
-    axiosDeploy
-      .post("/upload/file", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((res) => {
-        setLoading(false);
-        addPost(res.data.path);
+    formData.append("image", file);
 
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    const clientId = "90792b277ce19e4";
+
+    const response = await axios.post(
+      "https://api.imgur.com/3/image",
+      formData,
+      {
+        headers: {
+          Authorization: `Client-ID ${clientId}`,
+          "Content-Type": "multipart/form-data"
+        },
+      }
+    );
+
+    console.log(response.data.data.link);
+
+    // setLoading(true);
+    // const formData = new FormData();
+    // formData.append("image", file);
+    // axios.post("https://api.imgur.com/3/image", formData, {
+    //   headers: {
+    //     Authorization: `Client-ID 90792b277ce19e4`,
+    //   },
+    // })
+    //   .then((res) => {
+    //     setLoading(false);
+    //     // addPost(res.data.data.link);
+
+    //     console.log(res.data);
+    //   })
+    //   .catch((error) => {
+    //     setLoading(false);
+    //     console.log(error);
+    //   });
+    // axiosDeploy
+    //   .post("/upload/file", formData, {
+    //     headers: { "Content-Type": "multipart/form-data" },
+    //   })
+    //   .then((res) => {
+    //     setLoading(false);
+    //     addPost(res.data.path);
+
+    //     console.log(res);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   };
 
   const handleChangeFileImage = (e) => {
-    const file = e.target.files[0];
-    setImage(URL.createObjectURL(file));
-    setFile(file);
+    setImage(URL.createObjectURL(e.target.files[0]));
+    setFile(e.target.files[0]);
   };
 
   const handleChange = (name, value) => {
@@ -103,7 +135,7 @@ const Review = () => {
   return (
     <div>
       <Navbar loading={loading} />
-      <div className="Review_Container" style={{ witdt: "50%" }}>
+      <div className="Review_Container">
         <div className="header">
           <h1>Viết Review</h1>
         </div>
@@ -199,7 +231,6 @@ const Review = () => {
                       <b>{dataPlace.name}</b>
                       <br />
                       <span>{dataPlace.address}</span>
-                     
                     </div>
                   </div>
                 </div>
@@ -210,14 +241,14 @@ const Review = () => {
                 {image && <img style={{ width: "225px" }} src={image} alt="" />}
               </div>
               <div style={{ display: "flex" }}>
-                <Button variant="outlined" component="label">
+                <Button variant="outlined" component="label" disabled={loading}>
                   Thêm ảnh
                   <input
                     type="file"
                     hidden
                     name="photo"
                     accept="image/*"
-                    onChange={(e) => handleChangeFileImage(e)}
+                    onChange={handleChangeFileImage}
                   />
                 </Button>
                 <div style={{ marginLeft: "5px" }}>

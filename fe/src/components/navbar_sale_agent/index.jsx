@@ -1,6 +1,9 @@
-import React, { useState } from "react";
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import React, { useState } from "react";
+import { BiPackage } from "react-icons/bi";
+import { BsTicketPerforated } from "react-icons/bs";
+import { FiHome, FiLogOut } from "react-icons/fi";
 import {
   Menu,
   MenuItem,
@@ -9,22 +12,12 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "react-pro-sidebar";
-import "./style.scss";
-import { AiOutlineMessage, AiOutlineBarChart } from "react-icons/ai";
-import {
-  MdEditLocationAlt,
-  MdEditNote,
-  MdOutlineManageAccounts,
-} from "react-icons/md";
-import { BiCog, BiCreditCardFront } from "react-icons/bi";
-import { FaRegHeart } from "react-icons/fa";
-import { FiHome, FiLogOut } from "react-icons/fi";
-import { GoPackage } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
+import "./style.scss";
 
 import "react-pro-sidebar/dist/css/styles.css";
 
-const Header = ({ ReactNode }) => {
+const MenuSaleAgent = ({ ReactNode }) => {
   const [menuCollapse, setMenuCollapse] = useState(true);
   const [pathName, setPathName] = useState("/admin/home");
   const navigation = useNavigate();
@@ -60,7 +53,7 @@ const Header = ({ ReactNode }) => {
               }}
             >
               <div className="logotext">
-                <p>{menuCollapse ? "AD" : "ADMIN"}</p>
+                <p>{menuCollapse ? "DL" : "Sale Agent"}</p>
               </div>
               <div
                 className="closemenu"
@@ -94,77 +87,30 @@ const Header = ({ ReactNode }) => {
                   <MenuItem
                     active={pathName === "/admin/home" && true}
                     icon={<FiHome />}
-                    onClick={() => {
-                      movePage("/admin/home");
-                    }}
                   >
-                    Dashboard
+                    Manage information
                   </MenuItem>
                   <MenuItem
                     active={pathName === "/admin/message" && true}
-                    icon={<AiOutlineMessage />}
+                    icon={<BsTicketPerforated />}
+                  >
+                    Ticket management
+                  </MenuItem>
+                  <MenuItem
+                    active={pathName === "admin" && true}
+                    icon={<BiPackage />}
                     onClick={() => {
-                      movePage("/admin/message");
+                      movePage("/sale-agent/order-management");
                     }}
-                  >
-                    Message
-                  </MenuItem>
-                  <MenuItem
-                    active={pathName === "admin" && true}
-                    icon={<FaRegHeart />}
-                  >
-                    General Management
-                  </MenuItem>
-                  <MenuItem
-                    active={pathName === "admin" && true}
-                    icon={<MdEditLocationAlt />}
-                  >
-                    Location management
-                  </MenuItem>
-                  <MenuItem
-                    active={pathName === "admin" && true}
-                    icon={<MdEditNote />}
-                  >
-                    Post management
-                  </MenuItem>
-                  <MenuItem
-                    active={pathName === "admin" && true}
-                    icon={<MdOutlineManageAccounts />}
-                  >
-                    Account management
-                  </MenuItem>
-                  <MenuItem
-                    active={pathName === "admin" && true}
-                    icon={<GoPackage />}
                   >
                     Order management
-                  </MenuItem>
-                  <MenuItem
-                    active={pathName === "admin" && true}
-                    icon={<BiCreditCardFront />}
-                  >
-                    Voucher manager
-                  </MenuItem>
-                  <MenuItem
-                    active={pathName === "admin" && true}
-                    icon={<AiOutlineBarChart />}
-                    onClick={() => {
-                      movePage("/admin/statistic");
-                    }}
-                  >
-                    statistic
                   </MenuItem>
                 </Menu>
               </div>
             </SidebarContent>
             <SidebarFooter>
-              <Menu
-                iconShape="square"
-                onClick={() => {
-                  navigation("/home");
-                }}
-              >
-                <MenuItem icon={<FiLogOut />}>Exit</MenuItem>
+              <Menu iconShape="square">
+                <MenuItem icon={<FiLogOut />}>Logout</MenuItem>
               </Menu>
             </SidebarFooter>
           </ProSidebar>
@@ -175,4 +121,4 @@ const Header = ({ ReactNode }) => {
   );
 };
 
-export default Header;
+export default MenuSaleAgent;

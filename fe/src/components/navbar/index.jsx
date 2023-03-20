@@ -35,11 +35,14 @@ import {
 } from "../../redux/chat_box/chatBoxSlice";
 import ws from "../../socket";
 import { toastify } from "../../utils/common";
+import {
+  getUserDataLocalStorage,
+  removeUserDataLocalStorage,
+} from "../../utils/localstorage";
 import GetDataPlaceItem from "../modle_find_place";
 import logo1 from "./images/acount.jpeg";
 import "./index.scss";
 import NotificationItem from "./notification";
-import { removeUserDataLocalStorage } from "../../utils/localstorage";
 
 const Navbar = ({ loading, valueTab }) => {
   const currrenUser = JSON.parse(localStorage.getItem("user"));
@@ -48,6 +51,7 @@ const Navbar = ({ loading, valueTab }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElNotify, setAnchorElNotify] = React.useState(null);
   const [offset, setOffset] = useState(0);
+  const userIdStorage = getUserDataLocalStorage();
 
   console.log(currrenUser);
 
@@ -192,32 +196,37 @@ const Navbar = ({ loading, valueTab }) => {
                       <Typography sx={{ ml: 1 }}>Khuyến Mãi</Typography>
                     </Box>
                   }
+                  onClick={() => {
+                    movePage("/voucher");
+                  }}
                 />
               </Tabs>
             </Box>
           </div>
 
           <div className="Navbar_Icon">
-            <div className="Button">
-              <Button
-                variant="contained"
-                onClick={() => {
-                  movePage("/review");
-                }}
-                sx={{ whiteSpace: "pre" }}
-              >
-                <span
-                  class="material-icons"
-                  style={{
-                    fontSize: "18px",
-                    paddingRight: "8px",
+            {userIdStorage && (
+              <div className="Button">
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    movePage("/review");
                   }}
+                  sx={{ whiteSpace: "pre" }}
                 >
-                  edit
-                </span>
-                Viết Review
-              </Button>
-            </div>
+                  <span
+                    class="material-icons"
+                    style={{
+                      fontSize: "18px",
+                      paddingRight: "8px",
+                    }}
+                  >
+                    edit
+                  </span>
+                  Viết Review
+                </Button>
+              </div>
+            )}
             <div className="Icon">
               {currrenUser ? (
                 <>
@@ -312,7 +321,7 @@ const Navbar = ({ loading, valueTab }) => {
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          movePage("/login");
+                          movePage("/order/63fd6d8f3ac0f9d2d5e102fd");
                         }}
                       >
                         <ListItemIcon>
@@ -334,7 +343,7 @@ const Navbar = ({ loading, valueTab }) => {
                         onClick={() => {
                           handleClose();
                           removeUserDataLocalStorage();
-                          navigation("/");
+                          navigation("/home");
                         }}
                       >
                         <ListItemIcon>
@@ -351,7 +360,6 @@ const Navbar = ({ loading, valueTab }) => {
                   variant="contained"
                   onClick={() => {
                     movePage("/login");
-                    // handleLogin();
                   }}
                   sx={{ whiteSpace: "pre" }}
                 >

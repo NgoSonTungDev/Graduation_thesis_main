@@ -15,7 +15,14 @@ import NotFound from "./pages/not_found";
 import Place from "./pages/place/index";
 import Profile from "./pages/profile";
 import Review from "./pages/review";
+import Explore from "./components/explore";
 import { OpenChatBox } from "./redux/selectors";
+import HomeSaleAgent from "./pages/sale_agent/home";
+import OrderSaleAgent from "./pages/sale_agent/order";
+import Voucher from "./pages/voucher";
+import Order from "./pages/order";
+import ThankCustomer from "./pages/thank_customer";
+
 const App = () => {
   const open = useSelector(OpenChatBox);
 
@@ -30,9 +37,23 @@ const App = () => {
           <Route path="/place" element={<Place />} />
           <Route path="/review" element={<Review />} />
           <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/voucher" element={<Voucher />} />
+          <Route path="/order/:id" element={<Order />} />
+          <Route path="/page/thank-customer" element={<ThankCustomer />} />
+
+          {/* admin */}
           <Route path="/admin/home" element={<AdminHome />} />
           <Route path="/admin/message" element={<AdminMessage />} />
           <Route path="/admin/statistic" element={<Statistic />} />
+
+          {/* saleAgent */}
+          <Route path="/sale-agent/home" element={<HomeSaleAgent />} />
+          <Route
+            path="/sale-agent/order-management"
+            element={<OrderSaleAgent />}
+          />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

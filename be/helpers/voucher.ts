@@ -6,7 +6,6 @@ import { errorFunction } from "../utils/errorFunction";
 const validation = joi.object<IVoucher>({
   codeVoucher: joi.string(),
   title: joi.string().required(),
-  image: joi.string().required(),
   price: joi.number().min(10000).required(),
   startDate: joi.number().required(),
   endDate: joi.number().required(),
