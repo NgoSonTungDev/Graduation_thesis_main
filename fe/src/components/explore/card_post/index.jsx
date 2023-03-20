@@ -18,8 +18,10 @@ import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Comment from "../comment";
+import _ from "lodash"
 
 const CardPost = ({ data }) => {
+  console.log("ffdfd",data.like.length);
   const [like, setLike] = useState(false);
   const [numberLike, setNumberLike] = useState(0);
   const [expanded, setExpanded] = React.useState(false);
@@ -126,6 +128,7 @@ const CardPost = ({ data }) => {
         userId: userIdStorage._id,
         content: data.content,
         image: data.image,
+        public: true,
         rating: data.rating,
         time: Number(new Date()),
         placeId: data.placeId._id,
@@ -135,6 +138,7 @@ const CardPost = ({ data }) => {
         toastify("success", res.data.message || "Tạo bài thành công !");
       })
       .catch((err) => {
+        handleClose();
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
@@ -150,11 +154,11 @@ const CardPost = ({ data }) => {
       console.log("nmdsnfdsf");
       setLike(false);
     }
+    setNumberLike(data.like.length)
   };
 
   useEffect(() => {
     fetchData();
-    setNumberLike(Number(data?.like.length));
   }, []);
 
   return (
