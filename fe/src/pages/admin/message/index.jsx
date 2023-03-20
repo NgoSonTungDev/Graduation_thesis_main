@@ -30,7 +30,7 @@ const AdminMessage = () => {
   const dispatch = useDispatch();
   const [payload, setPayload] = React.useState({
     userName: "",
-    isAdmin: 2,
+    isAdmin: 1,
   });
 
   const handleChangeTab = (e, newValue) => {
