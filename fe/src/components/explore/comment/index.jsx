@@ -1,33 +1,23 @@
-import { yupResolver } from "@hookform/resolvers/yup";
 import TelegramIcon from "@mui/icons-material/Telegram";
 import { Collapse, IconButton, Paper, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
+import { message } from "antd";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Rep_Comment from "../rep_comment";
 
-const validationRepComment = yup.object().shape({
-  content: yup.string().required("Comment không được để trống"),
-});
-
 const Comment = ({ dataComment, callBackApi }) => {
-  console.log("dsads", dataComment);
   const [numberLike, setNumberLike] = useState();
   const [like, setLike] = useState(false);
   const [datarepComent, setDataRepComment] = React.useState([]);
   const [expanded, setExpanded] = React.useState(false);
   const [content, setContent] = useState("");
-  const navigation = useNavigate();
   const userIdStorage = getUserDataLocalStorage();
-  const [data, setData] = useState([]);
 
   const [open, setOpen] = useState(false);
 
@@ -37,15 +27,6 @@ const Comment = ({ dataComment, callBackApi }) => {
   const handleClose = () => {
     setOpen(false);
   };
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isDirty, isValid },
-  } = useForm({
-    resolver: yupResolver(validationRepComment),
-    mode: "all",
-  });
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -70,8 +51,12 @@ const Comment = ({ dataComment, callBackApi }) => {
   const handleOnClickEnter = (e) => {
     e.stopPropagation();
     if (e.key === "Enter") {
-      handleRepComment();
-      setContent("");
+      if (content === "") {
+        message.error("Vui lòng nhập comment!");
+      } else {
+        handleRepComment();
+        setExpanded(true);
+      }
     }
   };
 
@@ -127,21 +112,25 @@ const Comment = ({ dataComment, callBackApi }) => {
   };
 
   const handleRepComment = (e) => {
-    axiosClient
-      .post(`/rep-comment/add`, {
-        userId: userIdStorage._id,
-        content: content,
-        dateTime: Number(new Date()),
-        commentId: dataComment._id,
-      })
-      .then((res) => {
-        toastify("success", res.data.message);
-        setDataRepComment([...datarepComent, res.data.data]);
-        setContent("");
-      })
-      .catch((err) => {
-        toastify("error", err.response.data.message || "Lỗi hệ thông !");
-      });
+    if (content === "") {
+      message.error("Vui lòng nhập comment!");
+    } else {
+      axiosClient
+        .post(`/rep-comment/add`, {
+          userId: userIdStorage._id,
+          content: content,
+          dateTime: Number(new Date()),
+          commentId: dataComment._id,
+        })
+        .then((res) => {
+          toastify("success", res.data.message);
+          setDataRepComment([...datarepComent, res.data.data]);
+          setContent("");
+        })
+        .catch((err) => {
+          toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        });
+    }
   };
 
   const fetchData = () => {
@@ -267,38 +256,55 @@ const Comment = ({ dataComment, callBackApi }) => {
             />
           ))}
           {userIdStorage && (
-            <Paper
-              component="form"
-              sx={{
+            <div
+              className="comment"
+              style={{
+                display: "flex",
                 width: "100%",
+                alignItems: "center",
               }}
             >
-              <TextField
-                error={!!errors?.content}
-                {...register("content")}
-                sx={{ width: "100%", outline: "none", border: "none" }}
-                value={content}
-                size="small"
-                multiline
-                maxRows={4}
-                placeholder="Aa...."
-                onKeyDown={handleOnClickEnter}
-                onChange={(e) => {
-                  setContent(e.target.value);
+              <div
+                className="avatar"
+                style={{ width: "56px", height: "56px", marginLeft: "40px" }}
+              >
+                <img
+                  style={{ width: "100%", height: "100%", borderRadius: "50%" }}
+                  src={userIdStorage?.avt}
+                  alt=""
+                />
+              </div>
+              <div
+                style={{
+                  width: "78%",
                 }}
-                helperText={errors.content?.message}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton type="button">
-                      <TelegramIcon
-                        disabled={!isDirty && !isValid}
-                        onClick={handleSubmit(handleRepComment)}
-                      />
-                    </IconButton>
-                  ),
-                }}
-              />
-            </Paper>
+              >
+                <Paper
+                  sx={{
+                    marginLeft: "20px",
+                    width: "100%",
+                  }}
+                >
+                  <TextField
+                    sx={{ width: "100%", border: "none", outline: "none" }}
+                    value={content}
+                    size="small"
+                    placeholder="Aa...."
+                    onKeyDown={handleOnClickEnter}
+                    onChange={(e) => {
+                      setContent(e.target.value);
+                    }}
+                    InputProps={{
+                      endAdornment: (
+                        <IconButton type="button">
+                          <TelegramIcon onClick={handleRepComment} />
+                        </IconButton>
+                      ),
+                    }}
+                  />
+                </Paper>
+              </div>
+            </div>
           )}
         </div>
       </Collapse>

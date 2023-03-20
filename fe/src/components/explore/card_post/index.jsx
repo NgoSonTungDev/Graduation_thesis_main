@@ -10,7 +10,7 @@ import Collapse from "@mui/material/Collapse";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Image } from "antd";
+import { Image, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -18,10 +18,6 @@ import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Comment from "../comment";
-
-const validationComment = yup.object().shape({
-  content: yup.string().required("Comment không được để trống"),
-});
 
 const CardPost = ({ data }) => {
   const [like, setLike] = useState(false);
@@ -38,14 +34,6 @@ const CardPost = ({ data }) => {
   const handleClose = () => {
     setOpen(false);
   };
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isDirty, isValid },
-  } = useForm({
-    resolver: yupResolver(validationComment),
-  });
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -101,28 +89,35 @@ const CardPost = ({ data }) => {
   const handleOnClickEnter = (e) => {
     e.stopPropagation();
     if (e.key === "Enter") {
-      handleComment();
-      setContent("");
-      setExpanded(true);
+      if (content === "") {
+        message.error("Vui lòng nhập comment!");
+      } else {
+        handleComment();
+        setExpanded(true);
+      }
     }
   };
 
-  const handleComment = () => {
-    axiosClient
-      .post(`/comment/add/`, {
-        userId: userIdStorage._id,
-        content: content,
-        dateTime: Number(new Date()),
-        postId: data._id,
-      })
-      .then((res) => {
-        // toastify("success", res.data.message);
-        setDataComment([...dataComment, res.data.data]);
-        setContent("");
-      })
-      .catch((err) => {
-        toastify("error", err.response.data.message || "Lỗi hệ thông !");
-      });
+  const handleComment = (e) => {
+    if (content === "") {
+      message.error("Vui lòng nhập comment!");
+    } else {
+      axiosClient
+        .post(`/comment/add/`, {
+          userId: userIdStorage._id,
+          content: content,
+          dateTime: Number(new Date()),
+          postId: data._id,
+        })
+        .then((res) => {
+          // toastify("success", res.data.message);
+          setDataComment([...dataComment, res.data.data]);
+          setContent("");
+        })
+        .catch((err) => {
+          toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        });
+    }
   };
 
   const handleShare = () => {
@@ -273,7 +268,7 @@ const CardPost = ({ data }) => {
                     padding: "7px",
                   }}
                 />
-                <span>{data ? `${numberLike} Thích` : "Thích"}</span>
+                <span>Đã thích ({numberLike}) </span>
               </Button>
             ) : (
               <Button
@@ -288,7 +283,7 @@ const CardPost = ({ data }) => {
                     color: "#000000",
                   }}
                 />
-                <span>{data ? `${numberLike} Thích` : "Thích"}</span>
+                <span>Thích ({numberLike}) </span>
               </Button>
             )}
           </div>
@@ -367,8 +362,6 @@ const CardPost = ({ data }) => {
                 }}
               >
                 <TextField
-                  error={!!errors?.content}
-                  {...register("content")}
                   sx={{ width: "100%", border: "none", outline: "none" }}
                   value={content}
                   size="small"
@@ -377,14 +370,10 @@ const CardPost = ({ data }) => {
                   onChange={(e) => {
                     setContent(e.target.value);
                   }}
-                  helperText={errors.content?.message}
                   InputProps={{
                     endAdornment: (
                       <IconButton type="button">
-                        <TelegramIcon
-                          disabled={!isDirty && !isValid}
-                          onClick={handleSubmit(handleComment)}
-                        />
+                        <TelegramIcon onClick={handleComment} />
                       </IconButton>
                     ),
                   }}

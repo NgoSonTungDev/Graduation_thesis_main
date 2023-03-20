@@ -23,7 +23,7 @@ import Voucher from "./pages/voucher";
 import Order from "./pages/order";
 import ThankCustomer from "./pages/thank_customer";
 import OrderManagement from "./pages/admin/order";
-
+import PaymentDetail from "./pages/payment/payment_detail";
 const App = () => {
   const open = useSelector(OpenChatBox);
 
@@ -42,6 +42,7 @@ const App = () => {
           <Route path="/voucher" element={<Voucher />} />
           <Route path="/order/:id" element={<Order />} />
           <Route path="/page/thank-customer" element={<ThankCustomer />} />
+          <Route path="/payment" element={<PaymentDetail />} />
 
           {/* admin */}
           <Route path="/admin/home" element={<AdminHome />} />
