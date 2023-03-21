@@ -368,6 +368,82 @@ const statisticController = {
       });
     }
   },
+  // detailPaymentStatisticsForAboutSaleAgent: async (
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ) => {
+  //   try {
+  //     const { startDay, endDay, salesAgentId } = req.query;
+  //     let sum = 0;
+
+  //     const result = await Payments.aggregate([
+  //       {
+  //         $addFields: {
+  //           timeFormat: {
+  //             $toDate: "$dateTime",
+  //           },
+  //         },
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: "orders",
+  //           localField: "orderId",
+  //           foreignField: "_id",
+  //           as: "detail",
+  //         },
+  //       },
+  //       {
+  //         $unwind: "$detail",
+  //       },
+  //       {
+  //         $match: {
+  //           $and: [
+  //             // {
+  //             //   timeFormat: {
+  //             //     $gte: new Date(Number(startDay)),
+  //             //     $lt: new Date(Number(endDay)),
+  //             //   },
+  //             // },
+  //             {
+  //               "$detail.salesAgentId": salesAgentId,
+  //             },
+  //           ],
+  //         },
+  //       },
+  //       {
+  //         $group: {
+  //           _id: {
+  //             $dateToString: {
+  //               format: "%Y-%m-%d",
+  //               date: "$timeFormat",
+  //             },
+  //           },
+  //           sumTicked: {
+  //             $sum: "$detail.amount",
+  //           },
+  //           totalRevenue: {
+  //             $sum: "$detail.total",
+  //           },
+  //         },
+  //       },
+  //     ]);
+
+  //     const arrNumber = result.map((e) => e.totalRevenue);
+
+  //     res.json(
+  //       errorFunction(false, 200, "Lấy thống kê thành công", {
+  //         detail: result,
+  //         total: arrNumber.reduce(sumTotal, sum),
+  //       })
+  //     );
+  //   } catch (error) {
+  //     console.log("error: ", error);
+  //     res.status(400).json({
+  //       message: "Bad request",
+  //     });
+  //   }
+  // },
 };
 
 export default statisticController;

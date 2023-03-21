@@ -4,9 +4,12 @@ import Footer from "../../components/footer";
 import "./style.scss";
 import BoxStatistic from "./box_statistic";
 import { useNavigate } from "react-router-dom";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const styles = {
   button: {
+    width: "400px",
     backgroundColor: "#FFC300",
     color: "#fff",
     borderRadius: "30px",
@@ -17,6 +20,7 @@ const styles = {
     fontSize: "1.2rem",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
     transition: "all 0.3s ease",
+    margin: "auto",
   },
   buttonHover: {
     transform: "translateY(-2px)",
@@ -36,6 +40,11 @@ const handleLeave = (e) => {
 
 const Home = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    AOS.init({ duration: 800 });
+  }, []);
+
   return (
     <>
       <Navbar loading={false} valueTab="one" />
@@ -52,23 +61,30 @@ const Home = () => {
             />
           </div>
           <div className="home__banner_content">
-            <span>Khám phá các địa điểm du lịch Việt Nam</span>
-            <button
-              style={styles.button}
-              onMouseEnter={handleHover}
-              onMouseLeave={handleLeave}
-              onClick={() => {
-                navigate("/place");
-              }}
+            <div
+              style={{ display: "flex", gap: "15px", flexDirection: "column" }}
             >
-              Bắt đầu
-            </button>
+              <span>Khám phá các địa điểm du lịch Việt Nam</span>
+              <button
+                style={styles.button}
+                onMouseEnter={handleHover}
+                onMouseLeave={handleLeave}
+                onClick={() => {
+                  navigate("/place");
+                }}
+              >
+                Bắt đầu
+              </button>
+            </div>
           </div>
         </div>
 
         <div className="container_home_body">
           <div className="container_home_body_information">
-            <div className="container_home_body_information_text">
+            <div
+              className="container_home_body_information_text"
+              data-aos="fade-right"
+            >
               <h2>
                 Thêm thông tin <br /> Giới thiệu về những địa điểm đẹp
               </h2>
@@ -79,7 +95,10 @@ const Home = () => {
                 hướng dẫn bạn tận tình chỉ còn chờ đợi, nhận chỗ ngay.
               </span>
             </div>
-            <div className="container_home_body_information_image">
+            <div
+              className="container_home_body_information_image"
+              data-aos="fade-left"
+            >
               <img
                 width={215}
                 height={320}
@@ -95,7 +114,10 @@ const Home = () => {
             </div>
           </div>
           <div className="container_home_body_place">
-            <div className="container_home_body_place_text">
+            <div
+              className="container_home_body_place_text"
+              data-aos="fade-down"
+            >
               <h2>
                 Khám phá nhiều nhất <br />
                 Địa điểm hấp dẫn{" "}
@@ -116,6 +138,7 @@ const Home = () => {
                   style={{ objectFit: "cover" }}
                   src="https://images.unsplash.com/photo-1606801954050-be6b29588460?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
                   alt=""
+                  data-aos="zoom-in"
                 />
                 <img
                   width={240}
@@ -123,6 +146,7 @@ const Home = () => {
                   style={{ objectFit: "cover" }}
                   src="https://images.unsplash.com/photo-1531737212413-667205e1cda7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=434&q=80"
                   alt=""
+                  data-aos="zoom-in"
                 />
                 <img
                   width={215}
@@ -130,12 +154,16 @@ const Home = () => {
                   style={{ objectFit: "cover" }}
                   src="https://images.unsplash.com/photo-1588411393236-d2524cca1196?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=465&q=80"
                   alt=""
+                  data-aos="zoom-in"
                 />
               </div>
             </div>
           </div>
           <div className="container_home_body_place">
-            <div className="container_home_body_place_text">
+            <div
+              className="container_home_body_place_text"
+              data-aos="fade-down"
+            >
               <h2>
                 Với kinh nghiệm của chúng tôi <br />
                 Chúng Tôi Sẽ Phục Vụ Bạn
@@ -152,9 +180,9 @@ const Home = () => {
                   fontWeight: "500",
                 }}
               >
-                <p>2+ năm kinh nghiệm </p>
-                <p>20+ Hoàn thành các chuyến tham quan </p>
-                <p>10+ điểm du lịch </p>
+                <p data-aos="zoom-in">2+ năm kinh nghiệm </p>
+                <p data-aos="zoom-in">20+ Hoàn thành các chuyến tham quan </p>
+                <p data-aos="zoom-in">10+ điểm du lịch </p>
               </div>
               <img
                 width={"70%"}
@@ -162,8 +190,9 @@ const Home = () => {
                 style={{ objectFit: "cover" }}
                 src="https://images.unsplash.com/photo-1504457047772-27faf1c00561?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1247&q=80"
                 alt=""
+                data-aos="zoom-in"
               />
-              <span style={{ marginTop: "15px" }}>
+              <span style={{ marginTop: "15px" }} data-aos="fade-down">
                 --- Chúc bạn có những trải nghiệm tuyệt vời trong các chuyến đi
                 ❤️ ---
               </span>
