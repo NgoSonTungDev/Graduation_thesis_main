@@ -13,6 +13,7 @@ import { clearByIdPlace } from "../../redux/place/placeSlice";
 import { DataPlaceById } from "../../redux/selectors";
 import { toastify } from "../../utils/common";
 import { getUserDataLocalStorage } from "../../utils/localstorage";
+import moment from "moment";
 import "./index.scss";
 
 const Review = () => {
@@ -43,7 +44,7 @@ const Review = () => {
   const addPost = (value) => {
     axiosClient
       .post("/post/add", {
-        userId: userIdStorage,
+        userId: userIdStorage._id,
         content: content,
         image: value,
         rating: rate.rate,
@@ -68,56 +69,45 @@ const Review = () => {
       message.error("Vui lòng điền đầy đủ thông tin!");
       return;
     }
+    setLoading(true);
+
+    const api = "https://api.cloudinary.com/v1_1/djo1gzatx/image/upload";
+    const presetName = "mafline-upload";
+    const folderName = "mafline";
 
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("upload_preset", presetName);
+    formData.append("folder", folderName);
+    formData.append("file", file);
 
-    const clientId = "90792b277ce19e4";
+    axios
+      .post(api, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((res) => {
+        setLoading(false);
+        addPost(res.data.url);
+      })
+      .catch((error) => {
+        setLoading(false);
+      });
+  };
 
-    const response = await axios.post(
-      "https://api.imgur.com/3/image",
-      formData,
-      {
-        headers: {
-          Authorization: `Client-ID ${clientId}`,
-          "Content-Type": "multipart/form-data"
-        },
-      }
+  const renderItemCheckTime = (open, close) => {
+    const start = moment(open).format("HH:mm");
+    const end = moment(close).format("HH:mm");
+    const check2 = moment(new Date()).format("HH:mm");
+
+    const isCheckBetweenStartAndEnd = moment(check2, "HH:mm").isBetween(
+      moment(start, "HH:mm"),
+      moment(end, "HH:mm")
     );
 
-    console.log(response.data.data.link);
-
-    // setLoading(true);
-    // const formData = new FormData();
-    // formData.append("image", file);
-    // axios.post("https://api.imgur.com/3/image", formData, {
-    //   headers: {
-    //     Authorization: `Client-ID 90792b277ce19e4`,
-    //   },
-    // })
-    //   .then((res) => {
-    //     setLoading(false);
-    //     // addPost(res.data.data.link);
-
-    //     console.log(res.data);
-    //   })
-    //   .catch((error) => {
-    //     setLoading(false);
-    //     console.log(error);
-    //   });
-    // axiosDeploy
-    //   .post("/upload/file", formData, {
-    //     headers: { "Content-Type": "multipart/form-data" },
-    //   })
-    //   .then((res) => {
-    //     setLoading(false);
-    //     addPost(res.data.path);
-
-    //     console.log(res);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
+    if (isCheckBetweenStartAndEnd) {
+      return <span style={{ color: "#2ecc71" }}>Đang mở cửa </span>;
+    } else {
+      return <span style={{ color: "#c0392b" }}>Đang đóng cửa </span>;
+    }
   };
 
   const handleChangeFileImage = (e) => {
@@ -227,10 +217,25 @@ const Review = () => {
                         src={dataPlace.image[0]}
                       />
                     </div>
-                    <div style={{ width: "53%", paddingLeft: "10px" }}>
+                    <div
+                      style={{
+                        width: "53%",
+                        paddingLeft: "10px",
+                        gap: "7px",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
                       <b>{dataPlace.name}</b>
-                      <br />
+
                       <span>{dataPlace.address}</span>
+
+                      <span>
+                        {renderItemCheckTime(
+                          dataPlace.openTime,
+                          dataPlace.closeTime
+                        )}
+                      </span>
                     </div>
                   </div>
                 </div>

@@ -20,13 +20,14 @@ import { BiCog, BiCreditCardFront } from "react-icons/bi";
 import { FaRegHeart } from "react-icons/fa";
 import { FiHome, FiLogOut } from "react-icons/fi";
 import { GoPackage } from "react-icons/go";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import "react-pro-sidebar/dist/css/styles.css";
 
 const Header = ({ ReactNode }) => {
   const [menuCollapse, setMenuCollapse] = useState(true);
-  const [pathName, setPathName] = useState("/admin/home");
+  const location = useLocation();
+  const pathName = location.pathname;
   const navigation = useNavigate();
 
   const menuIconClick = () => {
@@ -36,7 +37,6 @@ const Header = ({ ReactNode }) => {
   const movePage = (path) => {
     navigation(path);
     setMenuCollapse(true);
-    setPathName(path);
   };
 
   return (
@@ -134,19 +134,25 @@ const Header = ({ ReactNode }) => {
                     Account management
                   </MenuItem>
                   <MenuItem
-                    active={pathName === "admin" && true}
+                    active={pathName === "/admin/order" && true}
                     icon={<GoPackage />}
+                    onClick={() => {
+                      movePage("/admin/order");
+                    }}
                   >
                     Order management
                   </MenuItem>
                   <MenuItem
-                    active={pathName === "admin" && true}
+                    active={pathName === "/admin/voucher" && true}
                     icon={<BiCreditCardFront />}
+                    onClick={() => {
+                      movePage("/admin/voucher");
+                    }}
                   >
                     Voucher manager
                   </MenuItem>
                   <MenuItem
-                    active={pathName === "admin" && true}
+                    active={pathName === "/admin/statistic" && true}
                     icon={<AiOutlineBarChart />}
                     onClick={() => {
                       movePage("/admin/statistic");

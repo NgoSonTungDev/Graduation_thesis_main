@@ -17,11 +17,12 @@
       border-radius: 10px;
 
       .profile-avatar {
+        position: relative;
         width: 150px;
         height: 150px;
         border-radius: 50%;
         margin-top: 100px;
-        background-color: white;
+        border: 1px solid #ccc;
 
         img {
           width: 150px;
@@ -86,7 +87,7 @@
         margin-top: 30px;
         padding-top: 10px;
         width: 350px;
-        height: 165px;
+        height: 270px;
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
         border-radius: 10px;
 

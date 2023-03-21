@@ -11,6 +11,7 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ManageHistoryIcon from "@mui/icons-material/ManageHistory";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 import {
   Avatar,
   Box,
@@ -45,15 +46,12 @@ import "./index.scss";
 import NotificationItem from "./notification";
 
 const Navbar = ({ loading, valueTab }) => {
-  const currrenUser = JSON.parse(localStorage.getItem("user"));
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElNotify, setAnchorElNotify] = React.useState(null);
   const [offset, setOffset] = useState(0);
   const userIdStorage = getUserDataLocalStorage();
-
-  console.log(currrenUser);
 
   const dispatch = useDispatch();
 
@@ -64,7 +62,7 @@ const Navbar = ({ loading, valueTab }) => {
 
   const handleGetDataInbox = (event, newValue) => {
     axiosClient
-      .get(`/room/get-room-user/63fd6e153ac0f9d2d5e10309`)
+      .get(`/room/get-room-user/${userIdStorage?.roomId}`)
       .then((res) => {
         dispatch(changeListInbox(res.data.data.listInbox));
       })
@@ -106,11 +104,11 @@ const Navbar = ({ loading, valueTab }) => {
   };
 
   const joinRoom = () => {
-    ws.joinRoom("63fd6e153ac0f9d2d5e10309");
+    ws.joinRoom(userIdStorage?.roomId);
   };
 
   useEffect(() => {
-    ws.initialize();
+    // ws.initialize();
     const onScroll = () => setOffset(window.pageYOffset);
     window.removeEventListener("scroll", onScroll);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -228,7 +226,7 @@ const Navbar = ({ loading, valueTab }) => {
               </div>
             )}
             <div className="Icon">
-              {currrenUser ? (
+              {userIdStorage ? (
                 <>
                   <IconButton onClick={handleOpenModal}>
                     <FavoriteBorderIcon />
@@ -311,7 +309,7 @@ const Navbar = ({ loading, valueTab }) => {
                     >
                       <MenuItem
                         onClick={() => {
-                          movePage(`/profile/${currrenUser?._id}`);
+                          movePage(`/profile/${userIdStorage?._id}`);
                         }}
                       >
                         <ListItemIcon>
@@ -337,8 +335,20 @@ const Navbar = ({ loading, valueTab }) => {
                         <ListItemIcon>
                           <ManageAccountsIcon fontSize="medium" />
                         </ListItemIcon>
-                        Quàn lý hệ thống
+                        Quản lý hệ thống
                       </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          handleClose();
+                          removeUserDataLocalStorage();
+                          navigation("/home");
+                        }}
+                      >
+                        <ListItemIcon>
+                          <LockOpenIcon fontSize="medium" />
+                        </ListItemIcon>
+                        Đổi mật khẩu
+                      </MenuItem>{" "}
                       <MenuItem
                         onClick={() => {
                           handleClose();

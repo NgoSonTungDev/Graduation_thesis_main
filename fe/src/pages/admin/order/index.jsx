@@ -1,21 +1,24 @@
+import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
-import { Box } from "@mui/material";
-import Tab from "@mui/material/Tab";
+import TabPanel from "@mui/lab/TabPanel";
+import React, { useEffect, useState } from "react";
+import SidebarAdmin from "../../../components/narbar_admin";
+import { Box, Button } from "@mui/material";
+import PaginationCpn from "../../../components/pagination";
+import axiosClient from "../../../api/axiosClient";
+import { toastify } from "../../../utils/common";
+import LoadingBar from "../../../components/loadding/loading_bar";
+import ErrorEmpty from "../../../components/emty_data";
 import _ from "lodash";
 import qs from "query-string";
-import React, { useEffect } from "react";
-import axiosClient from "../../../api/axiosClient";
-import ErrorEmpty from "../../../components/emty_data";
-import LoadingBar from "../../../components/loadding/loading_bar";
-import MenuSaleAgent from "../../../components/navbar_sale_agent";
-import PaginationCpn from "../../../components/pagination";
-import { toastify } from "../../../utils/common";
-import OrderTable from "./table";
+import OrderTableAdmin from "./table";
+import GetDataSaleAgent from "./modle_find_sale_agent";
 
-const OrderSaleAgent = () => {
+const OrderManagement = () => {
   const [value, setValue] = React.useState("0");
   const [loading, setLoading] = React.useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [data, setData] = React.useState({});
   const [payload, setPayload] = React.useState({
     pageNumber: 1,
@@ -47,11 +50,7 @@ const OrderSaleAgent = () => {
 
   const fetchData = () => {
     axiosClient
-      .get(
-        `/order/get-id-sale-agent/63fd6883ea9627ba24c33075?${qs.stringify(
-          payload
-        )}`
-      )
+      .get(`/order/all?${qs.stringify(payload)}`)
       .then((res) => {
         setLoading(false);
         setData(res.data.data);
@@ -68,12 +67,28 @@ const OrderSaleAgent = () => {
     window.scrollTo(0, 0);
   }, [payload]);
 
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
   const renderForm = () => {
     return (
       <div>
         <Box sx={{ width: "100%", height: "100vh", overflow: "hidden" }}>
           <TabContext value={value}>
-            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Box
+              sx={{
+                borderBottom: 1,
+                borderColor: "divider",
+                marginTop: 1,
+                // display: "flex",
+                // justifyContent: "space-between",
+              }}
+            >
               <TabList
                 onChange={handleChangeTab}
                 aria-label="lab API tabs example"
@@ -84,6 +99,13 @@ const OrderSaleAgent = () => {
                 <Tab label="Đã hủy" value="3" />
                 <Tab label="Đã thanh toán" value="4" />
               </TabList>
+              {/* <Button
+                size="medium"
+                sx={{ marginRight: "30px" }}
+                onClick={handleOpenModal}
+              >
+                Tìm kiếm đại lý
+              </Button> */}
             </Box>
             <div
               style={{
@@ -104,7 +126,7 @@ const OrderSaleAgent = () => {
                 ) : _.isEmpty(data) ? (
                   <ErrorEmpty />
                 ) : (
-                  <OrderTable data={data.data} callBackApi={fetchData} />
+                  <OrderTableAdmin data={data.data} callBackApi={fetchData} />
                 )}
               </div>
               <div
@@ -122,15 +144,18 @@ const OrderSaleAgent = () => {
             </div>
           </TabContext>
         </Box>
+        {openModal && (
+          <GetDataSaleAgent openDialog={openModal} onClose={handleCloseModal} />
+        )}
       </div>
     );
   };
 
   return (
     <div>
-      <MenuSaleAgent ReactNode={renderForm()} />
+      <SidebarAdmin ReactNode={renderForm()} />
     </div>
   );
 };
 
-export default OrderSaleAgent;
+export default OrderManagement;

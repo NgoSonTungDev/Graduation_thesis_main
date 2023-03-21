@@ -1,6 +1,7 @@
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import React, { useState } from "react";
+import { AiOutlineMessage } from "react-icons/ai";
 import { BiPackage } from "react-icons/bi";
 import { BsTicketPerforated } from "react-icons/bs";
 import { FiHome, FiLogOut } from "react-icons/fi";
@@ -12,15 +13,43 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "react-pro-sidebar";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./style.scss";
 
 import "react-pro-sidebar/dist/css/styles.css";
+import ws from "../../socket";
+import { useDispatch } from "react-redux";
+import { getUserDataLocalStorage } from "../../utils/localstorage";
+import {
+  changeListInbox,
+  openChatBox,
+} from "../../redux/chat_box/chatBoxSlice";
+import axiosClient from "../../api/axiosClient";
+import { toastify } from "../../utils/common";
 
 const MenuSaleAgent = ({ ReactNode }) => {
   const [menuCollapse, setMenuCollapse] = useState(true);
-  const [pathName, setPathName] = useState("/admin/home");
   const navigation = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const userIdStorage = getUserDataLocalStorage();
+
+  const pathName = location.pathname;
+
+  const joinRoom = () => {
+    ws.joinRoom(userIdStorage?.roomId);
+  };
+
+  const handleGetDataInbox = (event, newValue) => {
+    axiosClient
+      .get(`/room/get-room-user/${userIdStorage?.roomId}`)
+      .then((res) => {
+        dispatch(changeListInbox(res.data.data.listInbox));
+      })
+      .catch((err) => {
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
 
   const menuIconClick = () => {
     menuCollapse ? setMenuCollapse(false) : setMenuCollapse(true);
@@ -29,7 +58,6 @@ const MenuSaleAgent = ({ ReactNode }) => {
   const movePage = (path) => {
     navigation(path);
     setMenuCollapse(true);
-    setPathName(path);
   };
 
   return (
@@ -85,25 +113,41 @@ const MenuSaleAgent = ({ ReactNode }) => {
               >
                 <Menu iconShape="square">
                   <MenuItem
-                    active={pathName === "/admin/home" && true}
+                    active={pathName === "/sale-agent/home" && true}
                     icon={<FiHome />}
                   >
                     Manage information
                   </MenuItem>
                   <MenuItem
-                    active={pathName === "/admin/message" && true}
+                    active={
+                      pathName === "/sale-agent/ticket-management" && true
+                    }
                     icon={<BsTicketPerforated />}
+                    onClick={() => {
+                      movePage("/sale-agent/ticket-management");
+                    }}
                   >
                     Ticket management
                   </MenuItem>
                   <MenuItem
-                    active={pathName === "admin" && true}
+                    active={pathName === "/sale-agent/order-management" && true}
                     icon={<BiPackage />}
                     onClick={() => {
                       movePage("/sale-agent/order-management");
                     }}
                   >
                     Order management
+                  </MenuItem>
+                  <MenuItem
+                    active={false}
+                    icon={<AiOutlineMessage />}
+                    onClick={() => {
+                      dispatch(openChatBox());
+                      joinRoom();
+                      handleGetDataInbox();
+                    }}
+                  >
+                    Message
                   </MenuItem>
                 </Menu>
               </div>

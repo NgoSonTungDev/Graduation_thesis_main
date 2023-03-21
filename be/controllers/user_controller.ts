@@ -21,13 +21,26 @@ const userController = {
   },
   getAllUser: async (req: Request, res: Response) => {
     try {
-      const { pageNumber, userName, limit } = req.query;
+      const { pageNumber, userName, limit, isAdmin } = req.query;
 
       const SkipNumber = (Number(pageNumber) - 1) * Number(limit);
 
-      const condition = userName
-        ? { userName: { $regex: new RegExp(userName + ""), $options: "i" } }
-        : {};
+      const condition =
+        userName || isAdmin
+          ? {
+              $and: [
+                {
+                  userName: {
+                    $regex: new RegExp(userName + ""),
+                    $options: "i",
+                  },
+                },
+                {
+                  isAdmin: Number(isAdmin),
+                },
+              ],
+            }
+          : {};
 
       const allUser = await Users.find(condition);
 
