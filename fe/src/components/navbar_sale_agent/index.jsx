@@ -3,7 +3,6 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import React, { useState } from "react";
 import { AiOutlineMessage } from "react-icons/ai";
 import { BiPackage } from "react-icons/bi";
-import { BsTicketPerforated } from "react-icons/bs";
 import { FiHome, FiLogOut } from "react-icons/fi";
 import {
   Menu,
@@ -122,7 +121,7 @@ const MenuSaleAgent = ({ ReactNode }) => {
                     active={
                       pathName === "/sale-agent/ticket-management" && true
                     }
-                    icon={<BsTicketPerforated />}
+                    icon={<BiPackage />}
                     onClick={() => {
                       movePage("/sale-agent/ticket-management");
                     }}

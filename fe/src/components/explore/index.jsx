@@ -50,7 +50,7 @@ const Explore = () => {
   };
 
   const handleFindPostById = (id) => {
-    setpayLoadPost({ pageNumber: 1, placeID: id });
+    setpayLoadPost({ pageNumber: 1, placeID: id, active: true });
   };
 
   const getApiPlace = () => {

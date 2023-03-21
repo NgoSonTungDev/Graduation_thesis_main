@@ -66,6 +66,17 @@ const voucherController = {
       res.status(500).json(error);
     }
   },
+  findVoucher: async (req: Request, res: Response) => {
+    try {
+      const data = await Vouchers.find({
+        codeVoucher: req.params.codeVoucher,
+      }).populate("placeId", "name");
+
+      res.json(errorFunction(false, 200, "Lấy thành công !", data));
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { placeID, active } = req.query;
