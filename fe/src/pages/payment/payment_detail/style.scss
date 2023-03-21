@@ -5,16 +5,17 @@
         place-items: center;
   
         .container_payment_body_input_information {
-          width: 90%;
+          width: 100%;
+          // margin: 10px 0px 0px 0px;
           box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
             rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
           .form {
-            padding: 30px 40px;
+            padding: 10px 40px;
           }
   
           .form-control {
-            margin-bottom: 10px;
-            padding-bottom: 20px;
+            // margin-bottom: 10px;
+            padding-bottom: 5px;
             position: relative;
           }
   
@@ -30,7 +31,8 @@
             font-family: inherit;
             font-size: 14px;
             padding: 10px;
-            width: 100%;
+            margin-top: 20px;
+            width: 97%;
           }
   
           p {
@@ -41,7 +43,7 @@
             font-family: inherit;
             font-size: 14px;
             padding: 10px;
-            width: 100%;
+            width: 97%;
           }
   
           .form-control input:focus {
@@ -87,18 +89,18 @@
             visibility: visible;
           }
   
-          .form button {
-            background-color: #8e44ad;
-            border: 2px solid #8e44ad;
-            border-radius: 4px;
-            color: #fff;
-            display: block;
-            font-family: inherit;
-            font-size: 16px;
-            padding: 10px;
-            margin-top: 20px;
-            width: 100%;
-          }
+          // .form button {
+          //   background-color: #8e44ad;
+          //   border: 2px solid #8e44ad;
+          //   border-radius: 4px;
+          //   color: #fff;
+          //   display: block;
+          //   font-family: inherit;
+          //   font-size: 16px;
+          //   padding: 10px;
+          //   margin-top: 20px;
+          //   width: 100%;
+          // }
   
           @media screen and (max-width: 480px) {
             .social-panel-container.visible {
