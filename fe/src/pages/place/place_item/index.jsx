@@ -8,9 +8,11 @@ import { formatDate, formatMoney, toastify } from "../../../utils/common";
 import "./style.scss";
 import axiosClient from "../../../api/axiosClient";
 import moment from "moment";
+import { useNavigate } from "react-router";
 
 const PlaceItem = ({ data }) => {
   const [check, setCheck] = useState(false);
+  const navigate = useNavigate();
 
   const renderItemCheckTime = (open, close) => {
     const start = moment(open).format("HH:mm");
@@ -87,6 +89,9 @@ const PlaceItem = ({ data }) => {
         alignItems: "center",
         overflow: "hidden",
         cursor: "pointer",
+      }}
+      onClick={() => {
+        navigate(`/place/${data._id}`);
       }}
     >
       <div className="place_item_image">

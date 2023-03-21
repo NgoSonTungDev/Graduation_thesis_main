@@ -18,6 +18,7 @@ import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Comment from "../comment";
+import _ from "lodash";
 
 const validationComment = yup.object().shape({
   content: yup.string().required("Comment không được để trống"),
@@ -145,6 +146,7 @@ const CardPost = ({ data }) => {
   };
 
   const fetchData = () => {
+    // if (_.isEmpty(data?.like)) return setLike(false);
     if (userIdStorage) {
       data?.like?.find((e) => {
         return e === userIdStorage._id;
@@ -152,14 +154,16 @@ const CardPost = ({ data }) => {
         ? setLike(true)
         : setLike(false);
     } else {
-      console.log("nmdsnfdsf");
       setLike(false);
     }
   };
 
   useEffect(() => {
     fetchData();
-    setNumberLike(Number(data?.like.length));
+    setNumberLike(Number(data?.like?.length));
+    return () => {
+      setNumberLike(0);
+    };
   }, []);
 
   return (

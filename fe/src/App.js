@@ -26,6 +26,7 @@ import OrderManagement from "./pages/admin/order";
 import VoucherManagement from "./pages/admin/voucher";
 import TicketSaleAgent from "./pages/sale_agent/ticket";
 import ws from "./socket";
+import PlaceDetail from "./pages/place_detail";
 
 const App = () => {
   const open = useSelector(OpenChatBox);
@@ -48,6 +49,7 @@ const App = () => {
           <Route path="/profile/:id" element={<Profile />} />
           <Route path="/voucher" element={<Voucher />} />
           <Route path="/order/:id" element={<Order />} />
+          <Route path="/place/:id" element={<PlaceDetail />} />
           <Route path="/page/thank-customer" element={<ThankCustomer />} />
 
           {/* admin */}
