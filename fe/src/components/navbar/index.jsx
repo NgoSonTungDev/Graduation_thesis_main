@@ -318,7 +318,7 @@ const Navbar = ({ loading, valueTab }) => {
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          movePage("/order/63fd6d8f3ac0f9d2d5e102fd");
+                          movePage(`/order/${userIdStorage._id}`);
                         }}
                       >
                         <ListItemIcon>
