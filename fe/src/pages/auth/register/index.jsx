@@ -41,6 +41,7 @@ const Register = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     defaultValues: {
       userName: "",
@@ -100,6 +101,8 @@ const Register = () => {
           );
           handleClose();
           setLoadingPage(false);
+          navigation("/login");
+          reset();
         })
         .catch((err) => {
           toastify("error", err.response.data.message || "Lỗi hệ thông !");

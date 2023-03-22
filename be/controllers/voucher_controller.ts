@@ -41,25 +41,11 @@ const voucherController = {
       });
     }
   },
-  getByIdVoucher: async (req: Request, res: Response) => {
+  getByPlaceId: async (req: Request, res: Response) => {
     try {
-      const { codeVoucher } = req.query;
-
-      const filter = {
-        $and: [
-          {
-            codeVoucher: {
-              $regex: codeVoucher,
-              $options: "$i",
-            },
-          },
-          {
-            placeId: req.params.id,
-          },
-        ],
-      };
-
-      const data = await Vouchers.find(filter).populate("placeId", "name");
+      const data = await Vouchers.find({
+        placeId: req.params.placeId,
+      }).populate("placeId", "name");
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {
@@ -68,11 +54,19 @@ const voucherController = {
   },
   findVoucher: async (req: Request, res: Response) => {
     try {
-      const data = await Vouchers.find({
-        codeVoucher: req.params.codeVoucher,
+      const { codeVoucher, placeId } = req.query;
+
+      const data = await Vouchers.findOne({
+        codeVoucher: codeVoucher,
       }).populate("placeId", "name");
 
-      res.json(errorFunction(false, 200, "Lấy thành công !", data));
+      if (String(data?.placeId?._id) === placeId && data?.public === true) {
+        res.json(errorFunction(false, 200, "Lấy thành công !", data));
+      } else {
+        res.json(
+          errorFunction(false, 402, "Không sử dụng được mã giảm giá này!")
+        );
+      }
     } catch (error) {
       res.status(500).json(error);
     }

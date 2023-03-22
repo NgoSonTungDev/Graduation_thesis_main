@@ -1,4 +1,5 @@
 import React from "react";
+import { Image } from "antd";
 
 const ImageBox = ({ images }) => {
   return (
@@ -10,10 +11,12 @@ const ImageBox = ({ images }) => {
         flexDirection: "row",
       }}
     >
-      <img
+      <Image
         src={
           images
             ? images[0]
+              ? images[0]
+              : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930"
             : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930"
         }
         style={{ objectFit: "cover" }}
@@ -21,10 +24,12 @@ const ImageBox = ({ images }) => {
         height={355}
         alt=""
       />
-      <img
+      <Image
         src={
           images
             ? images[1]
+              ? images[1]
+              : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930"
             : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930"
         }
         style={{ objectFit: "cover" }}
@@ -34,10 +39,12 @@ const ImageBox = ({ images }) => {
       />
       <div>
         <div style={{ display: "flex", gap: "10px", flexDirection: "row" }}>
-          <img
+          <Image
             src={
               images
                 ? images[2]
+                  ? images[2]
+                  : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930"
                 : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930"
             }
             style={{ objectFit: "cover" }}
@@ -45,10 +52,12 @@ const ImageBox = ({ images }) => {
             height={155}
             alt=""
           />
-          <img
+          <Image
             src={
               images
                 ? images[3]
+                  ? images[3]
+                  : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930"
                 : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930"
             }
             style={{ objectFit: "cover" }}
@@ -57,10 +66,12 @@ const ImageBox = ({ images }) => {
             alt=""
           />
         </div>
-        <img
+        <Image
           src={
             images
               ? images[4]
+                ? images[4]
+                : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930"
               : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930"
           }
           width={380}
