@@ -2,6 +2,7 @@ import { IVoucher } from "./../types/voucher";
 import Vouchers from "../models/voucher";
 import { errorFunction } from "../utils/errorFunction";
 import { Request, Response, NextFunction } from "express";
+import { ObjectId } from "mongodb";
 
 const fakeCode = (length: number) => {
   let result = "";
@@ -43,9 +44,20 @@ const voucherController = {
   },
   getByPlaceId: async (req: Request, res: Response) => {
     try {
-      const data = await Vouchers.find({
-        placeId: req.params.placeId,
-      }).populate("placeId", "name");
+      const data = await Vouchers.aggregate([
+        {
+          $match: {
+            $and: [
+              {
+                placeId: req.params.placeId,
+              },
+              {
+                public: true,
+              },
+            ],
+          },
+        },
+      ]);
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {

@@ -20,12 +20,14 @@ import _ from "lodash";
 import BoxEvaluate from "./box_evaluate";
 import ModalChooseSaleAgent from "./modal_choose_sale_agent";
 import { getUserDataLocalStorage } from "../../utils/localstorage";
+import ModalVoucher from "./modal_voucher";
 
 const PlaceDetail = () => {
   const [loading, setLoading] = React.useState(false);
   const [loadingEvaluate, setLoadingEvaluate] = React.useState(false);
   const [data, setData] = React.useState({});
   const [openModal, setOpenModal] = React.useState(false);
+  const [openModalVoucher, setOpenModalVoucher] = React.useState(false);
   const [dataEvaluate, setDataEvaluate] = React.useState([]);
   const userIdStorage = getUserDataLocalStorage();
 
@@ -39,8 +41,20 @@ const PlaceDetail = () => {
     }
   };
 
+  const handleClickOpenVoucher = () => {
+    if (userIdStorage) {
+      setOpenModalVoucher(true);
+    } else {
+      toastify("warn", "Bạn cần đăng nhập để sử dụng dịch vụ của chúng tôi");
+    }
+  };
+
   const handleCloseSaleAgent = () => {
     setOpenModal(false);
+  };
+
+  const handleCloseVoucher = () => {
+    setOpenModalVoucher(false);
   };
 
   const renderItemCheckTime = (open, close) => {
@@ -146,7 +160,7 @@ const PlaceDetail = () => {
                   flexDirection: "row",
                 }}
               >
-                <Button variant="outlined" onClick={handleClickOpenSaleAgent}>
+                <Button variant="outlined" onClick={handleClickOpenVoucher}>
                   Lấy mã khuyến mãi
                 </Button>
                 <Button variant="outlined" onClick={handleClickOpenSaleAgent}>
@@ -329,6 +343,12 @@ const PlaceDetail = () => {
       <ModalChooseSaleAgent
         open={openModal}
         handleClose={handleCloseSaleAgent}
+        placeId={id}
+      />
+      <ModalVoucher
+        open={openModalVoucher}
+        handleClose={handleCloseVoucher}
+        placeId={id}
       />
 
       <Footer />

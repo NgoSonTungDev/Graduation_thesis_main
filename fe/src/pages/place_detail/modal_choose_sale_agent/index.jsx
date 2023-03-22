@@ -19,7 +19,7 @@ import ErrorEmpty from "../../../components/emty_data";
 import { useNavigate } from "react-router-dom";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 
-const ModalChooseSaleAgent = ({ open, handleClose }) => {
+const ModalChooseSaleAgent = ({ open, handleClose, placeId }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const userIdStorage = getUserDataLocalStorage();
@@ -29,7 +29,7 @@ const ModalChooseSaleAgent = ({ open, handleClose }) => {
   const fetchData = () => {
     setLoading(true);
     axiosClient
-      .get(`ticket/get-by-id-place/63f8228931c94274cd9f18b7`)
+      .get(`ticket/get-by-id-place/${placeId}`)
       .then((res) => {
         setData(res.data.data);
         setLoading(false);
@@ -76,7 +76,7 @@ const ModalChooseSaleAgent = ({ open, handleClose }) => {
                     <TableBody
                       className="table_sale_agent"
                       onClick={() => {
-                        navigate(`/payment/${item._id}/${userIdStorage?._id}`);
+                        navigate(`/payment/${item._id}`);
                         handleClose();
                       }}
                     >

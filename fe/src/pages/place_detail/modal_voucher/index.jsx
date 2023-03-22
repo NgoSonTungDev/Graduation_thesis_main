@@ -1,35 +1,35 @@
-import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import axiosClient from "../../../api/axiosClient";
-import { formatMoney, toastify } from "../../../utils/common";
+import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import LoadingBar from "../../../components/loadding/loading_bar";
 import _ from "lodash";
-import "./style.scss";
+import React, { useEffect, useState } from "react";
+import axiosClient from "../../../api/axiosClient";
 import ErrorEmpty from "../../../components/emty_data";
-import { useNavigate } from "react-router-dom";
-import { getUserDataLocalStorage } from "../../../utils/localstorage";
+import LoadingBar from "../../../components/loadding/loading_bar";
+import { formatMoney, toastify } from "../../../utils/common";
+import "./style.scss";
 
-const modalVoucher = ({ open, handleClose }) => {
+const ModalVoucher = ({ open, handleClose, placeId }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const userIdStorage = getUserDataLocalStorage();
 
-  const navigate = useNavigate();
+  const CopyText = (CodeVoucher) => {
+    navigator.clipboard.writeText(`${CodeVoucher}`);
+    toastify("success", "Sao chép mã thành công !");
+  };
 
   const fetchData = () => {
     setLoading(true);
     axiosClient
-      .get(`/voucher/get-all?active=true`)
+      .get(`/voucher/get-by-place/${placeId}`)
       .then((res) => {
         setData(res.data.data);
         setLoading(false);
@@ -52,7 +52,7 @@ const modalVoucher = ({ open, handleClose }) => {
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title" sx={{ textAlign: "center" }}>
-        <b>Chọn đại lý bạn muốn mua vé</b>
+        <b>Chọn mã khuyến mãi</b>
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
@@ -66,30 +66,24 @@ const modalVoucher = ({ open, handleClose }) => {
                 <Table sx={{ width: "100%" }} aria-label="simple table">
                   <TableHead>
                     <TableRow>
-                      <TableCell align="center">Mã giảm</TableCell>
-                      <TableCell align="center">Vé người lớn</TableCell>
-                      <TableCell align="center">Vé trẻ em</TableCell>
-                      <TableCell align="center">Số vé còn lại</TableCell>
+                      <TableCell align="center">Mã khuyến mãi</TableCell>
+                      <TableCell align="center">Sự kiện</TableCell>
+                      <TableCell align="center">Giá giảm</TableCell>
                     </TableRow>
                   </TableHead>
                   {data.map((item) => (
                     <TableBody
                       className="table_sale_agent"
                       onClick={() => {
-                        navigate(`/payment/${item._id}/${userIdStorage?._id}`);
+                        CopyText(item.codeVoucher);
                         handleClose();
                       }}
                     >
+                      <TableCell align="center">{item?.codeVoucher}</TableCell>
+                      <TableCell align="center">{item.title}</TableCell>
                       <TableCell align="center">
-                        {item?.salesAgentId?.userName}
+                        {formatMoney(item.price)}
                       </TableCell>
-                      <TableCell align="center">
-                        {formatMoney(item.adultTicket)}
-                      </TableCell>
-                      <TableCell align="center">
-                        {formatMoney(item.childTicket)}
-                      </TableCell>
-                      <TableCell align="center">{item.numberTickets}</TableCell>
                     </TableBody>
                   ))}
                 </Table>
@@ -102,4 +96,4 @@ const modalVoucher = ({ open, handleClose }) => {
   );
 };
 
-export default modalVoucher;
+export default ModalVoucher;
