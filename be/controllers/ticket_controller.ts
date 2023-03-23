@@ -45,7 +45,7 @@ const ticketController = {
       } else {
         const data = await Tickets.create(req.body);
         return res
-          .status(400)
+          .status(200)
           .json(errorFunction(false, 200, "Thêm thành công !", data));
       }
     } catch (error) {
@@ -55,7 +55,7 @@ const ticketController = {
   getByIdTicket: async (req: Request, res: Response) => {
     try {
       const ticket = await Tickets.findById<ITicket>(req.params.id)
-        .populate("placeId", ["name", "location"])
+        .populate("placeId", ["name", "location", "startingPrice", "LastPrice"])
         .populate("salesAgentId", ["userName", "email"]);
 
       if (!ticket)
@@ -73,7 +73,7 @@ const ticketController = {
       const data = await Tickets.find<ITicket[]>({
         placeId: req.params.id,
       })
-        .populate("placeId", ["name", "location"])
+        .populate("placeId", ["name", "location", "startingPrice", "LastPrice"])
         .populate("salesAgentId", ["userName", "email"]);
 
       if (!data)
@@ -91,7 +91,7 @@ const ticketController = {
       const data = await Tickets.find<ITicket[]>({
         salesAgentId: req.params.id,
       })
-        .populate("placeId", ["name", "location"])
+        .populate("placeId", ["name", "location", "startingPrice", "LastPrice"])
         .populate("salesAgentId", ["userName", "email"]);
 
       if (!data)

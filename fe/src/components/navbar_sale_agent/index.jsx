@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import { AiOutlineMessage } from "react-icons/ai";
 import { BiPackage } from "react-icons/bi";
 import { FiHome, FiLogOut } from "react-icons/fi";
+import ConfirmationNumberOutlinedIcon from "@mui/icons-material/ConfirmationNumberOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
 import {
   Menu,
   MenuItem,
@@ -113,15 +116,15 @@ const MenuSaleAgent = ({ ReactNode }) => {
                 <Menu iconShape="square">
                   <MenuItem
                     active={pathName === "/sale-agent/home" && true}
-                    icon={<FiHome />}
+                    icon={<HomeOutlinedIcon />}
                   >
-                    Manage information
+                    Home
                   </MenuItem>
                   <MenuItem
                     active={
                       pathName === "/sale-agent/ticket-management" && true
                     }
-                    icon={<BiPackage />}
+                    icon={<ConfirmationNumberOutlinedIcon />}
                     onClick={() => {
                       movePage("/sale-agent/ticket-management");
                     }}
@@ -139,7 +142,7 @@ const MenuSaleAgent = ({ ReactNode }) => {
                   </MenuItem>
                   <MenuItem
                     active={false}
-                    icon={<AiOutlineMessage />}
+                    icon={<MessageOutlinedIcon />}
                     onClick={() => {
                       dispatch(openChatBox());
                       joinRoom();

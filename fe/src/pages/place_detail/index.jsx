@@ -200,7 +200,7 @@ const PlaceDetail = () => {
                       <Rating
                         name="simple-controlled"
                         value={Number(data.rating)}
-                        disabled={true}
+                        // disabled={true}
                       />
                     </i>
                     <span>({data.rating})</span>
