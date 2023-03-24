@@ -15,7 +15,7 @@ import Place from "./pages/place/index";
 import Review from "./pages/review";
 import { OpenChatBox } from "./redux/selectors";
 import Voucher from "./pages/voucher";
-
+import Favourite from "./pages/favourite";
 const App = () => {
   const open = useSelector(OpenChatBox);
 
@@ -31,7 +31,7 @@ const App = () => {
           <Route path="/admin/home" element={<AdminHome />} />
           <Route path="/admin/message" element={<AdminMessage />} />
           <Route path="/admin/statistic" element={<Statistic />} />
-
+          <Route path="/favourite" element={<Favourite />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
 
