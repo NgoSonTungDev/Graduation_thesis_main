@@ -1,122 +1,124 @@
-.container_payment{
-    .container_payment_body_input {
-        width: 100%;
-        display: grid;
-        place-items: center;
-  
-        .container_payment_body_input_information {
-          width: 100%;
-          // margin: 10px 0px 0px 0px;
-          box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
-            rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-          .form {
-            padding: 10px 40px;
-          }
-  
-          .form-control {
-            // margin-bottom: 10px;
-            padding-bottom: 5px;
-            position: relative;
-          }
-  
-          .form-control label {
-            display: inline-block;
-            margin-bottom: 5px;
-          }
-  
-          .form-control input {
-            border: 2px solid #f0f0f0;
-            border-radius: 4px;
-            display: block;
-            font-family: inherit;
-            font-size: 14px;
-            padding: 10px;
-            margin-top: 20px;
-            width: 97%;
-          }
-  
-          p {
-            transform: translateY(13px);
-            border: 2px solid #2ecc71;
-            border-radius: 4px;
-            display: block;
-            font-family: inherit;
-            font-size: 14px;
-            padding: 10px;
-            width: 97%;
-          }
-  
-          .form-control input:focus {
-            outline: 0;
-            border-color: #777;
-          }
-  
-          .form-control.success input {
-            border-color: #2ecc71;
-          }
-  
-          .form-control.error input {
-            border-color: #e74c3c;
-          }
-  
-          .form-control i {
-            visibility: hidden;
-            position: absolute;
-            top: 50px;
-            right: 25px;
-          }
-  
-          .form-control.success i.fa-check-circle {
-            color: #2ecc71;
-            visibility: visible;
-          }
-  
-          .form-control.error i.fa-exclamation-circle {
-            color: #e74c3c;
-            visibility: visible;
-          }
-  
-          .form-control small {
-            font-size: 12px;
-            color: #e74c3c;
-            position: absolute;
-            bottom: 0;
-            left: 12px;
-            visibility: hidden;
-          }
-  
-          .form-control.error small {
-            visibility: visible;
-          }
-  
-          // .form button {
-          //   background-color: #8e44ad;
-          //   border: 2px solid #8e44ad;
-          //   border-radius: 4px;
-          //   color: #fff;
-          //   display: block;
-          //   font-family: inherit;
-          //   font-size: 16px;
-          //   padding: 10px;
-          //   margin-top: 20px;
-          //   width: 100%;
-          // }
-  
-          @media screen and (max-width: 480px) {
-            .social-panel-container.visible {
-              transform: translateX(0px);
-            }
-  
-            .floating-btn {
-              right: 10px;
-            }
-          }
-  
-          .buttonCheck {
-            transform: translateY(-15px);
-            margin-left: 40%;
-            // transform: translateX(-60%);
-          }
+.container_payment {
+  width: 100%;
+  padding-bottom: 10px;
+  .container_payment_body_input {
+    width: 100%;
+    display: grid;
+    place-items: center;
+
+    .container_payment_body_input_information {
+      width: 100%;
+      border: 1px dashed #dcdddd;
+      border-radius: 5px;
+      .form {
+        padding: 10px 40px;
+      }
+
+      .form-control {
+        // margin-bottom: 10px;
+        padding-bottom: 5px;
+      }
+
+      .form-control label {
+        display: inline-block;
+        transform: translateY(5px);
+        margin: 0;
+      }
+
+      .form-control input {
+        border: 2px solid #f0f0f0;
+        border-radius: 4px;
+        display: block;
+        font-family: inherit;
+        font-size: 14px;
+        padding: 10px;
+        margin-top: 20px;
+        width: 97%;
+        outline: none;
+      }
+
+      p {
+        transform: translateY(13px);
+        border: 2px solid #2ecc71;
+        border-radius: 4px;
+        display: block;
+        font-family: inherit;
+        font-size: 14px;
+        padding: 10px;
+        width: 97%;
+      }
+
+      .form-control input:focus {
+        outline: 0;
+        border-color: #777;
+      }
+
+      .form-control.success input {
+        border-color: #2ecc71;
+      }
+
+      .form-control.error input {
+        border-color: #e74c3c;
+      }
+
+      .form-control i {
+        visibility: hidden;
+        position: absolute;
+        top: 50px;
+        right: 25px;
+      }
+
+      .form-control.success i.fa-check-circle {
+        color: #2ecc71;
+        visibility: visible;
+      }
+
+      .form-control.error i.fa-exclamation-circle {
+        color: #e74c3c;
+        visibility: visible;
+      }
+
+      .form-control small {
+        font-size: 12px;
+        color: #e74c3c;
+        position: absolute;
+        bottom: 0;
+        left: 12px;
+        visibility: hidden;
+      }
+
+      .form-control.error small {
+        visibility: visible;
+      }
+
+      // .form button {
+      //   background-color: #8e44ad;
+      //   border: 2px solid #8e44ad;
+      //   border-radius: 4px;
+      //   color: #fff;
+      //   display: block;
+      //   font-family: inherit;
+      //   font-size: 16px;
+      //   padding: 10px;
+      //   margin-top: 20px;
+      //   width: 100%;
+      // }
+
+      @media screen and (max-width: 480px) {
+        .social-panel-container.visible {
+          transform: translateX(0px);
+        }
+
+        .floating-btn {
+          right: 10px;
         }
       }
+
+      .buttonCheck {
+        transform: translateY(-15px);
+        margin-left: 40%;
+        // transform: translateX(-60%);
+      }
+    }
+  }
 }

@@ -68,7 +68,7 @@ const voucherController = {
   },
   findVoucher: async (req: Request, res: Response) => {
     try {
-      const data = await Vouchers.find({
+      const data = await Vouchers.findOne({
         codeVoucher: req.params.codeVoucher,
       }).populate("placeId", "name");
 

@@ -1,38 +1,71 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import PaymentIcon from "@mui/icons-material/Payment";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { Button, TextField } from "@mui/material";
+import { color } from "@mui/system";
+import { Input } from "antd";
 import moment from "moment";
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
-import axiosClient from "../../../api/axiosClient";
-import Navbar from "../../../components/navbar";
-import { toastify } from "../../../utils/common";
-import "./style.scss";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
+import * as yup from "yup";
+import axiosClient from "../../../api/axiosClient";
+import Footer from "../../../components/footer";
+import Navbar from "../../../components/navbar";
+import { formatMoney, toastify } from "../../../utils/common";
+import { getUserDataLocalStorage } from "../../../utils/localstorage";
+import ModalUpateUser from "../modale-payment";
+import "./style.scss";
 
 const validationInput = yup.object().shape({
-  numberAdultTicket: yup.number().min(0, "Số lượng vé phải lớn hơn 0"),
-  numberChildTicket: yup.string().min(0, "Số lượng vé phải lớn hơn 0"),
-  addres: yup.string().required("Địa chỉ không được bỏ trống !!!"),
-  numberPhone: yup.number().required("Số điện thoại không được bỏ trống !!!"),
+  numberAdultTicket: yup
+    .number()
+    .typeError("Vui lòng chọn số vé ")
+    .required("Không được bỏ trống trường này")
+    .min(0, "Số lượng vé người lớn phải lớn hơn hoặc bằng 0!")
+    .max(20, "Số lượng vé đặt không quá 20 vé!"),
+  numberChildTicket: yup
+    .number()
+    .typeError("Vui lòng chọn số vé")
+    .required("Không được bỏ trống trường này")
+    .min(0, "Số lượng vé người lớn phải lớn hơn hoặc bằng 0!")
+    .max(20, "Số lượng vé đặt không quá 20 vé!"),
 });
 
 export default function PaymentDetail() {
   const [dataUser, setDataUser] = useState({});
   const [dataTicket, setDataaTicket] = useState({});
   const [loading, setLoading] = useState(false);
-  const { ticketId, userId } = useParams();
-  const [numberPhone, setNumberPhone] = useState([]);
-  const [address, setAddress] = useState([]);
-  const [numberAdultTicket, setNumberAdultTicket] = useState([]);
-  const [numberChildTicket, setNumberChildTicket] = useState([]);
-  const [dateTime, setDateTime] = useState([]);
-  const [sale, setSale] = useState([]);
-  const [totalPrice, setTotalPrice] = useState([]);
-  const totalPriceChildTicket = numberChildTicket * dataTicket?.childTicket;
-  const totalPriceAdultTicket = numberAdultTicket * dataTicket?.adultTicket;
-  const sumtotalPrice = totalPriceChildTicket + totalPriceAdultTicket;
+  const [loadingPayment, setLoadingPayment] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [check, setCheck] = useState(true);
+  const { ticketId } = useParams();
+  const [dataOrder, setDataOrder] = useState({});
+  const [dateTime, setDateTime] = useState("");
+  const [voucher, setVoucher] = useState("");
+  const [dataVoucher, setDataVoucher] = useState(0);
+  const userIdStorage = getUserDataLocalStorage();
+  const [content, setContent] = useState("");
+  const totalPriceChildTicket =
+    dataOrder.numberChildTicket * dataTicket?.childTicket;
+
+  const totalPriceAdultTicket =
+    dataOrder.numberAdultTicket * dataTicket?.adultTicket;
+
+  const sumTicket =
+    Number(dataOrder.numberChildTicket) +
+    Number(dataOrder.numberAdultTicket) -
+    Number(dataVoucher ? dataVoucher : 0);
+
+  const sumtotalPrice =
+    totalPriceChildTicket +
+    totalPriceAdultTicket +
+    Number(sumTicket > 2 ? 0 : 30000) -
+    Number(dataVoucher ? dataVoucher : 0);
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
 
   const {
     register,
@@ -40,18 +73,16 @@ export default function PaymentDetail() {
     formState: { errors, isDirty, isValid },
   } = useForm({
     defaultValues: {
-      numberAdultTicket: "",
-      numberChildTicket: "",
-      numberPhone: "",
-      address: "",
+      numberAdultTicket: 0,
+      numberChildTicket: 0,
+      mode: "all",
     },
-    mode: "all",
     resolver: yupResolver(validationInput),
   });
 
   const getApiUserID = () => {
     axiosClient
-      .get(`/user/get-an/${userId}`)
+      .get(`/user/get-an/${userIdStorage._id}`)
       .then((res) => {
         setLoading(false);
         setDataUser(res.data.data);
@@ -74,13 +105,62 @@ export default function PaymentDetail() {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
+  const getApiVoucher = () => {
+    axiosClient
+      .get(`/voucher/find-voucher/${voucher}`)
+      .then((res) => {
+        setLoading(false);
+        setDataVoucher(res.data.data.price);
+      })
+      .catch((err) => {
+        setLoading(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
 
-  const handleSubmitForm = (e) => {
-    // if (numberAdultTicket === 0 && numberChildTicket === 0) {
-    //   // toastify("error","nhập nít nhất 1 vé");
-      alert("lỗi");
-    // } else {
-    // }
+  const handleSubmitForm = (data) => {
+    if (data.numberAdultTicket + data.numberChildTicket < 1) {
+      toastify("error", "Bạn phải chọn ít nhất 1 vé");
+    } else {
+      if (dateTime === "") {
+        toastify("error", "Ngày không được bỏ trống");
+      } else {
+        setDataOrder(data);
+        setCheck(false);
+        if (voucher !== "") {
+          getApiVoucher();
+        }
+      }
+    }
+  };
+
+  const handleOrder = (data) => {
+    if (data.address === "" || data.numberPhone === "") {
+      setOpenModal(true);
+    } else {
+      setLoadingPayment(true);
+      axiosClient
+        .post("/order/add", {
+          adultTicket: dataOrder.numberAdultTicket,
+          childTicket: dataOrder.numberChildTicket,
+          total: sumtotalPrice,
+          description: content,
+          dateTime: Number(new Date()),
+          userId: userIdStorage?._id,
+          placeId: dataTicket?.placeId?._id,
+          salesAgentId: dataTicket?.salesAgentId?._id,
+          ticketId: ticketId,
+        })
+        .then((res) => {
+          toastify("success", res.data.message || "Đặt hàng thành công !");
+          setContent("");
+          setLoadingPayment(false);
+        })
+        .catch((err) => {
+          toastify("error", err.response.data.message || "Lỗi hệ thông !");
+          setLoadingPayment(false);
+        });
+    }
   };
 
   React.useEffect(() => {
@@ -144,23 +224,30 @@ export default function PaymentDetail() {
                 style={{
                   width: "100%",
                   border: "1px solid #dcdddd",
+                  borderRadius: "5px",
                 }}
               >
                 <div
                   style={{ textAlign: "center", margin: "10px 0px 10px 0px" }}
                 >
-                  <b>Thông tin đơn hàng</b>
+                  <b>Thông Tin Đơn Hàng</b>
                 </div>
                 <div
                   style={{ width: "100%", display: "flex", padding: "10px" }}
                 >
-                  <div style={{ width: "40%" }}>
-                    <span>Tên địa điểm</span>
+                  <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
+                    <span>Tên Địa Điểm</span>
                   </div>
                   <div style={{ width: "45%" }}>
                     <TextField
                       disabled
-                      sx={{ border: "none", outline: "none" }}
+                      sx={{
+                        border: "none",
+                        outline: "none",
+                        "& label": {
+                          color: "red"
+                        }
+                      }}
                       size="small"
                       label={dataTicket?.placeId?.name}
                     />
@@ -169,8 +256,8 @@ export default function PaymentDetail() {
                 <div
                   style={{ width: "100%", display: "flex", padding: "10px" }}
                 >
-                  <div style={{ width: "40%" }}>
-                    <span>Địa điểm</span>
+                  <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
+                    <span>Địa Điểm</span>
                   </div>
                   <div style={{ width: "45%" }}>
                     <TextField
@@ -183,58 +270,52 @@ export default function PaymentDetail() {
                 <div
                   style={{ width: "100%", display: "flex", padding: "10px" }}
                 >
-                  <div style={{ width: "40%" }}>
-                    <span>Vé người lớn</span>
+                  <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
+                    <span>Vé Người Lớn</span>
                   </div>
                   <div style={{ width: "45%" }}>
                     <TextField
-                      // error={!!errors?.numberAdultTicket}
-                      // {...register("numberAdultTicket")}
+                      error={!!errors?.numberAdultTicket}
+                      {...register("numberAdultTicket")}
                       type="number"
                       sx={{
                         border: "none",
                         outline: "none",
                         borderColor: "#777",
                       }}
-                      // helperText={errors.numberAdultTicket?.message}
+                      helperText={errors.numberAdultTicket?.message}
                       size="small"
                       placeholder="0"
-                      value={numberAdultTicket}
-                      onChange={(e) => setNumberAdultTicket(e.target.value)}
                     />
-                    <label htmlFor="">
-                      Giá vé:{" "}
-                      {totalPriceAdultTicket.toLocaleString("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      })}
+                    <label style={{ paddingTop: "5px", fontSize: "14px" }}>
+                      Thành Tiền:{" "}
+                      {totalPriceAdultTicket
+                        ? formatMoney(totalPriceAdultTicket)
+                        : "0"}
                     </label>
                   </div>
                 </div>
                 <div
                   style={{ width: "100%", display: "flex", padding: "10px" }}
                 >
-                  <div style={{ width: "40%" }}>
-                    <span>Vé trẻ em</span>
+                  <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
+                    <span>Vé Trẻ Em</span>
                   </div>
                   <div style={{ width: "45%" }}>
                     <TextField
-                      // error={!!errors?.numberChildTicket}
-                      // {...register("numberChildTicket")}
+                      error={!!errors?.numberChildTicket}
+                      {...register("numberChildTicket")}
                       type="number"
                       sx={{ border: "none", outline: "none" }}
-                      // helperText={errors.numberChildTicket?.message}
+                      helperText={errors.numberChildTicket?.message}
                       size="small"
-                      value={numberChildTicket}
-                      onChange={(e) => setNumberChildTicket(e.target.value)}
                       placeholder="0"
                     />
-                    <label htmlFor="">
-                      Giá vé:{" "}
-                      {totalPriceChildTicket.toLocaleString("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      })}
+                    <label style={{ paddingTop: "5px", fontSize: "14px" }}>
+                      Thành Tiền:{" "}
+                      {totalPriceChildTicket
+                        ? formatMoney(totalPriceChildTicket)
+                        : "0"}
                     </label>
                   </div>
                 </div>
@@ -242,39 +323,49 @@ export default function PaymentDetail() {
                 <div
                   style={{ width: "100%", display: "flex", padding: "10px" }}
                 >
-                  <div style={{ width: "40%" }}>
-                    <span>Ngày đặt vé</span>
+                  <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
+                    <span>Ngày Đi</span>
                   </div>
-                  <div style={{ width: "60%" }}>
-                    <TextField
+                  <div style={{ width: "60%", marginLeft: "10px" }}>
+                    <input
+                      style={{
+                        height: "30px",
+                        width: "75%",
+                        border: "1px solid #c4c4c4",
+                        borderRadius: "5px",
+                        outline: "none",
+                        padding: "5px",
+                        color: "#c4c4c4",
+                      }}
                       type="date"
-                      sx={{ border: "none", outline: "none" }}
-                      size="small"
+                      name="startDay"
                       value={dateTime}
-                      onChange={(e) => setDateTime(e.target.value)}
-                      placeholder="0"
+                      min={moment(new Date()).format("yyyy-MM-DD")}
+                      onChange={(e) => {
+                        setDateTime(e.target.value);
+                      }}
                     />
                   </div>
                 </div>
                 <div
                   style={{ width: "100%", display: "flex", padding: "10px" }}
                 >
-                  <div style={{ width: "40%" }}>
+                  <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
                     <span>Mã khuyến mãi</span>
                   </div>
                   <div style={{ width: "45%" }}>
                     <TextField
                       sx={{ border: "none", outline: "none" }}
                       size="small"
-                      value={sale}
-                      onChange={(e) => setSale(e.target.value)}
+                      value={voucher}
+                      onChange={(e) => setVoucher(e.target.value)}
                     />
                   </div>
                 </div>
                 <div
                   style={{ width: "100%", display: "flex", padding: "10px" }}
                 >
-                  <div style={{ width: "40%" }}>
+                  <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
                     <span>Tổng thành tiền</span>
                   </div>
                   <div style={{ width: "45%" }}>
@@ -283,10 +374,7 @@ export default function PaymentDetail() {
                       type="number"
                       sx={{ border: "none", outline: "none" }}
                       size="small"
-                      label={sumtotalPrice.toLocaleString("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      })}
+                      label={sumtotalPrice ? formatMoney(sumtotalPrice) : "0"}
                     />
                   </div>
                 </div>
@@ -295,10 +383,10 @@ export default function PaymentDetail() {
                   style={{ textAlign: "center", padding: "10px 0px 10px 0px" }}
                 >
                   <Button
-                    sx={{ width: "90%" }}
+                    sx={{ width: "85%" }}
                     variant="outlined"
-                    // label={!isDirty && !isValid}
-                    // onClick={handleSubmit(handleSubmitForm)}
+                    label={!isDirty && !isValid}
+                    onClick={handleSubmit(handleSubmitForm)}
                   >
                     Xác nhận
                   </Button>
@@ -316,6 +404,7 @@ export default function PaymentDetail() {
                 style={{
                   width: "100%",
                   border: "1px solid #dcdddd",
+                  borderRadius: "5px",
                 }}
               >
                 <div
@@ -323,39 +412,10 @@ export default function PaymentDetail() {
                 >
                   <b>Thông tin vé</b>
                 </div>
-                {/* <div
-                  style={{ width: "100%", display: "flex", padding: "10px" }}
-                >
-                  <div style={{ width: "40%" }}>
-                    <span>Tên địa điểm</span>
-                  </div>
-                  <div style={{ width: "45%" }}>
-                    <TextField
-                      disabled
-                      sx={{ border: "none", outline: "none" }}
-                      size="small"
-                      label={dataTicket?.placeId?.name}
-                    />
-                  </div>
-                </div>
                 <div
                   style={{ width: "100%", display: "flex", padding: "10px" }}
                 >
-                  <div style={{ width: "40%" }}>
-                    <span>Địa điểm</span>
-                  </div>
-                  <div style={{ width: "45%" }}>
-                    <TextField
-                      disabled
-                      size="small"
-                      label={dataTicket?.placeId?.location}
-                    />
-                  </div>
-                </div> */}
-                <div
-                  style={{ width: "100%", display: "flex", padding: "10px" }}
-                >
-                  <div style={{ width: "40%" }}>
+                  <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
                     <span>Giá vé người lớn</span>
                   </div>
                   <div style={{ width: "45%" }}>
@@ -367,17 +427,21 @@ export default function PaymentDetail() {
                       }}
                       disabled
                       size="small"
-                      // label={dataTicket?.adultTicket.toLocaleString("vi-VN", {
-                      //   style: "currency",
-                      //   currency: "VND",
-                      // })}
+                      label={
+                        dataTicket?.adultTicket
+                          ? dataTicket.adultTicket.toLocaleString("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            })
+                          : ""
+                      }
                     />
                   </div>
                 </div>
                 <div
                   style={{ width: "100%", display: "flex", padding: "10px" }}
                 >
-                  <div style={{ width: "40%" }}>
+                  <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
                     <span>Giá vé trẻ em</span>
                   </div>
                   <div style={{ width: "45%" }}>
@@ -385,10 +449,14 @@ export default function PaymentDetail() {
                       sx={{ border: "none", outline: "none" }}
                       disabled
                       size="small"
-                      // label={dataTicket?.childTicket.toLocaleString("vi-VN", {
-                      //   style: "currency",
-                      //   currency: "VND",
-                      // })}
+                      label={
+                        dataTicket?.childTicket
+                          ? dataTicket.childTicket.toLocaleString("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            })
+                          : ""
+                      }
                     />
                   </div>
                 </div>
@@ -396,7 +464,7 @@ export default function PaymentDetail() {
                 <div
                   style={{ width: "100%", display: "flex", padding: "10px" }}
                 >
-                  <div style={{ width: "40%" }}>
+                  <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
                     <span>Số lượng vé còn</span>
                   </div>
                   <div style={{ width: "45%" }}>
@@ -417,7 +485,7 @@ export default function PaymentDetail() {
                 <div className="container_payment_body_input_information">
                   <form id="form" className="form">
                     <div style={{ textAlign: "center" }}>
-                      <b>Thông tin khách hàng</b>
+                      <b>Thông tin đơn hàng</b>
                     </div>
                     <div className="form-control">
                       <label>Tên Khách Hàng</label>
@@ -433,29 +501,90 @@ export default function PaymentDetail() {
                     </div>
                     <div className="form-control">
                       <label>Địa Chỉ</label>
-                      <input
-                        error={!!errors?.address}
-                        {...register("adress")}
-                        style={{ paddingTop: "10px" }}
-                        type="address"
-                        placeholder="242 Tô Hiệu"
-                        id="address"
-                        // value={address}
-                        // onChange={(e) => setAddress(e.target.value)}
-                        helperText={errors.address?.message}
-                      />
+                      <p>{dataUser?.address}</p>
                     </div>
                     <div className="form-control">
                       <label>Số Điện Thoại</label>
+                      <p>{dataUser?.numberPhone}</p>
+                    </div>
+
+                    <div className="form-control">
+                      <label>Tên Địa Điểm</label>
+                      <input disabled placeholder={dataTicket?.placeId?.name} />
+                    </div>
+                    <div className="form-control">
+                      <label>Địa Điểm</label>
                       <input
-                        error={!!errors?.numberPhone}
-                        {...register("numberPhone")}
-                        type="tel"
-                        placeholder="0835129813"
-                        id="numberPhone"
-                        value={numberPhone}
-                        onChange={(e) => setNumberPhone(e.target.value)}
-                        helperText={errors.numberPhone?.message}
+                        disabled
+                        placeholder={dataTicket?.placeId?.location}
+                      />
+                    </div>
+                    <div className="form-control">
+                      <label>Vé Người Lớn</label>
+                      <input
+                        disabled
+                        placeholder={dataOrder.numberAdultTicket}
+                      />
+                    </div>
+                    <div className="form-control">
+                      <label>Vé Trẻ Em</label>
+                      <input
+                        disabled
+                        placeholder={dataOrder.numberChildTicket}
+                      />
+                    </div>
+                    <div className="form-control">
+                      <label>Ngày đi</label>
+                      <input disabled placeholder={dateTime} />
+                    </div>
+                    <div className="form-control">
+                      <label>Tổng Vé</label>
+                      <input
+                        disabled
+                        placeholder={
+                          sumTicket
+                            ? Number(dataOrder?.numberAdultTicket) +
+                              Number(dataOrder?.numberChildTicket)
+                            : "0"
+                        }
+                      />
+                    </div>
+                    <div className="form-control">
+                      <label>Phí Ship</label>
+                      <input
+                        disabled
+                        placeholder={
+                          sumTicket <= 2 ? `${formatMoney(30000)}` : "Miến phí"
+                        }
+                      />
+                    </div>
+                    <div className="form-control">
+                      <label>Voucher</label>
+                      <input
+                        disabled
+                        placeholder={
+                          dataVoucher
+                            ? `- ${formatMoney(dataVoucher)}`
+                            : "Chưa áp dụng được mã"
+                        }
+                      />
+                    </div>
+                    <div className="form-control">
+                      <label>Tổng Tiền</label>
+                      <input
+                        disabled
+                        placeholder={
+                          sumtotalPrice ? formatMoney(sumtotalPrice) : "0"
+                        }
+                      />
+                    </div>
+                    <div className="form-control">
+                      <h3 className="title">Chú Thích</h3>
+                      <Input.TextArea
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder="Nhập chú thích "
+                        autoSize={{  maxRows: 4 }}
                       />
                     </div>
                     <div
@@ -464,15 +593,16 @@ export default function PaymentDetail() {
                         padding: "10px 0px 10px 0px",
                       }}
                     >
-                      <Button
+                      <LoadingButton
                         sx={{ width: "100%" }}
                         variant="outlined"
                         label={!isDirty && !isValid}
-                        onClick={handleSubmit(handleSubmitForm)}
-
+                        disabled={check}
+                        onClick={handleOrder}
+                        loading={loadingPayment}
                       >
                         Xác nhận đơn hàng
-                      </Button>
+                      </LoadingButton>
                     </div>
                   </form>
                 </div>
@@ -481,6 +611,12 @@ export default function PaymentDetail() {
           </div>
         </div>
       </div>
+      <ModalUpateUser
+        open={openModal}
+        handleClose={handleCloseModal}
+        callBackApi={getApiUserID}
+      />
+      <Footer />
     </div>
   );
 }

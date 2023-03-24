@@ -93,6 +93,15 @@ const Explore = () => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
+  const handelDeleteDataPost = (id) => {
+    // console.log("hh",id);
+    getApiAllPost()
+    // setDataPost(
+    //   dataPost.filter((e) => {
+    //     return e._id !== id;
+    //   })
+    // );
+  };
 
   useEffect(() => {
     Promise.all([getApiUser(), getApiPlace(), getApiAllPost()]);
@@ -144,7 +153,13 @@ const Explore = () => {
                 <ErrorEmpty />
               ) : (
                 dataPost?.data?.map((item, index) => {
-                  return <CardPost data={item} key={index} />;
+                  return (
+                    <CardPost
+                      data={item}
+                      callBackApi={handelDeleteDataPost}
+                      key={index}
+                    />
+                  );
                 })
               )}
             </div>

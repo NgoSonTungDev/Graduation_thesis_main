@@ -1,6 +1,6 @@
-import { yupResolver } from "@hookform/resolvers/yup";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ReplyIcon from "@mui/icons-material/Reply";
 import TelegramIcon from "@mui/icons-material/Telegram";
@@ -12,16 +12,13 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Image, message } from "antd";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Comment from "../comment";
-import _ from "lodash"
 
-const CardPost = ({ data }) => {
-  console.log("ffdfd",data.like.length);
+const CardPost = ({ data,callBackApi }) => {
+  console.log("ffdfd", data);
   const [like, setLike] = useState(false);
   const [numberLike, setNumberLike] = useState(0);
   const [expanded, setExpanded] = React.useState(false);
@@ -35,6 +32,15 @@ const CardPost = ({ data }) => {
   };
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const [opendelete, setOpenDelete] = useState(false);
+
+  const handleClickOpenDelete = () => {
+    setOpenDelete(true);
+  };
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
   };
 
   const handleExpandClick = () => {
@@ -143,6 +149,21 @@ const CardPost = ({ data }) => {
       });
   };
 
+  const handleDeleteShare = (e) => {
+    axiosClient
+      .delete(`/post/delete/${data._id}`, {
+        userId: userIdStorage._id,
+      })
+      .then((res) => {
+        toastify("success", res.data.message);
+        handleCloseDelete();
+        callBackApi(data._id)
+      })
+      .catch((err) => {
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
+
   const fetchData = () => {
     if (userIdStorage) {
       data?.like?.find((e) => {
@@ -154,7 +175,7 @@ const CardPost = ({ data }) => {
       console.log("nmdsnfdsf");
       setLike(false);
     }
-    setNumberLike(data.like.length)
+    setNumberLike(data.like.length);
   };
 
   useEffect(() => {
@@ -231,6 +252,11 @@ const CardPost = ({ data }) => {
               </div>
             </div>
           </div>
+          {userIdStorage?._id === data?.userId?._id && (
+            <div style={{ marginLeft:"300px" }}>
+              <CloseIcon onClick={handleClickOpenDelete} />
+            </div>
+          )}
         </div>
         <div
           className="text"
@@ -387,6 +413,23 @@ const CardPost = ({ data }) => {
           </div>
         )}
       </Box>
+      <Dialog
+        open={opendelete}
+        onClose={handleCloseDelete}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Bạn có chắc muốn xóa bài viết ?"}
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handleDeleteShare}>xóa</Button>
+          <Button onClick={handleClose} autoFocus>
+            thoát
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* deleteshare */}
       <Dialog
         open={open}
         onClose={handleClose}
