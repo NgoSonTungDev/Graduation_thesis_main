@@ -13,7 +13,7 @@ const validation = joi.object<IPlace>({
   purpose: joi.string().required(),
   type: joi.string().required(),
   rating: joi.number().min(0).max(5),
-  image: joi.array().min(1).max(8),
+  image: joi.array().min(1).max(5),
   openTime: joi.number().required(),
   closeTime: joi.number().required(),
   description: joi.string().required(),

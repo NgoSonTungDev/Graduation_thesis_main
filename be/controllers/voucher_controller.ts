@@ -2,6 +2,7 @@ import { IVoucher } from "./../types/voucher";
 import Vouchers from "../models/voucher";
 import { errorFunction } from "../utils/errorFunction";
 import { Request, Response, NextFunction } from "express";
+import { ObjectId } from "mongodb";
 
 const fakeCode = (length: number) => {
   let result = "";
@@ -41,25 +42,22 @@ const voucherController = {
       });
     }
   },
-  getByIdVoucher: async (req: Request, res: Response) => {
+  getByPlaceId: async (req: Request, res: Response) => {
     try {
-      const { codeVoucher } = req.query;
-
-      const filter = {
-        $and: [
-          {
-            codeVoucher: {
-              $regex: codeVoucher,
-              $options: "$i",
-            },
+      const data = await Vouchers.aggregate([
+        {
+          $match: {
+            $and: [
+              {
+                placeId: req.params.placeId,
+              },
+              {
+                public: true,
+              },
+            ],
           },
-          {
-            placeId: req.params.id,
-          },
-        ],
-      };
-
-      const data = await Vouchers.find(filter).populate("placeId", "name");
+        },
+      ]);
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {
@@ -68,11 +66,19 @@ const voucherController = {
   },
   findVoucher: async (req: Request, res: Response) => {
     try {
+      const { codeVoucher, placeId } = req.query;
+
       const data = await Vouchers.findOne({
-        codeVoucher: req.params.codeVoucher,
+        codeVoucher: codeVoucher,
       }).populate("placeId", "name");
 
-      res.json(errorFunction(false, 200, "Lấy thành công !", data));
+      if (String(data?.placeId?._id) === placeId && data?.public === true) {
+        res.json(errorFunction(false, 200, "Lấy thành công !", data));
+      } else {
+        res.json(
+          errorFunction(false, 402, "Không sử dụng được mã giảm giá này!")
+        );
+      }
     } catch (error) {
       res.status(500).json(error);
     }

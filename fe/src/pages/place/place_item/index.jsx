@@ -8,9 +8,13 @@ import { formatDate, formatMoney, toastify } from "../../../utils/common";
 import "./style.scss";
 import axiosClient from "../../../api/axiosClient";
 import moment from "moment";
+import { useNavigate } from "react-router";
+import { getUserDataLocalStorage } from "../../../utils/localstorage";
 
 const PlaceItem = ({ data }) => {
   const [check, setCheck] = useState(false);
+  const navigate = useNavigate();
+  const userIdStorage = getUserDataLocalStorage();
 
   const renderItemCheckTime = (open, close) => {
     const start = moment(open).format("HH:mm");
@@ -87,6 +91,9 @@ const PlaceItem = ({ data }) => {
         alignItems: "center",
         overflow: "hidden",
         cursor: "pointer",
+      }}
+      onClick={() => {
+        navigate(`/place/${data._id}`);
       }}
     >
       <div className="place_item_image">
@@ -174,27 +181,32 @@ const PlaceItem = ({ data }) => {
           </span>
         </div>
       </div>
-      <div style={{ marginLeft: "8px" }}>
-        {check ? (
-          <IconButton
-            sx={{ backgroundColor: " #ff0000", color: "#fff" }}
-            onClick={(e) => {
-              handleDisFavourite(e);
-            }}
-          >
-            <FavoriteBorderIcon />
-          </IconButton>
-        ) : (
-          <IconButton
-            sx={{ border: "1px solid #ff0000", color: "#ff0000" }}
-            onClick={(e) => {
-              handleFavourite(e);
-            }}
-          >
-            <FavoriteBorderIcon />
-          </IconButton>
-        )}
-      </div>
+
+      {userIdStorage && (
+        <div style={{ marginLeft: "8px" }}>
+          {check ? (
+            <IconButton
+              sx={{ backgroundColor: " #ff0000", color: "#fff" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDisFavourite(e);
+              }}
+            >
+              <FavoriteBorderIcon />
+            </IconButton>
+          ) : (
+            <IconButton
+              sx={{ border: "1px solid #ff0000", color: "#ff0000" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleFavourite(e);
+              }}
+            >
+              <FavoriteBorderIcon />
+            </IconButton>
+          )}
+        </div>
+      )}
     </div>
   );
 };

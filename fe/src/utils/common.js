@@ -47,7 +47,10 @@ export const momentLocale = (date) => {
 };
 
 export const formatMoney = (money) => {
-  return Number(money).toLocaleString("vi", { style: "currency", currency: "VND" });
+  return Number(money).toLocaleString("vi", {
+    style: "currency",
+    currency: "VND",
+  });
 };
 
 // export const take_decimal_number = (number, n) => {

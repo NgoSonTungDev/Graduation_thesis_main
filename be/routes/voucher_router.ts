@@ -7,12 +7,9 @@ export const voucherRouter = (router: Router) => {
 
   router.get("/voucher/get-all", voucherController.getAll);
 
-  router.get(
-    "/voucher/find-voucher/:codeVoucher",
-    voucherController.findVoucher
-  );
+  router.get("/voucher/get-by-place/:placeId", voucherController.getByPlaceId);
 
-  router.get("/voucher/get-by-id/:id", voucherController.getByIdVoucher);
+  router.get("/voucher/find-voucher", voucherController.findVoucher);
 
   router.delete("/voucher/delete/:id", voucherController.deleteVoucher);
 };

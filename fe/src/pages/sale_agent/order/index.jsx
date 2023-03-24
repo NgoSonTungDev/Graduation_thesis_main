@@ -11,6 +11,7 @@ import LoadingBar from "../../../components/loadding/loading_bar";
 import MenuSaleAgent from "../../../components/navbar_sale_agent";
 import PaginationCpn from "../../../components/pagination";
 import { toastify } from "../../../utils/common";
+import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import OrderTable from "./table";
 
 const OrderSaleAgent = () => {
@@ -22,6 +23,7 @@ const OrderSaleAgent = () => {
     limit: 5,
     status: "",
   });
+  const userIdStorage = getUserDataLocalStorage();
 
   const handleChangeTab = (e, newValue) => {
     setValue(newValue);
@@ -48,7 +50,7 @@ const OrderSaleAgent = () => {
   const fetchData = () => {
     axiosClient
       .get(
-        `/order/get-id-sale-agent/63fd6883ea9627ba24c33075?${qs.stringify(
+        `/order/get-id-sale-agent/${userIdStorage?._id}?${qs.stringify(
           payload
         )}`
       )
@@ -101,7 +103,7 @@ const OrderSaleAgent = () => {
               >
                 {loading ? (
                   <LoadingBar loading={loading} />
-                ) : _.isEmpty(data) ? (
+                ) : _.isEmpty(data.data) ? (
                   <ErrorEmpty />
                 ) : (
                   <OrderTable data={data.data} callBackApi={fetchData} />

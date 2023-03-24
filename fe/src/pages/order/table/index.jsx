@@ -13,11 +13,13 @@ import TableRow from "@mui/material/TableRow";
 import axios from "axios";
 import moment from "moment";
 import React from "react";
+import _ from "lodash";
 import axiosClient from "../../../api/axiosClient";
 import { formatMoney, toastify } from "../../../utils/common";
 import { setOrderLocalStorage } from "../../../utils/localstorage";
 import ModalEvaluate from "../model_evaluate";
 import "./style.scss";
+import ErrorEmpty from "../../../components/emty_data";
 
 const style = {
   position: "absolute",
@@ -159,101 +161,105 @@ const TableOrderUser = ({
   return (
     <div>
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-          <TableHead>
-            <TableRow sx={{ padding: "5px 0" }}>
-              <TableCell>Mã đơn hàng</TableCell>
-              <TableCell align="center">Tên khách hàng</TableCell>
-              <TableCell align="center">Email</TableCell>
-              <TableCell align="center">Địa điểm</TableCell>
-              <TableCell align="center">Vé người lớn</TableCell>
-              <TableCell align="center">Vé trẻ em</TableCell>
-              <TableCell align="center">Ngày đi</TableCell>
-              <TableCell align="center">Chi tiết</TableCell>
-              <TableCell align="center">Ngày đặt</TableCell>
-              <TableCell align="center">Tổng vé</TableCell>
-              <TableCell align="center">Trạng thái</TableCell>
-              <TableCell align="center">Tổng tiền</TableCell>
-              <TableCell align="center">Chức năng</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data?.map((item) => (
-              <TableRow
-                key={"ksjd"}
-                sx={{
-                  "&:last-child td, &:last-child th": { border: 0 },
-                }}
-              >
-                <TableCell component="th" scope="row" size="medium">
-                  {item.codeOrder}
-                </TableCell>
-                <TableCell align="center" size="medium">
-                  {item?.userId?.userName}
-                </TableCell>
-                <TableCell align="center" size="medium">
-                  {item?.userId?.email}
-                </TableCell>
-                <TableCell align="center" size="medium">
-                  {item?.placeId?.name}
-                </TableCell>
-                <TableCell align="center" size="medium">
-                  {item.adultTicket}
-                </TableCell>
-                <TableCell align="center" size="medium">
-                  {item.childTicket}
-                </TableCell>
-                <TableCell align="center" size="medium">
-                  {moment(item.dateTime).format("DD/MM/yyyy")}
-                </TableCell>
-                <TableCell align="center" size="medium">
-                  {item.description ? (
-                    <Button
-                      onClick={() => {
-                        setDescription({
-                          name: item?.userId?.userName,
-                          email: item?.userId?.email,
-                          address: item?.userId?.address,
-                          numberPhone: item?.userId?.numberPhone,
-                          description: item.description,
-                        });
-                        handleOpen();
-                      }}
-                    >
-                      Xem
-                    </Button>
-                  ) : (
-                    "..."
-                  )}
-                </TableCell>
-                <TableCell align="center" size="medium">
-                  {moment(item.createdAt).format("DD/MM/yyyy")}
-                </TableCell>
-                <TableCell align="center" size="medium">
-                  {item.amount}
-                </TableCell>
-                <TableCell align="center" size="medium">
-                  {renderStory(item.status)}
-                </TableCell>
-                <TableCell align="center" size="medium" sx={{ color: "red" }}>
-                  {formatMoney(item.total)}
-                </TableCell>
-                <TableCell align="center" size="medium">
-                  {renderButton(
-                    item.status,
-                    item._id,
-                    item.codeOrder,
-                    item.total,
-                    item.amount,
-                    item?.ticketId?.numberTickets,
-                    item?.userId?.email,
-                    item?.placeId?._id
-                  )}
-                </TableCell>
+        {_.isEmpty(data) ? (
+          <ErrorEmpty />
+        ) : (
+          <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+            <TableHead>
+              <TableRow sx={{ padding: "5px 0" }}>
+                <TableCell>Mã đơn hàng</TableCell>
+                <TableCell align="center">Tên khách hàng</TableCell>
+                <TableCell align="center">Email</TableCell>
+                <TableCell align="center">Địa điểm</TableCell>
+                <TableCell align="center">Vé người lớn</TableCell>
+                <TableCell align="center">Vé trẻ em</TableCell>
+                <TableCell align="center">Ngày đi</TableCell>
+                <TableCell align="center">Chi tiết</TableCell>
+                <TableCell align="center">Ngày đặt</TableCell>
+                <TableCell align="center">Tổng vé</TableCell>
+                <TableCell align="center">Trạng thái</TableCell>
+                <TableCell align="center">Tổng tiền</TableCell>
+                <TableCell align="center">Chức năng</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {data?.map((item) => (
+                <TableRow
+                  key={"ksjd"}
+                  sx={{
+                    "&:last-child td, &:last-child th": { border: 0 },
+                  }}
+                >
+                  <TableCell component="th" scope="row" size="medium">
+                    {item.codeOrder}
+                  </TableCell>
+                  <TableCell align="center" size="medium">
+                    {item?.userId?.userName}
+                  </TableCell>
+                  <TableCell align="center" size="medium">
+                    {item?.userId?.email}
+                  </TableCell>
+                  <TableCell align="center" size="medium">
+                    {item?.placeId?.name}
+                  </TableCell>
+                  <TableCell align="center" size="medium">
+                    {item.adultTicket}
+                  </TableCell>
+                  <TableCell align="center" size="medium">
+                    {item.childTicket}
+                  </TableCell>
+                  <TableCell align="center" size="medium">
+                    {moment(item.dateTime).format("DD/MM/yyyy")}
+                  </TableCell>
+                  <TableCell align="center" size="medium">
+                    {item.description ? (
+                      <Button
+                        onClick={() => {
+                          setDescription({
+                            name: item?.userId?.userName,
+                            email: item?.userId?.email,
+                            address: item?.userId?.address,
+                            numberPhone: item?.userId?.numberPhone,
+                            description: item.description,
+                          });
+                          handleOpen();
+                        }}
+                      >
+                        Xem
+                      </Button>
+                    ) : (
+                      "..."
+                    )}
+                  </TableCell>
+                  <TableCell align="center" size="medium">
+                    {moment(item.createdAt).format("DD/MM/yyyy")}
+                  </TableCell>
+                  <TableCell align="center" size="medium">
+                    {item.amount}
+                  </TableCell>
+                  <TableCell align="center" size="medium">
+                    {renderStory(item.status)}
+                  </TableCell>
+                  <TableCell align="center" size="medium" sx={{ color: "red" }}>
+                    {formatMoney(item.total)}
+                  </TableCell>
+                  <TableCell align="center" size="medium">
+                    {renderButton(
+                      item.status,
+                      item._id,
+                      item.codeOrder,
+                      item.total,
+                      item.amount,
+                      item?.ticketId?.numberTickets,
+                      item?.userId?.email,
+                      item?.placeId?._id
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </TableContainer>
       <Modal
         aria-labelledby="transition-modal-title"

@@ -1,8 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const StatisticItem = ({ data }) => {
+  const navigate = useNavigate();
   return (
     <div
+      onClick={() => {
+        navigate(`/place/${data._id}`);
+      }}
       style={{
         cursor: "pointer",
         width: "98%",

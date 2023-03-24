@@ -5,6 +5,7 @@ import { Button, TextField } from "@mui/material";
 import { color } from "@mui/system";
 import { Input } from "antd";
 import moment from "moment";
+import queryString from "query-string";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
@@ -43,7 +44,7 @@ export default function PaymentDetail() {
   const [dataOrder, setDataOrder] = useState({});
   const [dateTime, setDateTime] = useState("");
   const [voucher, setVoucher] = useState("");
-  const [dataVoucher, setDataVoucher] = useState(0);
+  const [dataVoucher, setDataVoucher] = useState({});
   const userIdStorage = getUserDataLocalStorage();
   const [content, setContent] = useState("");
   const totalPriceChildTicket =
@@ -51,6 +52,7 @@ export default function PaymentDetail() {
 
   const totalPriceAdultTicket =
     dataOrder.numberAdultTicket * dataTicket?.adultTicket;
+    console.log("mmm",dataVoucher);
 
   const sumTicket =
     Number(dataOrder.numberChildTicket) +
@@ -105,12 +107,18 @@ export default function PaymentDetail() {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
+
   const getApiVoucher = () => {
     axiosClient
-      .get(`/voucher/find-voucher/${voucher}`)
+      .get(
+        `/voucher/find-voucher?${queryString.stringify({
+          codevoucher: voucher,
+          placeId: dataTicket?.placeId?._id,
+        })}`
+      )
       .then((res) => {
         setLoading(false);
-        setDataVoucher(res.data.data.price);
+        setDataVoucher(res.data.data);
       })
       .catch((err) => {
         setLoading(false);
@@ -162,6 +170,21 @@ export default function PaymentDetail() {
         });
     }
   };
+
+  // const getApiVoucher = () => {
+  //   axiosClient
+  //     .get(`/voucher/find-voucher?${queryString.stringify({
+  //       codevoucher :"",placeId:id
+  //     })}`)
+  //     .then((res) => {
+  //       setDataUser(res.data.data.data);
+  //       setLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       setLoading(false);
+  //       toastify("error", err.response.data.message || "Lỗi hệ thông !");
+  //     });
+  // };
 
   React.useEffect(() => {
     getApiUserID();
@@ -245,8 +268,8 @@ export default function PaymentDetail() {
                         border: "none",
                         outline: "none",
                         "& label": {
-                          color: "red"
-                        }
+                          color: "red",
+                        },
                       }}
                       size="small"
                       label={dataTicket?.placeId?.name}
@@ -584,7 +607,7 @@ export default function PaymentDetail() {
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                         placeholder="Nhập chú thích "
-                        autoSize={{  maxRows: 4 }}
+                        autoSize={{ maxRows: 4 }}
                       />
                     </div>
                     <div

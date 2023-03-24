@@ -18,7 +18,7 @@ export const ticketRouter = (router: Router) => {
     ticketController.getSalesAgentId
   );
 
-  router.get("/ticket/update/:id", ticketController.updateTicket);
+  router.put("/ticket/update/:id", ticketController.updateTicket);
 
-  router.get("/ticket/delete/:id", ticketController.deleteTicket);
+  router.delete("/ticket/delete/:id", ticketController.deleteTicket);
 };

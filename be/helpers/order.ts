@@ -9,7 +9,7 @@ const validation = joi.object<IOrder>({
   adultTicket: joi.number().required(),
   childTicket: joi.number().required(),
   total: joi.number().required(),
-  description: joi.string().required(),
+  description: joi.string(),
   status: joi.number(),
   dateTime: joi.number().required(),
   placeId: joi.string().required(),

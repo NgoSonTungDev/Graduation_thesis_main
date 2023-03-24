@@ -16,6 +16,7 @@ import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Comment from "../comment";
+import _ from "lodash";
 
 const CardPost = ({ data,callBackApi }) => {
   console.log("ffdfd", data);
@@ -165,6 +166,7 @@ const CardPost = ({ data,callBackApi }) => {
   };
 
   const fetchData = () => {
+    // if (_.isEmpty(data?.like)) return setLike(false);
     if (userIdStorage) {
       data?.like?.find((e) => {
         return e === userIdStorage._id;
@@ -172,7 +174,6 @@ const CardPost = ({ data,callBackApi }) => {
         ? setLike(true)
         : setLike(false);
     } else {
-      console.log("nmdsnfdsf");
       setLike(false);
     }
     setNumberLike(data.like.length);

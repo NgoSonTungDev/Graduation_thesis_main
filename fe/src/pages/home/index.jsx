@@ -9,7 +9,7 @@ import "aos/dist/aos.css";
 
 const styles = {
   button: {
-    width: "400px",
+    width: "30%",
     backgroundColor: "#FFC300",
     color: "#fff",
     borderRadius: "30px",
