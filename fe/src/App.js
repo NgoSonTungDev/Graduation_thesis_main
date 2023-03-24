@@ -28,6 +28,7 @@ import VoucherManagement from "./pages/admin/voucher";
 import TicketSaleAgent from "./pages/sale_agent/ticket";
 import ws from "./socket";
 import PlaceDetail from "./pages/place_detail";
+import RegisterAgency from "./pages/auth/\bregister_agency";
 
 const App = () => {
   const open = useSelector(OpenChatBox);
@@ -44,9 +45,9 @@ const App = () => {
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/register-agency" element={<RegisterAgency />} />
           <Route path="/place" element={<Place />} />
           <Route path="/review" element={<Review />} />
-          <Route path="/profile/:id" element={<Profile />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/profile/:id" element={<Profile />} />
           <Route path="/voucher" element={<Voucher />} />
