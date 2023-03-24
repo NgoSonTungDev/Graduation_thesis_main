@@ -44,7 +44,7 @@ export default function PaymentDetail() {
   const [dataOrder, setDataOrder] = useState({});
   const [dateTime, setDateTime] = useState("");
   const [voucher, setVoucher] = useState("");
-  const [dataVoucher, setDataVoucher] = useState({});
+  const [dataVoucher, setDataVoucher] = useState(0);
   const userIdStorage = getUserDataLocalStorage();
   const [content, setContent] = useState("");
   const totalPriceChildTicket =
@@ -52,7 +52,7 @@ export default function PaymentDetail() {
 
   const totalPriceAdultTicket =
     dataOrder.numberAdultTicket * dataTicket?.adultTicket;
-    console.log("mmm",dataVoucher);
+  console.log("mmm", dataVoucher);
 
   const sumTicket =
     Number(dataOrder.numberChildTicket) +
@@ -112,13 +112,13 @@ export default function PaymentDetail() {
     axiosClient
       .get(
         `/voucher/find-voucher?${queryString.stringify({
-          codevoucher: voucher,
+          codeVoucher: voucher,
           placeId: dataTicket?.placeId?._id,
         })}`
       )
       .then((res) => {
         setLoading(false);
-        setDataVoucher(res.data.data);
+        setDataVoucher(res.data.data.price);
       })
       .catch((err) => {
         setLoading(false);
@@ -170,21 +170,6 @@ export default function PaymentDetail() {
         });
     }
   };
-
-  // const getApiVoucher = () => {
-  //   axiosClient
-  //     .get(`/voucher/find-voucher?${queryString.stringify({
-  //       codevoucher :"",placeId:id
-  //     })}`)
-  //     .then((res) => {
-  //       setDataUser(res.data.data.data);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       setLoading(false);
-  //       toastify("error", err.response.data.message || "Lỗi hệ thông !");
-  //     });
-  // };
 
   React.useEffect(() => {
     getApiUserID();

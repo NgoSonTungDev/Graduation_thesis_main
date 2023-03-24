@@ -32,7 +32,6 @@ const validationInput = yup.object().shape({
 
 const Register = () => {
   const [open, setOpen] = React.useState(false);
-  const [openAgency, setOpenAgency] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [loadingPage, setLoadingPage] = React.useState(false);
   const [data, setData] = React.useState({});
@@ -61,14 +60,6 @@ const Register = () => {
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const handleOpenAgency = () => {
-    setOpenAgency(true);
-  };
-
-  const handleCloseAgency = () => {
-    setOpenAgency(false);
   };
 
   const handleSendEmailRegister = (data) => {
@@ -119,25 +110,6 @@ const Register = () => {
           setLoadingPage(false);
         });
     }
-  };
-
-  const handleSendEmailRegisterAgency = (data) => {
-    setData(data);
-    setLoading(true);
-    axiosClient
-      .post("/email/send-code-register", {
-        userName: data.userName,
-        email: data.email,
-      })
-      .then((res) => {
-        toastify("success", "Tên người dùng và email hợp lệ !");
-        handleOpenAgency();
-        setLoading(false);
-      })
-      .catch((err) => {
-        toastify("error", err.response.data.message || "Lỗi hệ thông !");
-        setLoading(false);
-      });
   };
 
   return (
@@ -197,28 +169,6 @@ const Register = () => {
             sx={{ width: "80%", marginLeft: "10%" }}
             helperText={errors.confirmPassword?.message}
           />
-          <span
-            style={{
-              textAlign: "right",
-              width: "100%",
-              fontSize: "12px",
-              fontWeight: "600",
-              position: "absolute",
-              top: "327px",
-            }}
-            onClick={handleOpenAgency}
-          >
-            <i
-              style={{
-                paddingRight: "10px",
-                textAlign: "center",
-                cursor: "pointer",
-                color: "#0d3aee",
-              }}
-            >
-              Đăng ký để trở thành đại lý
-            </i>
-          </span>
         </div>
 
         <div
@@ -257,130 +207,10 @@ const Register = () => {
         <DialogTitle>Nhập mã OTP</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Mã OTP sẽ được gửi về email của bạn dùng để xác thực email hoặc tài
-            khoản của bạn ! vì lí do bảo mật vui lòng không chia sẻ mã này dưới
-            bất kì hình thức nào. <b>MAFLINE</b> cảm ơn bạn đã sử dụng dịch vụ
-            của chung tôi 😉
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="OTP"
-            type="number"
-            fullWidth
-            variant="standard"
-            value={OTP}
-            onChange={(e) => {
-              setOTP(e.target.value);
-            }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Hủy</Button>
-          <LoadingButton loading={loadingPage} onClick={handleRegister}>
-            Gửi
-          </LoadingButton>
-        </DialogActions>
-      </Dialog>
-
-      {/*From register agency */}
-      <div className="register_container_box" style={{ display: "none" }}>
-        <h3
-          style={{
-            fontSize: "20px",
-            textAlign: "center",
-            color: "#636e72",
-            textTransform: "capitalize",
-          }}
-        >
-          Chào mừng bạn gia nhập với cộng đồng MAFLINE
-        </h3>
-        <div
-          style={{
-            display: "flex",
-            gap: "25px",
-            flexDirection: "column",
-            paddingBottom: "20px",
-          }}
-        >
-          <TextField
-            error={!!errors?.userName}
-            {...register("userName")}
-            type="text"
-            label="Tên đăng nhập của bạn"
-            size="small"
-            sx={{ width: "80%", marginLeft: "10%" }}
-            helperText={errors.userName?.message}
-          />
-          <TextField
-            error={!!errors?.email}
-            {...register("email")}
-            type="text"
-            label="Email của bạn"
-            size="small"
-            sx={{ width: "80%", marginLeft: "10%" }}
-            helperText={errors.email?.message}
-          />
-          <TextField
-            error={!!errors?.password}
-            {...register("password")}
-            type="password"
-            label="Nhập mật khẩu"
-            size="small"
-            sx={{ width: "80%", marginLeft: "10%" }}
-            helperText={errors.password?.message}
-          />
-          <TextField
-            error={!!errors?.confirmPassword}
-            {...register("confirmPassword")}
-            type="password"
-            label="Xác nhận mật khẩu"
-            size="small"
-            sx={{ width: "80%", marginLeft: "10%" }}
-            helperText={errors.confirmPassword?.message}
-          />
-        </div>
-
-        <div
-          style={{
-            width: "80%",
-            display: "flex",
-            marginTop: "10px",
-            marginLeft: "10%",
-            justifyContent: "space-around",
-          }}
-        >
-          <Button
-            variant="outlined"
-            sx={{ width: "80px" }}
-            onClick={() => {
-              navigation("/");
-            }}
-          >
-            Back
-          </Button>
-          <LoadingButton
-            loading={loading}
-            loadingIndicator="Loading…"
-            variant="outlined"
-            onClick={handleSubmit(handleSendEmailRegister)}
-          >
-            Đăng ký
-          </LoadingButton>
-        </div>
-
-        <LoadingBar loading={loadingPage} />
-      </div>
-
-      {/* Dialog send mail agency */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Nhập mã OTP</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Mã OTP sẽ được gửi về email của bạn dùng để xác thực email hoặc tài
-            khoản của bạn ! vì lí do bảo mật vui lòng không chia sẻ mã này dưới
-            bất kì hình thức nào. <b>MAFLINE</b> cảm ơn bạn đã sử dụng dịch vụ
-            của chung tôi 😉
+            Mã OTP có thời gian hiệu lực trong 3 phút sẽ được gửi về email của
+            bạn dùng để xác thực email hoặc tài khoản của bạn ! vì lí do bảo mật
+            vui lòng không chia sẻ mã này dưới bất kì hình thức nào.{" "}
+            <b>MAFLINE</b> cảm ơn bạn đã sử dụng dịch vụ của chung tôi 😉
           </DialogContentText>
           <TextField
             autoFocus
