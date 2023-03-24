@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import axiosClient from "../../../../api/axiosClient";
 import ErrorEmpty from "../../../../components/emty_data";
-import ModalConfirm from "../../../../components/modal_delete";
+import ModalConfirm from "../../../../components/modal_confirm";
 import { formatMoney, toastify } from "../../../../utils/common";
 
 const TableTicket = ({ data, updateData, deleteData }) => {
@@ -260,7 +260,7 @@ const TableTicket = ({ data, updateData, deleteData }) => {
         handleClose={handleCloseModalDelete}
         content={"Bạn có chắt chắn muốn xóa không?"}
         loading={loading}
-        functionDelete={handleDelete}
+        callBackFunction={handleDelete}
       />
     </div>
   );

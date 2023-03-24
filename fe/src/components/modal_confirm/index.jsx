@@ -11,7 +11,7 @@ const ModalConfirm = ({
   open,
   handleClose,
   content,
-  functionDelete,
+  callBackFunction,
   loading,
 }) => {
   return (
@@ -35,7 +35,7 @@ const ModalConfirm = ({
         <Button onClick={handleClose}>Hủy</Button>
         <LoadingButton
           loading={loading ? loading : false}
-          onClick={functionDelete}
+          onClick={callBackFunction}
           autoFocus
         >
           Xác nhận
