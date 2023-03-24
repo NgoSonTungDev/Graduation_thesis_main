@@ -11,6 +11,7 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ManageHistoryIcon from "@mui/icons-material/ManageHistory";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 import {
   Avatar,
   Box,
@@ -308,7 +309,7 @@ const Navbar = ({ loading, valueTab }) => {
                     >
                       <MenuItem
                         onClick={() => {
-                          movePage("/profile");
+                          movePage(`/profile/${userIdStorage?._id}`);
                         }}
                       >
                         <ListItemIcon>
@@ -334,8 +335,20 @@ const Navbar = ({ loading, valueTab }) => {
                         <ListItemIcon>
                           <ManageAccountsIcon fontSize="medium" />
                         </ListItemIcon>
-                        Quàn lý hệ thống
+                        Quản lý hệ thống
                       </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          handleClose();
+                          removeUserDataLocalStorage();
+                          navigation("/home");
+                        }}
+                      >
+                        <ListItemIcon>
+                          <LockOpenIcon fontSize="medium" />
+                        </ListItemIcon>
+                        Đổi mật khẩu
+                      </MenuItem>{" "}
                       <MenuItem
                         onClick={() => {
                           handleClose();

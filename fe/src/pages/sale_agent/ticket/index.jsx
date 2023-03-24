@@ -1,10 +1,12 @@
 import { Button } from "@mui/material";
 import React, { useEffect } from "react";
 import axiosClient from "../../../api/axiosClient";
+import LoadingBar from "../../../components/loadding/loading_bar";
 import MenuSaleAgent from "../../../components/navbar_sale_agent";
 import { toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import ModalAddTicket from "./modal_add_ticket";
+import "./style.scss";
 import TableTicket from "./table_ticket";
 
 const TicketSaleAgent = () => {
@@ -23,6 +25,14 @@ const TicketSaleAgent = () => {
         numberTickets: value.numberTickets,
       });
     }
+  };
+
+  const handleDeleteData = (id) => {
+    setData(
+      data.filter((item) => {
+        return item._id !== id;
+      })
+    );
   };
 
   const handleClickOpenModalAddTicket = () => {
@@ -61,15 +71,17 @@ const TicketSaleAgent = () => {
         >
           Thêm vé
         </Button>
-        <div
-          style={{
-            width: "100%",
-            height: "90vh",
-            marginTop: "10px",
-          }}
-        >
-          <TableTicket data={data} updateData={handleUpdateData} />
-        </div>
+        {loading ? (
+          <LoadingBar />
+        ) : (
+          <div className="box_table">
+            <TableTicket
+              data={data}
+              updateData={handleUpdateData}
+              deleteData={handleDeleteData}
+            />
+          </div>
+        )}
         <ModalAddTicket
           open={openModalAddTicket}
           handleClose={handleCloseModalAddTicket}

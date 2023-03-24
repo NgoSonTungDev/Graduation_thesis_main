@@ -1,6 +1,16 @@
-import React, { useState } from "react";
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import React, { useState } from "react";
+import { AiOutlineBarChart, AiOutlineMessage } from "react-icons/ai";
+import { BiCreditCardFront } from "react-icons/bi";
+import { FaRegHeart } from "react-icons/fa";
+import { FiHome, FiLogOut } from "react-icons/fi";
+import { GoPackage } from "react-icons/go";
+import {
+  MdEditLocationAlt,
+  MdEditNote,
+  MdOutlineManageAccounts,
+} from "react-icons/md";
 import {
   Menu,
   MenuItem,
@@ -9,20 +19,11 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "react-pro-sidebar";
-import "./style.scss";
-import { AiOutlineMessage, AiOutlineBarChart } from "react-icons/ai";
-import {
-  MdEditLocationAlt,
-  MdEditNote,
-  MdOutlineManageAccounts,
-} from "react-icons/md";
-import { BiCog, BiCreditCardFront } from "react-icons/bi";
-import { FaRegHeart } from "react-icons/fa";
-import { FiHome, FiLogOut } from "react-icons/fi";
-import { GoPackage } from "react-icons/go";
 import { useLocation, useNavigate } from "react-router-dom";
+import "./style.scss";
 
 import "react-pro-sidebar/dist/css/styles.css";
+import { removeUserDataLocalStorage } from "../../utils/localstorage";
 
 const Header = ({ ReactNode }) => {
   const [menuCollapse, setMenuCollapse] = useState(true);
@@ -167,6 +168,7 @@ const Header = ({ ReactNode }) => {
               <Menu
                 iconShape="square"
                 onClick={() => {
+                  removeUserDataLocalStorage();
                   navigation("/home");
                 }}
               >

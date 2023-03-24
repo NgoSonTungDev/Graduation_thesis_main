@@ -59,7 +59,7 @@ const postController = {
     try {
       const data = await Posts.find({ userId: req.params.id })
         .populate("placeId", "name")
-        .populate("userId", "userName");
+        .populate("userId", ["userName","avt"]);
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {

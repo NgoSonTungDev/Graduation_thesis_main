@@ -7,6 +7,7 @@ import { FiHome, FiLogOut } from "react-icons/fi";
 import ConfirmationNumberOutlinedIcon from "@mui/icons-material/ConfirmationNumberOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import {
   Menu,
   MenuItem,
@@ -21,7 +22,10 @@ import "./style.scss";
 import "react-pro-sidebar/dist/css/styles.css";
 import ws from "../../socket";
 import { useDispatch } from "react-redux";
-import { getUserDataLocalStorage } from "../../utils/localstorage";
+import {
+  getUserDataLocalStorage,
+  removeUserDataLocalStorage,
+} from "../../utils/localstorage";
 import {
   changeListInbox,
   openChatBox,
@@ -147,15 +151,25 @@ const MenuSaleAgent = ({ ReactNode }) => {
                       dispatch(openChatBox());
                       joinRoom();
                       handleGetDataInbox();
+                      setMenuCollapse(true);
                     }}
                   >
                     Message
+                  </MenuItem>
+                  <MenuItem active={false} icon={<SettingsOutlinedIcon />}>
+                    Account management
                   </MenuItem>
                 </Menu>
               </div>
             </SidebarContent>
             <SidebarFooter>
-              <Menu iconShape="square">
+              <Menu
+                iconShape="square"
+                onClick={() => {
+                  removeUserDataLocalStorage();
+                  navigation("/home");
+                }}
+              >
                 <MenuItem icon={<FiLogOut />}>Logout</MenuItem>
               </Menu>
             </SidebarFooter>
