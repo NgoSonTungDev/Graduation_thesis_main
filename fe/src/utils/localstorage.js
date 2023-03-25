@@ -1,7 +1,6 @@
 export const setUserDataLocalStorage = (data) => {
   return localStorage.setItem("user", JSON.stringify(data));
 };
-
 export const removeUserDataLocalStorage = () => {
   return localStorage.removeItem("user");
 };
@@ -12,7 +11,7 @@ export const getUserDataLocalStorage = () => {
 };
 
 export const setOrderLocalStorage = (data) => {
-  return localStorage.setItem("order", JSON.stringify(data));
+  return localStorage.setItem("order", data);
 };
 
 export const removeOrderLocalStorage = () => {

@@ -132,7 +132,7 @@ const TableOrderUser = ({
               className="button-check payment"
               onClick={() => {
                 handlePaymentVnPay(codeOrder, total);
-                setOrderLocalStorage({ orderId: id, email: email });
+                setOrderLocalStorage(id);
               }}
               disabled={loading}
             >

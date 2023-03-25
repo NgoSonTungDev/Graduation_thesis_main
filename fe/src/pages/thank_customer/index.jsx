@@ -5,13 +5,17 @@ import RingLoader from "react-spinners/RingLoader";
 import axiosClient from "../../api/axiosClient";
 import Navbar from "../../components/navbar";
 import { toastify } from "../../utils/common";
-import { removeOrderLocalStorage } from "../../utils/localstorage";
+import {
+  getUserDataLocalStorage,
+  removeOrderLocalStorage,
+} from "../../utils/localstorage";
 import "./style.scss";
 
 const ThankCustomer = () => {
   const [loading, setLoading] = useState(false);
-  const valueOrder = JSON.parse(localStorage.getItem("order"));
+  const orderId = localStorage.getItem("order");
   const checkPayment = window.location.href.split("&")[1];
+  const userIdStorage = getUserDataLocalStorage();
   const navigation = useNavigate();
 
   const movePageHome = () => {
@@ -22,7 +26,7 @@ const ThankCustomer = () => {
   const handleSendEmail = () => {
     axiosClient
       .post(`/email/send-payment`, {
-        email: valueOrder?.email,
+        email: userIdStorage?.email,
       })
       .then((res) => {
         setLoading(false);
@@ -35,7 +39,7 @@ const ThankCustomer = () => {
 
   const handleChangeDataPayment = () => {
     axiosClient
-      .put(`/order/update-story-success/${valueOrder?.orderId}`)
+      .put(`/order/update-story-success/${orderId}`)
       .then((res) => {
         handleSendEmail();
       })
@@ -49,7 +53,8 @@ const ThankCustomer = () => {
     if (checkPayment === "vnp_BankCode=NCB") {
       handleChangeDataPayment();
     } else {
-      toastify("success", "Đặt hàng thất bại !");
+      setLoading(false);
+      toastify("error", "Đặt hàng thất bại !");
     }
   };
 
@@ -91,7 +96,9 @@ const ThankCustomer = () => {
                 😉
               </span>
             </div>
-            <button onClick={movePageHome}>về lại trang chủ</button>
+            <button disabled={loading} onClick={movePageHome}>
+              về lại trang chủ
+            </button>
           </div>
         )}
       </div>

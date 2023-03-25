@@ -1,5 +1,5 @@
 import TelegramIcon from "@mui/icons-material/Telegram";
-import { Collapse, IconButton, Paper, TextField } from "@mui/material";
+import { Collapse, IconButton, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -265,10 +265,7 @@ const Comment = ({ dataComment, callBackApi }) => {
                 justifyContent: "space-between",
               }}
             >
-              <div
-                className="avatar"
-                style={{ width: "56px", height: "56px" }}
-              >
+              <div className="avatar" style={{ width: "56px", height: "56px" }}>
                 <img
                   style={{
                     width: "100%",

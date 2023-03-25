@@ -1,7 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import CloseIcon from "@mui/icons-material/Close";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { TextField } from "@mui/material";
-import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -78,6 +78,7 @@ export default function ModalUpateUser({ open, handleClose, callBackApi }) {
   });
 
   const updateApiUser = (data) => {
+    setLoading(true);
     axiosClient
       .put(`/user/update/${userIdStorage._id}`, {
         address: data.address,
@@ -95,6 +96,7 @@ export default function ModalUpateUser({ open, handleClose, callBackApi }) {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
+
   return (
     <div>
       <BootstrapDialog
@@ -149,9 +151,13 @@ export default function ModalUpateUser({ open, handleClose, callBackApi }) {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleSubmit(updateApiUser)}>
+          <LoadingButton
+            loading={loading}
+            autoFocus
+            onClick={handleSubmit(updateApiUser)}
+          >
             Cập nhật
-          </Button>
+          </LoadingButton>
         </DialogActions>
       </BootstrapDialog>
     </div>

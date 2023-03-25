@@ -4,7 +4,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ReplyIcon from "@mui/icons-material/Reply";
 import TelegramIcon from "@mui/icons-material/Telegram";
-import { Button, IconButton, Paper, Rating, TextField } from "@mui/material";
+import { Button, IconButton, Rating, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import Dialog from "@mui/material/Dialog";
@@ -16,7 +16,6 @@ import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Comment from "../comment";
-import _ from "lodash";
 
 const CardPost = ({ data, callBackApi }) => {
   console.log("ffdfd", data);
@@ -32,10 +31,8 @@ const CardPost = ({ data, callBackApi }) => {
     if (userIdStorage) {
       setOpen(true);
     } else {
-      
       setOpen(false);
       message.error("Vui lòng đăng nhập để chia sẻ bài viết");
-
     }
   };
   const handleClose = () => {
@@ -389,40 +386,41 @@ const CardPost = ({ data, callBackApi }) => {
             style={{
               display: "flex",
               width: "92%",
-              marginLeft:"4%",
+              marginLeft: "4%",
               alignItems: "center",
-              justifyContent:'space-between'
+              justifyContent: "space-between",
             }}
           >
-            <div
-              className="avatar"
-              style={{ width: "56px", height: "56px" }}
-            >
+            <div className="avatar" style={{ width: "56px", height: "56px" }}>
               <img
-                style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit:"center" }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  objectFit: "center",
+                }}
                 src={userIdStorage?.avt}
                 alt=""
               />
             </div>
-       
-                <TextField
-                  sx={{width:"86%" }}
-                  value={content}
-                  size="small"
-                  placeholder="Aa..."
-                  onKeyDown={handleOnClickEnter}
-                  onChange={(e) => {
-                    setContent(e.target.value);
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton type="button">
-                        <TelegramIcon onClick={handleComment} />
-                      </IconButton>
-                    ),
-                  }}
-                />
-              
+
+            <TextField
+              sx={{ width: "86%" }}
+              value={content}
+              size="small"
+              placeholder="Aa..."
+              onKeyDown={handleOnClickEnter}
+              onChange={(e) => {
+                setContent(e.target.value);
+              }}
+              InputProps={{
+                endAdornment: (
+                  <IconButton type="button">
+                    <TelegramIcon onClick={handleComment} />
+                  </IconButton>
+                ),
+              }}
+            />
           </div>
         )}
       </Box>
