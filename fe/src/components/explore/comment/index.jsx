@@ -279,14 +279,14 @@ const Comment = ({ dataComment, callBackApi }) => {
                   width: "78%",
                 }}
               >
-                <Paper
+                {/* <Paper
                   sx={{
                     marginLeft: "20px",
                     width: "100%",
                   }}
-                >
+                > */}
                   <TextField
-                    sx={{ width: "100%", border: "none", outline: "none" }}
+                    sx={{marginLeft:"20px", maxWidth: "100%", border: "none", outline: "none" }}
                     value={content}
                     size="small"
                     placeholder="Aa...."
@@ -302,7 +302,7 @@ const Comment = ({ dataComment, callBackApi }) => {
                       ),
                     }}
                   />
-                </Paper>
+                {/* </Paper> */}
               </div>
             </div>
           )}

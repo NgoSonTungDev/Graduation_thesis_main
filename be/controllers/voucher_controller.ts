@@ -73,11 +73,13 @@ const voucherController = {
       }).populate("placeId", "name");
 
       if (String(data?.placeId?._id) === placeId && data?.public === true) {
-        res.json(errorFunction(false, 200, "Lấy thành công !", data));
+        res.json(errorFunction(false, 200, "Áp dụng mã thành công !", data));
       } else {
-        res.json(
-          errorFunction(false, 402, "Không sử dụng được mã giảm giá này!")
-        );
+        res
+          .status(402)
+          .json(
+            errorFunction(false, 402, "Không sử dụng được mã giảm giá này!")
+          );
       }
     } catch (error) {
       res.status(500).json(error);

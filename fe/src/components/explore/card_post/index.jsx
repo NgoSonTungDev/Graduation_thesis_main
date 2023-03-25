@@ -18,7 +18,7 @@ import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Comment from "../comment";
 import _ from "lodash";
 
-const CardPost = ({ data,callBackApi }) => {
+const CardPost = ({ data, callBackApi }) => {
   console.log("ffdfd", data);
   const [like, setLike] = useState(false);
   const [numberLike, setNumberLike] = useState(0);
@@ -29,7 +29,14 @@ const CardPost = ({ data,callBackApi }) => {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
-    setOpen(true);
+    if (userIdStorage) {
+      setOpen(true);
+    } else {
+      
+      setOpen(false);
+      message.error("Vui lòng đăng nhập để chia sẻ bài viết");
+
+    }
   };
   const handleClose = () => {
     setOpen(false);
@@ -78,6 +85,8 @@ const CardPost = ({ data,callBackApi }) => {
           setLike(false);
           toastify("error", err.response.data.message || "Lỗi hệ thông !");
         });
+    } else {
+      message.error("Vui lòng đăng nhập để like bài viết");
     }
   };
   const handleUnlikeReview = (e) => {
@@ -99,7 +108,7 @@ const CardPost = ({ data,callBackApi }) => {
     e.stopPropagation();
     if (e.key === "Enter") {
       if (content === "") {
-        message.error("Vui lòng nhập comment!");
+        message.error("Vui lòng nhập bình luận của bạn");
       } else {
         handleComment();
         setExpanded(true);
@@ -109,7 +118,7 @@ const CardPost = ({ data,callBackApi }) => {
 
   const handleComment = (e) => {
     if (content === "") {
-      message.error("Vui lòng nhập comment!");
+      message.error("Vui lòng nhập bình luận của bạn");
     } else {
       axiosClient
         .post(`/comment/add/`, {
@@ -158,7 +167,7 @@ const CardPost = ({ data,callBackApi }) => {
       .then((res) => {
         toastify("success", res.data.message);
         handleCloseDelete();
-        callBackApi(data._id)
+        callBackApi(data._id);
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -196,20 +205,32 @@ const CardPost = ({ data,callBackApi }) => {
         }}
       >
         <div className="card_top" style={{ display: "flex", width: "100%" }}>
-          <div
-            className="avatar"
-            style={{ width: "56px", height: "56px", marginLeft: "30px" }}
-          >
-            <img
-              style={{ width: "100%", height: "100%", borderRadius: "50%" }}
-              src={userIdStorage?.avt}
-              alt=""
-            />
+          <div>
+            <div
+              className="avatar"
+              style={{ width: "56px", height: "56px", marginLeft: "30px" }}
+            >
+              <img
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                }}
+                src={
+                  data.userId
+                    ? data?.userId?.avt
+                    : "https://ss-images.saostar.vn/wp700/pc/1613810558698/Facebook-Avatar_3.png"
+                }
+                alt=""
+              />
+            </div>
           </div>
           <div className="container_right">
             <div
               className="container_name"
               style={{
+                width: "100%",
                 marginLeft: "10px",
                 display: "flex",
                 fontWeight: "500",
@@ -254,7 +275,7 @@ const CardPost = ({ data,callBackApi }) => {
             </div>
           </div>
           {userIdStorage?._id === data?.userId?._id && (
-            <div style={{ marginLeft:"300px" }}>
+            <div style={{ marginLeft: "300px" }}>
               <CloseIcon onClick={handleClickOpenDelete} />
             </div>
           )}
@@ -386,14 +407,14 @@ const CardPost = ({ data,callBackApi }) => {
                 width: "78%",
               }}
             >
-              <Paper
+              {/* <Paper
                 sx={{
                   marginLeft: "20px",
                   width: "100%",
                 }}
-              >
+              > */}
                 <TextField
-                  sx={{ width: "100%", border: "none", outline: "none" }}
+                  sx={{marginLeft:"20px", maxWidth: "100%", border: "none", outline: "none" }}
                   value={content}
                   size="small"
                   placeholder="Aa..."
@@ -409,7 +430,7 @@ const CardPost = ({ data,callBackApi }) => {
                     ),
                   }}
                 />
-              </Paper>
+              {/* </Paper> */}
             </div>
           </div>
         )}
