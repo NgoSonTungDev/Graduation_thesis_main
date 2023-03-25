@@ -388,33 +388,25 @@ const CardPost = ({ data, callBackApi }) => {
             className="comment"
             style={{
               display: "flex",
-              width: "100%",
+              width: "92%",
+              marginLeft:"4%",
               alignItems: "center",
+              justifyContent:'space-between'
             }}
           >
             <div
               className="avatar"
-              style={{ width: "56px", height: "56px", marginLeft: "40px" }}
+              style={{ width: "56px", height: "56px" }}
             >
               <img
-                style={{ width: "100%", height: "100%", borderRadius: "50%" }}
+                style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit:"center" }}
                 src={userIdStorage?.avt}
                 alt=""
               />
             </div>
-            <div
-              style={{
-                width: "78%",
-              }}
-            >
-              {/* <Paper
-                sx={{
-                  marginLeft: "20px",
-                  width: "100%",
-                }}
-              > */}
+       
                 <TextField
-                  sx={{marginLeft:"20px", maxWidth: "100%", border: "none", outline: "none" }}
+                  sx={{width:"86%" }}
                   value={content}
                   size="small"
                   placeholder="Aa..."
@@ -430,8 +422,7 @@ const CardPost = ({ data, callBackApi }) => {
                     ),
                   }}
                 />
-              {/* </Paper> */}
-            </div>
+              
           </div>
         )}
       </Box>
