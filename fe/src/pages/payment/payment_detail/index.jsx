@@ -3,7 +3,7 @@ import PaymentIcon from "@mui/icons-material/Payment";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { Button, TextField } from "@mui/material";
 import { color } from "@mui/system";
-import { Input } from "antd";
+import { Input, message } from "antd";
 import moment from "moment";
 import queryString from "query-string";
 import React, { useState } from "react";
@@ -45,14 +45,17 @@ export default function PaymentDetail() {
   const [dateTime, setDateTime] = useState("");
   const [voucher, setVoucher] = useState("");
   const [dataVoucher, setDataVoucher] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
   const userIdStorage = getUserDataLocalStorage();
   const [content, setContent] = useState("");
+  const [address, setAddress] = useState("");
+  const [numberPhone, setNumberPhone] = useState("");
+
   const totalPriceChildTicket =
     dataOrder.numberChildTicket * dataTicket?.childTicket;
 
   const totalPriceAdultTicket =
     dataOrder.numberAdultTicket * dataTicket?.adultTicket;
-  console.log("mmm", dataVoucher);
 
   const sumTicket =
     Number(dataOrder.numberChildTicket) +
@@ -72,6 +75,7 @@ export default function PaymentDetail() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isDirty, isValid },
   } = useForm({
     defaultValues: {
@@ -119,13 +123,19 @@ export default function PaymentDetail() {
       .then((res) => {
         setLoading(false);
         setDataVoucher(res.data.data.price);
+        toastify("success", res.data.message || "Áp dụng mã thành công !");
+        setTotalPrice(
+          totalPriceChildTicket +
+            totalPriceAdultTicket +
+            Number(sumTicket > 2 ? 0 : 30000) -
+            Number(res.data.data.price ? res.data.data.price : 0)
+        );
       })
       .catch((err) => {
         setLoading(false);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
-
   const handleSubmitForm = (data) => {
     if (data.numberAdultTicket + data.numberChildTicket < 1) {
       toastify("error", "Bạn phải chọn ít nhất 1 vé");
@@ -135,15 +145,23 @@ export default function PaymentDetail() {
       } else {
         setDataOrder(data);
         setCheck(false);
+
         if (voucher !== "") {
-          getApiVoucher();
+          return getApiVoucher();
         }
+
+        setTotalPrice(
+          totalPriceChildTicket +
+            totalPriceAdultTicket +
+            Number(sumTicket > 2 ? 0 : 30000) -
+            0
+        );
       }
     }
   };
-
   const handleOrder = (data) => {
-    if (data.address === "" || data.numberPhone === "") {
+    if (dataUser.address === "" || dataUser.numberPhone === "") {
+      message.error("Vui lòng nhập đầy đủ thông tin");
       setOpenModal(true);
     } else {
       setLoadingPayment(true);
@@ -293,6 +311,9 @@ export default function PaymentDetail() {
                       }}
                       helperText={errors.numberAdultTicket?.message}
                       size="small"
+                      onChange={(e) => {
+                        setCheck(true);
+                      }}
                       placeholder="0"
                     />
                     <label style={{ paddingTop: "5px", fontSize: "14px" }}>
@@ -317,6 +338,9 @@ export default function PaymentDetail() {
                       sx={{ border: "none", outline: "none" }}
                       helperText={errors.numberChildTicket?.message}
                       size="small"
+                      onChange={(e) => {
+                        setCheck(true);
+                      }}
                       placeholder="0"
                     />
                     <label style={{ paddingTop: "5px", fontSize: "14px" }}>
@@ -495,7 +519,7 @@ export default function PaymentDetail() {
                     <div style={{ textAlign: "center" }}>
                       <b>Thông tin đơn hàng</b>
                     </div>
-                    <div className="form-control">
+                    {/* <div className="form-control">
                       <label>Tên Khách Hàng</label>
                       <p>{dataUser?.userName}</p>
                     </div>
@@ -506,16 +530,35 @@ export default function PaymentDetail() {
                     <div className="form-control">
                       <label>Giới tính</label>
                       <p>{dataUser?.gender}</p>
+                    </div> */}
+                    {/* <div className="form-control">
+                      <label>Địa Chỉ</label>
+                      <p>{dataUser?.address}</p>
+                    </div> */}
+                    <div className="form-control">
+                      <label>Tên Khách Hàng</label>
+                      <input disabled placeholder={dataUser?.userName} />
+                    </div>
+                    <div className="form-control">
+                      <label>Email</label>
+                      <input disabled placeholder={dataUser?.email} />
+                    </div>
+                    <div className="form-control">
+                      <label>Giới Tính</label>
+                      <input disabled placeholder={dataUser?.gender} />
                     </div>
                     <div className="form-control">
                       <label>Địa Chỉ</label>
-                      <p>{dataUser?.address}</p>
+                      <input disabled placeholder={dataUser?.address ?dataUser?.address:"bạn cần phải nhập thông tin địa chỉ"} />
                     </div>
-                    <div className="form-control">
+                    {/* <div className="form-control">
                       <label>Số Điện Thoại</label>
                       <p>{dataUser?.numberPhone}</p>
+                    </div> */}
+                    <div className="form-control">
+                      <label>Số Điện Thoại</label>
+                      <input disabled placeholder={dataUser?.numberPhone?dataUser?.numberPhone :"bạn cần phải cập nhật thông tin số điện thoại"} />
                     </div>
-
                     <div className="form-control">
                       <label>Tên Địa Điểm</label>
                       <input disabled placeholder={dataTicket?.placeId?.name} />
@@ -592,9 +635,10 @@ export default function PaymentDetail() {
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                         placeholder="Nhập chú thích "
-                        autoSize={{ maxRows: 4 }}
+                        autoSize={{ maxRows: 4, minRows: 4 }}
                       />
                     </div>
+                    
                     <div
                       style={{
                         textAlign: "center",
@@ -609,7 +653,7 @@ export default function PaymentDetail() {
                         onClick={handleOrder}
                         loading={loadingPayment}
                       >
-                        Xác nhận đơn hàng
+                       Xác nhận đơn hàng 
                       </LoadingButton>
                     </div>
                   </form>
