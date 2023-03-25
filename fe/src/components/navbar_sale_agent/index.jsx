@@ -121,6 +121,9 @@ const MenuSaleAgent = ({ ReactNode }) => {
                   <MenuItem
                     active={pathName === "/sale-agent/home" && true}
                     icon={<HomeOutlinedIcon />}
+                    onClick={() => {
+                      movePage("/sale-agent/home");
+                    }}
                   >
                     Home
                   </MenuItem>

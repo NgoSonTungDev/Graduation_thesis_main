@@ -13,7 +13,7 @@ const validation = joi.object<IUser>({
   numberPhone: joi.string(),
   gender: joi.string(),
   description: joi.string(),
-  isAdmin: joi.boolean(),
+  isAdmin: joi.number(),
 });
 
 export const userValidation = async (
