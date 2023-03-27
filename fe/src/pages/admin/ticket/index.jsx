@@ -32,7 +32,7 @@ const TicketMangement = () => {
 
     const [payload, setPayload] = useState({
         pageNumber: 1,
-        limit: 3,
+        limit: 10,
         placeId: "",
     });
 

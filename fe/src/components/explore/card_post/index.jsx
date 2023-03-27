@@ -145,6 +145,7 @@ const CardPost = ({ data, callBackApi }) => {
         placeId: data.placeId._id,
       })
       .then((res) => {
+        toastify("success", res.data.message || "Tạo bài thành công !");
         handleClose();
       })
       .catch((err) => {
@@ -160,6 +161,7 @@ const CardPost = ({ data, callBackApi }) => {
       })
       .then((res) => {
         handleCloseDelete();
+        toastify("success", res.data.message || "Tạo bài thành công !");
         callBackApi(data._id);
       })
       .catch((err) => {
