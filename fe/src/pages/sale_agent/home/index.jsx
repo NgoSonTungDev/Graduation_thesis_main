@@ -3,8 +3,8 @@ import axiosClient from "../../../api/axiosClient";
 import MenuSaleAgent from "../../../components/navbar_sale_agent";
 import { toastify } from "../../../utils/common";
 import ChartPie from "./chart_pie";
-import ChartColumComment from "./chart_collum_statistic_cmt";
-import ChartColumPlace from "./chart_colum_palce";
+import ChartColumComment from "./chart_column_statistic_cmt";
+import ChartColumPlace from "./chart_colum_place";
 
 const HomeSaleAgent = () => {
   const [data, setData] = React.useState({});

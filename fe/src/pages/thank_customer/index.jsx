@@ -1,7 +1,5 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import RingLoader from "react-spinners/RingLoader";
 import axiosClient from "../../api/axiosClient";
 import Navbar from "../../components/navbar";
 import { toastify } from "../../utils/common";
