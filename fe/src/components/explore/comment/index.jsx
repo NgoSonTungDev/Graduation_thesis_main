@@ -68,7 +68,6 @@ const Comment = ({ dataComment, callBackApi }) => {
         })
         .then((res) => {
           setLike(true);
-          // toastify("success", res.data.message);
           setNumberLike(res.data.data);
         })
         .catch((err) => {
@@ -86,7 +85,6 @@ const Comment = ({ dataComment, callBackApi }) => {
         })
         .then((res) => {
           setLike(false);
-          // toastify("success", res.data.message);
           setNumberLike(res.data.data);
         })
         .catch((err) => {
@@ -102,7 +100,6 @@ const Comment = ({ dataComment, callBackApi }) => {
         userId: userIdStorage._id,
       })
       .then((res) => {
-        toastify("success", res.data.message);
         handleClose();
         callBackApi(dataComment._id);
       })
@@ -123,7 +120,6 @@ const Comment = ({ dataComment, callBackApi }) => {
           commentId: dataComment._id,
         })
         .then((res) => {
-          toastify("success", res.data.message);
           setDataRepComment([...datarepComent, res.data.data]);
           setContent("");
         })
@@ -265,7 +261,7 @@ const Comment = ({ dataComment, callBackApi }) => {
                 justifyContent: "space-between",
               }}
             >
-              <div className="avatar" style={{ width: "56px", height: "56px" }}>
+              <div className="avatar" style={{ width: "46px", height: "46px" }}>
                 <img
                   style={{
                     width: "100%",

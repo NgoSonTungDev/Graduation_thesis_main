@@ -26,7 +26,6 @@ const Rep_Comment = ({ datarepComent, callBackApi }) => {
         userId: userIdStorage._id,
       })
       .then((res) => {
-        // toastify("success", res.data.message);
         handleClose();
         callBackApi(datarepComent._id);
       })
@@ -43,7 +42,6 @@ const Rep_Comment = ({ datarepComent, callBackApi }) => {
         })
         .then((res) => {
           setLike(true);
-          // toastify("success", res.data.message);
           setNumberLike(res.data.data);
           console.log("resssss", res);
         })
@@ -62,7 +60,6 @@ const Rep_Comment = ({ datarepComent, callBackApi }) => {
         })
         .then((res) => {
           setLike(false);
-          // toastify("success", res.data.message);
           setNumberLike(res.data.data);
         })
         .catch((err) => {
@@ -99,8 +96,8 @@ const Rep_Comment = ({ datarepComent, callBackApi }) => {
       >
         <div
           style={{
-            width: "40px",
-            height: "40px",
+            width: "46px",
+            height: "46px",
           }}
         >
           <img
