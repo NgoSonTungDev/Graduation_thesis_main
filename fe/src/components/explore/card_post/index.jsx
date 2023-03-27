@@ -18,7 +18,6 @@ import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Comment from "../comment";
 
 const CardPost = ({ data, callBackApi }) => {
-  console.log("ffdfd", data);
   const [like, setLike] = useState(false);
   const [numberLike, setNumberLike] = useState(0);
   const [expanded, setExpanded] = React.useState(false);
@@ -125,7 +124,6 @@ const CardPost = ({ data, callBackApi }) => {
           postId: data._id,
         })
         .then((res) => {
-          // toastify("success", res.data.message);
           setDataComment([...dataComment, res.data.data]);
           setContent("");
         })
@@ -147,8 +145,8 @@ const CardPost = ({ data, callBackApi }) => {
         placeId: data.placeId._id,
       })
       .then((res) => {
-        handleClose();
         toastify("success", res.data.message || "Tạo bài thành công !");
+        handleClose();
       })
       .catch((err) => {
         handleClose();
@@ -162,8 +160,8 @@ const CardPost = ({ data, callBackApi }) => {
         userId: userIdStorage._id,
       })
       .then((res) => {
-        toastify("success", res.data.message);
         handleCloseDelete();
+        toastify("success", res.data.message || "Tạo bài thành công !");
         callBackApi(data._id);
       })
       .catch((err) => {
@@ -280,6 +278,7 @@ const CardPost = ({ data, callBackApi }) => {
         <div
           className="text"
           style={{
+            width:"92%",
             paddingTop: "10px",
             marginLeft: "30px",
           }}
@@ -294,7 +293,7 @@ const CardPost = ({ data, callBackApi }) => {
             paddingTop: "30px",
           }}
         >
-          <Image width={"100%"} src={data.image} style={{ width: "100%" }} />
+          <Image width={"100%"} src={data.image} style={{ width: "100%",borderRadius:"5px" }} />
         </div>
         <Box
           sx={{
@@ -391,7 +390,7 @@ const CardPost = ({ data, callBackApi }) => {
               justifyContent: "space-between",
             }}
           >
-            <div className="avatar" style={{ width: "56px", height: "56px" }}>
+            <div className="avatar" style={{ width: "46px", height: "46px" }}>
               <img
                 style={{
                   width: "100%",

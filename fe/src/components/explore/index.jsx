@@ -54,7 +54,6 @@ const Explore = () => {
   };
 
   const getApiPlace = () => {
-    // setLoading(true);
     axiosClient
       .get(`/place/all?${queryString.stringify(payload1)}`)
       .then((res) => {
@@ -94,13 +93,7 @@ const Explore = () => {
       });
   };
   const handelDeleteDataPost = (id) => {
-    // console.log("hh",id);
     getApiAllPost()
-    // setDataPost(
-    //   dataPost.filter((e) => {
-    //     return e._id !== id;
-    //   })
-    // );
   };
 
   useEffect(() => {
