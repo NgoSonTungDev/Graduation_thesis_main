@@ -83,8 +83,6 @@ const voucherController = {
   },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { placeID, active } = req.query;
-
       // const currentDate = new Date();
 
       // const dataStartTime = await (
@@ -110,8 +108,12 @@ const voucherController = {
 
       //   await Promise.all(listEndTime.map((e) => updatePublicVoucher(e, false)));
 
+      const { placeID, active } = req.query;
+
       const condition = placeID
-        ? { placeId: placeID, public: active }
+        ? {
+            $and: [{ placeId: placeID }, { public: active }],
+          }
         : { public: active };
 
       const newData = await Vouchers.find(condition).populate(
