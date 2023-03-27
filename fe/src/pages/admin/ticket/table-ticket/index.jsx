@@ -17,14 +17,9 @@ import ModalConfirm from "../../../../components/modal_confirm";
 import { formatMoney, toastify } from "../../../../utils/common";
 
 const TableTicket = ({ data, deleteData }) => {
-  const [editingRowIndex, setEditingRowIndex] = useState(null);
   const [ticketId, setTicketId] = useState("");
   const [loading, setLoading] = React.useState(false);
   const [openDelete, setOpenDelete] = React.useState(false);
-  const [valueCheckValidate, setValueCheckValidate] = useState({
-    startingPrice: 0,
-    LastPrice: 0,
-  });
 
   const handleClickOpenModalDelete = () => {
     setOpenDelete(true);
@@ -34,9 +29,9 @@ const TableTicket = ({ data, deleteData }) => {
     setOpenDelete(false);
   };
 
-
   const handleDelete = () => {
     setLoading(true);
+
     axiosClient
       .delete(`/ticket/delete/${ticketId}`)
       .then((res) => {
@@ -51,28 +46,52 @@ const TableTicket = ({ data, deleteData }) => {
       });
   };
 
-
   return (
     <div>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-          <TableHead>
-            <TableRow sx={{ padding: "5px 0" }}>
-              <TableCell align="center">Địa điểm</TableCell>
-              <TableCell align="center">Tỉnh/Thành phố</TableCell>
-              <TableCell align="center">Khoảng giá</TableCell>
-              <TableCell align="center">Giá vé trẻ em</TableCell>
-              <TableCell align="center">Giá vé người lớn</TableCell>
-              <TableCell align="center">Số lượng vé</TableCell>
-              <TableCell align="center">Chức năng</TableCell>
-            </TableRow>
-          </TableHead>
-          {_.isEmpty(data) ? (
-            <ErrorEmpty />
-          ) : (
-            data.map((item, index) => {
+      {_.isEmpty(data) ? (
+        <ErrorEmpty />
+      ) : (
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+            <TableHead>
+              <TableRow sx={{ padding: "5px 0" }}>
+                <TableCell align="center">Đại lý</TableCell>
+                <TableCell align="center">Email</TableCell>
+                <TableCell align="center">Địa điểm</TableCell>
+                <TableCell align="center">Tỉnh/Thành phố</TableCell>
+                <TableCell align="center">Khoảng giá</TableCell>
+                <TableCell align="center">Giá vé trẻ em</TableCell>
+                <TableCell align="center">Giá vé người lớn</TableCell>
+                <TableCell align="center">Số lượng vé</TableCell>
+                <TableCell align="center">Chức năng</TableCell>
+              </TableRow>
+            </TableHead>
+
+            {data.map((item, index) => {
               return (
                 <TableBody key={index}>
+                  <TableCell
+                    align="left"
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      maxWidth: "150px",
+                    }}
+                  >
+                    {item.salesAgentId?.userName}
+                  </TableCell>
+                  <TableCell
+                    align="left"
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      maxWidth: "150px",
+                    }}
+                  >
+                    {item.salesAgentId?.email}
+                  </TableCell>
                   <TableCell
                     align="left"
                     sx={{
@@ -89,19 +108,14 @@ const TableTicket = ({ data, deleteData }) => {
                     {formatMoney(item.placeId?.startingPrice)} -{" "}
                     {formatMoney(item.placeId?.LastPrice)}
                   </TableCell>
-                  <TableCell align="center">{formatMoney(item.childTicket)
-                  }</TableCell>
+                  <TableCell align="center">
+                    {formatMoney(item.childTicket)}
+                  </TableCell>
 
                   <TableCell align="center">
-                    {
-                      formatMoney(item.adultTicket)
-                    }
+                    {formatMoney(item.adultTicket)}
                   </TableCell>
-                  <TableCell align="center">
-                    {
-                      item.numberTickets
-                    }
-                  </TableCell>
+                  <TableCell align="center">{item.numberTickets}</TableCell>
                   <TableCell align="center" sx={{ flexWrap: "nowrap" }}>
                     <Button
                       onClick={() => {
@@ -114,10 +128,10 @@ const TableTicket = ({ data, deleteData }) => {
                   </TableCell>
                 </TableBody>
               );
-            })
-          )}
-        </Table>
-      </TableContainer>
+            })}
+          </Table>
+        </TableContainer>
+      )}
       <ModalConfirm
         open={openDelete}
         handleClose={handleCloseModalDelete}

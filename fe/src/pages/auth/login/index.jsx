@@ -10,10 +10,7 @@ import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
 import ws from "../../../socket";
 import { toastify } from "../../../utils/common";
-import {
-  getUserDataLocalStorage,
-  setUserDataLocalStorage,
-} from "../../../utils/localstorage";
+import { setUserDataLocalStorage } from "../../../utils/localstorage";
 import "./style.scss";
 
 const validationInput = yup.object().shape({
@@ -71,10 +68,12 @@ const Login = () => {
         setUserDataLocalStorage(res.data.data);
         setCheck(false);
         joinRoom(res.data.data.roomId);
-        if (res.data.data.isAdmin === 1 || res.data.data.isAdmin === 3) {
+        if (res.data.data.isAdmin === 1) {
           navigation("/home");
-        } else {
+        } else if (res.data.data.isAdmin === 2) {
           navigation("/sale-agent/home");
+        } else {
+          navigation("/admin/home");
         }
       })
       .catch((err) => {
