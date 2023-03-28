@@ -57,6 +57,8 @@ const RegisterAgency = () => {
     defaultValues: {
       userName: "",
       email: "",
+      address: "",
+      phone: "",
       password: "",
       confirmPassword: "",
       codeOTP: "",
@@ -102,6 +104,8 @@ const RegisterAgency = () => {
           codeOtp: OTP,
           userName: data.userName,
           email: data.email,
+          address: data.address,
+          numberPhone: data.phone,
           password: data.password,
           isAdmin: 2,
         })

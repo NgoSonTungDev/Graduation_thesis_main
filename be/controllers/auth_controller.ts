@@ -36,8 +36,9 @@ const authController = {
       // const data = await new AuthStore().createUser(user);
 
       const data = await Users.create({
-        userName: req.body.userName,
-        email: req.body.email,
+        ...req.body,
+        // userName: req.body.userName,
+        // email: req.body.email,
         password: hashedPassword,
       });
 

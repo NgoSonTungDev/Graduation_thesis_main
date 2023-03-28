@@ -341,7 +341,7 @@ const Navbar = ({ loading, valueTab }) => {
                         onClick={() => {
                           handleClose();
                           removeUserDataLocalStorage();
-                          navigation("/home");
+                          navigation("/change-password");
                         }}
                       >
                         <ListItemIcon>

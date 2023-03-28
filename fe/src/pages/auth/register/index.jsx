@@ -198,6 +198,17 @@ const Register = () => {
             Đăng ký
           </LoadingButton>
         </div>
+        <p className="text">
+          Đăng ký làm đại lý
+          <span
+            style={{ paddingLeft: "3px" }}
+            onClick={() => {
+              navigation("/register-agency");
+            }}
+          >
+            tại đây!!!
+          </span>
+        </p>
 
         <LoadingBar loading={loadingPage} />
       </div>

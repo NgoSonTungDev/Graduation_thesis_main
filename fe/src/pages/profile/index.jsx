@@ -37,6 +37,7 @@ import {
   getUserDataLocalStorage,
   setUserDataLocalStorage,
 } from "../../utils/localstorage";
+import Footer from "../../components/footer";
 
 const validation = yup.object().shape({
   address: yup
@@ -57,7 +58,6 @@ const Profile = () => {
   const [dataPost, setDataPost] = useState({});
   const [loading, setLoading] = useState(true);
   const [loadingImage, setLoadingImage] = useState(false);
-  const [loadingUsername, setLoadingUsername] = useState(false);
   const [loadingInformation, setLoadingInformation] = useState(false);
   const [username, setUserName] = useState("");
 
@@ -129,7 +129,6 @@ const Profile = () => {
       .get(`/user/get-an/${id}`)
       .then((res) => {
         setUserName(res.data.data.userName);
-        console.log("res", res);
         setData(res.data.data);
         setLoading(false);
       })
@@ -232,7 +231,7 @@ const Profile = () => {
           </div>
           <div className="profile-name">
             <span style={{ fontSize: "20px", fontWeight: "500" }}>
-              {userIdStorage?.userName}
+              {data.userName}
             </span>
           </div>
         </div>
@@ -327,6 +326,7 @@ const Profile = () => {
             )}
           </div>
         </div>
+        <Footer />
 
         {/* Dialog đổi ảnh đại diện */}
         <Dialog
