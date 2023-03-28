@@ -207,19 +207,13 @@ const orderController = {
 
       const findTicket = await Tickets.findById<ITicket>(orderId.ticketId);
 
-      if (Number(findTicket?.numberTickets) < orderId.amount) {
-        return res
-          .status(404)
-          .json(errorFunction(true, 404, "Số lượng vé còn lại không đủ !"));
-      } else {
-        await orderId.updateOne({
-          status: 4,
-        });
+      await orderId.updateOne({
+        status: 4,
+      });
 
-        await Tickets.updateOne({
-          numberTickets: Number(findTicket?.numberTickets) - orderId.amount,
-        });
-      }
+      await Tickets.findByIdAndUpdate(orderId.ticketId, {
+        numberTickets: Number(findTicket?.numberTickets) - orderId.amount,
+      });
 
       await Payments.create({
         orderId: req.params.id,

@@ -152,8 +152,6 @@ const statisticController = {
       const { startDay, endDay } = req.query;
       let sum = 0;
 
-      // console.log(moment(Number(startDay)).format("YYYY-MM-DD"), endDay);
-
       const result = await Payments.aggregate([
         {
           $addFields: {

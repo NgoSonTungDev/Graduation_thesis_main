@@ -136,23 +136,23 @@ const TableTicket = ({ data, updateData, deleteData }) => {
 
   return (
     <div>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-          <TableHead>
-            <TableRow sx={{ padding: "5px 0" }}>
-              <TableCell align="center">Địa điểm</TableCell>
-              <TableCell align="center">Tỉnh/Thành phố</TableCell>
-              <TableCell align="center">Khoảng giá</TableCell>
-              <TableCell align="center">Giá vé trẻ em</TableCell>
-              <TableCell align="center">Giá vé người lớn</TableCell>
-              <TableCell align="center">Số lượng vé</TableCell>
-              <TableCell align="center">Chức năng</TableCell>
-            </TableRow>
-          </TableHead>
-          {_.isEmpty(data) ? (
-            <ErrorEmpty />
-          ) : (
-            data.map((item, index) => {
+      {_.isEmpty(data) ? (
+        <ErrorEmpty />
+      ) : (
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+            <TableHead>
+              <TableRow sx={{ padding: "5px 0" }}>
+                <TableCell align="center">Địa điểm</TableCell>
+                <TableCell align="center">Tỉnh/Thành phố</TableCell>
+                <TableCell align="center">Khoảng giá</TableCell>
+                <TableCell align="center">Giá vé trẻ em</TableCell>
+                <TableCell align="center">Giá vé người lớn</TableCell>
+                <TableCell align="center">Số lượng vé</TableCell>
+                <TableCell align="center">Chức năng</TableCell>
+              </TableRow>
+            </TableHead>
+            {data.map((item, index) => {
               return (
                 <TableBody key={index}>
                   <TableCell
@@ -192,7 +192,7 @@ const TableTicket = ({ data, updateData, deleteData }) => {
                         error={!!errors?.adultTicket}
                         {...register("adultTicket")}
                         type="number"
-                        label="Giá vé trẻ em"
+                        label="Giá vé người lớn"
                         size="small"
                         sx={{ width: "80%", marginLeft: "10%" }}
                         helperText={errors.adultTicket?.message}
@@ -251,10 +251,10 @@ const TableTicket = ({ data, updateData, deleteData }) => {
                   </TableCell>
                 </TableBody>
               );
-            })
-          )}
-        </Table>
-      </TableContainer>
+            })}
+          </Table>
+        </TableContainer>
+      )}
       <ModalConfirm
         open={openDelete}
         handleClose={handleCloseModalDelete}

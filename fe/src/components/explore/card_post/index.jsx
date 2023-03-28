@@ -4,7 +4,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ReplyIcon from "@mui/icons-material/Reply";
 import TelegramIcon from "@mui/icons-material/Telegram";
-import { Button, IconButton, Paper, Rating, TextField } from "@mui/material";
+import { Button, IconButton, Rating, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import Dialog from "@mui/material/Dialog";
@@ -16,10 +16,8 @@ import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Comment from "../comment";
-import _ from "lodash";
 
-const CardPost = ({ data,callBackApi }) => {
-  console.log("ffdfd", data);
+const CardPost = ({ data, callBackApi }) => {
   const [like, setLike] = useState(false);
   const [numberLike, setNumberLike] = useState(0);
   const [expanded, setExpanded] = React.useState(false);
@@ -29,7 +27,12 @@ const CardPost = ({ data,callBackApi }) => {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
-    setOpen(true);
+    if (userIdStorage) {
+      setOpen(true);
+    } else {
+      setOpen(false);
+      message.error("Vui lòng đăng nhập để chia sẻ bài viết");
+    }
   };
   const handleClose = () => {
     setOpen(false);
@@ -78,6 +81,8 @@ const CardPost = ({ data,callBackApi }) => {
           setLike(false);
           toastify("error", err.response.data.message || "Lỗi hệ thông !");
         });
+    } else {
+      message.error("Vui lòng đăng nhập để like bài viết");
     }
   };
   const handleUnlikeReview = (e) => {
@@ -99,7 +104,7 @@ const CardPost = ({ data,callBackApi }) => {
     e.stopPropagation();
     if (e.key === "Enter") {
       if (content === "") {
-        message.error("Vui lòng nhập comment!");
+        message.error("Vui lòng nhập bình luận của bạn");
       } else {
         handleComment();
         setExpanded(true);
@@ -109,7 +114,7 @@ const CardPost = ({ data,callBackApi }) => {
 
   const handleComment = (e) => {
     if (content === "") {
-      message.error("Vui lòng nhập comment!");
+      message.error("Vui lòng nhập bình luận của bạn");
     } else {
       axiosClient
         .post(`/comment/add/`, {
@@ -119,7 +124,6 @@ const CardPost = ({ data,callBackApi }) => {
           postId: data._id,
         })
         .then((res) => {
-          // toastify("success", res.data.message);
           setDataComment([...dataComment, res.data.data]);
           setContent("");
         })
@@ -141,8 +145,8 @@ const CardPost = ({ data,callBackApi }) => {
         placeId: data.placeId._id,
       })
       .then((res) => {
-        handleClose();
         toastify("success", res.data.message || "Tạo bài thành công !");
+        handleClose();
       })
       .catch((err) => {
         handleClose();
@@ -156,9 +160,9 @@ const CardPost = ({ data,callBackApi }) => {
         userId: userIdStorage._id,
       })
       .then((res) => {
-        toastify("success", res.data.message);
         handleCloseDelete();
-        callBackApi(data._id)
+        toastify("success", res.data.message || "Tạo bài thành công !");
+        callBackApi(data._id);
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -196,20 +200,32 @@ const CardPost = ({ data,callBackApi }) => {
         }}
       >
         <div className="card_top" style={{ display: "flex", width: "100%" }}>
-          <div
-            className="avatar"
-            style={{ width: "56px", height: "56px", marginLeft: "30px" }}
-          >
-            <img
-              style={{ width: "100%", height: "100%", borderRadius: "50%" }}
-              src={userIdStorage?.avt}
-              alt=""
-            />
+          <div>
+            <div
+              className="avatar"
+              style={{ width: "56px", height: "56px", marginLeft: "30px" }}
+            >
+              <img
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                }}
+                src={
+                  data.userId
+                    ? data?.userId?.avt
+                    : "https://ss-images.saostar.vn/wp700/pc/1613810558698/Facebook-Avatar_3.png"
+                }
+                alt=""
+              />
+            </div>
           </div>
           <div className="container_right">
             <div
               className="container_name"
               style={{
+                width: "100%",
                 marginLeft: "10px",
                 display: "flex",
                 fontWeight: "500",
@@ -254,7 +270,7 @@ const CardPost = ({ data,callBackApi }) => {
             </div>
           </div>
           {userIdStorage?._id === data?.userId?._id && (
-            <div style={{ marginLeft:"300px" }}>
+            <div style={{ marginLeft: "300px" }}>
               <CloseIcon onClick={handleClickOpenDelete} />
             </div>
           )}
@@ -262,6 +278,7 @@ const CardPost = ({ data,callBackApi }) => {
         <div
           className="text"
           style={{
+            width:"92%",
             paddingTop: "10px",
             marginLeft: "30px",
           }}
@@ -276,7 +293,7 @@ const CardPost = ({ data,callBackApi }) => {
             paddingTop: "30px",
           }}
         >
-          <Image width={"100%"} src={data.image} style={{ width: "100%" }} />
+          <Image width={"100%"} src={data.image} style={{ width: "100%",borderRadius:"5px" }} />
         </div>
         <Box
           sx={{
@@ -367,50 +384,42 @@ const CardPost = ({ data,callBackApi }) => {
             className="comment"
             style={{
               display: "flex",
-              width: "100%",
+              width: "92%",
+              marginLeft: "4%",
               alignItems: "center",
+              justifyContent: "space-between",
             }}
           >
-            <div
-              className="avatar"
-              style={{ width: "56px", height: "56px", marginLeft: "40px" }}
-            >
+            <div className="avatar" style={{ width: "46px", height: "46px" }}>
               <img
-                style={{ width: "100%", height: "100%", borderRadius: "50%" }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  objectFit: "center",
+                }}
                 src={userIdStorage?.avt}
                 alt=""
               />
             </div>
-            <div
-              style={{
-                width: "78%",
+
+            <TextField
+              sx={{ width: "86%" }}
+              value={content}
+              size="small"
+              placeholder="Aa..."
+              onKeyDown={handleOnClickEnter}
+              onChange={(e) => {
+                setContent(e.target.value);
               }}
-            >
-              <Paper
-                sx={{
-                  marginLeft: "20px",
-                  width: "100%",
-                }}
-              >
-                <TextField
-                  sx={{ width: "100%", border: "none", outline: "none" }}
-                  value={content}
-                  size="small"
-                  placeholder="Aa..."
-                  onKeyDown={handleOnClickEnter}
-                  onChange={(e) => {
-                    setContent(e.target.value);
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton type="button">
-                        <TelegramIcon onClick={handleComment} />
-                      </IconButton>
-                    ),
-                  }}
-                />
-              </Paper>
-            </div>
+              InputProps={{
+                endAdornment: (
+                  <IconButton type="button">
+                    <TelegramIcon onClick={handleComment} />
+                  </IconButton>
+                ),
+              }}
+            />
           </div>
         )}
       </Box>

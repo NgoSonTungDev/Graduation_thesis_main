@@ -52,6 +52,47 @@ const ticketController = {
       res.status(500).json(error);
     }
   },
+  getAll: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { pageNumber, limit, placeId } = req.query;
+
+      const SkipNumber = (Number(pageNumber) - 1) * Number(limit);
+
+      const condition = placeId
+        ? {
+            placeId: placeId,
+          }
+        : {};
+
+      const result = await Tickets.find(condition)
+        .skip(SkipNumber)
+        .limit(Number(limit))
+        .populate("placeId", ["name", "location", "startingPrice", "LastPrice"])
+        .populate("salesAgentId", ["userName", "email"]);
+
+      const allPlace = await Tickets.find(condition);
+
+      let totalPage = 0;
+      if (allPlace.length % Number(limit) === 0) {
+        totalPage = allPlace.length / Number(limit);
+      } else {
+        totalPage = Math.floor(allPlace.length / Number(limit) + 1);
+      }
+
+      res.json(
+        errorFunction(false, 200, "Lấy thành công !", {
+          totalPage: totalPage,
+          total: allPlace.length,
+          data: result,
+        })
+      );
+    } catch (error) {
+      res.status(400).json({
+        error: error,
+        message: "Bad request",
+      });
+    }
+  },
   getByIdTicket: async (req: Request, res: Response) => {
     try {
       const ticket = await Tickets.findById<ITicket>(req.params.id)

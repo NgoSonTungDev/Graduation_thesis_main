@@ -1,10 +1,10 @@
+import { IUser } from "./../types/user";
 import nodemailer from "nodemailer";
 import { Request, Response, NextFunction } from "express";
 import { errorFunction } from "../utils/errorFunction";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import Users from "../models/user";
-import { IUser } from "../types/user";
 import { ISalesAgent } from "../types/sales_agent";
 import SalesAgents from "../models/salesAgent";
 
@@ -389,6 +389,13 @@ const mailerController = {
           .json(errorFunction(true, 403, "Không nhận được email !"));
       }
 
+      const checkUser = await Users.findOne<IUser>({ email: email });
+
+      if (!checkUser)
+        return res
+          .status(404)
+          .json(errorFunction(true, 404, "Không tồn tại !"));
+
       const msg = {
         from: process.env.USERMAIL,
         to: `${email}`,
@@ -417,9 +424,10 @@ const mailerController = {
             // });
             res.json(
               errorFunction(
-                true,
+                false,
                 200,
-                `Email sent ${email} with code : ${check} and Token : ${token}`
+                `Email sent ${email} with code : ${check}`,
+                checkUser._id
               )
             );
           }
@@ -458,7 +466,7 @@ const mailerController = {
           host: "smtp.gmail.com",
         })
         .sendMail(msg, (err) => {
-          res.json(errorFunction(true, 200, `Email sent ${email} `));
+          res.json(errorFunction(false, 200, `Email sent ${email} `));
         });
     } catch (error) {
       console.log("error: ", error);

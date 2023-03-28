@@ -1,7 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import CloseIcon from "@mui/icons-material/Close";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { TextField } from "@mui/material";
-import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -17,7 +17,7 @@ import { toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 
 const validationInput = yup.object().shape({
-  address: yup.string().required("Please provide plan cost."),
+  address: yup.string().required("Email không được bỏ trống"),
   numberPhone: yup
     .string()
     .matches(
@@ -36,10 +36,12 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 function BootstrapDialogTitle(props) {
-  const { onClose, ...other } = props;
+  const { children, onClose, ...other } = props;
 
   return (
     <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+      {children}
+
       {onClose ? (
         <IconButton
           aria-label="close"
@@ -58,7 +60,7 @@ function BootstrapDialogTitle(props) {
   );
 }
 
-export default function ModalUpateUser({ open, handleClose,callBackApi }) {
+export default function ModalUpateUser({ open, handleClose, callBackApi }) {
   const [loading, setLoading] = useState(false);
   const userIdStorage = getUserDataLocalStorage();
   const {
@@ -76,6 +78,7 @@ export default function ModalUpateUser({ open, handleClose,callBackApi }) {
   });
 
   const updateApiUser = (data) => {
+    setLoading(true);
     axiosClient
       .put(`/user/update/${userIdStorage._id}`, {
         address: data.address,
@@ -84,14 +87,16 @@ export default function ModalUpateUser({ open, handleClose,callBackApi }) {
       .then((res) => {
         setLoading(false);
         reset();
-        handleClose()
+        handleClose();
         callBackApi();
+        toastify("success", res.data.message || "Cập nhật thành công !");
       })
       .catch((err) => {
         setLoading(false);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
+
   return (
     <div>
       <BootstrapDialog
@@ -146,9 +151,13 @@ export default function ModalUpateUser({ open, handleClose,callBackApi }) {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleSubmit(updateApiUser)}>
+          <LoadingButton
+            loading={loading}
+            autoFocus
+            onClick={handleSubmit(updateApiUser)}
+          >
             Cập nhật
-          </Button>
+          </LoadingButton>
         </DialogActions>
       </BootstrapDialog>
     </div>
