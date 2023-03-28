@@ -69,6 +69,10 @@ const Review = () => {
       message.error("Vui lòng điền đầy đủ thông tin!");
       return;
     }
+
+    if (_.isEmpty(dataPlace)) {
+      return toastify("info", "Vui lòng chọn địa điểm.");
+    }
     setLoading(true);
 
     const api = "https://api.cloudinary.com/v1_1/djo1gzatx/image/upload";

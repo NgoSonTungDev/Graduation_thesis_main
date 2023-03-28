@@ -160,10 +160,10 @@ const TableOrderUser = ({
   };
   return (
     <div>
-      <TableContainer component={Paper}>
-        {_.isEmpty(data) ? (
-          <ErrorEmpty />
-        ) : (
+      {_.isEmpty(data) ? (
+        <ErrorEmpty />
+      ) : (
+        <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
               <TableRow sx={{ padding: "5px 0" }}>
@@ -259,8 +259,8 @@ const TableOrderUser = ({
               ))}
             </TableBody>
           </Table>
-        )}
-      </TableContainer>
+        </TableContainer>
+      )}
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"

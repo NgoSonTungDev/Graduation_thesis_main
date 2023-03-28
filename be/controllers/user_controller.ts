@@ -120,7 +120,7 @@ const userController = {
           .json(errorFunction(true, 404, "Không tồn tại !"));
 
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      await Users.updateOne({
+      await id.updateOne({
         $set: {
           password: hashedPassword,
         },
