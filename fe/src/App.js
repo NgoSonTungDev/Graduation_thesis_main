@@ -28,7 +28,10 @@ import VoucherManagement from "./pages/admin/voucher";
 import TicketSaleAgent from "./pages/sale_agent/ticket";
 import ws from "./socket";
 import PlaceDetail from "./pages/place_detail";
-import TicketMangement from "./pages/admin/ticket";
+import RegisterAgency from "./pages/auth/\bregister_agency";
+import ForgotPassword from "./pages/auth/forgot_password";
+import ChangePassword from "./components/change_password";
+
 const App = () => {
   const open = useSelector(OpenChatBox);
 
@@ -44,9 +47,11 @@ const App = () => {
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/register-agency" element={<RegisterAgency />} />
+          <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/place" element={<Place />} />
           <Route path="/review" element={<Review />} />
-          <Route path="/profile/:id" element={<Profile />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/profile/:id" element={<Profile />} />
           <Route path="/voucher" element={<Voucher />} />
@@ -61,7 +66,7 @@ const App = () => {
           <Route path="/admin/statistic" element={<Statistic />} />
           <Route path="/admin/order" element={<OrderManagement />} />
           <Route path="/admin/voucher" element={<VoucherManagement />} />
-          <Route path="/admin/ticket" element={<TicketMangement />} />
+          {/* <Route path="/admin/ticket" element={<TicketMangement />} /> */}
 
           {/* saleAgent */}
           <Route path="/sale-agent/home" element={<HomeSaleAgent />} />

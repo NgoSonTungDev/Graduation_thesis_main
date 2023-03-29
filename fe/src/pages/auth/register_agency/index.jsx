@@ -23,6 +23,16 @@ const validationInput = yup.object().shape({
     .min(5, "Tên tài khoản tối thiểu 5 ký tự.")
     .max(30, "Tên tài khoản tối đa 30 ký tự."),
   email: yup.string().required("Email không được để trống").email(),
+  address: yup
+    .string()
+    .min(6, "Địa chỉ ít nhất 10 ký tự !!!")
+    .max(30, "Địa chỉ tối đa 50 ký tự !!!")
+    .required("Địa chỉ không được để trống"),
+  phone: yup
+    .string()
+    .max(11, "Số điện thoại tối đa 11 ký tự!!!")
+    .min(10, "Số điện thoại ít nhất 10 ký tự!!!")
+    .required("Số điện thoại chưa được nhập!!!"),
   password: yup.string().required("Mật khẩu không được để trống"),
   confirmPassword: yup
     .string()
@@ -30,7 +40,7 @@ const validationInput = yup.object().shape({
     .oneOf([yup.ref("password"), null], "Không trùng khớp."),
 });
 
-const Register = () => {
+const RegisterAgency = () => {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [loadingPage, setLoadingPage] = React.useState(false);
@@ -47,6 +57,8 @@ const Register = () => {
     defaultValues: {
       userName: "",
       email: "",
+      address: "",
+      phone: "",
       password: "",
       confirmPassword: "",
       codeOTP: "",
@@ -71,7 +83,7 @@ const Register = () => {
         email: data.email,
       })
       .then((res) => {
-        toastify("success", "Tên người dùng và email hợp lệ !");
+        toastify("success", "Tên đại lý và email hợp lệ !");
         handleClickOpen();
         setLoading(false);
       })
@@ -92,7 +104,10 @@ const Register = () => {
           codeOtp: OTP,
           userName: data.userName,
           email: data.email,
+          address: data.address,
+          numberPhone: data.phone,
           password: data.password,
+          isAdmin: 2,
         })
         .then((res) => {
           console.log(res);
@@ -152,6 +167,24 @@ const Register = () => {
             helperText={errors.email?.message}
           />
           <TextField
+            error={!!errors?.address}
+            {...register("address")}
+            type="text"
+            label="Địa chỉ"
+            size="small"
+            sx={{ width: "80%", marginLeft: "10%" }}
+            helperText={errors.address?.message}
+          />{" "}
+          <TextField
+            error={!!errors?.phone}
+            {...register("phone")}
+            type="text"
+            label="Số điện thoại"
+            size="small"
+            sx={{ width: "80%", marginLeft: "10%" }}
+            helperText={errors.phone?.message}
+          />
+          <TextField
             error={!!errors?.password}
             {...register("password")}
             type="password"
@@ -198,22 +231,10 @@ const Register = () => {
             Đăng ký
           </LoadingButton>
         </div>
-        <p className="text">
-          Đăng ký làm đại lý
-          <span
-            style={{ paddingLeft: "3px" }}
-            onClick={() => {
-              navigation("/register-agency");
-            }}
-          >
-            tại đây!!!
-          </span>
-        </p>
 
         <LoadingBar loading={loadingPage} />
       </div>
 
-      {/* Dialog send mail user */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Nhập mã OTP</DialogTitle>
         <DialogContent>
@@ -247,4 +268,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterAgency;

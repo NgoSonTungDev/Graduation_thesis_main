@@ -12,6 +12,7 @@ const validation = joi.object<IUser>({
   avt: joi.string(),
   numberPhone: joi.string(),
   gender: joi.string(),
+  description: joi.string(),
   isAdmin: joi.number(),
 });
 

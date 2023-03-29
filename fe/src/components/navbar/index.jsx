@@ -44,6 +44,8 @@ import GetDataPlaceItem from "../modle_find_place";
 import logo1 from "./images/acount.jpeg";
 import "./index.scss";
 import NotificationItem from "./notification";
+import ModalUpdatePassword from "../change_password/modal_update_pass";
+import ChangePassword from "../change_password";
 
 const Navbar = ({ loading, valueTab }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -52,6 +54,8 @@ const Navbar = ({ loading, valueTab }) => {
   const [anchorElNotify, setAnchorElNotify] = React.useState(null);
   const [offset, setOffset] = useState(0);
   const userIdStorage = getUserDataLocalStorage();
+  const [openModalChangePassword, setOpenModalChangePassword] =
+    React.useState(false);
 
   const dispatch = useDispatch();
 
@@ -105,6 +109,14 @@ const Navbar = ({ loading, valueTab }) => {
 
   const joinRoom = () => {
     ws.joinRoom(userIdStorage?.roomId);
+  };
+
+  const handleCloseChangePassword = () => {
+    setOpenModalChangePassword(false);
+  };
+
+  const handleOpenChangePassword = () => {
+    setOpenModalChangePassword(true);
   };
 
   useEffect(() => {
@@ -339,16 +351,14 @@ const Navbar = ({ loading, valueTab }) => {
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          handleClose();
-                          removeUserDataLocalStorage();
-                          navigation("/home");
+                          handleOpenChangePassword();
                         }}
                       >
                         <ListItemIcon>
                           <LockOpenIcon fontSize="medium" />
                         </ListItemIcon>
                         Đổi mật khẩu
-                      </MenuItem>{" "}
+                      </MenuItem>
                       <MenuItem
                         onClick={() => {
                           handleClose();
@@ -435,6 +445,11 @@ const Navbar = ({ loading, valueTab }) => {
       {openModal && (
         <GetDataPlaceItem openDialog={openModal} onClose={handleCloseModal} />
       )}
+
+      <ChangePassword
+        open={openModalChangePassword}
+        handleClose={handleCloseChangePassword}
+      />
     </div>
   );
 };

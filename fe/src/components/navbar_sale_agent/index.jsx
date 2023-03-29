@@ -8,6 +8,8 @@ import ConfirmationNumberOutlinedIcon from "@mui/icons-material/ConfirmationNumb
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+
 import {
   Menu,
   MenuItem,
@@ -32,6 +34,7 @@ import {
 } from "../../redux/chat_box/chatBoxSlice";
 import axiosClient from "../../api/axiosClient";
 import { toastify } from "../../utils/common";
+import ChangePassword from "../change_password";
 
 const MenuSaleAgent = ({ ReactNode }) => {
   const [menuCollapse, setMenuCollapse] = useState(true);
@@ -39,6 +42,9 @@ const MenuSaleAgent = ({ ReactNode }) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const userIdStorage = getUserDataLocalStorage();
+
+  const [openModalChangePassword, setOpenModalChangePassword] =
+    React.useState(false);
 
   const pathName = location.pathname;
 
@@ -64,6 +70,14 @@ const MenuSaleAgent = ({ ReactNode }) => {
   const movePage = (path) => {
     navigation(path);
     setMenuCollapse(true);
+  };
+
+  const handleCloseChangePassword = () => {
+    setOpenModalChangePassword(false);
+  };
+
+  const handleOpenChangePassword = () => {
+    setOpenModalChangePassword(true);
   };
 
   return (
@@ -162,6 +176,13 @@ const MenuSaleAgent = ({ ReactNode }) => {
                   <MenuItem active={false} icon={<SettingsOutlinedIcon />}>
                     Account management
                   </MenuItem>
+                  <MenuItem
+                    active={false}
+                    icon={<LockOpenIcon />}
+                    onClick={handleOpenChangePassword}
+                  >
+                    Change password
+                  </MenuItem>
                 </Menu>
               </div>
             </SidebarContent>
@@ -177,6 +198,11 @@ const MenuSaleAgent = ({ ReactNode }) => {
               </Menu>
             </SidebarFooter>
           </ProSidebar>
+
+          <ChangePassword
+            open={openModalChangePassword}
+            handleClose={handleCloseChangePassword}
+          />
         </div>
         <div className="body_scroll">{ReactNode}</div>
       </div>
