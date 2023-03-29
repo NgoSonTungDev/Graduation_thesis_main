@@ -1,0 +1,51 @@
+.container_forgot_password {
+  width: 100%;
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-image: url("https://png.pngtree.com/background/20210710/original/pngtree-may-day-travel-tour-poster-background-picture-image_1035753.jpg");
+  background-position: center;
+  background-size: cover;
+  position: relative;
+
+  .modal_forgotPassword {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30%;
+    min-width: 400px;
+    height: auto;
+    padding-bottom: 10px;
+    border-radius: 8px;
+    background-color: white;
+    text-align: center;
+
+    .text {
+      font-size: 18px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+  }
+
+  .buttonPassword {
+    margin-top: 20px;
+
+    .buttonSubmit {
+      width: 100px;
+      margin-left: 15px;
+    }
+
+    .buttonBack {
+      width: 100px;
+      font-weight: 600;
+      color: #636e72;
+      border: 1px solid #636e72;
+
+      &:hover {
+        color: #2d3436;
+        border: 1px solid #2d3436;
+      }
+    }
+  }
+}

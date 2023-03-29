@@ -29,7 +29,8 @@ import TicketSaleAgent from "./pages/sale_agent/ticket";
 import ws from "./socket";
 import PlaceDetail from "./pages/place_detail";
 import RegisterAgency from "./pages/auth/\bregister_agency";
-import ChangePassword from "./pages/auth/change_password";
+import ForgotPassword from "./pages/auth/forgot_password";
+import ChangePassword from "./components/change_password";
 
 const App = () => {
   const open = useSelector(OpenChatBox);
@@ -48,6 +49,7 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/register-agency" element={<RegisterAgency />} />
           <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/place" element={<Place />} />
           <Route path="/review" element={<Review />} />
           <Route path="/explore" element={<Explore />} />

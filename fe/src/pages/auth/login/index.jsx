@@ -124,7 +124,7 @@ const Login = () => {
           <div className="back_home">
             <span
               onClick={() => {
-                navigation("/profile");
+                navigation("/forgot-password");
               }}
             >
               Quên mật khẩu
