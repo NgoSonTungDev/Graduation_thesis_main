@@ -198,7 +198,15 @@ const Register = () => {
             Đăng ký
           </LoadingButton>
         </div>
-        <p className="text">
+        <p
+          className="text"
+          style={{
+            margin: 0,
+            textAlign: "left",
+            marginTop: "15px",
+            marginLeft: "15px",
+          }}
+        >
           Đăng ký làm đại lý
           <span
             style={{ paddingLeft: "3px" }}

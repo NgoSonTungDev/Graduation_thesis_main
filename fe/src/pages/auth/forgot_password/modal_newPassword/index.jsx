@@ -16,6 +16,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { Button } from "antd";
 import axiosClient from "../../../../api/axiosClient";
 import { toastify } from "../../../../utils/common";
+import { removeUserIdLocalStorage } from "../../../../utils/localstorage";
 
 const validationInput = yup.object().shape({
   code_otp: yup
@@ -36,15 +37,16 @@ const validationInput = yup.object().shape({
 
 const id = localStorage.getItem("id");
 
-const ModalForgotPassword = (open, handleClose) => {
+const ModalForgotPassword = ({ open, handleClose }) => {
   const [check, setCheck] = useState(false);
   const navigation = useNavigate();
 
-  const id = localStorage.getItem("id");
+  const id = localStorage.getItem("userId");
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isDirty, isValid },
   } = useForm({
     defaultValues: {
@@ -65,10 +67,12 @@ const ModalForgotPassword = (open, handleClose) => {
         password: data.new_password,
       })
       .then((res) => {
-        console.log("true");
         setCheck(false);
         handleClose();
         navigation("/login");
+        removeUserIdLocalStorage();
+        toastify("success", "Cập nhật mật khẩu thành công !!!");
+        reset();
       })
       .catch((err) => {
         console.log("false");

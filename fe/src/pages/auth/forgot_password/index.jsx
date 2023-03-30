@@ -8,7 +8,7 @@ import { ToastContainer } from "react-toastify";
 import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
 import { toastify } from "../../../utils/common";
-import { setOrderLocalStorage } from "../../../utils/localstorage";
+import { setUserIdLocalStorage } from "../../../utils/localstorage";
 import ModalForgotPassword from "./modal_newPassword";
 import "./styles.scss";
 
@@ -52,16 +52,13 @@ const ForgotPassword = () => {
         email: data.email,
       })
       .then((res) => {
-        console.log("true");
         handleOpenForgotPassword();
         setCheck(false);
-
-        setOrderLocalStorage("id", res.data.data);
+        setUserIdLocalStorage(res.data.data);
+        toastify("success", "Vui lòng kiểm tra email của bạn !!!");
       })
       .catch((err) => {
-        console.log("false");
         setCheck(false);
-        console.log("false");
         toastify("error", err.response.data.message || "Lỗi hệ thống !");
       });
   };

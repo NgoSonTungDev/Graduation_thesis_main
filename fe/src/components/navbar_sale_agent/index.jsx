@@ -1,15 +1,16 @@
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import React, { useState } from "react";
-import { AiOutlineMessage } from "react-icons/ai";
+import {
+  AiFillHome,
+  AiOutlineBarChart,
+  AiOutlineSetting,
+} from "react-icons/ai";
 import { BiPackage } from "react-icons/bi";
-import { FiHome, FiLogOut } from "react-icons/fi";
-import ConfirmationNumberOutlinedIcon from "@mui/icons-material/ConfirmationNumberOutlined";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
-
+import { BsMessenger } from "react-icons/bs";
+import { FiLogOut } from "react-icons/fi";
+import { HiOutlineTicket } from "react-icons/hi";
 import {
   Menu,
   MenuItem,
@@ -18,23 +19,22 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "react-pro-sidebar";
-import { useLocation, useNavigate } from "react-router-dom";
-import "./style.scss";
-
 import "react-pro-sidebar/dist/css/styles.css";
-import ws from "../../socket";
 import { useDispatch } from "react-redux";
-import {
-  getUserDataLocalStorage,
-  removeUserDataLocalStorage,
-} from "../../utils/localstorage";
+import { useLocation, useNavigate } from "react-router-dom";
+import axiosClient from "../../api/axiosClient";
 import {
   changeListInbox,
   openChatBox,
 } from "../../redux/chat_box/chatBoxSlice";
-import axiosClient from "../../api/axiosClient";
+import ws from "../../socket";
 import { toastify } from "../../utils/common";
+import {
+  getUserDataLocalStorage,
+  removeUserDataLocalStorage,
+} from "../../utils/localstorage";
 import ChangePassword from "../change_password";
+import "./style.scss";
 
 const MenuSaleAgent = ({ ReactNode }) => {
   const [menuCollapse, setMenuCollapse] = useState(true);
@@ -134,7 +134,7 @@ const MenuSaleAgent = ({ ReactNode }) => {
                 <Menu iconShape="square">
                   <MenuItem
                     active={pathName === "/sale-agent/home" && true}
-                    icon={<HomeOutlinedIcon />}
+                    icon={<AiFillHome />}
                     onClick={() => {
                       movePage("/sale-agent/home");
                     }}
@@ -145,7 +145,7 @@ const MenuSaleAgent = ({ ReactNode }) => {
                     active={
                       pathName === "/sale-agent/ticket-management" && true
                     }
-                    icon={<ConfirmationNumberOutlinedIcon />}
+                    icon={<HiOutlineTicket />}
                     onClick={() => {
                       movePage("/sale-agent/ticket-management");
                     }}
@@ -163,7 +163,7 @@ const MenuSaleAgent = ({ ReactNode }) => {
                   </MenuItem>
                   <MenuItem
                     active={false}
-                    icon={<MessageOutlinedIcon />}
+                    icon={<BsMessenger />}
                     onClick={() => {
                       dispatch(openChatBox());
                       joinRoom();
@@ -173,7 +173,16 @@ const MenuSaleAgent = ({ ReactNode }) => {
                   >
                     Message
                   </MenuItem>
-                  <MenuItem active={false} icon={<SettingsOutlinedIcon />}>
+                  <MenuItem
+                    active={pathName === "/sales-agent/statistic" && true}
+                    icon={<AiOutlineBarChart />}
+                    onClick={() => {
+                      movePage("/sales-agent/statistic");
+                    }}
+                  >
+                    statistic
+                  </MenuItem>
+                  <MenuItem active={false} icon={<AiOutlineSetting />}>
                     Account management
                   </MenuItem>
                   <MenuItem
