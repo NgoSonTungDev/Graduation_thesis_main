@@ -16,10 +16,16 @@ import React from "react";
 import _ from "lodash";
 import axiosClient from "../../../api/axiosClient";
 import { formatMoney, toastify } from "../../../utils/common";
-import { setOrderLocalStorage } from "../../../utils/localstorage";
+import {
+  getUserDataLocalStorage,
+  setOrderLocalStorage,
+} from "../../../utils/localstorage";
 import ModalEvaluate from "../model_evaluate";
 import "./style.scss";
 import ErrorEmpty from "../../../components/emty_data";
+import { useDispatch } from "react-redux";
+import { addNotify } from "../../../redux/notify/notifySlice";
+import ws from "../../../socket";
 
 const style = {
   position: "absolute",
@@ -44,6 +50,8 @@ const TableOrderUser = ({
   const [open, setOpen] = React.useState(false);
   const [placeId, setPlaceId] = React.useState("");
   const [openEvaluate, setOpenEvaluate] = React.useState(false);
+  const userIdStorage = getUserDataLocalStorage();
+  const dispatch = useDispatch();
 
   const handleClickOpenEvaluate = () => {
     setOpenEvaluate(true);
@@ -63,6 +71,7 @@ const TableOrderUser = ({
       .then((res) => {
         toastify("success", "Hủy đơn hàng thành công");
         callBackApi();
+        sendNotify();
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -96,6 +105,18 @@ const TableOrderUser = ({
     } else {
       return <p style={{ color: "#3498db" }}>Đã thanh Toán</p>;
     }
+  };
+
+  const sendNotify = async () => {
+    const NotifyData = {
+      room: userIdStorage?._id,
+      content: "Đơn hàng của bạn đã được hủy thành công",
+      status: true,
+      dateTime: Number(new Date()),
+    };
+
+    ws.sendNotify(NotifyData);
+    dispatch(addNotify(NotifyData));
   };
 
   const renderButton = (

@@ -1,7 +1,7 @@
 import { HighchartsReact } from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import axiosClient from "../../../../api/axiosClient";
 import FormDate from "../../../../hook-form/form_date";
 import { formatMoney, toastify } from "../../../../utils/common";
@@ -31,7 +31,7 @@ const ChartStatisticAbout = () => {
       })`,
     },
     xAxis: {
-      categories: data?.detail?.map((e) => e._id),
+      categories: data?.detail?.map((e) => moment(e._id).format("DD/MM/yyyy")),
     },
     yAxis: {
       opposite: false,

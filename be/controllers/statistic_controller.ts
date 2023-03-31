@@ -204,6 +204,11 @@ const statisticController = {
             totalRevenue: 1,
           },
         },
+        {
+          $sort: {
+            _id: -1,
+          },
+        },
       ]);
 
       const arrNumber = result.map((e) => e.totalRevenue);

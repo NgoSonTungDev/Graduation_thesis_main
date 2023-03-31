@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axiosClient from "../../api/axiosClient";
 import Navbar from "../../components/navbar";
+import { addNotify } from "../../redux/notify/notifySlice";
+import ws from "../../socket";
 import { toastify } from "../../utils/common";
 import {
   getUserDataLocalStorage,
@@ -14,11 +17,24 @@ const ThankCustomer = () => {
   const orderId = localStorage.getItem("order");
   const checkPayment = window.location.href.split("&")[1];
   const userIdStorage = getUserDataLocalStorage();
+  const dispatch = useDispatch();
   const navigation = useNavigate();
 
   const movePageHome = () => {
     navigation("/");
     removeOrderLocalStorage();
+  };
+
+  const sendNotify = async () => {
+    const NotifyData = {
+      room: userIdStorage?._id,
+      content: "Đơn hàng của bạn đã được thanh toán thành công",
+      status: true,
+      dateTime: Number(new Date()),
+    };
+
+    ws.sendNotify(NotifyData);
+    dispatch(addNotify(NotifyData));
   };
 
   const handleSendEmail = () => {
@@ -40,6 +56,7 @@ const ThankCustomer = () => {
       .put(`/order/update-story-success/${orderId}`)
       .then((res) => {
         handleSendEmail();
+        sendNotify();
       })
       .catch((err) => {
         setLoading(false);

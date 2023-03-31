@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import http from "http";
 import { Server } from "socket.io";
 import Rooms from "./models/roomInbox";
+import Notifications from "./models/notify";
 
 const app = express();
 
@@ -57,8 +58,6 @@ io.on("connection", (socket) => {
       public: true,
     });
 
-    console.log(data);
-
     socket.to(data.room).emit("receive_message", data);
   });
 
@@ -68,6 +67,12 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send_notify", (data) => {
+    console.log(data);
+    Notifications.create({
+      userId: data.room,
+      content: data.content,
+      dateTime: Number(new Date()),
+    });
     socket.to(data.room).emit("receive_notify", data);
   });
 

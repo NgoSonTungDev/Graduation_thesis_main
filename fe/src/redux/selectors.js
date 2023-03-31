@@ -8,3 +8,6 @@ export const payloadPlace = (state) => state.Place.payload;
 //Chat box
 export const OpenChatBox = (state) => state.ChatBox.open;
 export const listChatBox = (state) => state.ChatBox.listChat;
+
+//Notify
+export const listNotify = (state) => state.Notify.listNotify;
