@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
-import MenuSaleAgent from "../../../components/navbar_sale_agent";
-import { getUserDataLocalStorage } from "../../../utils/localstorage";
-import qs from "query-string";
-import ChartStatisticAbout from "./chart_statistic_about";
-import axiosClient from "../../../api/axiosClient";
-import { formatMoney, toastify } from "../../../utils/common";
 import moment from "moment";
+import React, { useEffect, useState } from "react";
+import axiosClient from "../../../api/axiosClient";
+import MenuSaleAgent from "../../../components/navbar_sale_agent";
 import FormDate from "../../../hook-form/form_date";
+import { formatMoney, toastify } from "../../../utils/common";
+import { getUserDataLocalStorage } from "../../../utils/localstorage";
+import ChartStatisticAbout from "./chart_statistic_about";
 
 const SaleAgentStatistic = () => {
   const [data, setData] = useState({});
@@ -61,6 +60,7 @@ const SaleAgentStatistic = () => {
           >
             <FormDate
               value={payload.startDay}
+              maxDate={new Date()}
               label={"Ngày bat dau"}
               onChange={(value) => {
                 setPayload({ startDay: value, endDate: "" });
@@ -68,6 +68,8 @@ const SaleAgentStatistic = () => {
             />
             <FormDate
               value={payload.endDate}
+              minDate={payload.startDay}
+              maxDate={new Date()}
               label={"Ngày kết thúc"}
               onChange={(value) => {
                 setPayload({ ...payload, endDate: value });

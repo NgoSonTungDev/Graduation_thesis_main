@@ -91,12 +91,15 @@ const ChartStatisticAbout = () => {
         >
           <FormDate
             value={payload.startDay}
+            maxDate={new Date()}
             label={"Ngày bat dau"}
             onChange={(value) => {
               setPayload({ startDay: value, endDate: "" });
             }}
           />
           <FormDate
+            minDate={payload.startDay}
+            maxDate={new Date()}
             value={payload.endDate}
             label={"Ngày kết thúc"}
             onChange={(value) => {

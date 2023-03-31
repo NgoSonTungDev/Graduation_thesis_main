@@ -6,8 +6,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { width } from "@mui/system";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
@@ -36,6 +35,7 @@ const Register = () => {
   const [loadingPage, setLoadingPage] = React.useState(false);
   const [data, setData] = React.useState({});
   const [OTP, setOTP] = React.useState(0);
+  const [timeLeft, setTimeLeft] = useState(180);
   const navigation = useNavigate();
 
   const {
@@ -74,6 +74,7 @@ const Register = () => {
         toastify("success", "Tên người dùng và email hợp lệ !");
         handleClickOpen();
         setLoading(false);
+        setTimeLeft(180);
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -110,6 +111,29 @@ const Register = () => {
           setLoadingPage(false);
         });
     }
+  };
+
+  useEffect(() => {
+    let countdownTimer = null;
+
+    if (timeLeft > 0) {
+      countdownTimer = setInterval(() => {
+        setTimeLeft(timeLeft - 1);
+      }, 1000);
+    }
+
+    if (timeLeft === 0) {
+      clearInterval(countdownTimer);
+    }
+
+    return () => clearInterval(countdownTimer);
+  }, [timeLeft]);
+
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
   return (
@@ -230,6 +254,10 @@ const Register = () => {
             bạn dùng để xác thực email hoặc tài khoản của bạn ! vì lí do bảo mật
             vui lòng không chia sẻ mã này dưới bất kì hình thức nào.{" "}
             <b>MAFLINE</b> cảm ơn bạn đã sử dụng dịch vụ của chung tôi 😉
+            <p style={{ margin: "0" }}>
+              Thời gian còn lại{" "}
+              <i style={{ fontWeight: "600" }}>{formatTime(timeLeft)}</i>
+            </p>
           </DialogContentText>
           <TextField
             autoFocus

@@ -264,6 +264,7 @@ const Navbar = ({ loading, valueTab }) => {
                     aria-controls={openNotify ? "notify" : undefined}
                     aria-haspopup="true"
                     aria-expanded={openNotify ? "true" : undefined}
+                    style={{ backgroundColor: "red", color: "#fff" }}
                   >
                     <NotificationsOutlinedIcon />
                   </IconButton>
@@ -279,7 +280,7 @@ const Navbar = ({ loading, valueTab }) => {
                       <Tooltip title="Account settings">
                         <Avatar
                           alt="Remy Sharp"
-                          src={logo1}
+                          src={userIdStorage ? userIdStorage.avt : logo1}
                           onClick={handleClick}
                           sx={{
                             cursor: "pointer",

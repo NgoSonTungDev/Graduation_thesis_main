@@ -189,6 +189,7 @@ const TableOrderUser = ({
             <TableHead>
               <TableRow sx={{ padding: "5px 0" }}>
                 <TableCell>Mã đơn hàng</TableCell>
+                <TableCell align="center">Đại lý</TableCell>
                 <TableCell align="center">Tên khách hàng</TableCell>
                 <TableCell align="center">Email</TableCell>
                 <TableCell align="center">Địa điểm</TableCell>
@@ -213,6 +214,9 @@ const TableOrderUser = ({
                 >
                   <TableCell component="th" scope="row" size="medium">
                     {item.codeOrder}
+                  </TableCell>
+                  <TableCell align="center" size="medium">
+                    {item?.salesAgentId?.userName}
                   </TableCell>
                   <TableCell align="center" size="medium">
                     {item?.userId?.userName}

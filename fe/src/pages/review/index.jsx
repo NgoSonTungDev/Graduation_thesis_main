@@ -54,7 +54,9 @@ const Review = () => {
       .then((res) => {
         toastify("success", res.data.message || "Tạo bài thành công !");
         setFile(null);
-        setRate("");
+        setRate({
+          rate: 4,
+        });
         setImage("");
         dispatch(clearByIdPlace());
         setContent("");

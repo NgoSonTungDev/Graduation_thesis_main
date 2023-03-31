@@ -153,14 +153,14 @@ const statisticController = {
       const startDay = Number(req.query.startDay);
       const endDay = Number(req.query.endDay);
 
-      if (
-        !startDay ||
-        !endDay ||
-        new Date(startDay).toString() === "Invalid Date" ||
-        new Date(endDay).toString() === "Invalid Date"
-      ) {
-        throw Error("Ngay khong hop lệ");
-      }
+      // if (
+      //   !startDay ||
+      //   !endDay ||
+      //   new Date(startDay).toString() === "Invalid Date" ||
+      //   new Date(endDay).toString() === "Invalid Date"
+      // ) {
+      //   throw Error("Ngay khong hop lệ");
+      // }
 
       let sum = 0;
 
