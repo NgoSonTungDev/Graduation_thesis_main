@@ -35,7 +35,7 @@ const Register = () => {
   const [loadingPage, setLoadingPage] = React.useState(false);
   const [data, setData] = React.useState({});
   const [OTP, setOTP] = React.useState(0);
-  const [timeLeft, setTimeLeft] = useState(180);
+  const [timeLeft, setTimeLeft] = useState(0);
   const navigation = useNavigate();
 
   const {
@@ -251,11 +251,11 @@ const Register = () => {
         <DialogContent>
           <DialogContentText>
             Mã OTP có thời gian hiệu lực trong 3 phút sẽ được gửi về email của
-            bạn dùng để xác thực email hoặc tài khoản của bạn ! vì lí do bảo mật
-            vui lòng không chia sẻ mã này dưới bất kì hình thức nào.{" "}
-            <b>MAFLINE</b> cảm ơn bạn đã sử dụng dịch vụ của chung tôi 😉
-            <p style={{ margin: "0" }}>
-              Thời gian còn lại{" "}
+            bạn dùng để xác thực email của bạn ! vì lí do bảo mật vui lòng không
+            chia sẻ mã này dưới bất kì hình thức nào. <b>MAFLINE</b> cảm ơn bạn
+            đã sử dụng dịch vụ của chung tôi 😉
+            <p style={{ margin: "5px 0", fontSize: "13px" }}>
+              Thời gian còn lại :{" "}
               <i style={{ fontWeight: "600" }}>{formatTime(timeLeft)}</i>
             </p>
           </DialogContentText>
