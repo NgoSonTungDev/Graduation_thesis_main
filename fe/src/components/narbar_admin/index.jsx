@@ -121,6 +121,9 @@ const Header = ({ ReactNode }) => {
                   <MenuItem
                     active={pathName === "admin" && true}
                     icon={<MdEditLocationAlt />}
+                    onClick={() => {
+                      movePage("/admin/place");
+                    }}
                   >
                     Location management
                   </MenuItem>
