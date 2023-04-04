@@ -11,3 +11,4 @@ export const listChatBox = (state) => state.ChatBox.listChat;
 
 //Notify
 export const listNotify = (state) => state.Notify.listNotify;
+export const checkNotify = (state) => state.Notify.check;

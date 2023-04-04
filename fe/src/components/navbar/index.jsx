@@ -25,7 +25,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BarLoader from "react-spinners/BarLoader";
@@ -44,8 +44,12 @@ import logo1 from "./images/acount.jpeg";
 import "./index.scss";
 import NotificationItem from "./notification";
 import ChangePassword from "../change_password";
-import { addNotify, changeListNotify } from "../../redux/notify/notifySlice";
-import { listNotify } from "../../redux/selectors";
+import {
+  addNotify,
+  changeListNotify,
+  falseNotify,
+} from "../../redux/notify/notifySlice";
+import { checkNotify, listNotify } from "../../redux/selectors";
 import ErrorEmpty from "../emty_data";
 import _ from "lodash";
 import LoadingBar from "../loadding/loading_bar";
@@ -59,6 +63,7 @@ const Navbar = ({ loading, valueTab }) => {
   const userIdStorage = getUserDataLocalStorage();
 
   const arrayNotify = useSelector(listNotify);
+  const checkStatusNotify = useSelector(checkNotify);
 
   const dispatch = useDispatch();
 
@@ -80,8 +85,8 @@ const Navbar = ({ loading, valueTab }) => {
 
   const handleClickShowNotify = (event) => {
     setAnchorElNotify(event.currentTarget);
-    ws.joinRoomNotify(userIdStorage?._id);
     setLoadingNotify(true);
+    dispatch(falseNotify());
     axiosClient
       .get(`/notify/get-by-id/${userIdStorage?._id}`)
       .then((res) => {
@@ -106,24 +111,8 @@ const Navbar = ({ loading, valueTab }) => {
     setAnchorEl(null);
   };
 
-  const sendNotify = async () => {
-    const NotifyData = {
-      room: "641aa90ab0032dc3af78760a",
-      content: "Đơn hàng của bạn đã được xác nhận",
-      status: true,
-      dateTime: Number(new Date()),
-    };
-
-    ws.sendNotify(NotifyData);
-    dispatch(addNotify(NotifyData));
-  };
-
   const movePage = (path) => {
     navigation(path);
-  };
-
-  const joinRoom = () => {
-    ws.joinRoom(userIdStorage?.roomId);
   };
 
   const handleCloseChangePassword = () => {
@@ -247,13 +236,12 @@ const Navbar = ({ loading, valueTab }) => {
             <div className="Icon">
               {userIdStorage ? (
                 <>
-                  <IconButton onClick={sendNotify}>
+                  <IconButton>
                     <FavoriteBorderIcon />
                   </IconButton>
                   <IconButton
                     onClick={() => {
                       dispatch(openChatBox());
-                      joinRoom();
                       handleGetDataInbox();
                     }}
                   >
@@ -264,7 +252,10 @@ const Navbar = ({ loading, valueTab }) => {
                     aria-controls={openNotify ? "notify" : undefined}
                     aria-haspopup="true"
                     aria-expanded={openNotify ? "true" : undefined}
-                    style={{ backgroundColor: "red", color: "#fff" }}
+                    style={{
+                      backgroundColor: checkStatusNotify ? "red" : " #fff",
+                      color: !checkStatusNotify ? "red" : "#fff",
+                    }}
                   >
                     <NotificationsOutlinedIcon />
                   </IconButton>

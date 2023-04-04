@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
-import { addMessage } from "../redux/chat_box/chatBoxSlice";
-import { addNotify } from "../redux/notify/notifySlice";
+import { addMessage, openChatBox } from "../redux/chat_box/chatBoxSlice";
+import { addNotify, trueNotify } from "../redux/notify/notifySlice";
 import store from "../redux/store";
 import { toastify } from "../utils/common";
 
@@ -28,12 +28,14 @@ class WebsocketClient {
   listen() {
     const dispatch = store.dispatch;
     this.io.on("receive_message", (data) => {
-      toastify("info", "Bạn có 1 tin nhắn mới.");
+      toastify("info", "Bạn có 1 tin nhắn mới.");      
       dispatch(addMessage(data));
+      dispatch(openChatBox());
     });
     this.io.on("receive_notify", (data) => {
       toastify("info", "Bạn có 1 thông báo mới.");
       dispatch(addNotify(data));
+      dispatch(trueNotify());
     });
   }
 

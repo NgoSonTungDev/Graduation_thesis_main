@@ -165,9 +165,11 @@ const PlaceDetail = () => {
                 <Button variant="outlined" onClick={handleClickOpenVoucher}>
                   Lấy mã khuyến mãi
                 </Button>
-                <Button variant="outlined" onClick={handleClickOpenSaleAgent}>
-                  Đặt vé
-                </Button>
+                {userIdStorage && (
+                  <Button variant="outlined" onClick={handleClickOpenSaleAgent}>
+                    Đặt vé
+                  </Button>
+                )}
               </div>
               <div className="box_banner_place_image">
                 {!loading && <ImageBox images={data?.image} />}

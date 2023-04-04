@@ -33,12 +33,20 @@ import ForgotPassword from "./pages/auth/forgot_password";
 import ChangePassword from "./components/change_password";
 import TicketManagement from "./pages/admin/ticket";
 import SaleAgentStatistic from "./pages/sale_agent/statistic";
+import { getUserDataLocalStorage } from "./utils/localstorage";
 
 const App = () => {
   const open = useSelector(OpenChatBox);
+  const userIdStorage = getUserDataLocalStorage();
 
   useEffect(() => {
     ws.initialize();
+    if (userIdStorage && userIdStorage.isAdmin === 1) {
+      ws.joinRoom(userIdStorage?.roomId);
+      ws.joinRoomNotify(userIdStorage?._id);
+    } else if (userIdStorage && userIdStorage.isAdmin === 2) {
+      ws.joinRoom(userIdStorage?.roomId);
+    }
   }, []);
 
   return (
