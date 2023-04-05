@@ -28,9 +28,9 @@ import VoucherManagement from "./pages/admin/voucher";
 import TicketSaleAgent from "./pages/sale_agent/ticket";
 import ws from "./socket";
 import PlaceDetail from "./pages/place_detail";
-import RegisterAgency from "./pages/auth/\bregister_agency";
 import ForgotPassword from "./pages/auth/forgot_password";
 import ChangePassword from "./components/change_password";
+import RegisterAgency from "./pages/auth/register_agency";
 
 const App = () => {
   const open = useSelector(OpenChatBox);

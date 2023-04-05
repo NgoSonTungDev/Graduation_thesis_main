@@ -36,7 +36,7 @@ const validationInput = yup.object().shape({
 
 const id = localStorage.getItem("id");
 
-const ModalForgotPassword = (open, handleClose) => {
+const ModalForgotPassword = ({ open, handleClose }) => {
   const [check, setCheck] = useState(false);
   const navigation = useNavigate();
 
