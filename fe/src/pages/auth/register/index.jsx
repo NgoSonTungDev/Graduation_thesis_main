@@ -206,12 +206,11 @@ const Register = () => {
         >
           <Button
             variant="outlined"
-            sx={{ width: "80px" }}
             onClick={() => {
               navigation("/");
             }}
           >
-            Back
+            Quay lại
           </Button>
           <LoadingButton
             loading={loading}

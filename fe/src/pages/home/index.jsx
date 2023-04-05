@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
 import "./style.scss";
@@ -39,9 +39,23 @@ const handleLeave = (e) => {
 };
 
 const Home = () => {
+  const [image, setImage] = useState("https://images.unsplash.com/photo-1587893859371-f4d438436b0e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80");
   const navigate = useNavigate();
+  const listImage = [
+    "https://images.unsplash.com/photo-1587893859371-f4d438436b0e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80",
+    "https://images.unsplash.com/photo-1556225496-ff493e20d9a0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+    "https://images.unsplash.com/photo-1670236903659-6c89f993b25e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80",
+    "https://images.unsplash.com/photo-1628134785730-0476293bf596?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+    "https://images.unsplash.com/photo-1678393813297-c8ee5e1c5327?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+    "https://images.unsplash.com/photo-1587459049099-dd14eaef8f9a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80",
+    "https://images.unsplash.com/photo-1564596823821-79b97151055e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80",
+  ];
 
   useEffect(() => {
+    setInterval(() => {
+      const randomIndex = Math.floor(Math.random() * listImage.length);
+      setImage(listImage[randomIndex]);
+    }, 5000);
     AOS.init({ duration: 800 });
     window.scrollTo(0, 0);
   }, []);
@@ -58,7 +72,7 @@ const Home = () => {
               width={"100%"}
               height={"100%"}
               style={{ objectFit: "cover" }}
-              src="https://images.unsplash.com/photo-1582473788903-afc455672cf6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+              src={image}
               alt=""
             />
           </div>
