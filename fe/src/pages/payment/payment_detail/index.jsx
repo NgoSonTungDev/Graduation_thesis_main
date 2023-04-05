@@ -530,7 +530,7 @@ export default function PaymentDetail() {
                         placeholder={
                           dataUser?.address
                             ? dataUser?.address
-                            : "bạn cần phải nhập thông tin địa chỉ"
+                            : "Chưa cập nhật"
                         }
                       />
                     </div>
@@ -541,7 +541,7 @@ export default function PaymentDetail() {
                         placeholder={
                           dataUser?.numberPhone
                             ? dataUser?.numberPhone
-                            : "bạn cần phải cập nhật thông tin số điện thoại"
+                            : "Chưa cập nhật"
                         }
                       />
                     </div>

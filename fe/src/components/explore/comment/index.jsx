@@ -10,6 +10,7 @@ import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Rep_Comment from "../rep_comment";
+import ws from "../../../socket/index";
 
 const Comment = ({ dataComment, callBackApi }) => {
   const [numberLike, setNumberLike] = useState();
@@ -108,6 +109,17 @@ const Comment = ({ dataComment, callBackApi }) => {
       });
   };
 
+  const sendNotify = async () => {
+    const NotifyData = {
+      room: dataComment.userId?._id,
+      content: `${userIdStorage?.userName} đã phản hồi bình luận của bạn`,
+      status: true,
+      dateTime: Number(new Date()),
+    };
+
+    ws.sendNotify(NotifyData);
+  };
+
   const handleRepComment = (e) => {
     if (content === "") {
       message.error("Vui lòng nhập comment!");
@@ -122,6 +134,7 @@ const Comment = ({ dataComment, callBackApi }) => {
         .then((res) => {
           setDataRepComment([...datarepComent, res.data.data]);
           setContent("");
+          sendNotify();
         })
         .catch((err) => {
           toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -275,7 +288,7 @@ const Comment = ({ dataComment, callBackApi }) => {
               </div>
 
               <TextField
-                sx={{ width: "86%" }}
+                sx={{ width: "90%" }}
                 value={content}
                 size="small"
                 placeholder="Aa...."

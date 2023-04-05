@@ -15,7 +15,7 @@ import { IconButton, TextField } from "@mui/material";
 import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
 import "./style.scss";
 
-const TicketMangement = () => {
+const TicketManagement = () => {
   const [data, setData] = React.useState({});
   const [listData, setListData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
@@ -150,4 +150,4 @@ const TicketMangement = () => {
   );
 };
 
-export default TicketMangement;
+export default TicketManagement;

@@ -1,16 +1,15 @@
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import CreateIcon from "@mui/icons-material/Create";
-import EmailIcon from "@mui/icons-material/Email";
-import WcIcon from "@mui/icons-material/Wc";
-import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import PhoneIcon from "@mui/icons-material/Phone";
-import HomeIcon from "@mui/icons-material/Home";
-import LoadingButton from "@mui/lab/LoadingButton";
-import * as yup from "yup";
-import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import EmailIcon from "@mui/icons-material/Email";
+import HomeIcon from "@mui/icons-material/Home";
+import PhoneIcon from "@mui/icons-material/Phone";
+import WcIcon from "@mui/icons-material/Wc";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { Image } from "antd";
 import {
   Button,
   Dialog,
@@ -18,42 +17,36 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  MenuItem,
   Skeleton,
   TextField,
 } from "@mui/material";
+import axios from "axios";
 import _ from "lodash";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axiosClient from "../../api/axiosClient";
 import ErrorEmpty from "../../components/emty_data";
 import CardPost from "../../components/explore/card_post";
+import Footer from "../../components/footer";
 import Navbar from "../../components/navbar";
-import moment from "moment";
-import { formatDate, toastify } from "../../utils/common";
-import "./style.scss";
-import axios from "axios";
+import { toastify } from "../../utils/common";
 import {
   getUserDataLocalStorage,
   setUserDataLocalStorage,
 } from "../../utils/localstorage";
+import "./style.scss";
 
 const validation = yup.object().shape({
-  username: yup
-    .string()
-    .min(6, "Tên đăng nhập ít nhất 6 ký tự !!!")
-    .max(30, "Tên đăng nhập tối đa 30 ký tự !!!")
-    .required("Tên đăng nhập không được để trống!!!")
-    .matches(
-      /^[a-zA-Z0-9_]+$/,
-      "Tên đăng nhập không được được chứa kí tự đặc biệt!!!"
-    ),
   address: yup
     .string()
     .min(6, "Địa chỉ ít nhất 10 ký tự !!!")
     .max(30, "Địa chỉ tối đa 50 ký tự !!!")
     .required("Địa chỉ không được để trống"),
   phone: yup
-    .number()
+    .string()
+    .max(11, "Số điện thoại tối đa 11 ký tự!!!")
     .min(10, "Số điện thoại ít nhất 10 ký tự!!!")
     .required("Số điện thoại chưa được nhập!!!"),
 });
@@ -64,37 +57,21 @@ const Profile = () => {
   const [dataPost, setDataPost] = useState({});
   const [loading, setLoading] = useState(true);
   const [loadingImage, setLoadingImage] = useState(false);
-  const [loadingUsername, setLoadingUsername] = useState(false);
   const [loadingInformation, setLoadingInformation] = useState(false);
-  const [username, setUserName] = useState("");
-  const [gender, setGender] = useState("Nam");
-  const [address, setAddress] = useState("");
-  const [phone, setPhone] = useState("");
-
-  const [open, setOpen] = React.useState(false);
   const [openDialogAvt, setOpenDialogAvt] = React.useState(false);
   const [openDialogInformation, setOpenDialogInformation] =
     React.useState(false);
-  const [openAccept, setOpenAccept] = React.useState(false);
-
   const [file, setFile] = useState(null);
   const userIdStorage = getUserDataLocalStorage();
-
   const [image, setImage] = useState("");
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const handleOpenDialogAvt = () => {
     setOpenDialogAvt(true);
   };
 
   const handleCloseDialogAvt = () => {
+    setImage("");
+    setFile(null);
     setOpenDialogAvt(false);
   };
 
@@ -106,22 +83,13 @@ const Profile = () => {
     setOpenDialogInformation(false);
   };
 
-  const handleOpenAccept = () => {
-    setOpenAccept(true);
-  };
-
-  const handleCloseAccept = () => {
-    setOpenAccept(false);
-  };
-
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty, isValid },
+    formState: { errors },
   } = useForm({
     defaultValues: {
-      username: "",
-      gender: "",
+      gender: "Nam",
       address: "",
       phone: "",
     },
@@ -148,8 +116,6 @@ const Profile = () => {
     axiosClient
       .get(`/user/get-an/${id}`)
       .then((res) => {
-        setUserName(res.data.data.userName);
-        console.log("res", res);
         setData(res.data.data);
         setLoading(false);
       })
@@ -159,49 +125,24 @@ const Profile = () => {
       });
   };
 
-  const handleUpdateUsername = () => {
-    setLoadingUsername(true);
-    axiosClient
-      .put(`/user/update/${id}`, {
-        userName: username,
-      })
-      .then((res) => {
-        handleClose();
-        setUserDataLocalStorage({
-          ...userIdStorage,
-          userName: username,
-        });
-        setLoadingUsername(false);
-        fetchData();
-      })
-      .catch((err) => {
-        setLoadingUsername(false);
-        handleClose();
-        toastify("error", err.response.data.message || "Lỗi hệ thông !");
-      });
-  };
-
-  const handleUpdateInformation = () => {
+  const handleUpdateInformation = (data) => {
     setLoadingInformation(true);
+    console.log("data", data);
     axiosClient
       .put(`/user/update/${id}`, {
-        gender: gender,
-        address: address,
-        numberPhone: phone,
+        gender: data.gender,
+        address: data.address,
+        numberPhone: data.phone,
       })
       .then((res) => {
         setLoadingInformation(false);
-        setGender();
-        setAddress();
-        setPhone();
         fetchData();
         handleCloseDialogInformation();
-        handleCloseAccept();
         toastify("success", "Cập nhật thông tin cá nhân thành công!!!");
       })
       .catch((err) => {
         setLoadingInformation(false);
-        handleClose();
+        handleCloseDialogInformation();
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
@@ -250,11 +191,8 @@ const Profile = () => {
         <div className="profile-header">
           <div className="profile-bg">
             <div className="profile-avatar">
-              <img
-                alt=""
+              <Image
                 style={{
-                  position: "absolute",
-                  width: "100%",
                   objectFit: "cover",
                 }}
                 src={userIdStorage?.avt}
@@ -277,16 +215,8 @@ const Profile = () => {
           </div>
           <div className="profile-name">
             <span style={{ fontSize: "20px", fontWeight: "500" }}>
-              {userIdStorage?.userName}
+              {data.userName}
             </span>
-            <CreateIcon
-              style={{
-                fontSize: "16px",
-                cursor: "pointer",
-                marginLeft: "10px",
-              }}
-              onClick={handleClickOpen}
-            />
           </div>
         </div>
         <hr style={{ width: "80%", marginLeft: "10%", color: "gray" }} />
@@ -322,7 +252,9 @@ const Profile = () => {
                     <HomeIcon className="icon" />
                     Địa chỉ
                   </span>
-                  <span className="text-detail">{data.address}</span>
+                  <span className="text-detail">
+                    {data.address ? data.address : "Chưa cập nhật"}
+                  </span>
                 </div>
                 <div className="details">
                   <span>
@@ -330,7 +262,9 @@ const Profile = () => {
                     Số điện thoại
                   </span>
 
-                  <span className="text-detail">{data.numberPhone}</span>
+                  <span className="text-detail">
+                    {data.numberPhone ? data.numberPhone : "Chưa cập nhật"}
+                  </span>
                 </div>
                 <div className="details">
                   <span>
@@ -342,24 +276,27 @@ const Profile = () => {
                     {moment(data.createdAt).format("DD/MM/yyyy")}
                   </span>
                 </div>
-                <div
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    paddingBottom: "10px",
-                  }}
-                >
-                  <Button onClick={handleOpenDialogInformation}>
-                    Chỉnh sửa
-                  </Button>
-                </div>
+                {id === userIdStorage._id && (
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                      paddingBottom: "10px",
+                    }}
+                  >
+                    <Button onClick={handleOpenDialogInformation}>
+                      Chỉnh sửa
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
             {loading ? (
               <div className="profile-content">
                 {[1, 2, 3, 4, 5, 6].map((item, index) => (
                   <Skeleton
+                    key={index}
                     variant="rectangular"
                     sx={{ width: "300px", height: "385px", margin: "38px" }}
                   />
@@ -380,56 +317,13 @@ const Profile = () => {
             )}
           </div>
         </div>
-
-        {/* Dialog đổi tên người dùng */}
-        <Dialog
-          open={open}
-          keepMounted
-          onClose={handleClose}
-          aria-describedby="alert-dialog-slide-description"
-        >
-          <DialogTitle
-            style={{ color: "#000", fontWeight: "600", textAlign: "center" }}
-          >
-            {"Thay đổi tên người dùng"}
-          </DialogTitle>
-          <DialogContent className="edit-profile">
-            {/* <ErrorIcon /> */}
-            <label
-              style={{ fontSize: "14px", color: "red", fontWeight: "500" }}
-            >
-              Nếu bạn đổi tên người dùng thì tên đăng nhập cũng sẽ bị thay đổi!
-            </label>
-            <br />
-            <TextField
-              error={!!errors?.username}
-              {...register("username")}
-              helperText={errors.username?.message}
-              type="text"
-              size="small"
-              sx={{ width: "100%", marginTop: "10px" }}
-              label={"Tên người dùng"}
-            />
-          </DialogContent>
-          <DialogActions>
-            <LoadingButton variant="outlined" onClick={handleClose}>
-              Huỷ
-            </LoadingButton>
-            <LoadingButton
-              loading={loadingUsername}
-              variant="outlined"
-              onClick={handleSubmit(handleUpdateUsername)}
-            >
-              Xác nhận
-            </LoadingButton>
-          </DialogActions>
-        </Dialog>
+        <Footer />
 
         {/* Dialog đổi ảnh đại diện */}
         <Dialog
           open={openDialogAvt}
           keepMounted
-          onClose={handleClose}
+          onClose={handleCloseDialogAvt}
           aria-describedby="alert-dialog-slide-description"
         >
           <DialogTitle
@@ -452,7 +346,7 @@ const Profile = () => {
                   style={{
                     width: "100%",
                     height: "427px",
-                    objectFit: "center",
+                    objectFit: "contain",
                   }}
                   src={image}
                   alt=""
@@ -504,19 +398,18 @@ const Profile = () => {
                   Giới tính
                 </label>
               </span>
-              <span style={{ marginLeft: "10px" }}>
-                <select
-                  style={{ padding: "5px 15px" }}
-                  value={gender}
-                  onChange={(e) => {
-                    setGender(e.target.value);
-                  }}
-                >
-                  <option value="Nam">Nam</option>
-                  <option value="Nữ">Nữ</option>
-                  <option value="Khác">Khác</option>
-                </select>
-              </span>
+              <TextField
+                style={{ width: "110px", height: "30px", marginLeft: "5px" }}
+                select
+                label="Giới Tính"
+                name="gender"
+                inputProps={register("gender")}
+                size="small"
+              >
+                <MenuItem value="Nam">Nam</MenuItem>
+                <MenuItem value="Nữ">Nữ</MenuItem>
+                <MenuItem value="Khác">Khác</MenuItem>
+              </TextField>
             </div>
             <div style={{ padding: "10px" }}>
               <span>
@@ -533,10 +426,6 @@ const Profile = () => {
                 size="small"
                 sx={{ width: "350px", marginTop: "10px" }}
                 label={"Địa chỉ"}
-                value={address}
-                onChange={(e) => {
-                  setAddress(e.target.value);
-                }}
               />
             </div>
             <div style={{ padding: "10px" }}>
@@ -553,10 +442,6 @@ const Profile = () => {
                 size="small"
                 sx={{ width: "100%", marginTop: "10px" }}
                 label={"Số điện thoại"}
-                value={phone}
-                onChange={(e) => {
-                  setPhone(e.target.value);
-                }}
               />
             </div>
           </DialogContent>
@@ -570,38 +455,9 @@ const Profile = () => {
             <LoadingButton
               loading={loadingInformation}
               variant="outlined"
-              onClick={handleOpenAccept}
+              onClick={handleSubmit(handleUpdateInformation)}
             >
               Cập nhật
-            </LoadingButton>
-          </DialogActions>
-        </Dialog>
-
-        {/* Dialog xác nhận */}
-        <Dialog
-          open={openAccept}
-          keepMounted
-          onClose={handleCloseAccept}
-          aria-describedby="alert-dialog-slide-description"
-        >
-          <DialogTitle
-            style={{ color: "#000", fontWeight: "600", textAlign: "center" }}
-          >
-            {"Thông báo"}
-          </DialogTitle>
-          <DialogContent>
-            <h3>Bạn chắc chắn muôn cập nhật thông tin?</h3>
-          </DialogContent>
-          <DialogActions style={{ paddingBottom: "15px" }}>
-            <LoadingButton variant="outlined" onClick={handleCloseAccept}>
-              Huỷ
-            </LoadingButton>
-            <LoadingButton
-              loading={loadingInformation}
-              variant="outlined"
-              onClick={handleUpdateInformation}
-            >
-              Xác nhận
             </LoadingButton>
           </DialogActions>
         </Dialog>

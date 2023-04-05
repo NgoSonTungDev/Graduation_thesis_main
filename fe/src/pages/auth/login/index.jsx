@@ -68,6 +68,7 @@ const Login = () => {
         setUserDataLocalStorage(res.data.data);
         setCheck(false);
         joinRoom(res.data.data.roomId);
+        ws.joinRoomNotify(res.data.data._id);
         if (res.data.data.isAdmin === 1) {
           navigation("/home");
         } else if (res.data.data.isAdmin === 2) {
@@ -124,7 +125,7 @@ const Login = () => {
           <div className="back_home">
             <span
               onClick={() => {
-                navigation("/profile");
+                navigation("/forgot-password");
               }}
             >
               Quên mật khẩu

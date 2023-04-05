@@ -40,22 +40,11 @@ const voucherController = {
   },
   getByPlaceId: async (req: Request, res: Response) => {
     try {
-      const data = await Vouchers.aggregate([
-        {
-          $match: {
-            $and: [
-              {
-                placeId: req.params.placeId,
-              },
-              {
-                public: true,
-              },
-            ],
-          },
-        },
-      ]);
+      const newData = await Vouchers.find({
+        $and: [{ placeId: req.params.placeId }, { public: true }],
+      });
 
-      res.json(errorFunction(false, 200, "Lấy thành công !", data));
+      res.json(errorFunction(false, 200, "Lấy thành công !", newData));
     } catch (error) {
       res.status(500).json(error);
     }

@@ -32,10 +32,9 @@ const notifyController = {
         }
       );
 
-      const data = await Notifications.find({ userId: req.params.id }).populate(
-        "userId",
-        "userName"
-      );
+      const data = await Notifications.find({ userId: req.params.id }).sort({
+        dateTime: -1,
+      });
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {

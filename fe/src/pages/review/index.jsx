@@ -54,7 +54,9 @@ const Review = () => {
       .then((res) => {
         toastify("success", res.data.message || "Tạo bài thành công !");
         setFile(null);
-        setRate("");
+        setRate({
+          rate: 4,
+        });
         setImage("");
         dispatch(clearByIdPlace());
         setContent("");
@@ -68,6 +70,10 @@ const Review = () => {
     if (file === "" || content === "" || image === "") {
       message.error("Vui lòng điền đầy đủ thông tin!");
       return;
+    }
+
+    if (_.isEmpty(dataPlace)) {
+      return toastify("info", "Vui lòng chọn địa điểm.");
     }
     setLoading(true);
 

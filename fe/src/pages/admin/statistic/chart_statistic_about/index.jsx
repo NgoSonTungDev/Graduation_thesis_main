@@ -1,14 +1,15 @@
 import { HighchartsReact } from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import axiosClient from "../../../../api/axiosClient";
+import FormDate from "../../../../hook-form/form_date";
 import { formatMoney, toastify } from "../../../../utils/common";
 
 const ChartStatisticAbout = () => {
   const [payload, setPayload] = React.useState({
-    startDay: "",
-    endDate: "",
+    startDay: moment(new Date()).subtract(7, "days").format(),
+    endDate: moment(new Date()).format(),
   });
 
   const [data, setData] = React.useState({});
@@ -16,7 +17,7 @@ const ChartStatisticAbout = () => {
   const options = {
     chart: {
       type: "column",
-      height: "35%",
+      height: "40%",
     },
     title: {
       text: `Số lượng mua và doanh thu trong ngày (${
@@ -30,7 +31,7 @@ const ChartStatisticAbout = () => {
       })`,
     },
     xAxis: {
-      categories: data?.detail?.map((e) => e._id),
+      categories: data?.detail?.map((e) => moment(e._id).format("DD/MM/yyyy")),
     },
     yAxis: {
       opposite: false,
@@ -88,23 +89,21 @@ const ChartStatisticAbout = () => {
             alignItems: "center",
           }}
         >
-          <p>Từ ngày : </p>
-          <input
-            style={{ height: "30px", width: "200px" }}
-            type="date"
-            name="startDay"
+          <FormDate
+            value={payload.startDay}
+            maxDate={new Date()}
+            label={"Ngày bat dau"}
             onChange={(value) => {
-              setPayload({ startDay: value.target.value, endDate: "" });
+              setPayload({ startDay: value, endDate: "" });
             }}
           />
-          <p>Đến ngày : </p>
-          <input
-            style={{ height: "30px", width: "200px" }}
-            type="date"
-            name="endDate"
-            min={payload.startDay}
+          <FormDate
+            minDate={payload.startDay}
+            maxDate={new Date()}
+            value={payload.endDate}
+            label={"Ngày kết thúc"}
             onChange={(value) => {
-              setPayload({ ...payload, endDate: value.target.value });
+              setPayload({ ...payload, endDate: value });
             }}
           />
         </div>
@@ -122,8 +121,8 @@ const ChartStatisticAbout = () => {
           width: "100%",
           height: "90%",
           display: "flex",
-          justifyContent: "flex-end",
           flexDirection: "column",
+          justifyContent: "flex-end",
         }}
       >
         {!payload.startDay || !payload.endDate ? (

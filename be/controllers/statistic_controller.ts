@@ -5,6 +5,7 @@ import Evaluates from "../models/evaluate";
 import Places from "../models/place";
 import Payments from "../models/payment";
 import moment from "moment";
+import { ObjectId } from "mongodb";
 
 const sumTotal = (x: number, y: number) => {
   return x + y;
@@ -149,22 +150,26 @@ const statisticController = {
     next: NextFunction
   ) => {
     try {
-      const { startDay, endDay } = req.query;
+      const startDay = Number(req.query.startDay);
+      const endDay = Number(req.query.endDay);
+
+      // if (
+      //   !startDay ||
+      //   !endDay ||
+      //   new Date(startDay).toString() === "Invalid Date" ||
+      //   new Date(endDay).toString() === "Invalid Date"
+      // ) {
+      //   throw Error("Ngay khong hop lệ");
+      // }
+
       let sum = 0;
 
       const result = await Payments.aggregate([
         {
-          $addFields: {
-            timeFormat: {
-              $toDate: "$dateTime",
-            },
-          },
-        },
-        {
           $match: {
-            timeFormat: {
-              $gte: new Date(Number(startDay)),
-              $lt: new Date(Number(endDay)),
+            dateTime: {
+              $gte: startDay,
+              $lte: endDay,
             },
           },
         },
@@ -181,18 +186,27 @@ const statisticController = {
         },
         {
           $group: {
-            _id: {
-              $dateToString: {
-                format: "%Y-%m-%d",
-                date: "$timeFormat",
-              },
-            },
+            _id: "$dateTime",
             sumTicked: {
               $sum: "$detail.amount",
             },
             totalRevenue: {
               $sum: "$detail.total",
             },
+          },
+        },
+        {
+          $project: {
+            _id: {
+              $toDate: "$_id",
+            },
+            sumTicked: 1,
+            totalRevenue: 1,
+          },
+        },
+        {
+          $sort: {
+            _id: -1,
           },
         },
       ]);
@@ -366,82 +380,87 @@ const statisticController = {
       });
     }
   },
-  // detailPaymentStatisticsForAboutSaleAgent: async (
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ) => {
-  //   try {
-  //     const { startDay, endDay, salesAgentId } = req.query;
-  //     let sum = 0;
+  detailPaymentStatisticsForAboutSaleAgent: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { startDay, endDay, salesAgentId } = req.query;
+      let sum = 0;
 
-  //     const result = await Payments.aggregate([
-  //       {
-  //         $addFields: {
-  //           timeFormat: {
-  //             $toDate: "$dateTime",
-  //           },
-  //         },
-  //       },
-  //       {
-  //         $lookup: {
-  //           from: "orders",
-  //           localField: "orderId",
-  //           foreignField: "_id",
-  //           as: "detail",
-  //         },
-  //       },
-  //       {
-  //         $unwind: "$detail",
-  //       },
-  //       {
-  //         $match: {
-  //           $and: [
-  //             // {
-  //             //   timeFormat: {
-  //             //     $gte: new Date(Number(startDay)),
-  //             //     $lt: new Date(Number(endDay)),
-  //             //   },
-  //             // },
-  //             {
-  //               "$detail.salesAgentId": salesAgentId,
-  //             },
-  //           ],
-  //         },
-  //       },
-  //       {
-  //         $group: {
-  //           _id: {
-  //             $dateToString: {
-  //               format: "%Y-%m-%d",
-  //               date: "$timeFormat",
-  //             },
-  //           },
-  //           sumTicked: {
-  //             $sum: "$detail.amount",
-  //           },
-  //           totalRevenue: {
-  //             $sum: "$detail.total",
-  //           },
-  //         },
-  //       },
-  //     ]);
+      const result = await Payments.aggregate([
+        {
+          $addFields: {
+            timeFormat: {
+              $toDate: "$dateTime",
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "orders",
+            localField: "orderId",
+            foreignField: "_id",
+            as: "detail",
+          },
+        },
+        {
+          $unwind: "$detail",
+        },
+        {
+          $addFields: {
+            salesAgentId: "$detail.salesAgentId",
+          },
+        },
+        {
+          $match: {
+            $and: [
+              {
+                timeFormat: {
+                  $gte: new Date(Number(startDay)),
+                  $lte: new Date(Number(endDay)),
+                },
+              },
+              {
+                salesAgentId: new ObjectId(salesAgentId + ""),
+              },
+            ],
+          },
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: {
+                format: "%Y-%m-%d",
+                date: "$timeFormat",
+              },
+            },
+            sumTicked: {
+              $sum: "$detail.amount",
+            },
+            totalRevenue: {
+              $sum: "$detail.total",
+            },
+          },
+        },
+      ]);
 
-  //     const arrNumber = result.map((e) => e.totalRevenue);
+      const arrNumber = result.map((e) => e.totalRevenue);
 
-  //     res.json(
-  //       errorFunction(false, 200, "Lấy thống kê thành công", {
-  //         detail: result,
-  //         total: arrNumber.reduce(sumTotal, sum),
-  //       })
-  //     );
-  //   } catch (error) {
-  //     console.log("error: ", error);
-  //     res.status(400).json({
-  //       message: "Bad request",
-  //     });
-  //   }
-  // },
+      res.json(
+        errorFunction(false, 200, "Lấy thống kê thành công", {
+          detail: result,
+          total: arrNumber.reduce(sumTotal, sum),
+        })
+      );
+    } catch (error) {
+      console.log("error: ", error);
+      res.status(400).json({
+        message: "Bad request",
+      });
+    }
+  },
 };
 
 export default statisticController;

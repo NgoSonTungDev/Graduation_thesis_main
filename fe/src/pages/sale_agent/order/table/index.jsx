@@ -15,6 +15,7 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import "./style.scss";
 import axiosClient from "../../../../api/axiosClient";
+import ws from "../../../../socket";
 
 const style = {
   position: "absolute",
@@ -33,6 +34,17 @@ const OrderTable = ({ data, callBackApi }) => {
   const [description, setDescription] = React.useState({});
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const sendNotify = async (userId, content) => {
+    const NotifyData = {
+      room: userId,
+      content: `${content}`,
+      status: true,
+      dateTime: Number(new Date()),
+    };
+
+    ws.sendNotify(NotifyData);
+  };
 
   const handleSendEmailConfirm = (email) => {
     axiosClient
@@ -60,7 +72,7 @@ const OrderTable = ({ data, callBackApi }) => {
       });
   };
 
-  const handleConfirm = (id, email) => {
+  const handleConfirm = (id, email, userId) => {
     axiosClient
       .put(`/order/update/${id}`, {
         status: 2,
@@ -69,13 +81,14 @@ const OrderTable = ({ data, callBackApi }) => {
         toastify("success", "Xác nhận thành công");
         callBackApi();
         handleSendEmailConfirm(email);
+        sendNotify(userId, "Đơn hàng của bạn đã được xác nhận !!!");
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
 
-  const handleCancel = (id, email) => {
+  const handleCancel = (id, email, userId) => {
     axiosClient
       .put(`/order/update/${id}`, {
         status: 3,
@@ -84,6 +97,7 @@ const OrderTable = ({ data, callBackApi }) => {
         toastify("success", "Hủy đơn hàng thành công");
         callBackApi();
         handleSendEmailCancel(email);
+        sendNotify(userId, "Đơn hàng của bạn đã bị hủy !!!");
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -102,14 +116,14 @@ const OrderTable = ({ data, callBackApi }) => {
     }
   };
 
-  const renderButton = (number, id, email) => {
+  const renderButton = (number, id, email, userId) => {
     if (number === 1) {
       return (
         <div style={{ color: "#2ecc71" }}>
           <button
             className="button-check accept"
             onClick={() => {
-              handleConfirm(id, email);
+              handleConfirm(id, email, userId);
             }}
           >
             Xác nhận
@@ -117,7 +131,7 @@ const OrderTable = ({ data, callBackApi }) => {
           <button
             className="button-check cancel"
             onClick={() => {
-              handleCancel(id, email);
+              handleCancel(id, email, userId);
             }}
           >
             Hủy
@@ -216,7 +230,12 @@ const OrderTable = ({ data, callBackApi }) => {
                   {formatMoney(item.total)}
                 </TableCell>
                 <TableCell align="left" size="medium">
-                  {renderButton(item.status, item._id, item?.userId?.email)}
+                  {renderButton(
+                    item.status,
+                    item._id,
+                    item?.userId?.email,
+                    item?.userId?._id
+                  )}
                 </TableCell>
               </TableRow>
             ))}

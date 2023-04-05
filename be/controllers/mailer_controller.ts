@@ -419,9 +419,10 @@ const mailerController = {
           } else {
             const token = generateToken(check);
 
-            // res.cookie("CodeRegister", `${token}`, {
-            //   expires: new Date(Date.now() + 180 * 1000),
-            // });
+            res.cookie("CodeRegister", `${token}`, {
+              expires: new Date(Date.now() + 180 * 1000),
+              httpOnly: true,
+            });
             res.json(
               errorFunction(
                 false,

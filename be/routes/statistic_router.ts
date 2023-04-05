@@ -22,8 +22,8 @@ export const statisticRouter = (router: Router) => {
     statisticController.detailPaymentStatisticsForAbout
   );
 
-  // router.get(
-  //   "/statistic/payment-statistics-sale-agent",
-  //   statisticController.detailPaymentStatisticsForAboutSaleAgent
-  // );
+  router.get(
+    "/statistic/payment-statistics-sale-agent",
+    statisticController.detailPaymentStatisticsForAboutSaleAgent
+  );
 };

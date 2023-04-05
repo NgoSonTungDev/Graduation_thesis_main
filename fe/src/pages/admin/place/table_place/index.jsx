@@ -8,7 +8,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import _ from "lodash";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import axiosClient from "../../../../api/axiosClient";
@@ -19,50 +19,16 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import provinces from "../../../../asset/64_provinces_and_cities";
 
-const TablePlace = ({ data, deleteData }) => {
+const TablePlace = ({ data, deleteData, updateData }) => {
     const [editingRowIndex, setEditingRowIndex] = useState(null);
-    const [ticketId, setTicketId] = useState("");
+    const [placeId, setPlaceId] = useState("");
     const [loading, setLoading] = React.useState(false);
     const [openDelete, setOpenDelete] = React.useState(false);
-    const [valueCheckValidate, setValueCheckValidate] = useState({
-        // startingPrice: 0,
-        // LastPrice: 0,
-    });
-
-    const [age, setAge] = React.useState('');
-    const validationInput = yup.object().shape({
-        adultTicket: yup
-            .number()
-            .required("Không được để trống.")
-            .min(
-                Number(valueCheckValidate.startingPrice),
-                "Không nằm trong khoảng giá quy định !"
-            )
-            .typeError("Không được để trống")
-            .max(
-                Number(valueCheckValidate.LastPrice),
-                "Không nằm trong khoảng giá quy định !"
-            ),
-        childTicket: yup
-            .number()
-            .required("Không được để trống.")
-            .min(
-                Number(valueCheckValidate.startingPrice),
-                "Không nằm trong khoảng giá quy định !"
-            )
-            .typeError("Không được để trống")
-            .max(
-                Number(valueCheckValidate.LastPrice),
-                "Không nằm trong khoảng giá quy định !"
-            ),
-        numberTickets: yup
-            .number()
-            .min(50, "Ít nhất có 50 vé")
-            .max(500, "Tối đa 500 vé")
-            .typeError("Không được để trống")
-            .required("Không được để trống."),
-    });
+    const [dataType, setDataType] = React.useState([]);
+    const [dataPurpose, setDataPurpose] = React.useState([]);
+    const [listLocation, setListLocation] = useState(provinces);
 
     const {
         register,
@@ -71,16 +37,14 @@ const TablePlace = ({ data, deleteData }) => {
         reset,
     } = useForm({
         defaultValues: {
-            adultTicket: 0,
-            childTicket: 0,
-            numberTickets: 0,
+            type: "",
+            purpose: "",
+            location: "",
+            address: "",
+            name: "",
         },
-        resolver: yupResolver(validationInput),
     });
 
-    const handleChange = (event) => {
-        setAge(event.target.value);
-    };
 
     const handleClickOpenModalDelete = () => {
         setOpenDelete(true);
@@ -92,38 +56,86 @@ const TablePlace = ({ data, deleteData }) => {
 
     const handleEditButtonClick = (id, rowIndex) => {
         setEditingRowIndex(rowIndex);
-        setTicketId(id);
+        setPlaceId(id);
         const row = data[rowIndex];
 
-        setValueCheckValidate({
-            startingPrice: row.placeId?.startingPrice,
-            LastPrice: row.placeId?.LastPrice,
+        reset({
+            ...row,
         });
+    };
 
-        // reset({
-        //   ...row,
-        // });
+    const handleCancelButtonClick = () => {
+        setEditingRowIndex(null);
+    };
+
+    const handleSaveButtonClick = (data) => {
+        updateData(placeId, data);
+        axiosClient
+            .put(`/place/update/${placeId}`, {
+                location: data.location,
+                type: data.type,
+                purpose: data.purpose,
+                address: data.address,
+                name: data.name,
+            })
+            .then((res) => {
+                toastify("success", "Cập nhật thành công !");
+            })
+            .catch((err) => {
+                setLoading(false);
+                toastify("error", err.response.data.message || "Lỗi hệ thông !");
+            });
+        setEditingRowIndex(null);
     };
 
     const handleDelete = () => {
         setLoading(true);
-
-        // axiosClient
-        //   .delete(`/ticket/delete/${ticketId}`)
-        //   .then((res) => {
-        //     setLoading(false);
-        //     toastify("success", res.data.message || "Xóa thành công !");
-        //     handleCloseModalDelete();
-        //     deleteData(ticketId);
-        //   })
-        //   .catch((err) => {
-        //     setLoading(false);
-        //     toastify("error", err.response.data.message || "Lỗi hệ thông !");
-        //   });
+        axiosClient
+            .delete(`/place/delete/${placeId}`)
+            .then((res) => {
+                setLoading(false);
+                toastify("success", res.data.message || "Xóa thành công !");
+                handleCloseModalDelete();
+                deleteData(placeId);
+            })
+            .catch((err) => {
+                setLoading(false);
+                toastify("error", err.response.data.message || "Lỗi hệ thông !");
+            });
     };
+
+    const getApiType = () => {
+        axiosClient
+            .get(`type/all`)
+            .then((res) => {
+                setDataType(res.data.data)
+            })
+            .catch((err) => {
+                setLoading(false);
+                toastify("error", err.response.data.message || "Lỗi hệ thông !");
+            })
+    }
+
+    const getApiPurpose = () => {
+        axiosClient
+            .get(`purpose/all`)
+            .then((res) => {
+                setDataPurpose(res.data.data)
+            })
+            .catch((err) => {
+                setLoading(false);
+                toastify("error", err.response.data.message || "Lỗi hệ thông !");
+            })
+    }
+
+    useEffect(() => {
+        getApiType();
+        getApiPurpose();
+    }, []);
 
     return (
         <div>
+
             {_.isEmpty(data) ? (
                 <ErrorEmpty />
             ) : (
@@ -135,8 +147,8 @@ const TablePlace = ({ data, deleteData }) => {
                                 <TableCell align="center">Địa Điểm</TableCell>
                                 <TableCell align="center">Tỉnh/Thành phố</TableCell>
                                 <TableCell align="center">Khoảng giá</TableCell>
-                                <TableCell align="center">Mục Đích</TableCell>
                                 <TableCell align="center">Loại</TableCell>
+                                <TableCell align="center">Mục đích</TableCell>
                                 <TableCell align="center">Chức năng</TableCell>
                             </TableRow>
                         </TableHead>
@@ -144,8 +156,7 @@ const TablePlace = ({ data, deleteData }) => {
                         {data.map((item, index) => {
                             return (
                                 <TableBody key={index}>
-                                    <TableCell
-                                        align="left"
+                                    <TableCell align="left"
                                         sx={{
                                             overflow: "hidden",
                                             textOverflow: "ellipsis",
@@ -153,21 +164,40 @@ const TablePlace = ({ data, deleteData }) => {
                                             maxWidth: "150px",
                                         }}
                                     >
-                                        {item?.name}
+                                        {editingRowIndex === index ? (
+                                            <TextField
+                                                fullWidth
+                                                label={item?.name}
+                                                error={!!errors?.name}
+                                                {...register("name")}
+                                                helperText={errors.name?.message}
+                                                size="small"
+                                            >
+                                            </TextField>
+                                        ) : (
+                                            item?.name
+                                        )}
                                     </TableCell>
-                                    <TableCell
-                                        align="left"
-                                        sx={{
-                                            overflow: "hidden",
-                                            textOverflow: "ellipsis",
-                                            whiteSpace: "nowrap",
-                                            maxWidth: "150px",
-                                        }}
-                                    >
-                                        {item?.location}
+                                    <TableCell align="center">
+                                        {editingRowIndex === index ? (
+                                            <TextField
+                                                select
+                                                fullWidth
+                                                label={item?.location}
+                                                error={!!errors?.location}
+                                                {...register("location")}
+                                                helperText={errors.location?.message}
+                                                size="small"
+                                            >
+                                                {listLocation?.map((type) => (
+                                                    <MenuItem value={type.name}>{type.name}</MenuItem>
+                                                ))}
+                                            </TextField>
+                                        ) : (
+                                            item?.location
+                                        )}
                                     </TableCell>
-                                    <TableCell
-                                        align="left"
+                                    <TableCell align="left"
                                         sx={{
                                             overflow: "hidden",
                                             textOverflow: "ellipsis",
@@ -175,7 +205,19 @@ const TablePlace = ({ data, deleteData }) => {
                                             maxWidth: "150px",
                                         }}
                                     >
-                                        {item?.address}
+                                        {editingRowIndex === index ? (
+                                            <TextField
+                                                fullWidth
+                                                label={item?.address}
+                                                error={!!errors?.address}
+                                                {...register("address")}
+                                                helperText={errors.address?.message}
+                                                size="small"
+                                            >
+                                            </TextField>
+                                        ) : (
+                                            item?.address
+                                        )}
                                     </TableCell>
                                     <TableCell align="center" sx={{ whiteSpace: "nowrap" }}>
                                         {formatMoney(item?.startingPrice)} -{" "}
@@ -183,51 +225,54 @@ const TablePlace = ({ data, deleteData }) => {
                                     </TableCell>
                                     <TableCell align="center">
                                         {editingRowIndex === index ? (
-                                            <FormControl fullWidth>
-                                                <InputLabel id="demo-simple-select-label" align="center">Mục Đích</InputLabel>
-                                                <Select
-                                                    labelId="demo-simple-select-label"
-                                                    id="demo-simple-select"
-                                                    label="Chọn Mục Đích"
-                                                    error={!!errors?.childTicket}
-                                                    {...register("childTicket")}
-                                                    helperText={errors.childTicket?.message}
-                                                >
-                                                    <MenuItem value={1}>Vui Chơi</MenuItem>
-                                                    <MenuItem value={2}>Vui Chơi, Giải Trí</MenuItem>
-                                                    <MenuItem value={3}>Hẹn Hò</MenuItem>
-                                                    <MenuItem value={4}>Ăn Uống</MenuItem>
-                                                    <MenuItem value={5}>Sống Ảo</MenuItem>
-                                                    <MenuItem value={6}>Phiêu Lưu</MenuItem>
-                                                    <MenuItem value={7}>Phiêu Lưu Kí</MenuItem>
-                                                </Select>
-                                            </FormControl>
+                                            <TextField
+                                                select
+                                                fullWidth
+                                                label={item?.type}
+                                                error={!!errors?.type}
+                                                {...register("type")}
+                                                helperText={errors.type?.message}
+                                                size="small"
+                                            >
+                                                {dataType?.map((type) => (
+                                                    <MenuItem value={type.name}>{type.name}</MenuItem>
+                                                ))}
+                                            </TextField>
+                                        ) : (
+                                            item?.type
+                                        )}
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        {editingRowIndex === index ? (
+                                            <TextField
+                                                select
+                                                fullWidth
+                                                name="purpose"
+                                                label={item?.purpose}
+                                                error={!!errors?.purpose}
+                                                {...register("purpose")}
+                                                helperText={errors.purpose?.message}
+                                                size="small"
+                                            >
+                                                {dataPurpose?.map((purpose) => (
+                                                    <MenuItem value={purpose.name}>{purpose.name}</MenuItem>
+                                                ))}
+                                            </TextField>
                                         ) : (
                                             item?.purpose
                                         )}
-                                    </TableCell>
-                                    <TableCell
-                                        align="left"
-                                        sx={{
-                                            overflow: "hidden",
-                                            textOverflow: "ellipsis",
-                                            whiteSpace: "nowrap",
-                                            maxWidth: "150px",
-                                        }}
-                                    >
-                                        {item?.type}
                                     </TableCell>
                                     <TableCell align="center" sx={{ flexWrap: "nowrap" }}>
                                         {editingRowIndex === index ? (
                                             <>
                                                 <Button
-                                                // onClick={handleSubmit(handleSaveButtonClick)}
+                                                    onClick={handleSubmit(handleSaveButtonClick)}
                                                 >
                                                     Lưu
                                                 </Button>
                                                 <Button
                                                     onClick={() => {
-                                                        // handleCancelButtonClick();
+                                                        handleCancelButtonClick();
                                                     }}
                                                 >
                                                     Hủy
@@ -244,8 +289,8 @@ const TablePlace = ({ data, deleteData }) => {
                                         )}
                                         <Button
                                             onClick={() => {
-                                                // handleClickOpenModalDelete();
-                                                // setTicketId(item._id);
+                                                handleClickOpenModalDelete();
+                                                setPlaceId(item._id);
                                             }}
                                         >
                                             Xóa

@@ -43,6 +43,7 @@ const Home = () => {
 
   useEffect(() => {
     AOS.init({ duration: 800 });
+    window.scrollTo(0, 0);
   }, []);
 
   return (

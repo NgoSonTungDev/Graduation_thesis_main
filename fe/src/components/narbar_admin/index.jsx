@@ -7,7 +7,7 @@ import { FaRegHeart } from "react-icons/fa";
 import { FiHome, FiLogOut } from "react-icons/fi";
 import { GoPackage } from "react-icons/go";
 import ConfirmationNumberOutlinedIcon from "@mui/icons-material/ConfirmationNumberOutlined";
-
+import { HiOutlineTicket } from "react-icons/hi";
 import {
   MdEditLocationAlt,
   MdEditNote,
@@ -168,7 +168,7 @@ const Header = ({ ReactNode }) => {
                   </MenuItem>
                   <MenuItem
                     active={pathName === "/admin/ticket" && true}
-                    icon={<ConfirmationNumberOutlinedIcon />}
+                    icon={<HiOutlineTicket />}
                     onClick={() => {
                       movePage("/admin/ticket");
                     }}

@@ -43,6 +43,7 @@ const orderController = {
       const condition = status ? { status: status } : {};
 
       const result = await Orders.find(condition)
+        .sort({ createdAt: -1 })
         .skip(SkipNumber)
         .limit(Number(limit))
         .populate("userId", ["userName", "email", "address", "numberPhone"])
@@ -93,6 +94,7 @@ const orderController = {
         : { salesAgentId: req.params.saleAgentId };
 
       const result = await Orders.find(filter)
+        .sort({ createdAt: -1 })
         .skip(SkipNumber)
         .limit(Number(limit))
         .populate("userId", ["userName", "email", "address", "numberPhone"])
@@ -143,6 +145,7 @@ const orderController = {
         : { userId: req.params.userId };
 
       const result = await Orders.find(filter)
+        .sort({ createdAt: -1 })
         .skip(SkipNumber)
         .limit(Number(limit))
         .populate("userId", ["userName", "email", "address", "numberPhone"])

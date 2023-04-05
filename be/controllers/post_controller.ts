@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import Posts from "../models/post";
+import { ICondition } from "../types/common";
 import { errorFunction } from "../utils/errorFunction";
 
 const postController = {
@@ -20,16 +21,18 @@ const postController = {
 
       const SkipNumber = (Number(pageNumber) - 1) * Number(5);
 
-      const condition = placeID
-        ? { placeId: placeID, public: active }
-        : { public: active };
+      const condition: ICondition = { public: Boolean(active) };
+
+      if (placeID) {
+        condition.placeId = placeID;
+      }
 
       const allPost = await Posts.find(condition);
 
       const result = await Posts.find(condition)
+        .sort({ createdAt: -1 })
         .skip(SkipNumber)
         .limit(Number(5))
-        .populate("userId", ["userName", "avt"])
         .populate("userId", ["userName", "avt"])
         .populate("placeId", "name");
 
@@ -59,7 +62,7 @@ const postController = {
     try {
       const data = await Posts.find({ userId: req.params.id })
         .populate("placeId", "name")
-        .populate("userId", ["userName","avt"]);
+        .populate("userId", ["userName", "avt"]);
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {

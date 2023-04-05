@@ -1,5 +1,6 @@
 import { io } from "socket.io-client";
 import { addMessage } from "../redux/chat_box/chatBoxSlice";
+import { addNotify } from "../redux/notify/notifySlice";
 import store from "../redux/store";
 import { toastify } from "../utils/common";
 
@@ -30,6 +31,10 @@ class WebsocketClient {
       toastify("info", "Bạn có 1 tin nhắn mới.");
       dispatch(addMessage(data));
     });
+    this.io.on("receive_notify", (data) => {
+      toastify("info", "Bạn có 1 thông báo mới.");
+      dispatch(addNotify(data));
+    });
   }
 
   joinRoom(roomId) {
@@ -40,8 +45,8 @@ class WebsocketClient {
     this.io.emit("send_message", message);
   }
 
-  joinRoomNotify(roomId = "63eb395175a1b450e28d9665") {
-    this.io.emit("join_room_notify", roomId);
+  joinRoomNotify(userId) {
+    this.io.emit("join_room_notify", userId);
   }
 
   sendNotify(message) {

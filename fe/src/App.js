@@ -28,8 +28,13 @@ import VoucherManagement from "./pages/admin/voucher";
 import TicketSaleAgent from "./pages/sale_agent/ticket";
 import ws from "./socket";
 import PlaceDetail from "./pages/place_detail";
-import TicketMangement from "./pages/admin/ticket";
+import RegisterAgency from "./pages/auth/register_agency";
+import ForgotPassword from "./pages/auth/forgot_password";
+import ChangePassword from "./components/change_password";
+import TicketManagement from "./pages/admin/ticket";
 import PlaceMangement from "./pages/admin/place";
+import SaleAgentStatistic from "./pages/sale_agent/statistic";
+
 const App = () => {
   const open = useSelector(OpenChatBox);
 
@@ -45,9 +50,11 @@ const App = () => {
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/register-agency" element={<RegisterAgency />} />
+          <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/place" element={<Place />} />
           <Route path="/review" element={<Review />} />
-          <Route path="/profile/:id" element={<Profile />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/profile/:id" element={<Profile />} />
           <Route path="/voucher" element={<Voucher />} />
@@ -62,7 +69,7 @@ const App = () => {
           <Route path="/admin/statistic" element={<Statistic />} />
           <Route path="/admin/order" element={<OrderManagement />} />
           <Route path="/admin/voucher" element={<VoucherManagement />} />
-          <Route path="/admin/ticket" element={<TicketMangement />} />
+          <Route path="/admin/ticket" element={<TicketManagement />} />
           <Route path="/admin/place" element={<PlaceMangement />} />
 
           {/* saleAgent */}
@@ -74,6 +81,10 @@ const App = () => {
           <Route
             path="/sale-agent/ticket-management"
             element={<TicketSaleAgent />}
+          />
+          <Route
+            path="/sales-agent/statistic"
+            element={<SaleAgentStatistic />}
           />
 
           <Route path="*" element={<NotFound />} />
