@@ -56,8 +56,9 @@ const Home = () => {
           <div className="home__banner_image">
             <img
               width={"100%"}
-              style={{ objectFit: "center" }}
-              src="https://images.unsplash.com/photo-1551254656-e9cd460b5cd1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1229&q=80"
+              height={"100%"}
+              style={{ objectFit: "cover" }}
+              src="https://images.unsplash.com/photo-1582473788903-afc455672cf6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
               alt=""
             />
           </div>
