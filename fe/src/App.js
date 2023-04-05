@@ -110,7 +110,7 @@ const App = () => {
         />
         <ToastContainer />
       </BrowserRouter>
-    </div>
+    </div> 
   );
 };
 
