@@ -11,6 +11,7 @@ const notificationSchema = new mongoose.Schema<INotify>({
   dateTime: {
     type: Number,
     required: true,
+    default: Number(new Date()),
   },
   status: {
     type: Boolean,

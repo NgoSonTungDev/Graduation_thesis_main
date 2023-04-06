@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useNavigation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -16,6 +16,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { Button } from "antd";
 import axiosClient from "../../../../api/axiosClient";
 import { toastify } from "../../../../utils/common";
+import { removeUserIdLocalStorage } from "../../../../utils/localstorage";
 
 const validationInput = yup.object().shape({
   code_otp: yup
@@ -34,17 +35,16 @@ const validationInput = yup.object().shape({
     .oneOf([yup.ref("new_password"), null], "Không trùng khớp."),
 });
 
-const id = localStorage.getItem("id");
-
 const ModalForgotPassword = ({ open, handleClose }) => {
   const [check, setCheck] = useState(false);
   const navigation = useNavigate();
-
-  const id = localStorage.getItem("id");
+  const [timeLeft, setTimeLeft] = useState(180);
+  const id = localStorage.getItem("userId");
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isDirty, isValid },
   } = useForm({
     defaultValues: {
@@ -65,10 +65,12 @@ const ModalForgotPassword = ({ open, handleClose }) => {
         password: data.new_password,
       })
       .then((res) => {
-        console.log("true");
         setCheck(false);
         handleClose();
         navigation("/login");
+        removeUserIdLocalStorage();
+        toastify("success", "Cập nhật mật khẩu thành công !!!");
+        reset();
       })
       .catch((err) => {
         console.log("false");
@@ -76,6 +78,29 @@ const ModalForgotPassword = ({ open, handleClose }) => {
         console.log("false");
         toastify("error", err.response.data.message || "Lỗi hệ thống !");
       });
+  };
+
+  useEffect(() => {
+    let countdownTimer = null;
+
+    if (timeLeft > 0) {
+      countdownTimer = setInterval(() => {
+        setTimeLeft(timeLeft - 1);
+      }, 1000);
+    }
+
+    if (timeLeft === 0) {
+      clearInterval(countdownTimer);
+    }
+
+    return () => clearInterval(countdownTimer);
+  }, [timeLeft]);
+
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
   return (
@@ -95,6 +120,14 @@ const ModalForgotPassword = ({ open, handleClose }) => {
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
+              <Box sx={{ width: "400px" }}>
+                Mã OTP có thời gian hiệu lực trong 3 phút sẽ được gửi về email
+                của bạn dùng để xác thực tài khoảng của bạn.
+                <p style={{ margin: "5px 0", fontSize: "13px" }}>
+                  Thời gian hiệu lực còn lại :{" "}
+                  <i style={{ fontWeight: "600" }}>{formatTime(timeLeft)}</i>
+                </p>
+              </Box>
               <Box sx={{ width: "400px" }}>
                 <TextField
                   error={!!errors?.code_otp}

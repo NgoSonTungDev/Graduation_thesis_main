@@ -1,16 +1,15 @@
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import CreateIcon from "@mui/icons-material/Create";
-import EmailIcon from "@mui/icons-material/Email";
-import WcIcon from "@mui/icons-material/Wc";
-import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import PhoneIcon from "@mui/icons-material/Phone";
-import HomeIcon from "@mui/icons-material/Home";
-import LoadingButton from "@mui/lab/LoadingButton";
-import * as yup from "yup";
-import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import EmailIcon from "@mui/icons-material/Email";
+import HomeIcon from "@mui/icons-material/Home";
+import PhoneIcon from "@mui/icons-material/Phone";
+import WcIcon from "@mui/icons-material/Wc";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { Image } from "antd";
 import {
   Button,
   Dialog,
@@ -22,22 +21,22 @@ import {
   Skeleton,
   TextField,
 } from "@mui/material";
+import axios from "axios";
 import _ from "lodash";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axiosClient from "../../api/axiosClient";
 import ErrorEmpty from "../../components/emty_data";
 import CardPost from "../../components/explore/card_post";
+import Footer from "../../components/footer";
 import Navbar from "../../components/navbar";
-import moment from "moment";
-import { formatDate, toastify } from "../../utils/common";
-import "./style.scss";
-import axios from "axios";
+import { toastify } from "../../utils/common";
 import {
   getUserDataLocalStorage,
   setUserDataLocalStorage,
 } from "../../utils/localstorage";
-import Footer from "../../components/footer";
+import "./style.scss";
 
 const validation = yup.object().shape({
   address: yup
@@ -59,31 +58,20 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [loadingImage, setLoadingImage] = useState(false);
   const [loadingInformation, setLoadingInformation] = useState(false);
-  const [username, setUserName] = useState("");
-
-  const [open, setOpen] = React.useState(false);
   const [openDialogAvt, setOpenDialogAvt] = React.useState(false);
   const [openDialogInformation, setOpenDialogInformation] =
     React.useState(false);
-
   const [file, setFile] = useState(null);
   const userIdStorage = getUserDataLocalStorage();
-
   const [image, setImage] = useState("");
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const handleOpenDialogAvt = () => {
     setOpenDialogAvt(true);
   };
 
   const handleCloseDialogAvt = () => {
+    setImage("");
+    setFile(null);
     setOpenDialogAvt(false);
   };
 
@@ -98,7 +86,7 @@ const Profile = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty, isValid },
+    formState: { errors },
   } = useForm({
     defaultValues: {
       gender: "Nam",
@@ -128,7 +116,6 @@ const Profile = () => {
     axiosClient
       .get(`/user/get-an/${id}`)
       .then((res) => {
-        setUserName(res.data.data.userName);
         setData(res.data.data);
         setLoading(false);
       })
@@ -155,7 +142,7 @@ const Profile = () => {
       })
       .catch((err) => {
         setLoadingInformation(false);
-        handleClose();
+        handleCloseDialogInformation();
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
@@ -204,11 +191,8 @@ const Profile = () => {
         <div className="profile-header">
           <div className="profile-bg">
             <div className="profile-avatar">
-              <img
-                alt=""
+              <Image
                 style={{
-                  position: "absolute",
-                  width: "100%",
                   objectFit: "cover",
                 }}
                 src={userIdStorage?.avt}
@@ -268,7 +252,9 @@ const Profile = () => {
                     <HomeIcon className="icon" />
                     Địa chỉ
                   </span>
-                  <span className="text-detail">{data.address}</span>
+                  <span className="text-detail">
+                    {data.address ? data.address : "Chưa cập nhật"}
+                  </span>
                 </div>
                 <div className="details">
                   <span>
@@ -276,7 +262,9 @@ const Profile = () => {
                     Số điện thoại
                   </span>
 
-                  <span className="text-detail">{data.numberPhone}</span>
+                  <span className="text-detail">
+                    {data.numberPhone ? data.numberPhone : "Chưa cập nhật"}
+                  </span>
                 </div>
                 <div className="details">
                   <span>
@@ -288,24 +276,27 @@ const Profile = () => {
                     {moment(data.createdAt).format("DD/MM/yyyy")}
                   </span>
                 </div>
-                <div
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    paddingBottom: "10px",
-                  }}
-                >
-                  <Button onClick={handleOpenDialogInformation}>
-                    Chỉnh sửa
-                  </Button>
-                </div>
+                {id === userIdStorage._id && (
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                      paddingBottom: "10px",
+                    }}
+                  >
+                    <Button onClick={handleOpenDialogInformation}>
+                      Chỉnh sửa
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
             {loading ? (
               <div className="profile-content">
                 {[1, 2, 3, 4, 5, 6].map((item, index) => (
                   <Skeleton
+                    key={index}
                     variant="rectangular"
                     sx={{ width: "300px", height: "385px", margin: "38px" }}
                   />
@@ -332,7 +323,7 @@ const Profile = () => {
         <Dialog
           open={openDialogAvt}
           keepMounted
-          onClose={handleClose}
+          onClose={handleCloseDialogAvt}
           aria-describedby="alert-dialog-slide-description"
         >
           <DialogTitle
@@ -355,7 +346,7 @@ const Profile = () => {
                   style={{
                     width: "100%",
                     height: "427px",
-                    objectFit: "center",
+                    objectFit: "contain",
                   }}
                   src={image}
                   alt=""

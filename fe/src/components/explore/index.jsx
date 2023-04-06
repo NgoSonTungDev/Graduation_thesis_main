@@ -80,7 +80,7 @@ const Explore = () => {
   };
 
   const getApiAllPost = () => {
-    // setLoading(true);
+    setLoading(true);
     axiosClient
       .get(`post/all?${queryString.stringify(payloadPost)}`)
       .then((res) => {
@@ -93,7 +93,7 @@ const Explore = () => {
       });
   };
   const handelDeleteDataPost = (id) => {
-    getApiAllPost()
+    getApiAllPost();
   };
 
   useEffect(() => {

@@ -28,15 +28,25 @@ import VoucherManagement from "./pages/admin/voucher";
 import TicketSaleAgent from "./pages/sale_agent/ticket";
 import ws from "./socket";
 import PlaceDetail from "./pages/place_detail";
+import RegisterAgency from "./pages/auth/register_agency";
 import ForgotPassword from "./pages/auth/forgot_password";
 import ChangePassword from "./components/change_password";
-import RegisterAgency from "./pages/auth/register_agency";
+import TicketManagement from "./pages/admin/ticket";
+import SaleAgentStatistic from "./pages/sale_agent/statistic";
+import { getUserDataLocalStorage } from "./utils/localstorage";
 
 const App = () => {
   const open = useSelector(OpenChatBox);
+  const userIdStorage = getUserDataLocalStorage();
 
   useEffect(() => {
     ws.initialize();
+    if (userIdStorage && userIdStorage.isAdmin === 1) {
+      ws.joinRoom(userIdStorage?.roomId);
+      ws.joinRoomNotify(userIdStorage?._id);
+    } else if (userIdStorage && userIdStorage.isAdmin === 2) {
+      ws.joinRoom(userIdStorage?.roomId);
+    }
   }, []);
 
   return (
@@ -66,7 +76,7 @@ const App = () => {
           <Route path="/admin/statistic" element={<Statistic />} />
           <Route path="/admin/order" element={<OrderManagement />} />
           <Route path="/admin/voucher" element={<VoucherManagement />} />
-          {/* <Route path="/admin/ticket" element={<TicketMangement />} /> */}
+          <Route path="/admin/ticket" element={<TicketManagement />} />
 
           {/* saleAgent */}
           <Route path="/sale-agent/home" element={<HomeSaleAgent />} />
@@ -77,6 +87,10 @@ const App = () => {
           <Route
             path="/sale-agent/ticket-management"
             element={<TicketSaleAgent />}
+          />
+          <Route
+            path="/sales-agent/statistic"
+            element={<SaleAgentStatistic />}
           />
 
           <Route path="*" element={<NotFound />} />

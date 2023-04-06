@@ -1,7 +1,9 @@
-import { Avatar } from "@mui/material";
 import React from "react";
+import { momentLocale } from "../../../utils/common";
+import image from "../images/acount.jpeg";
 import "./index.scss";
-export default function NotificationItem() {
+
+export default function NotificationItem({ data }) {
   return (
     <div>
       <div className="Container_notify_item">
@@ -16,20 +18,21 @@ export default function NotificationItem() {
           >
             <img
               style={{ width: "100%", objectFit: "center" }}
-              src="https://images.pexels.com/photos/10041677/pexels-photo-10041677.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load"
+              src={image}
               alt=""
             />
           </div>
         </div>
-        <div>
+        <div style={{ width: "70%" }}>
           <p
             style={{ margin: 0, padding: 0, fontSize: "15px", maxWidth: "95%" }}
           >
-            <span style={{ fontWeight: "600" }}>Sontung</span> đã trả lời bình
-            luận của bạn
+            {/* <span style={{ fontWeight: "600" }}>Sontung</span> đã trả lời bình
+            luận của bạn */}
+            {data.content}
           </p>
           <span style={{ color: "#00000e", fontSize: "12px" }}>
-            1 phut truoc{" "}
+            {momentLocale(data.dateTime)}
           </span>
         </div>
       </div>

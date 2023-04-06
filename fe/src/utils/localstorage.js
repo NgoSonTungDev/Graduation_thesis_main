@@ -17,3 +17,11 @@ export const setOrderLocalStorage = (data) => {
 export const removeOrderLocalStorage = () => {
   return localStorage.removeItem("order");
 };
+
+export const setUserIdLocalStorage = (data) => {
+  return localStorage.setItem("userId", data);
+};
+
+export const removeUserIdLocalStorage = () => {
+  return localStorage.removeItem("userId");
+};
