@@ -6,20 +6,9 @@ import { Box, Tabs, Tab, Button } from "@mui/material";
 import logo1 from "./images/logo1.svg";
 
 const Footer = () => {
-  const navigation = useNavigate();
-
   return (
     <div>
       <div className="container_footer">
-        <div className="footer_Top">
-          {/* <div>
-                        <img src={logo1} alt="" />
-                    </div> */}
-          <span> Chúng tôi có đang bỏ lỡ địa điểm nào bạn biết ? </span>
-          <div className="Button">
-            <Button variant="contained">ĐÓNG GÓP ĐỊA ĐIỂM</Button>
-          </div>
-        </div>
         <div className="footer_Main">
           <div className="footer_Main_left">
             <span className="logo">
@@ -72,7 +61,8 @@ const Footer = () => {
         </div>
         <div className="deSign">
           <p>
-            Bản quyền © 2022 <span style={{ color: "red" }}>Love Travel</span>
+            Bản quyền © 2023{" "}
+            <span style={{ color: "red" }}>Mafline Travel</span>
           </p>
         </div>
       </div>

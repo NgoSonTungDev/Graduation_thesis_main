@@ -6,6 +6,7 @@ import { errorFunction } from "../utils/errorFunction";
 const validation = joi.object<IPost>({
   content: joi.string().required(),
   image: joi.string().required(),
+  public:joi.boolean(),
   placeId: joi.string().required(),
   userId: joi.string().required(),
   rating: joi.number().required().min(0).max(5),

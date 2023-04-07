@@ -1,6 +1,16 @@
-import React, { useState } from "react";
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import React, { useState } from "react";
+import { AiOutlineBarChart, AiOutlineMessage } from "react-icons/ai";
+import { BiCreditCardFront } from "react-icons/bi";
+import { FaRegHeart } from "react-icons/fa";
+import { FiHome, FiLogOut } from "react-icons/fi";
+import { GoPackage } from "react-icons/go";
+import {
+  MdEditLocationAlt,
+  MdEditNote,
+  MdOutlineManageAccounts,
+} from "react-icons/md";
 import {
   Menu,
   MenuItem,
@@ -9,24 +19,16 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "react-pro-sidebar";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./style.scss";
-import { AiOutlineMessage, AiOutlineBarChart } from "react-icons/ai";
-import {
-  MdEditLocationAlt,
-  MdEditNote,
-  MdOutlineManageAccounts,
-} from "react-icons/md";
-import { BiCog, BiCreditCardFront } from "react-icons/bi";
-import { FaRegHeart } from "react-icons/fa";
-import { FiHome, FiLogOut } from "react-icons/fi";
-import { GoPackage } from "react-icons/go";
-import { useNavigate } from "react-router-dom";
 
 import "react-pro-sidebar/dist/css/styles.css";
+import { removeUserDataLocalStorage } from "../../utils/localstorage";
 
 const Header = ({ ReactNode }) => {
   const [menuCollapse, setMenuCollapse] = useState(true);
-  const [pathName, setPathName] = useState("/admin/home");
+  const location = useLocation();
+  const pathName = location.pathname;
   const navigation = useNavigate();
 
   const menuIconClick = () => {
@@ -36,7 +38,6 @@ const Header = ({ ReactNode }) => {
   const movePage = (path) => {
     navigation(path);
     setMenuCollapse(true);
-    setPathName(path);
   };
 
   return (
@@ -134,19 +135,25 @@ const Header = ({ ReactNode }) => {
                     Account management
                   </MenuItem>
                   <MenuItem
-                    active={pathName === "admin" && true}
+                    active={pathName === "/admin/order" && true}
                     icon={<GoPackage />}
+                    onClick={() => {
+                      movePage("/admin/order");
+                    }}
                   >
                     Order management
                   </MenuItem>
                   <MenuItem
-                    active={pathName === "admin" && true}
+                    active={pathName === "/admin/voucher" && true}
                     icon={<BiCreditCardFront />}
+                    onClick={() => {
+                      movePage("/admin/voucher");
+                    }}
                   >
                     Voucher manager
                   </MenuItem>
                   <MenuItem
-                    active={pathName === "admin" && true}
+                    active={pathName === "/admin/statistic" && true}
                     icon={<AiOutlineBarChart />}
                     onClick={() => {
                       movePage("/admin/statistic");
@@ -158,8 +165,14 @@ const Header = ({ ReactNode }) => {
               </div>
             </SidebarContent>
             <SidebarFooter>
-              <Menu iconShape="square">
-                <MenuItem icon={<FiLogOut />}>Logout</MenuItem>
+              <Menu
+                iconShape="square"
+                onClick={() => {
+                  removeUserDataLocalStorage();
+                  navigation("/home");
+                }}
+              >
+                <MenuItem icon={<FiLogOut />}>Exit</MenuItem>
               </Menu>
             </SidebarFooter>
           </ProSidebar>

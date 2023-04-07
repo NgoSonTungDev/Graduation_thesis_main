@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "./style.scss";
 import axiosClient from "../../api/axiosClient";
 import MapData from "./data_vocher";
 import { toastify } from "../../utils/common";
@@ -27,10 +26,15 @@ const Voucher = () => {
     setOpenModal(false);
   };
 
-  const getApiVocher = () => {
+  const getApiVoucher = () => {
     setLoading(true);
     axiosClient
-      .get(`voucher/get-all?${qs.stringify({ placeID: placeId._id })}`)
+      .get(
+        `voucher/get-all?${qs.stringify({
+          placeID: placeId._id,
+          active: true,
+        })}`
+      )
       .then((res) => {
         setData(res.data.data);
         setLoading(false);
@@ -42,7 +46,7 @@ const Voucher = () => {
   };
 
   useEffect(() => {
-    getApiVocher();
+    getApiVoucher();
   }, [placeId]);
 
   return (
@@ -59,9 +63,6 @@ const Voucher = () => {
             display: "flex",
             width: "100%",
             backgroundColor: "rgb(244 74 110 / 20%)",
-            // backgroundColor: "rgb(215,0,22)",
-            // backgroundColor:
-            //   "linear-gradient(180deg, rgba(215,0,22,0.8352591036414566) 0%, rgba(215,0,6,0.7904411764705882) 31%, rgba(255,0,0,0.5691526610644257) 72%)",
           }}
         >
           <div
@@ -77,15 +78,15 @@ const Voucher = () => {
               <b style={{ fontSize: 30 }}>Cập nhật khuyến mãi hiện hành</b>
             </div>
             <div>
-              <span style={{ fontSize: 18 }}>
+              <p style={{ fontSize: 18, padding: 0 }}>
                 Bạn đang tìm kiếm một góc cafe để sống ảo?
-              </span>
-            </div>
-            <div>
+              </p>
               <span style={{ fontSize: 18 }}>
                 Hãy tiết kiệm hơn với các chương trình khuyến mãi của chúng tôi
                 ở dưới đây.
               </span>
+            </div>
+            <div>
               <div className="Button" style={{ paddingTop: "20px" }}>
                 <Button
                   variant="contained"
@@ -100,11 +101,14 @@ const Voucher = () => {
         </div>
 
         <div
-          className="card_voucher"
           style={{
-            width: "87%",
-            textTransform: "capitalize",
+            width: "80%",
+            marginLeft: "10%",
+            marginTop: "15px",
+            display: "flex",
+            flexWrap: "wrap",
             boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
+            justifyContent: "space-around",
           }}
         >
           {_.isEmpty(data) ? (

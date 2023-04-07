@@ -11,4 +11,5 @@ export interface IOrder {
   userId: any;
   placeId: any;
   salesAgentId: any;
+  ticketId: any;
 }

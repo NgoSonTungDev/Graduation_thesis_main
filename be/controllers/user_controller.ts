@@ -21,13 +21,26 @@ const userController = {
   },
   getAllUser: async (req: Request, res: Response) => {
     try {
-      const { pageNumber, userName, limit } = req.query;
+      const { pageNumber, userName, limit, isAdmin } = req.query;
 
       const SkipNumber = (Number(pageNumber) - 1) * Number(limit);
 
-      const condition = userName
-        ? { userName: { $regex: new RegExp(userName + ""), $options: "i" } }
-        : {};
+      const condition =
+        userName || isAdmin
+          ? {
+              $and: [
+                {
+                  userName: {
+                    $regex: new RegExp(userName + ""),
+                    $options: "i",
+                  },
+                },
+                {
+                  isAdmin: Number(isAdmin),
+                },
+              ],
+            }
+          : {};
 
       const allUser = await Users.find(condition);
 
@@ -66,7 +79,7 @@ const userController = {
 
       await userId.updateOne({ $set: req.body });
 
-      res.json(errorFunction(true, 200, "Cập nhật thành công !"));
+      res.json(errorFunction(false, 200, "Cập nhật thành công !"));
     } catch (error) {
       res.status(400).json({
         message: "Bad request",
@@ -88,6 +101,7 @@ const userController = {
           password: hashedPassword,
         },
       });
+
       res.json(errorFunction(true, 200, "Cập nhật mật khẩu thành công !"));
     } catch (error) {
       console.log("error: ", error);

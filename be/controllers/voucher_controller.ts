@@ -2,6 +2,7 @@ import { IVoucher } from "./../types/voucher";
 import Vouchers from "../models/voucher";
 import { errorFunction } from "../utils/errorFunction";
 import { Request, Response, NextFunction } from "express";
+import { ObjectId } from "mongodb";
 
 const fakeCode = (length: number) => {
   let result = "";
@@ -41,61 +42,82 @@ const voucherController = {
       });
     }
   },
-  getByIdVoucher: async (req: Request, res: Response) => {
+  getByPlaceId: async (req: Request, res: Response) => {
     try {
-      const { codeVoucher } = req.query;
-
-      const filter = {
-        $and: [
-          {
-            codeVoucher: {
-              $regex: codeVoucher,
-              $options: "$i",
-            },
+      const data = await Vouchers.aggregate([
+        {
+          $match: {
+            $and: [
+              {
+                placeId: req.params.placeId,
+              },
+              {
+                public: true,
+              },
+            ],
           },
-          {
-            placeId: req.params.id,
-          },
-        ],
-      };
-
-      const data = await Vouchers.find(filter);
+        },
+      ]);
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {
       res.status(500).json(error);
     }
   },
+  findVoucher: async (req: Request, res: Response) => {
+    try {
+      const { codeVoucher, placeId } = req.query;
+
+      const data = await Vouchers.findOne({
+        codeVoucher: codeVoucher,
+      }).populate("placeId", "name");
+
+      if (String(data?.placeId?._id) === placeId && data?.public === true) {
+        res.json(errorFunction(false, 200, "Lấy thành công !", data));
+      } else {
+        res.json(
+          errorFunction(false, 402, "Không sử dụng được mã giảm giá này!")
+        );
+      }
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { placeID } = req.query;
+      const { placeID, active } = req.query;
 
-      const dataEndTime = await (
-        await Vouchers.find()
-      ).filter((e) => {
-        return e.endDate > Number(new Date());
-      });
+      // const dataEndTime = await (
+      //   await Vouchers.find()
+      // ).filter((e) => {
+      //   return e.endDate > Number(new Date());
+      // });
 
-      const dataStartTime = await (
-        await Vouchers.find()
-      ).filter((e) => {
-        return e.startDate < Number(new Date());
-      });
+      // const dataStartTime = await (
+      //   await Vouchers.find()
+      // ).filter((e) => {
+      //   return e.startDate < Number(new Date());
+      // });
 
-      const listEndTime = dataEndTime.map((e) => e._id);
-      const listStartTime = dataStartTime.map((e) => e._id);
+      // const listEndTime = dataEndTime.map((e) => e._id);
+      // const listStartTime = dataStartTime.map((e) => e._id);
 
-      if (listStartTime.length > 0) {
-        await Promise.all(listStartTime.map((e) => updateByIdStartTime(e)));
-      }
+      // if (listStartTime.length > 0) {
+      //   await Promise.all(listStartTime.map((e) => updateByIdStartTime(e)));
+      // }
 
-      if (listEndTime.length > 0) {
-        await Promise.all(listEndTime.map((e) => deleteByIdEndTime(e)));
-      }
+      // if (listEndTime.length > 0) {
+      //   await Promise.all(listEndTime.map((e) => deleteByIdEndTime(e)));
+      // }
 
-      const condition = placeID ? { placeId: placeID } : {};
+      const condition = placeID
+        ? { placeId: placeID, public: active }
+        : { public: active };
 
-      const newData = await Vouchers.find(condition);
+      const newData = await Vouchers.find(condition).populate(
+        "placeId",
+        "name"
+      );
 
       res.json(errorFunction(false, 200, "Lấy thành công !", newData));
     } catch (error) {

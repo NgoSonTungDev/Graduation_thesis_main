@@ -8,21 +8,13 @@ const notificationSchema = new mongoose.Schema<INotify>({
     type: String,
     required: true,
   },
-  time: {
+  dateTime: {
     type: Number,
     required: true,
   },
   status: {
     type: Boolean,
     default: true,
-  },
-  postId: {
-    type: String,
-    required: false,
-  },
-  placeId: {
-    type: String,
-    required: false,
   },
 });
 

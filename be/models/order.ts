@@ -39,7 +39,8 @@ const orderSchema = new mongoose.Schema<IOrder>(
       required: true,
     },
     placeId: { type: Schema.Types.ObjectId, ref: "Place" },
-    salesAgentId: { type: Schema.Types.ObjectId, ref: "SalesAgent" },
+    salesAgentId: { type: Schema.Types.ObjectId, ref: "User" },
+    ticketId: { type: Schema.Types.ObjectId, ref: "Ticket" },
   },
   { timestamps: true }
 );

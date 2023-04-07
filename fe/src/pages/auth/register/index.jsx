@@ -6,6 +6,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { width } from "@mui/system";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -41,6 +42,7 @@ const Register = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     defaultValues: {
       userName: "",
@@ -100,6 +102,8 @@ const Register = () => {
           );
           handleClose();
           setLoadingPage(false);
+          navigation("/login");
+          reset();
         })
         .catch((err) => {
           toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -121,7 +125,14 @@ const Register = () => {
         >
           Chào mừng bạn gia nhập với cộng đồng MAFLINE
         </h3>
-        <div style={{ display: "flex", gap: "25px", flexDirection: "column" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "25px",
+            flexDirection: "column",
+            paddingBottom: "20px",
+          }}
+        >
           <TextField
             error={!!errors?.userName}
             {...register("userName")}
@@ -159,11 +170,12 @@ const Register = () => {
             helperText={errors.confirmPassword?.message}
           />
         </div>
+
         <div
           style={{
             width: "80%",
             display: "flex",
-            marginTop: "20px",
+            marginTop: "10px",
             marginLeft: "10%",
             justifyContent: "space-around",
           }}
@@ -186,16 +198,19 @@ const Register = () => {
             Đăng ký
           </LoadingButton>
         </div>
+
         <LoadingBar loading={loadingPage} />
       </div>
+
+      {/* Dialog send mail user */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Nhập mã OTP</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Mã OTP sẽ được gửi về email của bạn dùng để xác thực email hoặc tài
-            khoản của bạn ! vì lí do bảo mật vui lòng không chia sẻ mã này dưới
-            bất kì hình thức nào. <b>MAFLINE</b> cảm ơn bạn đã sử dụng dịch vụ
-            của chung tôi 😉
+            Mã OTP có thời gian hiệu lực trong 3 phút sẽ được gửi về email của
+            bạn dùng để xác thực email hoặc tài khoản của bạn ! vì lí do bảo mật
+            vui lòng không chia sẻ mã này dưới bất kì hình thức nào.{" "}
+            <b>MAFLINE</b> cảm ơn bạn đã sử dụng dịch vụ của chung tôi 😉
           </DialogContentText>
           <TextField
             autoFocus

@@ -16,31 +16,35 @@ const postController = {
   },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pageNumber, placeID } = req.query;
+      const { pageNumber, placeID, active } = req.query;
 
       const SkipNumber = (Number(pageNumber) - 1) * Number(5);
 
-      const condition = placeID ? { placeId: placeID } : {};
+      const condition = placeID
+        ? { placeId: placeID, public: active }
+        : { public: active };
 
-      const allUser = await Posts.find({ condition });
+      const allPost = await Posts.find(condition);
 
       const result = await Posts.find(condition)
         .skip(SkipNumber)
         .limit(Number(5))
         .populate("userId", ["userName", "avt"])
+        .populate("userId", ["userName", "avt"])
         .populate("placeId", "name");
 
       let totalPage = 0;
-      if (allUser.length % Number(5) === 0) {
-        totalPage = allUser.length / Number(5);
+
+      if (allPost.length % Number(5) === 0) {
+        totalPage = allPost.length / Number(5);
       } else {
-        totalPage = Math.floor(allUser.length / Number(5) + 1);
+        totalPage = Math.floor(allPost.length / Number(5) + 1);
       }
 
       res.json(
         errorFunction(false, 200, "Lấy thành công !", {
           totalPage: totalPage,
-          total: allUser.length,
+          total: allPost.length,
           data: result,
         })
       );
@@ -55,7 +59,7 @@ const postController = {
     try {
       const data = await Posts.find({ userId: req.params.id })
         .populate("placeId", "name")
-        .populate("userId", "userName");
+        .populate("userId", ["userName","avt"]);
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {

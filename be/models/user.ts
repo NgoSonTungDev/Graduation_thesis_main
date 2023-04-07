@@ -1,3 +1,4 @@
+import { number } from "joi";
 import mongoose from "mongoose";
 import { IUser } from "./../types/user";
 
@@ -20,6 +21,7 @@ const userSchema = new mongoose.Schema<IUser>(
     address: {
       type: String,
       required: false,
+      default: "",
     },
     gender: {
       type: String,
@@ -31,13 +33,14 @@ const userSchema = new mongoose.Schema<IUser>(
       required: false,
     },
     isAdmin: {
-      type: Boolean,
+      type: Number,
       required: false,
-      default: false,
+      default: 1,
     },
     numberPhone: {
       type: String,
       required: false,
+      default: "",
     },
     avt: {
       type: String,

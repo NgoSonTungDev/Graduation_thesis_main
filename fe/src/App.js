@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -10,28 +10,69 @@ import AdminMessage from "./pages/admin/message";
 import Statistic from "./pages/admin/statistic";
 import Register from "./pages/auth/register";
 import Home from "./pages/home";
+import Login from "./pages/auth/login";
 import NotFound from "./pages/not_found";
 import Place from "./pages/place/index";
+import Profile from "./pages/profile";
 import Review from "./pages/review";
+import Explore from "./components/explore";
 import { OpenChatBox } from "./redux/selectors";
+import HomeSaleAgent from "./pages/sale_agent/home";
+import OrderSaleAgent from "./pages/sale_agent/order";
 import Voucher from "./pages/voucher";
+import Order from "./pages/order";
+import ThankCustomer from "./pages/thank_customer";
+import OrderManagement from "./pages/admin/order";
+import PaymentDetail from "./pages/payment/payment_detail";
+import VoucherManagement from "./pages/admin/voucher";
+import TicketSaleAgent from "./pages/sale_agent/ticket";
+import ws from "./socket";
+import PlaceDetail from "./pages/place_detail";
 import Favourite from "./pages/favourite";
 const App = () => {
   const open = useSelector(OpenChatBox);
+
+  useEffect(() => {
+    ws.initialize();
+  }, []);
 
   return (
     <div>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/place" element={<Place />} />
           <Route path="/review" element={<Review />} />
+          <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/profile/:id" element={<Profile />} />
           <Route path="/voucher" element={<Voucher />} />
+          <Route path="/order/:id" element={<Order />} />
+          <Route path="/place/:id" element={<PlaceDetail />} />
+          <Route path="/page/thank-customer" element={<ThankCustomer />} />
+          <Route path="/payment/:ticketId" element={<PaymentDetail />} />
+          <Route path="/favourite" element={<Favourite />} />
+          {/* admin */}
           <Route path="/admin/home" element={<AdminHome />} />
           <Route path="/admin/message" element={<AdminMessage />} />
           <Route path="/admin/statistic" element={<Statistic />} />
-          <Route path="/favourite" element={<Favourite />} />
+          <Route path="/admin/order" element={<OrderManagement />} />
+          <Route path="/admin/voucher" element={<VoucherManagement />} />
+
+          {/* saleAgent */}
+          <Route path="/sale-agent/home" element={<HomeSaleAgent />} />
+          <Route
+            path="/sale-agent/order-management"
+            element={<OrderSaleAgent />}
+          />
+          <Route
+            path="/sale-agent/ticket-management"
+            element={<TicketSaleAgent />}
+          />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
 

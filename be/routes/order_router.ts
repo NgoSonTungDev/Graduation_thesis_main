@@ -7,6 +7,13 @@ export const orderRouter = (router: Router) => {
 
   router.get("/order/all", orderController.getAll);
 
+  router.get("/order/get-id-user/:userId", orderController.getByUserId);
+
+  router.get(
+    "/order/get-id-sale-agent/:saleAgentId",
+    orderController.getBySaleAgentId
+  );
+
   router.put("/order/update/:id", orderController.updateOrder);
 
   router.put(

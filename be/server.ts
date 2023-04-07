@@ -42,7 +42,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send_message", async (data) => {
-    console.log(data);
     const roomId = Rooms.findById(data.room);
 
     if (!roomId) return;
@@ -57,6 +56,8 @@ io.on("connection", (socket) => {
       },
       public: true,
     });
+
+    console.log(data);
 
     socket.to(data.room).emit("receive_message", data);
   });

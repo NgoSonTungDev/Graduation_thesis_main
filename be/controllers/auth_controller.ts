@@ -123,7 +123,7 @@ const authController = {
               userName,
               email,
               avt,
-              isAdmin: !isAdmin ? 1 : 3,
+              isAdmin,
               roomId: roomId?._id,
             })
           );

@@ -11,6 +11,7 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ManageHistoryIcon from "@mui/icons-material/ManageHistory";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 import {
   Avatar,
   Box,
@@ -35,6 +36,10 @@ import {
 } from "../../redux/chat_box/chatBoxSlice";
 import ws from "../../socket";
 import { toastify } from "../../utils/common";
+import {
+  getUserDataLocalStorage,
+  removeUserDataLocalStorage,
+} from "../../utils/localstorage";
 import GetDataPlaceItem from "../modle_find_place";
 import logo1 from "./images/acount.jpeg";
 import "./index.scss";
@@ -46,6 +51,7 @@ const Navbar = ({ loading, valueTab }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElNotify, setAnchorElNotify] = React.useState(null);
   const [offset, setOffset] = useState(0);
+  const userIdStorage = getUserDataLocalStorage();
 
   const dispatch = useDispatch();
 
@@ -56,7 +62,7 @@ const Navbar = ({ loading, valueTab }) => {
 
   const handleGetDataInbox = (event, newValue) => {
     axiosClient
-      .get(`/room/get-room-user/63fd6e153ac0f9d2d5e10309`)
+      .get(`/room/get-room-user/${userIdStorage?.roomId}`)
       .then((res) => {
         dispatch(changeListInbox(res.data.data.listInbox));
       })
@@ -98,11 +104,11 @@ const Navbar = ({ loading, valueTab }) => {
   };
 
   const joinRoom = () => {
-    ws.joinRoom("63fd6e153ac0f9d2d5e10309");
+    ws.joinRoom(userIdStorage?.roomId);
   };
 
   useEffect(() => {
-    ws.initialize();
+    // ws.initialize();
     const onScroll = () => setOffset(window.pageYOffset);
     window.removeEventListener("scroll", onScroll);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -175,6 +181,9 @@ const Navbar = ({ loading, valueTab }) => {
                       <Typography sx={{ ml: 1 }}>Khám Phá</Typography>
                     </Box>
                   }
+                  onClick={() => {
+                    movePage("/explore");
+                  }}
                 />
                 <Tab
                   className="Tab_Navbar"
@@ -194,28 +203,30 @@ const Navbar = ({ loading, valueTab }) => {
           </div>
 
           <div className="Navbar_Icon">
-            <div className="Button">
-              <Button
-                variant="contained"
-                onClick={() => {
-                  movePage("/review");
-                }}
-                sx={{ whiteSpace: "pre" }}
-              >
-                <span
-                  class="material-icons"
-                  style={{
-                    fontSize: "18px",
-                    paddingRight: "8px",
+            {userIdStorage && (
+              <div className="Button">
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    movePage("/review");
                   }}
+                  sx={{ whiteSpace: "pre" }}
                 >
-                  edit
-                </span>
-                Viết Review
-              </Button>
-            </div>
+                  <span
+                    class="material-icons"
+                    style={{
+                      fontSize: "18px",
+                      paddingRight: "8px",
+                    }}
+                  >
+                    edit
+                  </span>
+                  Viết Review
+                </Button>
+              </div>
+            )}
             <div className="Icon">
-              {isAuthenticated ? (
+              {userIdStorage ? (
                 <>
                   <IconButton onClick={handleOpenModal}>
                     <FavoriteBorderIcon />
@@ -296,13 +307,21 @@ const Navbar = ({ loading, valueTab }) => {
                       transformOrigin={{ horizontal: "right", vertical: "top" }}
                       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                     >
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem
+                        onClick={() => {
+                          movePage(`/profile/${userIdStorage?._id}`);
+                        }}
+                      >
                         <ListItemIcon>
                           <AccountCircleIcon fontSize="medium" />
                         </ListItemIcon>
                         Trang cá nhân
                       </MenuItem>
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem
+                        onClick={() => {
+                          movePage(`/order/${userIdStorage._id}`);
+                        }}
+                      >
                         <ListItemIcon>
                           <ManageHistoryIcon fontSize="medium" />
                         </ListItemIcon>
@@ -316,9 +335,27 @@ const Navbar = ({ loading, valueTab }) => {
                         <ListItemIcon>
                           <ManageAccountsIcon fontSize="medium" />
                         </ListItemIcon>
-                        Quàn lý hệ thống
+                        Quản lý hệ thống
                       </MenuItem>
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem
+                        onClick={() => {
+                          handleClose();
+                          removeUserDataLocalStorage();
+                          navigation("/home");
+                        }}
+                      >
+                        <ListItemIcon>
+                          <LockOpenIcon fontSize="medium" />
+                        </ListItemIcon>
+                        Đổi mật khẩu
+                      </MenuItem>{" "}
+                      <MenuItem
+                        onClick={() => {
+                          handleClose();
+                          removeUserDataLocalStorage();
+                          navigation("/home");
+                        }}
+                      >
                         <ListItemIcon>
                           <Logout fontSize="medium" />
                         </ListItemIcon>
@@ -331,7 +368,9 @@ const Navbar = ({ loading, valueTab }) => {
                 <Button
                   id="loginButton"
                   variant="contained"
-                  onClick={handleLogin}
+                  onClick={() => {
+                    movePage("/login");
+                  }}
                   sx={{ whiteSpace: "pre" }}
                 >
                   Đăng Nhập
