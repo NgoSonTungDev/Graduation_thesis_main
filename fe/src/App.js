@@ -34,6 +34,7 @@ import ChangePassword from "./components/change_password";
 import TicketManagement from "./pages/admin/ticket";
 import SaleAgentStatistic from "./pages/sale_agent/statistic";
 import { getUserDataLocalStorage } from "./utils/localstorage";
+import AccountManagement from "./pages/admin/account";
 
 const App = () => {
   const open = useSelector(OpenChatBox);
@@ -77,6 +78,7 @@ const App = () => {
           <Route path="/admin/order" element={<OrderManagement />} />
           <Route path="/admin/voucher" element={<VoucherManagement />} />
           <Route path="/admin/ticket" element={<TicketManagement />} />
+          <Route path="/admin/account" element={<AccountManagement />} />
 
           {/* saleAgent */}
           <Route path="/sale-agent/home" element={<HomeSaleAgent />} />
