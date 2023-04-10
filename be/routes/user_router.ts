@@ -9,6 +9,10 @@ export const userRouter = (router: Router) => {
 
   router.put("/user/update/:id", userController.updateUser);
 
+  router.put("/user/lock-user/:id", userController.lockUser);
+  
+  router.put("/user/un-lock-user/:id", userController.unLockUser);
+
   router.put(
     "/user/update-password/:id",
     verifyToken,

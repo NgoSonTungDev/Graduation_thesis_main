@@ -10,4 +10,5 @@ export interface IUser {
   gender: string;
   description: string;
   isAdmin: number;
+  isLock: boolean
 }

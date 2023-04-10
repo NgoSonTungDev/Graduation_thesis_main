@@ -109,6 +109,12 @@ const authController = {
       if (!user) {
         res.status(404).json(errorFunction(false, 404, "Sai tên đăng nhập !"));
       } else {
+        if (user.isLock === true) {
+         return res
+            .status(404)
+            .json(errorFunction(false, 404, "Tài khoản của bạn đã bị khoá !"));
+        }
+
         const password = await bcrypt.compare(req.body.password, user.password);
 
         if (!password) {

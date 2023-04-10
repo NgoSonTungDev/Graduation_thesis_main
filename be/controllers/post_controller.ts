@@ -91,9 +91,11 @@ const postController = {
           .status(404)
           .json(errorFunction(true, 404, "Không tồn tại !"));
 
+      await Comments.deleteMany({
+        postId: req.params.id,
+      }).exec();
+      await RepComments.deleteMany({ postId: req.params.id });
       await Posts.findByIdAndDelete(req.params.id);
-      await Comments.deleteMany({ postId: id });
-      await RepComments.deleteMany({ postId: id });
       res.status(200).json(errorFunction(true, 200, "Xóa thành công !"));
     } catch (error) {
       console.log("error: ", error);

@@ -1,5 +1,5 @@
 import React from "react";
-import { formatMoney, toastify } from "../../../utils/common";
+import { formatMoney, toastify} from "../../../utils/common";
 
 const styles = {
   card: {
@@ -74,6 +74,7 @@ const MapData = ({ data }) => {
         <div style={styles.discount}>Địa điểm: {data.placeId?.name}</div>
         <div style={styles.discount}>Sự kiện: {data.title}</div>
         <div style={styles.discount}>Giảm giá: {formatMoney(data.price)}</div>
+        <div style={styles.discount}>Thời gian còn lại : {Math.max(0, Math.ceil((new Date(data.endDate) - new Date()) / (1000 * 60 * 60 * 24)))} ngày</div>
       </p>
       <button
         onClick={CopyText}

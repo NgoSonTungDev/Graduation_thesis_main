@@ -15,6 +15,7 @@ import { toastify } from "../../utils/common";
 import { getUserDataLocalStorage } from "../../utils/localstorage";
 import moment from "moment";
 import "./index.scss";
+import { useNavigate } from "react-router-dom";
 
 const Review = () => {
   const desc = ["Tệ", "Khá tệ", "Trung bình", "Tốt", "Tuyệt vời"];
@@ -30,6 +31,7 @@ const Review = () => {
   });
 
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const dataPlace = useSelector(DataPlaceById);
   const userIdStorage = getUserDataLocalStorage();
 
@@ -53,6 +55,7 @@ const Review = () => {
       })
       .then((res) => {
         toastify("success", res.data.message || "Tạo bài thành công !");
+        navigate("/explore")
         setFile(null);
         setRate({
           rate: 4,

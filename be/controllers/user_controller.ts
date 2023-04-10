@@ -10,7 +10,18 @@ import RepComments from "../models/repComment";
 import Tickets from "../models/ticket";
 import { IUser } from "../types/user";
 import { errorFunction } from "../utils/errorFunction";
-import Orders from "../models/order";
+
+const fakeCode = (length: number) => {
+  let result = "";
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+};
 
 const userController = {
   getAnUser: async (req: Request, res: Response) => {
@@ -29,30 +40,30 @@ const userController = {
   },
   getAllUser: async (req: Request, res: Response) => {
     try {
-      const { pageNumber, userName, limit, isAdmin } = req.query;
+      const { pageNumber, userName, limit, isAdmin, isLock } = req.query;
 
       const SkipNumber = (Number(pageNumber) - 1) * Number(limit);
 
-      const condition =
-        userName || isAdmin
-          ? {
-              $and: [
-                {
-                  userName: {
-                    $regex: new RegExp(userName + ""),
-                    $options: "i",
-                  },
-                },
-                {
-                  isAdmin: Number(isAdmin),
-                },
-              ],
-            }
-          : {};
+      let query: any = {};
 
-      const allUser = await Users.find(condition);
+      if (userName) {
+        query.userName = {
+          $regex: userName,
+          $options: "$i",
+        };
+      }
 
-      const result = await Users.find(condition)
+      if (isAdmin) {
+        query.isAdmin = isAdmin;
+      }
+
+      if (isLock) {
+        query.isLock = isLock;
+      }
+
+      const allUser = await Users.find(query);
+
+      const result = await Users.find(query)
         .skip(SkipNumber)
         .limit(Number(limit));
 
@@ -72,6 +83,44 @@ const userController = {
     } catch (error) {
       res.status(400).json({
         error: error,
+        message: "Bad request",
+      });
+    }
+  },
+  lockUser: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = await Users.findById(req.params.id);
+      const hashedPassword = await bcrypt.hash(fakeCode(8), 10);
+
+      if (!userId)
+        return res
+          .status(404)
+          .json(errorFunction(true, 404, "Không tồn tại !"));
+
+      await userId.updateOne({ password: hashedPassword, isLock: true });
+
+      res.json(errorFunction(false, 200, "Đã khoá tài khoản !"));
+    } catch (error) {
+      res.status(400).json({
+        message: "Bad request",
+      });
+    }
+  },
+  unLockUser: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = await Users.findById(req.params.id);
+      const hashedPassword = await bcrypt.hash(req.body.fakeCode, 10);
+
+      if (!userId)
+        return res
+          .status(404)
+          .json(errorFunction(true, 404, "Không tồn tại !"));
+
+      await userId.updateOne({ password: hashedPassword, isLock: false });
+
+      res.json(errorFunction(false, 200, "Đã mở khoá tài khoản !"));
+    } catch (error) {
+      res.status(400).json({
         message: "Bad request",
       });
     }
@@ -150,19 +199,22 @@ const userController = {
           .status(404)
           .json(errorFunction(true, 404, "Không tồn tại !"));
 
-      await Favourites.deleteMany({ userId: id });
-      await Notifications.deleteMany({ userId: id });
-      await Rooms.deleteMany({ userId: id });
-      await Posts.deleteMany({ userId: id });
-      await Comments.deleteMany({ userId: id });
-      await Orders.updateMany(
-        { userId: id },
-        { $set: { userId: { userName: id.userName, email: id.email,address:id.address, numberPhone:id.numberPhone} } }
-      );
-      await Users.findByIdAndDelete(req.params.id);
+      const roomId = await Rooms.findOne({ userId: req.params.id });
+
+      await Favourites.deleteMany({ userId: req.params.id });
+      await Notifications.deleteMany({ userId: req.params.id });
+      await Rooms.findByIdAndUpdate(roomId?._id, {
+        listInbox: [],
+        public: false,
+      });
+      await Posts.deleteMany({ userId: req.params.id });
+      await Comments.deleteMany({ userId: req.params.id });
+      await RepComments.deleteMany({ userId: req.params.id });
       if (id.isAdmin === 2) {
-        await Tickets.deleteMany({ salesAgentId: id });
+        await Tickets.deleteMany({ salesAgentId: req.params.id });
       }
+      // await Users.findByIdAndDelete(req.params.id);
+
       res.status(200).json(errorFunction(true, 200, "Xóa thành công !"));
     } catch (error) {
       console.log("error: ", error);
