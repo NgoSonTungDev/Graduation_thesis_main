@@ -1,5 +1,5 @@
 import TelegramIcon from "@mui/icons-material/Telegram";
-import { Collapse, IconButton, Paper, TextField } from "@mui/material";
+import { Collapse, IconButton, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -10,6 +10,7 @@ import axiosClient from "../../../api/axiosClient";
 import { momentLocale, toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Rep_Comment from "../rep_comment";
+import ws from "../../../socket/index";
 
 const Comment = ({ dataComment, callBackApi }) => {
   const [numberLike, setNumberLike] = useState();
@@ -68,7 +69,6 @@ const Comment = ({ dataComment, callBackApi }) => {
         })
         .then((res) => {
           setLike(true);
-          // toastify("success", res.data.message);
           setNumberLike(res.data.data);
         })
         .catch((err) => {
@@ -86,7 +86,6 @@ const Comment = ({ dataComment, callBackApi }) => {
         })
         .then((res) => {
           setLike(false);
-          // toastify("success", res.data.message);
           setNumberLike(res.data.data);
         })
         .catch((err) => {
@@ -102,13 +101,23 @@ const Comment = ({ dataComment, callBackApi }) => {
         userId: userIdStorage._id,
       })
       .then((res) => {
-        toastify("success", res.data.message);
         handleClose();
         callBackApi(dataComment._id);
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
+  };
+
+  const sendNotify = async () => {
+    const NotifyData = {
+      room: dataComment.userId?._id,
+      content: `${userIdStorage?.userName} đã phản hồi bình luận của bạn`,
+      status: true,
+      dateTime: Number(new Date()),
+    };
+
+    ws.sendNotify(NotifyData);
   };
 
   const handleRepComment = (e) => {
@@ -123,9 +132,9 @@ const Comment = ({ dataComment, callBackApi }) => {
           commentId: dataComment._id,
         })
         .then((res) => {
-          toastify("success", res.data.message);
           setDataRepComment([...datarepComent, res.data.data]);
           setContent("");
+          sendNotify();
         })
         .catch((err) => {
           toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -262,48 +271,39 @@ const Comment = ({ dataComment, callBackApi }) => {
                 display: "flex",
                 width: "100%",
                 alignItems: "center",
+                justifyContent: "space-between",
               }}
             >
-              <div
-                className="avatar"
-                style={{ width: "56px", height: "56px", marginLeft: "40px" }}
-              >
+              <div className="avatar" style={{ width: "46px", height: "46px" }}>
                 <img
-                  style={{ width: "100%", height: "100%", borderRadius: "50%" }}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "50%",
+                    objectFit: "center",
+                  }}
                   src={userIdStorage?.avt}
                   alt=""
                 />
               </div>
-              <div
-                style={{
-                  width: "78%",
+
+              <TextField
+                sx={{ width: "90%" }}
+                value={content}
+                size="small"
+                placeholder="Aa...."
+                onKeyDown={handleOnClickEnter}
+                onChange={(e) => {
+                  setContent(e.target.value);
                 }}
-              >
-                <Paper
-                  sx={{
-                    marginLeft: "20px",
-                    width: "100%",
-                  }}
-                >
-                  <TextField
-                    sx={{ width: "100%", border: "none", outline: "none" }}
-                    value={content}
-                    size="small"
-                    placeholder="Aa...."
-                    onKeyDown={handleOnClickEnter}
-                    onChange={(e) => {
-                      setContent(e.target.value);
-                    }}
-                    InputProps={{
-                      endAdornment: (
-                        <IconButton type="button">
-                          <TelegramIcon onClick={handleRepComment} />
-                        </IconButton>
-                      ),
-                    }}
-                  />
-                </Paper>
-              </div>
+                InputProps={{
+                  endAdornment: (
+                    <IconButton type="button">
+                      <TelegramIcon onClick={handleRepComment} />
+                    </IconButton>
+                  ),
+                }}
+              />
             </div>
           )}
         </div>

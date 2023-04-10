@@ -25,8 +25,8 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BarLoader from "react-spinners/BarLoader";
 import axiosClient from "../../api/axiosClient";
@@ -40,18 +40,30 @@ import {
   getUserDataLocalStorage,
   removeUserDataLocalStorage,
 } from "../../utils/localstorage";
-import GetDataPlaceItem from "../modle_find_place";
 import logo1 from "./images/acount.jpeg";
 import "./index.scss";
 import NotificationItem from "./notification";
+import ChangePassword from "../change_password";
+import {
+  addNotify,
+  changeListNotify,
+  falseNotify,
+} from "../../redux/notify/notifySlice";
+import { checkNotify, listNotify } from "../../redux/selectors";
+import ErrorEmpty from "../emty_data";
+import _ from "lodash";
+import LoadingBar from "../loadding/loading_bar";
 
 const Navbar = ({ loading, valueTab }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
+  const [loadingNotify, setLoadingNotify] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElNotify, setAnchorElNotify] = React.useState(null);
-  const [offset, setOffset] = useState(0);
+  const [openModalChangePassword, setOpenModalChangePassword] =
+    React.useState(false);
   const userIdStorage = getUserDataLocalStorage();
+
+  const arrayNotify = useSelector(listNotify);
+  const checkStatusNotify = useSelector(checkNotify);
 
   const dispatch = useDispatch();
 
@@ -71,12 +83,20 @@ const Navbar = ({ loading, valueTab }) => {
       });
   };
 
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-  };
-
   const handleClickShowNotify = (event) => {
     setAnchorElNotify(event.currentTarget);
+    setLoadingNotify(true);
+    dispatch(falseNotify());
+    axiosClient
+      .get(`/notify/get-by-id/${userIdStorage?._id}`)
+      .then((res) => {
+        setLoadingNotify(false);
+        dispatch(changeListNotify(res.data.data));
+      })
+      .catch((err) => {
+        setLoadingNotify(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
   };
 
   const handleCloseNotify = () => {
@@ -91,30 +111,18 @@ const Navbar = ({ loading, valueTab }) => {
     setAnchorEl(null);
   };
 
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
-
   const movePage = (path) => {
     navigation(path);
   };
 
-  const joinRoom = () => {
-    ws.joinRoom(userIdStorage?.roomId);
+  const handleCloseChangePassword = () => {
+    setOpenModalChangePassword(false);
   };
 
-  useEffect(() => {
-    // ws.initialize();
-    const onScroll = () => setOffset(window.pageYOffset);
-    window.removeEventListener("scroll", onScroll);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-  // ${offset > 60 && "Navbar_fixed"}
+  const handleOpenChangePassword = () => {
+    setOpenModalChangePassword(true);
+  };
+
   return (
     <div>
       <div className={`Navbar_Container  `}>
@@ -228,13 +236,12 @@ const Navbar = ({ loading, valueTab }) => {
             <div className="Icon">
               {userIdStorage ? (
                 <>
-                  <IconButton onClick={handleOpenModal}>
+                  <IconButton>
                     <FavoriteBorderIcon />
                   </IconButton>
                   <IconButton
                     onClick={() => {
                       dispatch(openChatBox());
-                      joinRoom();
                       handleGetDataInbox();
                     }}
                   >
@@ -245,6 +252,10 @@ const Navbar = ({ loading, valueTab }) => {
                     aria-controls={openNotify ? "notify" : undefined}
                     aria-haspopup="true"
                     aria-expanded={openNotify ? "true" : undefined}
+                    style={{
+                      backgroundColor: checkStatusNotify ? "red" : " #fff",
+                      color: !checkStatusNotify ? "red" : "#fff",
+                    }}
                   >
                     <NotificationsOutlinedIcon />
                   </IconButton>
@@ -260,7 +271,7 @@ const Navbar = ({ loading, valueTab }) => {
                       <Tooltip title="Account settings">
                         <Avatar
                           alt="Remy Sharp"
-                          src={logo1}
+                          src={userIdStorage ? userIdStorage.avt : logo1}
                           onClick={handleClick}
                           sx={{
                             cursor: "pointer",
@@ -339,16 +350,14 @@ const Navbar = ({ loading, valueTab }) => {
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          handleClose();
-                          removeUserDataLocalStorage();
-                          navigation("/home");
+                          handleOpenChangePassword();
                         }}
                       >
                         <ListItemIcon>
                           <LockOpenIcon fontSize="medium" />
                         </ListItemIcon>
                         Đổi mật khẩu
-                      </MenuItem>{" "}
+                      </MenuItem>
                       <MenuItem
                         onClick={() => {
                           handleClose();
@@ -426,15 +435,22 @@ const Navbar = ({ loading, valueTab }) => {
           className="container_notify"
           style={{ width: "350px", maxHeight: "500px" }}
         >
-          <NotificationItem />
-          <NotificationItem />
-          <NotificationItem />
-          <NotificationItem />
+          {loadingNotify ? (
+            <LoadingBar loading={loadingNotify} />
+          ) : _.isEmpty(arrayNotify) ? (
+            <ErrorEmpty />
+          ) : (
+            arrayNotify.map((item, index) => {
+              return <NotificationItem data={item} key={index} />;
+            })
+          )}
         </div>
       </Menu>
-      {openModal && (
-        <GetDataPlaceItem openDialog={openModal} onClose={handleCloseModal} />
-      )}
+
+      <ChangePassword
+        open={openModalChangePassword}
+        handleClose={handleCloseChangePassword}
+      />
     </div>
   );
 };

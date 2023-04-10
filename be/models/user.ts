@@ -28,10 +28,6 @@ const userSchema = new mongoose.Schema<IUser>(
       required: false,
       default: "Nam",
     },
-    description: {
-      type: String,
-      required: false,
-    },
     isAdmin: {
       type: Number,
       required: false,

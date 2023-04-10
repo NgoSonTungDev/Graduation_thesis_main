@@ -28,6 +28,7 @@ const orderSchema = new mongoose.Schema<IOrder>(
     description: {
       type: String,
       required: false,
+      default: "",
     },
     status: {
       type: Number,

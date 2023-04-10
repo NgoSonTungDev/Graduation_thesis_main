@@ -92,7 +92,7 @@ const Place = () => {
                 fontWeight: "500",
               }}
             >
-              Kết quả tìm kiếm của bạn :
+              Gợi ý dành cho bạn :
             </span>
           </div>
 

@@ -10,10 +10,7 @@ import * as yup from "yup";
 import axiosClient from "../../../api/axiosClient";
 import ws from "../../../socket";
 import { toastify } from "../../../utils/common";
-import {
-  getUserDataLocalStorage,
-  setUserDataLocalStorage,
-} from "../../../utils/localstorage";
+import { setUserDataLocalStorage } from "../../../utils/localstorage";
 import "./style.scss";
 
 const validationInput = yup.object().shape({
@@ -71,10 +68,13 @@ const Login = () => {
         setUserDataLocalStorage(res.data.data);
         setCheck(false);
         joinRoom(res.data.data.roomId);
-        if (res.data.data.isAdmin === 1 || res.data.data.isAdmin === 3) {
+        ws.joinRoomNotify(res.data.data._id);
+        if (res.data.data.isAdmin === 1) {
           navigation("/home");
-        } else {
+        } else if (res.data.data.isAdmin === 2) {
           navigation("/sale-agent/home");
+        } else {
+          navigation("/admin/home");
         }
       })
       .catch((err) => {
@@ -87,7 +87,7 @@ const Login = () => {
     <div>
       <div className="container_Login">
         <div className={`container_Login_form `}>
-          <h3>Đăng Nhập</h3>
+          <p style={{textAlign:"center",fontWeight:"bold", fontSize:"28px",color:"#636e72"}}>Chào mừng bạn trở lại</p>
           <div className="container_Login_form_text">
             <TextField
               error={!!errors?.userName}
@@ -125,7 +125,7 @@ const Login = () => {
           <div className="back_home">
             <span
               onClick={() => {
-                navigation("/profile");
+                navigation("/forgot-password");
               }}
             >
               Quên mật khẩu
@@ -138,7 +138,7 @@ const Login = () => {
             variant="outlined"
             disabled={!isDirty && !isValid}
           >
-            Submit
+            Đăng nhập
           </LoadingButton>
           <p className="text">
             Nếu bạn chưa có tài khoản ?{" "}

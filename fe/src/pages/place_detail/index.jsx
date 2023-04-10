@@ -4,6 +4,8 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router";
 import axiosClient from "../../api/axiosClient";
 import Footer from "../../components/footer";
+import { SiZalo } from "react-icons/si";
+
 import Navbar from "../../components/navbar";
 import { formatDate, formatMoney, toastify } from "../../utils/common";
 import ImageBox from "./image_box";
@@ -163,9 +165,11 @@ const PlaceDetail = () => {
                 <Button variant="outlined" onClick={handleClickOpenVoucher}>
                   Lấy mã khuyến mãi
                 </Button>
-                <Button variant="outlined" onClick={handleClickOpenSaleAgent}>
-                  Đặt vé
-                </Button>
+                {userIdStorage && (
+                  <Button variant="outlined" onClick={handleClickOpenSaleAgent}>
+                    Đặt vé
+                  </Button>
+                )}
               </div>
               <div className="box_banner_place_image">
                 {!loading && <ImageBox images={data?.image} />}
@@ -277,7 +281,7 @@ const PlaceDetail = () => {
                       flexDirection: "row",
                     }}
                   >
-                    <FacebookOutlinedIcon /> <i>dsdsf</i>
+                    <SiZalo /> <i>Chưa cập nhật</i>
                   </div>
                 </div>
               </div>

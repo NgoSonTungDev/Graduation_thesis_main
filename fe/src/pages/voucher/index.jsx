@@ -112,7 +112,11 @@ const Voucher = () => {
           }}
         >
           {_.isEmpty(data) ? (
-            <ErrorEmpty />
+            <div
+              style={{ height: "400px", display: "grid", placeItems: "center" }}
+            >
+              <ErrorEmpty />
+            </div>
           ) : (
             data?.map((item, index) => <MapData data={item} key={index} />)
           )}
