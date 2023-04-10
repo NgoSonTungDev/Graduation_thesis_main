@@ -12,4 +12,5 @@ export interface IRepComment {
   dateTime: number;
   like: string[];
   commentId: string;
+  postId: string
 }

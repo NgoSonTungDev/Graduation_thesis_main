@@ -126,7 +126,6 @@ const TableOrderUser = ({
     total,
     amount,
     numberTickets,
-    email,
     placeId
   ) => {
     if (number === 1) {
@@ -276,7 +275,6 @@ const TableOrderUser = ({
                       item.total,
                       item.amount,
                       item?.ticketId?.numberTickets,
-                      item?.userId?.email,
                       item?.placeId?._id
                     )}
                   </TableCell>

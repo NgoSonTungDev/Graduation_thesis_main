@@ -1,12 +1,10 @@
-import { ITicket } from "./../types/ticket";
-import { IPlace } from "./../types/place";
-import bcrypt from "bcrypt";
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import Places from "../models/place";
-import Users from "../models/user";
-import { IUser } from "../types/user";
-import { errorFunction } from "../utils/errorFunction";
 import Tickets from "../models/ticket";
+import Users from "../models/user";
+import { errorFunction } from "../utils/errorFunction";
+import { IPlace } from "./../types/place";
+import { ITicket } from "./../types/ticket";
 
 function isWithinRange(number: number, min: number, max: number) {
   return isFinite(number) && number >= min && number <= max;

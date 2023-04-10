@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import Posts from "../models/post";
 import { ICondition } from "../types/common";
 import { errorFunction } from "../utils/errorFunction";
+import Comments from "../models/comment";
+import RepComments from "../models/repComment";
 
 const postController = {
   addPost: async (req: Request, res: Response, next: NextFunction) => {
@@ -90,6 +92,8 @@ const postController = {
           .json(errorFunction(true, 404, "Không tồn tại !"));
 
       await Posts.findByIdAndDelete(req.params.id);
+      await Comments.deleteMany({ postId: id });
+      await RepComments.deleteMany({ postId: id });
       res.status(200).json(errorFunction(true, 200, "Xóa thành công !"));
     } catch (error) {
       console.log("error: ", error);
