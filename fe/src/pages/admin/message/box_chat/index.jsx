@@ -44,7 +44,7 @@ const BoxChat = ({ data, openDetail, callBackFunction }) => {
             src={data?.userId?.avt}
             width="50px"
             height="50px"
-            style={{ borderRadius: "50%" }}
+            style={{ borderRadius: "50%" , objectFit:"cover"}}
             alt=""
           />
           <p

@@ -11,7 +11,7 @@ const CardRoom = ({ data, callBackFunction }) => {
   };
 
   useEffect(() => {
-    setCheck(!data?.listInbox[data.listInbox.length - 1].isAdmin);
+    setCheck(!data?.listInbox[data.listInbox.length - 1]?.isAdmin);
   }, []);
 
   return (
