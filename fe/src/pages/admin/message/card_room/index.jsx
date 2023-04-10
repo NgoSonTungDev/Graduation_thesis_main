@@ -28,7 +28,8 @@ const CardRoom = ({ data, callBackFunction }) => {
           src={data?.user.avt}
           alt=""
           width={"56px"}
-          style={{ borderRadius: "50%" }}
+          height={"56px"}
+          style={{ borderRadius: "50%" , objectFit:"cover"}}
         />
       </div>
       <div className="information_user">

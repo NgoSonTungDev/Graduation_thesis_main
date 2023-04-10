@@ -42,6 +42,27 @@ const provinces = [
   { id: 41, name: 'Gia Lai' },
   { id: 42, name: 'Đắk Lắk' },
   { id: 43, name: 'Đắk Nông' },
+  { id: 44, name: 'Lâm Đồng' },
+  { id: 45, name: 'Bình Phước' },
+  { id: 46, name: 'Tây Ninh' },
+  { id: 47, name: 'Bình Dương' },
+  { id: 48, name: 'Đồng Nai' },
+  { id: 49, name: 'Bà Rịa-Vũng Tàu' },
+  { id: 50, name: 'Hồ Chí Minh' },
+  { id: 51, name: 'Long An' },
+  { id: 52, name: 'Tiền Giang' },
+  { id: 53, name: 'Bến Tre' },
+  { id: 54, name: 'Trà Vinh' },
+  { id: 55, name: 'Vĩnh Long' },
+  { id: 56, name: 'Đồng Tháp' },
+  { id: 57, name: 'An Giang' },
+  { id: 58, name: 'Kiên Giang' },
+  { id: 59, name: 'Cần Thơ' },
+  { id: 60, name: 'Hậu Giang' },
+  { id: 61, name: 'Sóc Trăng' },
+  { id: 62, name: 'Bạc Liêu' },
+  { id: 63, name: 'Cà Mau' },
+  { id: 64, name: 'Điện Biên Phủ' }
 ];
 
 export default provinces;

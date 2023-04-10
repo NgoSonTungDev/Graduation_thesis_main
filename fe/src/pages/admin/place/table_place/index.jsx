@@ -30,6 +30,12 @@ const TablePlace = ({ data, deleteData, updateData }) => {
     const [dataPurpose, setDataPurpose] = React.useState([]);
     const [listLocation, setListLocation] = useState(provinces);
 
+    const swapPrice = (item) => {
+        const { startingPrice, LastPrice } = item;
+        return { startingPrice: LastPrice, LastPrice: startingPrice, ...item };
+    }
+
+
     const {
         register,
         handleSubmit,
@@ -42,6 +48,8 @@ const TablePlace = ({ data, deleteData, updateData }) => {
             location: "",
             address: "",
             name: "",
+            startingPrice: 0,
+            LastPrice: 0,
         },
     });
 
@@ -77,6 +85,8 @@ const TablePlace = ({ data, deleteData, updateData }) => {
                 purpose: data.purpose,
                 address: data.address,
                 name: data.name,
+                startingPrice: data.startingPrice,
+                LastPrice: data.LastPrice,
             })
             .then((res) => {
                 toastify("success", "Cập nhật thành công !");
@@ -146,7 +156,9 @@ const TablePlace = ({ data, deleteData, updateData }) => {
                                 <TableCell align="center">Tên Địa Điểm</TableCell>
                                 <TableCell align="center">Địa Điểm</TableCell>
                                 <TableCell align="center">Tỉnh/Thành phố</TableCell>
-                                <TableCell align="center">Khoảng giá</TableCell>
+                                {/* <TableCell align="center">Khoảng giá</TableCell> */}
+                                <TableCell align="center">Giá Thấp Nhất</TableCell>
+                                <TableCell align="center">Giá Cao Nhất</TableCell>
                                 <TableCell align="center">Loại</TableCell>
                                 <TableCell align="center">Mục đích</TableCell>
                                 <TableCell align="center">Chức năng</TableCell>
@@ -219,10 +231,42 @@ const TablePlace = ({ data, deleteData, updateData }) => {
                                             item?.address
                                         )}
                                     </TableCell>
-                                    <TableCell align="center" sx={{ whiteSpace: "nowrap" }}>
-                                        {formatMoney(item?.startingPrice)} -{" "}
-                                        {formatMoney(item?.LastPrice)}
+
+                                    <TableCell align="center">
+                                        {editingRowIndex === index ? (
+                                            <TextField
+                                                fullWidth
+                                                label={item?.startingPrice}
+                                                error={!!errors?.startingPrice}
+                                                {...register("startingPrice")}
+                                                helperText={errors.startingPrice?.message}
+                                                size="small"
+                                            >
+
+                                            </TextField>
+                                        ) : (
+                                            formatMoney(item?.startingPrice)
+                                        )}
                                     </TableCell>
+                                    <TableCell align="center">
+                                        {editingRowIndex === index ? (
+                                            <TextField
+                                                fullWidth
+                                                label={item?.LastPrice}
+                                                error={!!errors?.LastPrice}
+                                                {...register("LastPrice")}
+                                                helperText={errors.LastPrice?.message}
+                                                size="small"
+                                            >
+
+                                            </TextField>
+                                        ) : (
+                                            formatMoney(item?.LastPrice)
+                                        )}
+                                    </TableCell>
+
+
+
                                     <TableCell align="center">
                                         {editingRowIndex === index ? (
                                             <TextField
@@ -294,6 +338,14 @@ const TablePlace = ({ data, deleteData, updateData }) => {
                                             }}
                                         >
                                             Xóa
+                                        </Button>
+                                        <Button
+                                            // onClick={() => {
+                                            //     handleClickOpenModalDelete();
+                                            //     setPlaceId(item._id);
+                                            // }}
+                                        >
+                                            Chỉnh Ảnh
                                         </Button>
                                     </TableCell>
                                 </TableBody>
