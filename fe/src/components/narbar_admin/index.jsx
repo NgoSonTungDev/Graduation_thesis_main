@@ -121,6 +121,9 @@ const Header = ({ ReactNode }) => {
                   <MenuItem
                     active={pathName === "admin" && true}
                     icon={<MdEditLocationAlt />}
+                    onClick={() => {
+                      movePage("/admin/place");
+                    }}
                   >
                     Location management
                   </MenuItem>
@@ -155,15 +158,6 @@ const Header = ({ ReactNode }) => {
                     Voucher manager
                   </MenuItem>
                   <MenuItem
-                    active={pathName === "/admin/statistic" && true}
-                    icon={<AiOutlineBarChart />}
-                    onClick={() => {
-                      movePage("/admin/statistic");
-                    }}
-                  >
-                    statistic
-                  </MenuItem>
-                  <MenuItem
                     active={pathName === "/admin/ticket" && true}
                     icon={<HiOutlineTicket />}
                     onClick={() => {
@@ -171,6 +165,15 @@ const Header = ({ ReactNode }) => {
                     }}
                   >
                     Ticket manager
+                  </MenuItem>
+                  <MenuItem
+                    active={pathName === "/admin/statistic" && true}
+                    icon={<AiOutlineBarChart />}
+                    onClick={() => {
+                      movePage("/admin/statistic");
+                    }}
+                  >
+                    statistic
                   </MenuItem>
                 </Menu>
               </div>

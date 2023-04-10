@@ -12,7 +12,7 @@ import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import Rep_Comment from "../rep_comment";
 import ws from "../../../socket/index";
 
-const Comment = ({ dataComment, callBackApi }) => {
+const Comment = ({ dataComment, callBackApi, postId }) => {
   const [numberLike, setNumberLike] = useState();
   const [like, setLike] = useState(false);
   const [datarepComent, setDataRepComment] = React.useState([]);
@@ -110,14 +110,16 @@ const Comment = ({ dataComment, callBackApi }) => {
   };
 
   const sendNotify = async () => {
-    const NotifyData = {
-      room: dataComment.userId?._id,
-      content: `${userIdStorage?.userName} đã phản hồi bình luận của bạn`,
-      status: true,
-      dateTime: Number(new Date()),
-    };
+    if (dataComment.userId?.userName !== userIdStorage?.userName) {
+      const NotifyData = {
+        room: dataComment.userId?._id,
+        content: `${userIdStorage?.userName} đã phản hồi bình luận của bạn`,
+        status: true,
+        dateTime: Number(new Date()),
+      };
 
-    ws.sendNotify(NotifyData);
+      ws.sendNotify(NotifyData);
+    }
   };
 
   const handleRepComment = (e) => {
@@ -130,6 +132,7 @@ const Comment = ({ dataComment, callBackApi }) => {
           content: content,
           dateTime: Number(new Date()),
           commentId: dataComment._id,
+          postId: postId,
         })
         .then((res) => {
           setDataRepComment([...datarepComent, res.data.data]);

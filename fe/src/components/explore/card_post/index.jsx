@@ -50,14 +50,16 @@ const CardPost = ({ data, callBackApi }) => {
   };
 
   const sendNotify = async (content) => {
-    const NotifyData = {
-      room: data.userId?._id,
-      content: `${userIdStorage?.userName} ${content}`,
-      status: true,
-      dateTime: Number(new Date()),
-    };
+    if (data.userId?.userName !== userIdStorage?.userName) {
+      const NotifyData = {
+        room: data.userId?._id,
+        content: `${userIdStorage?.userName} ${content}`,
+        status: true,
+        dateTime: Number(new Date()),
+      };
 
-    ws.sendNotify(NotifyData);
+      ws.sendNotify(NotifyData);
+    }
   };
 
   const handleExpandClick = () => {
@@ -170,14 +172,12 @@ const CardPost = ({ data, callBackApi }) => {
       });
   };
 
-  const handleDeleteShare = (e) => {
+  const handleDeletePost = (e) => {
     axiosClient
-      .delete(`/post/delete/${data._id}`, {
-        userId: userIdStorage._id,
-      })
+      .delete(`/post/delete/${data._id}`)
       .then((res) => {
         handleCloseDelete();
-        toastify("success", res.data.message || "Tạo bài thành công !");
+        toastify("success", res.data.message || "Xoá bài thành công !");
         callBackApi(data._id);
       })
       .catch((err) => {
@@ -230,8 +230,8 @@ const CardPost = ({ data, callBackApi }) => {
             >
               <Image
                 style={{
-                  width: "100%",
-                  height: "100%",
+                  width: "56px",
+                  height: "56px",
                   borderRadius: "50%",
                   objectFit: "cover",
                 }}
@@ -394,6 +394,7 @@ const CardPost = ({ data, callBackApi }) => {
               <Comment
                 dataComment={item}
                 callBackApi={handelDeleteComment}
+                postId={data._id}
                 key={index}
               />
             ))}
@@ -422,8 +423,8 @@ const CardPost = ({ data, callBackApi }) => {
             <div className="avatar" style={{ width: "46px", height: "46px" }}>
               <img
                 style={{
-                  width: "100%",
-                  height: "100%",
+                  width: "46px",
+                  height: "46px",
                   borderRadius: "50%",
                   objectFit: "center",
                 }}
@@ -462,8 +463,8 @@ const CardPost = ({ data, callBackApi }) => {
           {"Bạn có chắc muốn xóa bài viết ?"}
         </DialogTitle>
         <DialogActions>
-          <Button onClick={handleDeleteShare}>xóa</Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={handleDeletePost}>xóa</Button>
+          <Button onClick={handleCloseDelete} autoFocus>
             thoát
           </Button>
         </DialogActions>

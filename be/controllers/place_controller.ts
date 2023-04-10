@@ -1,4 +1,7 @@
 import Places from "../models/place";
+import Tickets from "../models/ticket";
+import Posts from "../models/post";
+import Vouchers from "../models/voucher";
 import { errorFunction } from "../utils/errorFunction";
 import { Request, Response, NextFunction } from "express";
 
@@ -133,6 +136,9 @@ const placeController = {
           .status(404)
           .json(errorFunction(true, 404, "Không tồn tại !"));
 
+      await Vouchers.deleteMany({placeId: req.params.id})
+      await Tickets.deleteMany({placeId: req.params.id})
+      await Posts.deleteMany({placeId: req.params.id})
       await Places.findByIdAndDelete(req.params.id);
       res.status(200).json(errorFunction(true, 200, "Xóa thành công !"));
     } catch (error) {

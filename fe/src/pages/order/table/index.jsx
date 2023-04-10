@@ -126,27 +126,32 @@ const TableOrderUser = ({
     total,
     amount,
     numberTickets,
-    email,
     placeId
   ) => {
     if (number === 1) {
       return (
         <div style={{ color: "#2ecc71" }}>
-          <button
-            className="button-check cancel"
-            onClick={() => {
-              handleCancel(id);
-            }}
-            disabled={loading}
-          >
-            Hủy
-          </button>
+          {!placeId || !numberTickets ? (
+            <p style={{ color: "red" }}>Đã có vấn đề về đơn hàng</p>
+          ) : (
+            <button
+              className="button-check cancel"
+              onClick={() => {
+                handleCancel(id);
+              }}
+              disabled={loading}
+            >
+              Hủy
+            </button>
+          )}
         </div>
       );
     } else if (number === 2) {
       return (
         <>
-          {amount > numberTickets ? (
+          {!placeId || !numberTickets ? (
+            <p style={{ color: "red" }}>Đã có vấn đề về đơn hàng</p>
+          ) : amount > numberTickets ? (
             <p style={{ color: "#d63031" }}>Hết vé</p>
           ) : (
             <button
@@ -166,16 +171,22 @@ const TableOrderUser = ({
       return <p style={{ color: "#c0392b" }}>Đã hủy</p>;
     } else {
       return (
-        <button
-          className="button-check Evaluate"
-          disabled={loading}
-          onClick={() => {
-            handleClickOpenEvaluate();
-            setPlaceId(placeId);
-          }}
-        >
-          Đánh giá
-        </button>
+        <>
+          {!placeId ? (
+            <p style={{ color: "red" }}>Không thể đánh giá</p>
+          ) : (
+            <button
+              className="button-check Evaluate"
+              disabled={loading}
+              onClick={() => {
+                handleClickOpenEvaluate();
+                setPlaceId(placeId);
+              }}
+            >
+              Đánh giá
+            </button>
+          )}
+        </>
       );
     }
   };
@@ -205,9 +216,9 @@ const TableOrderUser = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {data?.map((item) => (
+              {data?.map((item, index) => (
                 <TableRow
-                  key={"ksjd"}
+                  key={index}
                   sx={{
                     "&:last-child td, &:last-child th": { border: 0 },
                   }}
@@ -225,7 +236,7 @@ const TableOrderUser = ({
                     {item?.userId?.email}
                   </TableCell>
                   <TableCell align="center" size="medium">
-                    {item?.placeId?.name}
+                    {item?.placeId ? item.placeId.name : <p style={{ color: "red" }}>Không còn tồn tại</p> }
                   </TableCell>
                   <TableCell align="center" size="medium">
                     {item.adultTicket}
@@ -275,9 +286,8 @@ const TableOrderUser = ({
                       item.codeOrder,
                       item.total,
                       item.amount,
-                      item?.ticketId?.numberTickets,
-                      item?.userId?.email,
-                      item?.placeId?._id
+                      item?.ticketId ? item?.ticketId.numberTickets : "",
+                      item?.placeId ? item?.placeId?._id : ""
                     )}
                   </TableCell>
                 </TableRow>

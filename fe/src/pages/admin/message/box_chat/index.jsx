@@ -8,6 +8,7 @@ import { addMessage } from "../../../../redux/chat_box/chatBoxSlice";
 import ws from "../../../../socket";
 import { useDispatch, useSelector } from "react-redux";
 import { listChatBox } from "../../../../redux/selectors";
+import { toastify } from "../../../../utils/common";
 
 const BoxChat = ({ data, openDetail, callBackFunction }) => {
   const [message, setMessage] = useState("");
@@ -16,6 +17,9 @@ const BoxChat = ({ data, openDetail, callBackFunction }) => {
 
   const handleOnClickEnter = (e) => {
     if (e.key === "Enter") {
+      if(message===""){
+        return toastify("info","Vui lòng nhập tin nhắn !")
+      }
       sendMessage();
       callBackFunction();
     }
@@ -44,7 +48,7 @@ const BoxChat = ({ data, openDetail, callBackFunction }) => {
             src={data?.userId?.avt}
             width="50px"
             height="50px"
-            style={{ borderRadius: "50%" }}
+            style={{ borderRadius: "50%" , objectFit:"cover"}}
             alt=""
           />
           <p

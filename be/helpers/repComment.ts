@@ -8,6 +8,7 @@ const validation = joi.object<IRepComment>({
   content: joi.string().required(),
   dateTime: joi.number().required(),
   commentId: joi.string().required(),
+  postId: joi.string().required(),
 });
 
 export const repCommentValidation = async (

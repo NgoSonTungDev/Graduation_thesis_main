@@ -7,14 +7,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import moment from "moment";
-import { formatMoney, toastify } from "../../../../utils/common";
+import { formatMoney } from "../../../../utils/common";
 import { Button, Typography } from "@mui/material";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import "./style.scss";
-import axiosClient from "../../../../api/axiosClient";
 
 const style = {
   position: "absolute",
@@ -34,62 +33,6 @@ const OrderTableAdmin = ({ data, callBackApi }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  // const handleSendEmailConfirm = (email) => {
-  //   axiosClient
-  //     .post(`/email/send-confirm`, {
-  //       email: email,
-  //     })
-  //     .then((res) => {
-  //       console.log(res);
-  //     })
-  //     .catch((err) => {
-  //       toastify("error", err.response.data.message || "Lỗi hệ thông !");
-  //     });
-  // };
-
-  // const handleSendEmailCancel = (email) => {
-  //   axiosClient
-  //     .post(`/email/send-cancel`, {
-  //       email: email,
-  //     })
-  //     .then((res) => {
-  //       console.log(res);
-  //     })
-  //     .catch((err) => {
-  //       toastify("error", err.response.data.message || "Lỗi hệ thông !");
-  //     });
-  // };
-
-  // const handleConfirm = (id, email) => {
-  //   axiosClient
-  //     .put(`/order/update/${id}`, {
-  //       status: 2,
-  //     })
-  //     .then((res) => {
-  //       toastify("success", "Xác nhận thành công");
-  //       callBackApi();
-  //       handleSendEmailConfirm(email);
-  //     })
-  //     .catch((err) => {
-  //       toastify("error", err.response.data.message || "Lỗi hệ thông !");
-  //     });
-  // };
-
-  // const handleCancel = (id, email) => {
-  //   axiosClient
-  //     .put(`/order/update/${id}`, {
-  //       status: 3,
-  //     })
-  //     .then((res) => {
-  //       toastify("success", "Hủy đơn hàng thành công");
-  //       callBackApi();
-  //       handleSendEmailCancel(email);
-  //     })
-  //     .catch((err) => {
-  //       toastify("error", err.response.data.message || "Lỗi hệ thông !");
-  //     });
-  // };
-
   const renderStory = (number) => {
     if (number === 1) {
       return <p style={{ color: "#2ecc71" }}>Chờ xác nhận</p>;
@@ -101,37 +44,6 @@ const OrderTableAdmin = ({ data, callBackApi }) => {
       return <p style={{ color: "#3498db" }}>Đã thanh Toán</p>;
     }
   };
-
-  // const renderButton = (number, id, email) => {
-  //   if (number === 1) {
-  //     return (
-  //       <div style={{ color: "#2ecc71" }}>
-  //         <button
-  //           className="button-check accept"
-  //           onClick={() => {
-  //             handleConfirm(id, email);
-  //           }}
-  //         >
-  //           Xác nhận
-  //         </button>
-  //         <button
-  //           className="button-check cancel"
-  //           onClick={() => {
-  //             handleCancel(id, email);
-  //           }}
-  //         >
-  //           Hủy
-  //         </button>
-  //       </div>
-  //     );
-  //   } else if (number === 2) {
-  //     return <p style={{ color: "#3498db" }}>Chờ thanh toán</p>;
-  //   } else if (number === 3) {
-  //     return <p style={{ color: "#c0392b" }}>Đã hủy</p>;
-  //   } else {
-  //     return <p style={{ color: "#3498db" }}>Đã thanh Toán</p>;
-  //   }
-  // };
 
   return (
     <div>
@@ -152,7 +64,7 @@ const OrderTableAdmin = ({ data, callBackApi }) => {
               <TableCell align="left">Tổng vé</TableCell>
               <TableCell align="left">Trạng thái</TableCell>
               <TableCell align="left">Tổng tiền</TableCell>
-              {/* <TableCell align="left">Chức năng</TableCell> */}
+              <TableCell align="left">Ghi chú</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -176,7 +88,11 @@ const OrderTableAdmin = ({ data, callBackApi }) => {
                   {item?.userId?.email}
                 </TableCell>
                 <TableCell align="left" size="medium">
-                  {item?.placeId?.name}
+                  {item?.placeId ? (
+                    item.placeId.name
+                  ) : (
+                    <p style={{ color: "red" }}>Không còn tồn tại</p>
+                  )}
                 </TableCell>
                 <TableCell align="left" size="medium">
                   {item.adultTicket}
@@ -219,10 +135,13 @@ const OrderTableAdmin = ({ data, callBackApi }) => {
                 <TableCell align="left" size="medium" sx={{ color: "red" }}>
                   {formatMoney(item.total)}
                 </TableCell>
-                {/* <TableCell align="left" size="medium">
-                  {renderStory(item.status)}
-                  {renderButton(item.status, item._id, item?.userId?.email)}
-                </TableCell> */}
+                <TableCell align="left" size="medium">
+                  {!item.placeId || !item.ticketId ? (
+                    <p style={{ color: "red" }}>Đã có vấn đề về đơn hàng</p>
+                  ) : (
+                    "Không"
+                  )}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

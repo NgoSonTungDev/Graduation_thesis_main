@@ -72,30 +72,20 @@ const voucherController = {
   },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // const currentDate = new Date();
+      const now = new Date();
 
-      // const dataStartTime = await (
-      //   await Vouchers.find()
-      // ).filter((e) => {
-      //   return (
-      //     currentDate >= new Date(e.startDate) &&
-      //     currentDate <= new Date(e.endDate)
-      //   );
-      // });
+      const dataVoucher = await Vouchers.find({});
 
-      //   await Promise.all(listStartTime.map((e) => updatePublicVoucher(e, true)));
+      await dataVoucher.forEach((element: IVoucher) => {
+        const startDate = new Date(element.startDate);
+        const endDate = new Date(element.endDate);
 
-      // const dataEndTime = await (
-      //   await Vouchers.find()
-      // ).filter((e) => {
-      //   return new Date(e.endDate) > new Date();
-      // });
-
-      // const listStartTime = dataStartTime.map((e) => e._id);
-
-      // const listEndTime = dataEndTime.map((e) => e._id);
-
-      //   await Promise.all(listEndTime.map((e) => updatePublicVoucher(e, false)));
+        if (now >= startDate && now <= endDate) {
+          updatePublicVoucher(element._id + "", true);
+        } else {
+          updatePublicVoucher(element._id + "", false);
+        }
+      });
 
       const { placeID, active } = req.query;
 
