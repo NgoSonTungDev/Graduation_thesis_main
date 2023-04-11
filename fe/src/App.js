@@ -35,6 +35,7 @@ import TicketManagement from "./pages/admin/ticket";
 import SaleAgentStatistic from "./pages/sale_agent/statistic";
 import { getUserDataLocalStorage } from "./utils/localstorage";
 import AccountManagement from "./pages/admin/account";
+import Introduce from "./pages/introduce";
 
 const App = () => {
   const open = useSelector(OpenChatBox);
@@ -70,6 +71,7 @@ const App = () => {
           <Route path="/place/:id" element={<PlaceDetail />} />
           <Route path="/page/thank-customer" element={<ThankCustomer />} />
           <Route path="/payment/:ticketId" element={<PaymentDetail />} />
+          <Route path="/introduce" element={<Introduce />} />
 
           {/* admin */}
           <Route path="/admin/home" element={<AdminHome />} />

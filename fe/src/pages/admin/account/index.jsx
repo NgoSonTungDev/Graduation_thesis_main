@@ -1,85 +1,74 @@
-import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
-import { Box, Tab } from "@mui/material";
-import React, { useState } from "react";
-import ErrorEmpty from "../../../components/emty_data";
-import LoadingBar from "../../../components/loadding/loading_bar";
-import PaginationCpn from "../../../components/pagination";
-import OrderTableAdmin from "../order/table";
+import React, { useEffect, useState } from "react";
+import axiosClient from "../../../api/axiosClient";
 import SidebarAdmin from "../../../components/narbar_admin";
-import GetDataSaleAgent from "../order/modle_find_sale_agent";
+import { toastify } from "../../../utils/common";
+import qs from "query-string";
+import LoadingBar from "../../../components/loadding/loading_bar";
+import ErrorEmpty from "../../../components/emty_data";
 import _ from "lodash";
+import PaginationCpn from "../../../components/pagination";
+import AccountTable from "./table_account";
+import { Box } from "@mui/system";
+import TabContext from "@mui/lab/TabContext";
 
 const AccountManagement = () => {
   const [value, setValue] = React.useState("0");
   const [loading, setLoading] = React.useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = React.useState({});
-  //   const [payload, setPayload] = React.useState({
+  const [payload, setPayload] = React.useState({
+    pageNumber: 1,
+    limit: 10,
+    status: "",
+  });
+
+  // const handleChangeTab = (e, newValue) => {
+  //   setValue(newValue);
+
+  //   if (newValue === "0") {
+  //     return setPayload({
+  //       ...payload,
+  //       status: "",
+  //       pageNumber: 1,
+  //     });
+  //   }
+
+  //   setPayload({
+  //     ...payload,
+  //     status: Number(newValue),
   //     pageNumber: 1,
-  //     limit: 5,
-  //     status: "",
   //   });
+  // };
 
-  //   const fetchData = () => {
-  //     axiosClient
-  //       .get(`/order/all?${qs.stringify(payload)}`)
-  //       .then((res) => {
-  //         setLoading(false);
-  //         setData(res.data.data);
-  //       })
-  //       .catch((err) => {
-  //         setLoading(false);
-  //         toastify("error", err.response.data.message || "Lỗi hệ thông !");
-  //       });
-  //   };
+  const handleChangePage = (page) => {
+    setPayload({ ...payload, pageNumber: page });
+  };
 
-  //   useEffect(() => {
-  //     setLoading(true);
-  //     fetchData();
-  //     window.scrollTo(0, 0);
-  //   }, [payload]);
+  const fetchData = () => {
+    axiosClient
+      .get(`/user/get-all?${qs.stringify(payload)}`)
+      .then((res) => {
+        setLoading(false);
+        console.log(res.data.data);
+        setData(res.data.data);
+      })
+      .catch((err) => {
+        setLoading(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
 
-  //   const handleOpenModal = () => {
-  //     setOpenModal(true);
-  //   };
-
-  //   const handleCloseModal = () => {
-  //     setOpenModal(false);
-  //   };
+  useEffect(() => {
+    setLoading(true);
+    fetchData();
+    window.scrollTo(0, 0);
+  }, [payload]);
 
   const renderForm = () => {
     return (
       <div>
         <Box sx={{ width: "100%", height: "100vh", overflow: "hidden" }}>
           <TabContext value={value}>
-            <Box
-              sx={{
-                borderBottom: 1,
-                borderColor: "divider",
-                marginTop: 1,
-                // display: "flex",
-                // justifyContent: "space-between",
-              }}
-            >
-              <TabList
-                // onChange={handleChangeTab}
-                aria-label="lab API tabs example"
-              >
-                <Tab label="Tất cả" value="0" />
-                <Tab label="Chờ xác nhận" value="1" />
-                <Tab label="Đã xác nhận" value="2" />
-                <Tab label="Đã hủy" value="3" />
-                <Tab label="Đã thanh toán" value="4" />
-              </TabList>
-              {/* <Button
-                size="medium"
-                sx={{ marginRight: "30px" }}
-                onClick={handleOpenModal}
-              >
-                Tìm kiếm đại lý
-              </Button> */}
-            </Box>
             <div
               style={{
                 width: "100%",
@@ -99,7 +88,7 @@ const AccountManagement = () => {
                 ) : _.isEmpty(data) ? (
                   <ErrorEmpty />
                 ) : (
-                  <OrderTableAdmin data={data.data} />
+                  <AccountTable data={data.data} callBackApi={fetchData} />
                 )}
               </div>
               <div
@@ -109,15 +98,17 @@ const AccountManagement = () => {
                 }}
               >
                 <PaginationCpn
-                //   count={data.totalPage}
-                //   page={payload.pageNumber}
-                //   onChange={handleChangePage}
+                  count={data.totalPage}
+                  page={payload.pageNumber}
+                  onChange={handleChangePage}
                 />
               </div>
             </div>
           </TabContext>
         </Box>
-        {openModal && <GetDataSaleAgent openDialog={openModal} />}
+        {/* {openModal && (
+          <GetDataSaleAgent openDialog={openModal} onClose={handleCloseModal} />
+        )} */}
       </div>
     );
   };

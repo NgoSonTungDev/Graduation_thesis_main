@@ -102,6 +102,7 @@ const Profile = () => {
     axiosClient
       .get(`/post/get-id-user/${id}`)
       .then((res) => {
+        console.log("data", res.data.data);
         setDataPost(res.data.data);
         setLoading(false);
       })
@@ -127,7 +128,6 @@ const Profile = () => {
 
   const handleUpdateInformation = (data) => {
     setLoadingInformation(true);
-    console.log("data", data);
     axiosClient
       .put(`/user/update/${id}`, {
         gender: data.gender,
@@ -152,6 +152,19 @@ const Profile = () => {
     setFile(e.target.files[0]);
   };
 
+  const handleUpdateImage = (urlImage) => {
+    axiosClient
+      .put(`/user/update/${id}`, {
+        avt: urlImage,
+      })
+      .then((res) => {
+        console.log("true");
+      })
+      .catch((error) => {
+        console.log("false");
+      });
+  };
+
   const handleSubmitAvt = async () => {
     setLoadingImage(true);
     const api = "https://api.cloudinary.com/v1_1/djo1gzatx/image/upload";
@@ -171,6 +184,7 @@ const Profile = () => {
         handleCloseDialogAvt();
         setUserDataLocalStorage({ ...userIdStorage, avt: res.data.url });
         toastify("success", "Cập nhật ảnh đại diện thành công!!!");
+        handleUpdateImage(res.data.url);
         setLoadingImage(false);
       })
       .catch((error) => {
@@ -195,7 +209,7 @@ const Profile = () => {
                 style={{
                   objectFit: "cover",
                 }}
-                src={userIdStorage?.avt}
+                src={userIdStorage._id === id ? userIdStorage.avt : data.avt}
               />
               {userIdStorage._id === id && (
                 <IconButton

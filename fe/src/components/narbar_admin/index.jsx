@@ -131,7 +131,7 @@ const Header = ({ ReactNode }) => {
                     Post management
                   </MenuItem>
                   <MenuItem
-                    active={pathName === "admin" && true}
+                    active={pathName === "/admin/account" && true}
                     icon={<MdOutlineManageAccounts />}
                   >
                     Account management

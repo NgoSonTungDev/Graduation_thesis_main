@@ -230,8 +230,8 @@ const CardPost = ({ data, callBackApi }) => {
             >
               <Image
                 style={{
-                  width: "100%",
-                  height: "100%",
+                  width: "56px",
+                  height: "56px",
                   borderRadius: "50%",
                   objectFit: "cover",
                 }}
@@ -419,11 +419,11 @@ const CardPost = ({ data, callBackApi }) => {
               justifyContent: "space-between",
             }}
           >
-            <div className="avatar" style={{ width: "46px", height: "46px" }}>
+            <div style={{ width: "46px", height: "46px" }}>
               <img
                 style={{
-                  width: "100%",
-                  height: "100%",
+                  width: "46px",
+                  height: "46px",
                   borderRadius: "50%",
                   objectFit: "center",
                 }}
