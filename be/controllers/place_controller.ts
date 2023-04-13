@@ -42,8 +42,8 @@ const placeController = {
     try {
       const {
         pageNumber,
-        placeName,
         limit,
+        placeName,
         type,
         purpose,
         location,
@@ -52,41 +52,38 @@ const placeController = {
 
       const SkipNumber = (Number(pageNumber) - 1) * Number(limit);
 
-      const filter = {
-        $and: [
-          {
-            name: {
-              $regex: placeName,
-              $options: "$i",
-            },
-          },
-          {
-            location: {
-              $regex: location,
-              $options: "$i",
-            },
-          },
-          {
-            purpose: {
-              $regex: purpose,
-              $options: "$i",
-            },
-          },
-          {
-            type: {
-              $regex: type,
-              $options: "$i",
-            },
-          },
-        ],
-      };
+      let query: any = {};
 
-      const result = await Places.find(filter)
+      if (!pageNumber || !limit) {
+        return res
+          .status(400)
+          .json(errorFunction(true, 400, "Truyền thiếu page và limit"));
+      }
+
+      if (placeName) {
+        query.name = {
+          $regex: placeName,
+          $options: "$i",
+        };
+      }
+      if (location) {
+        query.location = location;
+      }
+      if (purpose) {
+        query.purpose = purpose;
+      }
+      if (type) {
+        query.type = type;
+      }
+
+      console.log(query);
+
+      const result = await Places.find(query)
         .sort(`${variability === "asc" ? "" : "-"}rating`)
         .skip(SkipNumber)
         .limit(Number(limit));
 
-      const allPlace = await Places.find(filter);
+      const allPlace = await Places.find(query);
 
       let totalPage = 0;
       if (allPlace.length % Number(limit) === 0) {
@@ -136,9 +133,9 @@ const placeController = {
           .status(404)
           .json(errorFunction(true, 404, "Không tồn tại !"));
 
-      await Vouchers.deleteMany({placeId: req.params.id})
-      await Tickets.deleteMany({placeId: req.params.id})
-      await Posts.deleteMany({placeId: req.params.id})
+      await Vouchers.deleteMany({ placeId: req.params.id });
+      await Tickets.deleteMany({ placeId: req.params.id });
+      await Posts.deleteMany({ placeId: req.params.id });
       await Places.findByIdAndDelete(req.params.id);
       res.status(200).json(errorFunction(true, 200, "Xóa thành công !"));
     } catch (error) {
