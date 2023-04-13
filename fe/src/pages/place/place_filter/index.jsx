@@ -42,21 +42,14 @@ const PlaceFilter = () => {
 
   const handleChange = (e) => {
     const { purpose, type, variability, location } = watch();
-    if (purpose === "Tất cả" || type === "Tất cả" || location === "Tất cả") {
-      dispatch(
-        changePayload({
-          ...payload,
-          [e.target.name]: [e.target.name] === "Tất cả" ? [e.target.name] : "",
-          pageNumber: 1,
-        })
-      );
-    }
+
+    console.log({ [e.target.name]: "" });
     dispatch(
       changePayload({
         ...payload,
-        location,
-        purpose,
-        type,
+        location: location === "Tất cả" ? "" : location,
+        purpose: purpose === "Tất cả" ? "" : purpose,
+        type: type === "Tất cả" ? "" : type,
         variability,
         pageNumber: 1,
       })

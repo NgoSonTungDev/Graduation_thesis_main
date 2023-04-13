@@ -63,7 +63,7 @@ const placeController = {
       if (placeName) {
         query.name = {
           $regex: placeName,
-          $options: "$i",
+          $options: "i",
         };
       }
       if (location) {
