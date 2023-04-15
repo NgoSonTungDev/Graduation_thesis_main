@@ -86,8 +86,8 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       location: "",
       address: "",
       geographicalLocation: "",
-      startingPrice: 0,
-      LastPrice: 0,
+      startingPrice: 100000,
+      LastPrice: 200000,
       purpose: "",
       type: "",
       description: "",
@@ -104,34 +104,6 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
     setFile(e.target.files);
   };
 
-  // const uploadFiles = async () => {
-  //   const api = "https://api.cloudinary.com/v1_1/djo1gzatx/image/upload";
-  //   const presetName = "mafline-upload";
-  //   const folderName = "mafline";
-  //   const url = [];
-
-  //   const formData = new FormData();
-  //   formData.append("upload_preset", presetName);
-  //   formData.append("folder", folderName);
-
-  //   for (const file of files) {
-  //     formData.append("file", file);
-  //     axios
-  //       .post(api, formData, {
-  //         headers: { "Content-Type": "multipart/form-data" },
-  //       })
-  //       .then((res) => {
-  //         setLoading(false);
-  //         url.push(res.data.url);
-  //         // setListImage((prev) => [...prev,]);
-  //       })
-  //       .catch((error) => {
-  //         setLoading(false);
-  //       });
-  //   }
-
-  //   addPlace(url);
-  // };
   const uploadFiles = async () => {
     const url = [];
 
@@ -141,8 +113,6 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
     const folderName = "mafline";
     formData.append("upload_preset", presetName);
     formData.append("folder", folderName);
-
-    console.log("check", Object.values(files));
 
     const requests = Object.values(files).map((file) => {
       formData.append("file", file);
@@ -155,14 +125,13 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       const responses = await Promise.all(requests);
       setLoading(false);
       url.push(...responses.map((res) => res.data.url));
-      addPlace(url);
+      handleAddPlace(url);
     } catch (error) {
       setLoading(false);
     }
   };
 
-  const addPlace = (url) => {
-    // console.log("vaof daay rooif", _.isEmpty(url));
+  const handleAddPlace = (url) => {
     if (_.isEmpty(url)) {
       toastify("chưa có ảnh");
     }
@@ -197,13 +166,13 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       });
   };
 
-  const handleAddPlace = (data) => {
+  const handleCheckAddPlace = (data) => {
     if (valueOpen === "" || valueClose === "") {
       message.error("Vui lòng điền đầy đủ thông tin!");
     } else {
       setData(data);
       if (_.isEmpty(files)) {
-        return toastify("error", "Chauw cos file");
+        return toastify("error", "Chưa có file");
       } else {
         uploadFiles();
       }
@@ -419,7 +388,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
           <Button onClick={handleClose}>Hủy</Button>
           <LoadingButton
             loading={loading}
-            onClick={handleSubmit(handleAddPlace)}
+            onClick={handleSubmit(handleCheckAddPlace)}
           >
             Thêm
           </LoadingButton>
