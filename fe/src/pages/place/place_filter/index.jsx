@@ -9,6 +9,7 @@ import axiosClient from "../../../api/axiosClient";
 import { changePayload, resetPayload } from "../../../redux/place/placeSlice";
 import { payloadPlace } from "../../../redux/selectors";
 import { toastify } from "../../../utils/common";
+import provinces from "../../../asset/64_provinces_and_cities";
 
 const PlaceFilter = () => {
   const [listPurpose, setListPurpose] = useState([]);
@@ -39,27 +40,16 @@ const PlaceFilter = () => {
     []
   );
 
-  const debounceFnLocation = useCallback(
-    _.debounce((value) => {
-      dispatch(
-        changePayload({
-          ...payload,
-          location: value,
-          pageNumber: 1,
-        })
-      );
-    }, 500),
-    []
-  );
+  const handleChange = (e) => {
+    const { purpose, type, variability, location } = watch();
 
-  const handleChange = () => {
-    const { purpose, type, variability } = watch();
-
+    console.log({ [e.target.name]: "" });
     dispatch(
       changePayload({
         ...payload,
-        purpose,
-        type,
+        location: location === "Tất cả" ? "" : location,
+        purpose: purpose === "Tất cả" ? "" : purpose,
+        type: type === "Tất cả" ? "" : type,
         variability,
         pageNumber: 1,
       })
@@ -70,7 +60,10 @@ const PlaceFilter = () => {
     axiosClient
       .get("/purpose/all")
       .then((res) => {
-        setListPurpose(res.data.data);
+        setListPurpose([
+          { id: "21548621321", name: "Tất cả" },
+          ...res.data.data,
+        ]);
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -81,7 +74,7 @@ const PlaceFilter = () => {
     axiosClient
       .get("/type/all")
       .then((res) => {
-        setListType(res.data.data);
+        setListType([{ id: "21548621321", name: "Tất cả" }, ...res.data.data]);
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -114,15 +107,18 @@ const PlaceFilter = () => {
       />
 
       <TextField
-        type="text"
+        select
         label="Khu vực"
         fullWidth
         inputProps={register("location")}
         size="small"
-        onChange={(e) => {
-          debounceFnLocation(e.target.value);
-        }}
-      />
+        onChange={handleChange}
+      >
+        {provinces?.map((item) => (
+          <MenuItem value={item.name}>{item.name}</MenuItem>
+        ))}
+      </TextField>
+
       <TextField
         select
         fullWidth

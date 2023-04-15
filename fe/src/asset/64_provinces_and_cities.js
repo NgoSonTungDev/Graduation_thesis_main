@@ -1,4 +1,5 @@
 const provinces = [
+  { id: "", name: 'Tất cả' },
   { id: 1, name: 'Hà Nội' },
   { id: 2, name: 'Hà Giang' },
   { id: 3, name: 'Cao Bằng' },

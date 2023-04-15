@@ -1,20 +1,19 @@
-import { Button } from "@mui/material";
+import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
+import { Button, IconButton } from "@mui/material";
+import _ from "lodash";
+import queryString from "query-string";
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import axiosClient from "../../../api/axiosClient";
 import LoadingBar from "../../../components/loadding/loading_bar";
-import { toastify } from "../../../utils/common";
-import queryString from "query-string";
+import GetDataPlaceItem from "../../../components/modle_find_place";
 import SidebarAdmin from "../../../components/narbar_admin";
 import PaginationCpn from "../../../components/pagination";
-import { DataPlaceById } from "../../../redux/selectors";
-import { useSelector, useDispatch } from "react-redux";
-import GetDataPlaceItem from "../../../components/modle_find_place";
-import { IconButton } from "@mui/material";
-import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
-import TablePlace from "./table_place";
-import ModalAddPlace from "./modal_add_place";
-import _ from "lodash";
 import { clearByIdPlace } from "../../../redux/place/placeSlice";
+import { DataPlaceById } from "../../../redux/selectors";
+import { toastify } from "../../../utils/common";
+import ModalAddPlace from "./modal_add_place";
+import TablePlace from "./table_place";
 
 const PlaceMangement = () => {
   const [openModalAddPlace, setOpenModalAddPlace] = React.useState(false);
