@@ -5,17 +5,18 @@ import { errorFunction } from "../utils/errorFunction";
 const roomController = {
   addInboxRoom: async (req: Request, res: Response) => {
     try {
-      const roomId = Rooms.findById(req.body.roomId);
+      // const roomId = Rooms.findById(req.body.roomId);
 
-      if (!roomId)
-        return res
-          .status(404)
-          .json(errorFunction(true, 404, "Không tồn tại !"));
+      // if (!roomId)
+      //   return res
+      //     .status(404)
+      //     .json(errorFunction(true, 404, "Không tồn tại !"));
 
-      await roomId.updateOne({
-        $push: { listInbox: req.body.message },
-        public: true,
-      });
+      // await roomId.updateOne({
+      //   $push: { listInbox: req.body.message },
+      //   public: true,
+      // });
+      await Rooms.create(req.body)
 
       res.json(errorFunction(true, 200, "Thêm thành công !"));
     } catch (error) {

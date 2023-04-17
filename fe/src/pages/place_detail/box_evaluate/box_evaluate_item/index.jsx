@@ -42,7 +42,9 @@ const BoxEvaluateItem = ({ data }) => {
           }}
         >
           <div>
-            <p style={{ fontSize: "18px" }}>{data?.userId?.userName}</p>
+            <p style={{ fontSize: "18px" }}>{data?.userId?.userName
+                    ? data?.userId?.userName
+                    : "Người dùng Mafline"}</p>
             <span style={{ fontSize: "13px", color: "#898c95" }}>
               Đánh giá {momentLocale(data?.dateTime)}
             </span>

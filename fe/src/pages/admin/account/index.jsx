@@ -11,8 +11,19 @@ import AccountTable from "./table_account";
 import { Box } from "@mui/system";
 import TabContext from "@mui/lab/TabContext";
 
+const fakeCode = (length) => {
+  let result = "";
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+};
+
 const AccountManagement = () => {
-  const [value, setValue] = React.useState("0");
   const [loading, setLoading] = React.useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = React.useState({});
@@ -22,29 +33,55 @@ const AccountManagement = () => {
     status: "",
   });
 
-  // const handleChangeTab = (e, newValue) => {
-  //   setValue(newValue);
+  const handleLockAccount = (userId) => {
+    console.log("lock", userId);
+    axiosClient
+      .put(`/user/lock-user/${userId}`)
+      .then((res) => {
+        setLoading(false);
+        handleGetAllUsers();
+      })
+      .catch((err) => {
+        setLoading(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thống !");
+      });
+  };
 
-  //   if (newValue === "0") {
-  //     return setPayload({
-  //       ...payload,
-  //       status: "",
-  //       pageNumber: 1,
-  //     });
-  //   }
+  const sendEmailUnlock = (email, code) => {
+    axiosClient
+      .post("/email/send-un-lock", {
+        email,
+        code,
+      })
+      .catch((err) => {
+        setLoading(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thống !");
+      });
+  };
 
-  //   setPayload({
-  //     ...payload,
-  //     status: Number(newValue),
-  //     pageNumber: 1,
-  //   });
-  // };
+  const handleUnlockAccount = (userId, email) => {
+    console.log("unlock", userId);
+    const codePass = fakeCode(8);
+    axiosClient
+      .put(`/user/un-lock-user/${userId}`, {
+        fakeCode: codePass,
+      })
+      .then((res) => {
+        setLoading(false);
+        // handleGetAllUsers();
+        sendEmailUnlock(email, codePass);
+      })
+      .catch((err) => {
+        setLoading(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thống !");
+      });
+  };
 
   const handleChangePage = (page) => {
     setPayload({ ...payload, pageNumber: page });
   };
 
-  const fetchData = () => {
+  const handleGetAllUsers = () => {
     axiosClient
       .get(`/user/get-all?${qs.stringify(payload)}`)
       .then((res) => {
@@ -60,7 +97,7 @@ const AccountManagement = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchData();
+    handleGetAllUsers();
     window.scrollTo(0, 0);
   }, [payload]);
 
@@ -68,7 +105,7 @@ const AccountManagement = () => {
     return (
       <div>
         <Box sx={{ width: "100%", height: "100vh", overflow: "hidden" }}>
-          <TabContext value={value}>
+          <TabContext>
             <div
               style={{
                 width: "100%",
@@ -88,7 +125,12 @@ const AccountManagement = () => {
                 ) : _.isEmpty(data) ? (
                   <ErrorEmpty />
                 ) : (
-                  <AccountTable data={data.data} callBackApi={fetchData} />
+                  <AccountTable
+                    data={data.data}
+                    handleLockAccount={handleLockAccount}
+                    handleUnlockAccount={handleUnlockAccount}
+                    callBackApi={handleGetAllUsers}
+                  />
                 )}
               </div>
               <div

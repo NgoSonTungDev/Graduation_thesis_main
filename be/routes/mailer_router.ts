@@ -18,5 +18,7 @@ export const mailerRouter = (router: Router) => {
 
   router.post("/email/send-cancel", mailerController.sendEmailCancel);
 
+  router.post("/email/send-un-lock", mailerController.sendEmailUnLock);
+
   router.post("/email/send-code", mailerController.sendCodeOtp);
 };

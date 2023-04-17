@@ -222,6 +222,61 @@ const cancel = () => {
 </div>`;
 };
 
+const unLock = (code: string) => {
+  return `<div
+  class="container"
+  style="
+    position: absolute;
+    width: 600px;
+    height: 400px;
+    border: 1px solid #3e3e3e;
+    border-radius: 5px;
+    background: url(https://demoda.vn/wp-content/uploads/2022/03/background-black-background-den-cac-khoi-3d.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+      rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  "
+>
+  <div class="container_icon" style="text-align: center; margin-top: 30px">
+    <img
+      src="https://www.iconarchive.com/download/i85633/graphicloads/100-flat/unlock.256.png"
+      alt=""
+      style="width: 140px; height: 140px; border-radius: 50%"
+    />
+    <p
+      style="
+        text-transform: capitalize;
+        margin-top: 10px;
+        font-size: 27px;
+        font-weight: 500;
+        color: #3498db;
+      "
+    >
+       Mở khoá tài khoản
+    </p>
+  </div>
+  <div
+    class="container_text"
+    style="width: 90%; margin-left: 5%; text-align: center; color: #b2bec3"
+  >
+    <span>
+      Hệ thống Mafline đã mở khoá cho tài khoản của bạn. Mật khẩu đăng nhập của bạn : <i style="
+      text-transform: capitalize;
+      margin-top: 10px;
+      font-size: 27px;
+      font-weight: 500;
+      color: #fff;
+    ">${code}</i>
+    </span>
+  </div>
+</div>`;
+};
+
 const generateToken = (code: number) => {
   const token = jwt.sign({ code }, process.env.TOKEN_SECRET + "", {
     expiresIn: "180s",
@@ -491,6 +546,42 @@ const mailerController = {
         to: `${email}`,
         subject: "THÔNG BÁO TỪ HỆ THỐNG MAFLINE",
         html: cancel(),
+      };
+      nodemailer
+        .createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.USERMAIL,
+            pass: process.env.PASSMAIL,
+          },
+          port: 465,
+          host: "smtp.gmail.com",
+        })
+        .sendMail(msg, (err) => {
+          res.json(errorFunction(true, 200, `Email sent ${email} `));
+        });
+    } catch (error) {
+      console.log("error: ", error);
+      res.status(400).json({
+        message: "Bad request",
+      });
+    }
+  },
+  sendEmailUnLock: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email } = req.body;
+
+      if (req.body.email === "") {
+        return res
+          .status(403)
+          .json(errorFunction(true, 403, "Không nhận được email !"));
+      }
+
+      const msg = {
+        from: process.env.USERMAIL,
+        to: `${email}`,
+        subject: "THÔNG BÁO TỪ HỆ THỐNG MAFLINE",
+        html: unLock(req.body.code),
       };
       nodemailer
         .createTransport({

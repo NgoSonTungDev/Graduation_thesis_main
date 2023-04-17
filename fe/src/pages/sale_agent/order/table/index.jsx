@@ -116,27 +116,33 @@ const OrderTable = ({ data, callBackApi }) => {
     }
   };
 
-  const renderButton = (number, id, email, userId) => {
+  const renderButton = (number, id, email, userId, ticket, place) => {
     if (number === 1) {
       return (
-        <div style={{ color: "#2ecc71" }}>
-          <button
-            className="button-check accept"
-            onClick={() => {
-              handleConfirm(id, email, userId);
-            }}
-          >
-            Xác nhận
-          </button>
-          <button
-            className="button-check cancel"
-            onClick={() => {
-              handleCancel(id, email, userId);
-            }}
-          >
-            Hủy
-          </button>
-        </div>
+        <>
+          {!ticket || !place ? (
+            <p style={{ color: "red" }}>Đã có vấn đề về đơn hàng</p>
+          ) : (
+            <div style={{ color: "#2ecc71" }}>
+              <button
+                className="button-check accept"
+                onClick={() => {
+                  handleConfirm(id, email, userId);
+                }}
+              >
+                Xác nhận
+              </button>
+              <button
+                className="button-check cancel"
+                onClick={() => {
+                  handleCancel(id, email, userId);
+                }}
+              >
+                Hủy
+              </button>
+            </div>
+          )}{" "}
+        </>
       );
     } else if (number === 2) {
       return <p style={{ color: "#3498db" }}>Chờ thanh toán</p>;
@@ -186,7 +192,7 @@ const OrderTable = ({ data, callBackApi }) => {
                   {item?.userId?.email}
                 </TableCell>
                 <TableCell align="left" size="medium">
-                  {item?.placeId?.name}
+                {item?.placeId ? item.placeId.name : <p style={{ color: "red" }}>Không còn tồn tại</p> }
                 </TableCell>
                 <TableCell align="left" size="medium">
                   {item.adultTicket}
@@ -234,7 +240,9 @@ const OrderTable = ({ data, callBackApi }) => {
                     item.status,
                     item._id,
                     item?.userId?.email,
-                    item?.userId?._id
+                    item?.userId?._id,
+                    item?.ticketId ? item?.ticketId.numberTickets : "",
+                    item?.placeId ? item?.placeId?._id : ""
                   )}
                 </TableCell>
               </TableRow>

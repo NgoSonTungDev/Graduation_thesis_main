@@ -43,8 +43,8 @@ const AdminMessage = () => {
   };
 
   const debounceFn = useCallback(
-    _debounce((value) => {
-      setPayload({ userName: value });
+    _debounce((value, valueTab) => {
+      setPayload({ userName: value, isAdmin: valueTab });
     }, 500),
     []
   );
@@ -133,11 +133,11 @@ const AdminMessage = () => {
               <InputBase
                 size="small"
                 sx={{ ml: 1, flex: 1, fontSize: "14px", mt: 0.5 }}
-                // value={payload.userName}
+                value={payload.userName}
                 placeholder="Tìm kiếm trên messenger"
                 inputProps={{ "aria-label": "tìm kiếm trên messenger" }}
                 onChange={(e) => {
-                  debounceFn(e.target.value);
+                  debounceFn(e.target.value, valueTab);
                 }}
               />
               <IconButton
@@ -145,8 +145,7 @@ const AdminMessage = () => {
                 sx={{ p: "5px" }}
                 aria-label="search"
                 onClick={() => {
-                  fetchData();
-                  // setPayload({ ...payload, userName: "" });
+                  setPayload({ userName: "", isAdmin: valueTab });
                 }}
               >
                 <RotateLeftOutlinedIcon />

@@ -32,6 +32,7 @@ import RegisterAgency from "./pages/auth/register_agency";
 import ForgotPassword from "./pages/auth/forgot_password";
 import ChangePassword from "./components/change_password";
 import TicketManagement from "./pages/admin/ticket";
+import PlaceMangement from "./pages/admin/place";
 import SaleAgentStatistic from "./pages/sale_agent/statistic";
 import { getUserDataLocalStorage } from "./utils/localstorage";
 import AccountManagement from "./pages/admin/account";

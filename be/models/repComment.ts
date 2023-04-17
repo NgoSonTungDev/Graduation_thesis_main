@@ -17,6 +17,10 @@ const repCommentSchema = new mongoose.Schema<IRepComment>({
     type: String,
     required: true,
   },
+  postId: {
+    type: String,
+    required: true,
+  },
 });
 
 const RepComments = mongoose.model("RepComment", repCommentSchema);

@@ -1,4 +1,3 @@
-import { Footer } from "antd/es/layout/layout";
 import React, { useEffect } from "react";
 import Navbar from "../../components/navbar";
 import "./style.scss";
@@ -20,7 +19,10 @@ const Introduce = () => {
 
           <div className="introduce-logo">
             <div className="introduce-logo-color">
-              <p>MAFLINE</p>
+              <b>
+                <span className="text-application1">MAF</span>
+                <span className="text-application2">LINE</span>
+              </b>
             </div>
           </div>
 
@@ -28,8 +30,9 @@ const Introduce = () => {
             <p>
               <b>
                 &emsp;<span className="text-application">MAF</span>
-                <span className="text-application2">LINE</span> là local brand
-                được thành lập và xuất hiện lần đầu tiên vào đầu tháng 09-2022.
+                <span className="text-application2">LINE</span> là một mạng xã
+                hội thu nhỏ được sinh ra nhằm mục đích review và bán vé các địa
+                điểm du lịch trong nước.
               </b>
             </p>
             <i>
@@ -39,15 +42,15 @@ const Introduce = () => {
                   <span className="text-application1">MAF</span>
                   <span className="text-application2">LINE</span>
                 </b>{" "}
-                đã mang đến một góc nhìn khác hơn về giá thành của thương hiệu{" "}
+                đã mang đến người dùng trải nghiệm du lịch dễ dàng hơn bao giờ
+                hết.
                 <b>VIỆT</b> Bước ngoặc lớn nhất vào tháng 05-2021{" "}
                 <b>
                   <span className="text-application1">MAF</span>
                   <span className="text-application2">LINE</span>
                 </b>{" "}
-                tự hào là local đầu tiên đưa sản phẩm về mức giá{" "}
-                <b>#SALE 99K</b> nhưng vẫn đảm bảo tuyệt đối chất lượng đầu ra
-                của thương hiệu với tiêu chí : <b>“ rẻ - đẹp - chất lượng “</b>
+                hi vọng sẽ là dịch vụ du lịch đưa đến người dùng các tour du
+                dịch tốt với mức gía phù hợp nhất/
               </p>
 
               <p>
@@ -56,7 +59,7 @@ const Introduce = () => {
               </p>
 
               <p>
-                &emsp;&emsp;Hãy cùng nhau đón chờ những sản phẩm mới nhất từ{" "}
+                &emsp;&emsp;Hãy cùng nhau đón chờ những thông tin mới nhất từ{" "}
                 <b>
                   <span className="text-application1">MAF</span>
                   <span className="text-application2">LINE</span>
@@ -68,7 +71,6 @@ const Introduce = () => {
         </div>
         <div className="introduce-right"></div>
       </div>
-      <Footer />
     </div>
   );
 };
