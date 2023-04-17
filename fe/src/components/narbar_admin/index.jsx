@@ -119,7 +119,7 @@ const Header = ({ ReactNode }) => {
                     General Management
                   </MenuItem>
                   <MenuItem
-                    active={pathName === "admin" && true}
+                    active={pathName === "/admin/place" && true}
                     icon={<MdEditLocationAlt />}
                     onClick={() => {
                       movePage("/admin/place");
@@ -136,6 +136,9 @@ const Header = ({ ReactNode }) => {
                   <MenuItem
                     active={pathName === "/admin/account" && true}
                     icon={<MdOutlineManageAccounts />}
+                    onClick={() => {
+                      movePage("/admin/account");
+                    }}
                   >
                     Account management
                   </MenuItem>

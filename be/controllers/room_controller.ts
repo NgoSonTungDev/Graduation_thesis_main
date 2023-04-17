@@ -47,7 +47,7 @@ const roomController = {
                 {
                   "user.userName": {
                     $regex: userName,
-                    $options: "$i",
+                    $options: "i",
                   },
                 },
                 {
