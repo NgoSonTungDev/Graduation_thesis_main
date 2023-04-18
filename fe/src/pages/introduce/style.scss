@@ -1,0 +1,86 @@
+.introduce-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  background-image: url(https://iit.com.vn/files/images/Article/5-dieu-can-biet-khi-thiet-ke-website-du-lich.jpg);
+  object-fit: contain;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  .introduce-left {
+    width: 20%;
+  }
+
+  .introduce-content {
+    width: 60%;
+
+    .introduce-title {
+      color: rgb(74, 38, 215);
+      width: 100%;
+      height: auto;
+      margin-left: 50px;
+      margin-top: 20px;
+    }
+
+    .introduce-logo {
+      position: relative;
+      width: 100%;
+
+      .introduce-logo-color {
+        position: absolute;
+        width: 300px;
+        height: auto;
+        margin-left: 200px;
+        letter-spacing: 12px;
+
+        b {
+          position: absolute;
+          // color: #000;
+          font-size: 50px;
+          left: 165px;
+          font-weight: 600;
+        }
+
+        .text-application1 {
+          color: #3742fa;
+        }
+        .text-application2 {
+          color: #009432;
+        }
+      }
+    }
+
+    .introduce-text {
+      margin-top: 130px;
+      font-size: 20px;
+      color: rgb(74, 38, 215);
+      line-height: 40px;
+      text-align: justify;
+      top: 100px;
+
+      .text-application {
+        color: #3742fa;
+        &::after {
+          content: "";
+          height: 3px;
+          width: 43px;
+          background: #bec7c8;
+          position: absolute;
+          left: 325px;
+          bottom: 550px;
+        }
+      }
+
+      .text-application1 {
+        color: #3742fa;
+      }
+      .text-application2 {
+        color: #009432;
+      }
+    }
+  }
+
+  .introduce-right {
+    width: 20%;
+  }
+}

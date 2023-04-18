@@ -420,7 +420,7 @@ const CardPost = ({ data, callBackApi }) => {
               justifyContent: "space-between",
             }}
           >
-            <div className="avatar" style={{ width: "46px", height: "46px" }}>
+            <div style={{ width: "46px", height: "46px" }}>
               <img
                 style={{
                   width: "46px",

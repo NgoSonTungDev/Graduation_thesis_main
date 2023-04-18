@@ -12,6 +12,8 @@ import ws from "../../../socket";
 import { toastify } from "../../../utils/common";
 import { setUserDataLocalStorage } from "../../../utils/localstorage";
 import "./style.scss";
+import { setUser } from "../../../redux/user/userSlice";
+import { useDispatch } from "react-redux";
 
 const validationInput = yup.object().shape({
   userName: yup.string().required("Tên đăng nhập không được để trống"),
@@ -26,6 +28,7 @@ const Login = () => {
   const [check, setCheck] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigation = useNavigate();
+  const dispatch = useDispatch()
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
@@ -66,6 +69,7 @@ const Login = () => {
       })
       .then((res) => {
         setUserDataLocalStorage(res.data.data);
+        dispatch(setUser(res.data.data));
         setCheck(false);
         joinRoom(res.data.data.roomId);
         ws.joinRoomNotify(res.data.data._id);
@@ -78,6 +82,7 @@ const Login = () => {
         }
       })
       .catch((err) => {
+        dispatch(setUser(null));
         setCheck(false);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });

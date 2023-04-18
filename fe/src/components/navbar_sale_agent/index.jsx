@@ -35,6 +35,7 @@ import {
 } from "../../utils/localstorage";
 import ChangePassword from "../change_password";
 import "./style.scss";
+import { setUser } from "../../redux/user/userSlice";
 
 const MenuSaleAgent = ({ ReactNode }) => {
   const [menuCollapse, setMenuCollapse] = useState(true);
@@ -200,6 +201,7 @@ const MenuSaleAgent = ({ ReactNode }) => {
                 iconShape="square"
                 onClick={() => {
                   removeUserDataLocalStorage();
+                  dispatch(setUser(null));
                   navigation("/home");
                 }}
               >

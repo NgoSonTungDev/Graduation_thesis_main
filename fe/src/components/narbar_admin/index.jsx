@@ -26,12 +26,15 @@ import "./style.scss";
 
 import "react-pro-sidebar/dist/css/styles.css";
 import { removeUserDataLocalStorage } from "../../utils/localstorage";
+import { setUser } from "../../redux/user/userSlice";
+import { useDispatch } from "react-redux";
 
 const Header = ({ ReactNode }) => {
   const [menuCollapse, setMenuCollapse] = useState(true);
   const location = useLocation();
   const pathName = location.pathname;
   const navigation = useNavigate();
+  const dispatch = useDispatch()
 
   const menuIconClick = () => {
     menuCollapse ? setMenuCollapse(false) : setMenuCollapse(true);
@@ -134,8 +137,11 @@ const Header = ({ ReactNode }) => {
                     Post management
                   </MenuItem>
                   <MenuItem
-                    active={pathName === "admin" && true}
+                    active={pathName === "/admin/account" && true}
                     icon={<MdOutlineManageAccounts />}
+                    onClick={() => {
+                      movePage("/admin/account");
+                    }}
                   >
                     Account management
                   </MenuItem>
@@ -183,6 +189,7 @@ const Header = ({ ReactNode }) => {
                 iconShape="square"
                 onClick={() => {
                   removeUserDataLocalStorage();
+                  dispatch(setUser(null));
                   navigation("/home");
                 }}
               >
