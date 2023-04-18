@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ChangePassword from "./components/change_password";
@@ -14,6 +14,7 @@ import PlaceMangement from "./pages/admin/place";
 import Statistic from "./pages/admin/statistic";
 import TicketManagement from "./pages/admin/ticket";
 import VoucherManagement from "./pages/admin/voucher";
+import AccountManagement from "./pages/admin/account";
 import ForgotPassword from "./pages/auth/forgot_password";
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
@@ -34,9 +35,9 @@ import TicketSaleAgent from "./pages/sale_agent/ticket";
 import ThankCustomer from "./pages/thank_customer";
 import Voucher from "./pages/voucher";
 import { OpenChatBox } from "./redux/selectors";
+import { setUser } from "./redux/user/userSlice";
 import ws from "./socket";
 import { getUserDataLocalStorage } from "./utils/localstorage";
-import { setUser } from "./redux/user/userSlice";
 
 const AdminLayout = ({ children }) => {
   const { user } = useSelector((state) => state.User);
@@ -215,6 +216,14 @@ const App = () => {
           element={
             <AdminLayout>
               <PlaceMangement />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/account"
+          element={
+            <AdminLayout>
+              <AccountManagement />
             </AdminLayout>
           }
         />

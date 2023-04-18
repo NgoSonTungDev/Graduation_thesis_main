@@ -139,6 +139,9 @@ const Header = ({ ReactNode }) => {
                   <MenuItem
                     active={pathName === "/admin/account" && true}
                     icon={<MdOutlineManageAccounts />}
+                    onClick={() => {
+                      movePage("/admin/account");
+                    }}
                   >
                     Account management
                   </MenuItem>
