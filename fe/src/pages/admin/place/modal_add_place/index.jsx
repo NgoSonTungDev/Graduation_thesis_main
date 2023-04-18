@@ -5,28 +5,27 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
+import { message } from "antd";
+import axios from "axios";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
 import axiosClient from "../../../../api/axiosClient";
+import provinces from "../../../../asset/64_provinces_and_cities";
 import GetDataPlaceItem from "../../../../components/modle_find_place";
+import FormTime from "../../../../hook-form/form_time";
 import { clearByIdPlace } from "../../../../redux/place/placeSlice";
 import { toastify } from "../../../../utils/common";
-import MenuItem from "@mui/material/MenuItem";
-import axios from "axios";
-import provinces from "../../../../asset/64_provinces_and_cities";
-import FormTime from "../../../../hook-form/form_time";
-import { Input, message, Rate } from "antd";
 
 const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [listPurpose, setListPurpose] = useState([]);
   const [listType, setListType] = useState([]);
-  const [listLocation, setListLocation] = useState(provinces);
   const [listImage, setListImage] = useState([]);
   const [files, setFile] = useState(null);
   const [data, setData] = useState(null);
@@ -295,7 +294,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 size="small"
                 sx={{ width: "80%", marginLeft: "10%" }}
               >
-                {listLocation?.map((item) => (
+                {provinces.map((item) => (
                   <MenuItem value={item.name}>{item.name}</MenuItem>
                 ))}
               </TextField>

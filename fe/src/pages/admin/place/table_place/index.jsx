@@ -29,14 +29,13 @@ const TablePlace = ({ data, deleteData, updateData }) => {
   const [openDelete, setOpenDelete] = React.useState(false);
   const [dataType, setDataType] = React.useState([]);
   const [dataPurpose, setDataPurpose] = React.useState([]);
-  const [listLocation, setListLocation] = useState(provinces);
   const [openModal, setOpenModal] = useState(false);
   const dispatch = useDispatch();
-  const [dataPlace, setDataPlace] = React.useState([]);
+  const [dataPlaceImage, setDataPlaceImage] = React.useState([]);
 
-  const handleClickOpenModalUpdateImage = () => {
+  const handleClickOpenModalUpdateImage = (placeId) => {
+    getApiAnPlace(placeId);
     setOpenModalUpdateImage(true);
-    getApiAnPlace();
   };
 
   const handleCloseModalUpdateImage = () => {
@@ -147,11 +146,11 @@ const TablePlace = ({ data, deleteData, updateData }) => {
       });
   };
 
-  const getApiAnPlace = () => {
+  const getApiAnPlace = (id) => {
     axiosClient
-      .get(`/place/an/${placeId}`)
+      .get(`/place/an/${id}`)
       .then((res) => {
-        setDataPlace(res.data.data);
+        setDataPlaceImage(res.data.data.image);
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -219,7 +218,7 @@ const TablePlace = ({ data, deleteData, updateData }) => {
                         helperText={errors.location?.message}
                         size="small"
                       >
-                        {listLocation?.map((type) => (
+                        {provinces?.map((type) => (
                           <MenuItem value={type.name}>{type.name}</MenuItem>
                         ))}
                       </TextField>
@@ -353,8 +352,7 @@ const TablePlace = ({ data, deleteData, updateData }) => {
                     </Button>
                     <Button
                       onClick={() => {
-                        handleClickOpenModalUpdateImage();
-                        setPlaceId(item._id);
+                        handleClickOpenModalUpdateImage(item._id);
                       }}
                     >
                       Chỉnh Ảnh
@@ -367,7 +365,7 @@ const TablePlace = ({ data, deleteData, updateData }) => {
         </TableContainer>
       )}
       <ModalUpdateImage
-        dataPlace={dataPlace}
+        dataPlace={dataPlaceImage}
         open={openModalUpdateImage}
         handleClose={handleCloseModalUpdateImage}
       />
