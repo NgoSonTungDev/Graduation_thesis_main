@@ -1,6 +1,6 @@
 .place_item_image {
-  width: 30%;
-  height: 100%;
+  width: 330px;
+  height: 220px;
   overflow: hidden;
   border-radius: 8px;
   display: grid;
@@ -15,5 +15,6 @@
   img {
     transition: 0.5s all;
     width: 100%;
+    object-fit: cover;
   }
 }

@@ -5,8 +5,6 @@ import { errorFunction } from "../utils/errorFunction";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import Users from "../models/user";
-import { ISalesAgent } from "../types/sales_agent";
-import SalesAgents from "../models/salesAgent";
 
 var min = 100000;
 var max = 999999;
@@ -349,78 +347,6 @@ const mailerController = {
                 true,
                 200,
                 `Email sent ${email} with code : ${check} and Token : ${token}`
-              )
-            );
-          }
-        });
-    } catch (error) {
-      console.log("error: ", error);
-      res.status(400).json({
-        message: "Bad request",
-      });
-    }
-  },
-  sendCodeOtpRegisterSalesAgent: async (req: Request, res: Response) => {
-    try {
-      const check = Math.floor(min + Math.random() * (max - min));
-
-      if (!req.body.email || !req.body.userName) {
-        return res
-          .status(403)
-          .json(errorFunction(true, 403, "Truyền thiếu username hoặc email"));
-      }
-
-      const checkUserName = await SalesAgents.findOne<ISalesAgent>({
-        userName: req.body.userName,
-      });
-      // const checkExist = await Users.findOne<IUser>({$or: [
-      //   {userName: req.body.userName}, { email: req.body.email }
-      // ]})
-      const checkEmail = await SalesAgents.findOne({ email: req.body.email });
-
-      if (checkUserName)
-        return res
-          .status(400)
-          .json(errorFunction(true, 400, "Tên này đã tồn tại !"));
-
-      if (checkEmail)
-        return res
-          .status(400)
-          .json(errorFunction(true, 400, "Email này đã tồn tại !"));
-
-      const msg = {
-        from: process.env.USERMAIL,
-        to: `${req.body.email}`,
-        subject: "THÔNG BÁO TỪ HỆ THỐNG MAFLINE",
-        html: uiSendEmail(check),
-      };
-      nodemailer
-        .createTransport({
-          service: "gmail",
-          auth: {
-            user: process.env.USERMAIL,
-            pass: process.env.PASSMAIL,
-          },
-          port: 465,
-          host: "smtp.gmail.com",
-        })
-        .sendMail(msg, async (err) => {
-          if (err) {
-            console.log(err);
-            return res.status(500).json(err);
-          } else {
-            const token = generateToken(check);
-
-            res.cookie("CodeRegister", `${token}`, {
-              // maxAge: 5000,
-              expires: new Date(Date.now() + 180 * 1000),
-              httpOnly: true,
-            });
-            res.json(
-              errorFunction(
-                true,
-                200,
-                `Email sent ${req.body.email} with code : ${check} and Token : ${token}`
               )
             );
           }
