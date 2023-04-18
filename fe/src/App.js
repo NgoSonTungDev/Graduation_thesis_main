@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ChangePassword from "./components/change_password";
@@ -36,41 +36,61 @@ import Voucher from "./pages/voucher";
 import { OpenChatBox } from "./redux/selectors";
 import ws from "./socket";
 import { getUserDataLocalStorage } from "./utils/localstorage";
+import { setUser } from "./redux/user/userSlice";
+
+const AdminLayout = ({ children }) => {
+  const { user } = useSelector((state) => state.User);
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  } else if (user.isAdmin === 3) {
+    return <div>{children}</div>;
+  } else {
+    return <Navigate to="/forbidden" replace />;
+  }
+};
+
+const SaleAgentLayout = ({ children }) => {
+  const { user } = useSelector((state) => state.User);
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  } else if (user.isAdmin === 2) {
+    return <div>{children}</div>;
+  } else {
+    return <Navigate to="/forbidden" replace />;
+  }
+};
+
+const UserLayout = ({ children }) => {
+  const { user } = useSelector((state) => state.User);
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  } else if (user.isAdmin === 1) {
+    return <div>{children}</div>;
+  } else {
+    return <Navigate to="/forbidden" replace />;
+  }
+};
+
+const MainLayout = ({ children }) => {
+  const { user } = useSelector((state) => state.User);
+  if (user && user.isAdmin === 3) {
+    return <Navigate to="/admin/home" replace />;
+  }
+
+  if (user && user.isAdmin === 2) {
+    return <Navigate to="/sale-agent/home" replace />;
+  }
+
+  return children;
+};
 
 const App = () => {
   const open = useSelector(OpenChatBox);
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null);
 
-  const AdminLayout = ({ children }) => {
-    if (!user) {
-      return navigate("/login", { replace: true });
-    } else if (user.isAdmin === 3) {
-      return <div>{children}</div>;
-    } else {
-      return navigate("/forbidden", { replace: true });
-    }
-  };
-
-  const SaleAgentLayout = ({ children }) => {
-    if (!user) {
-      return navigate("/login", { replace: true });
-    } else if (user.isAdmin === 2) {
-      return <div>{children}</div>;
-    } else {
-      return navigate("/forbidden", { replace: true });
-    }
-  };
-
-  const UserLayout = ({ children }) => {
-    if (!user) {
-      return navigate("/login", { replace: true });
-    } else if (user.isAdmin === 1) {
-      return <div>{children}</div>;
-    } else {
-      return navigate("/forbidden", { replace: true });
-    }
-  };
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const userIdStorage = getUserDataLocalStorage();
@@ -83,14 +103,28 @@ const App = () => {
       ws.joinRoom(userIdStorage?.roomId);
     }
 
-    setUser(userIdStorage || null);
+    dispatch(setUser(userIdStorage || null));
   }, []);
 
   return (
     <div>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/home" element={<Home />} />
+        <Route
+          path="/"
+          element={
+            <MainLayout>
+              <Home />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/home"
+          element={
+            <MainLayout>
+              <Home />
+            </MainLayout>
+          }
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/register-agency" element={<RegisterAgency />} />
@@ -122,7 +156,6 @@ const App = () => {
           path="/payment/:ticketId"
           element={
             <UserLayout>
-              {" "}
               <PaymentDetail />
             </UserLayout>
           }
