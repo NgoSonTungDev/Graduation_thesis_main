@@ -1,19 +1,19 @@
-import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
-import TabPanel from "@mui/lab/TabPanel";
-import React, { useEffect, useState } from "react";
-import SidebarAdmin from "../../../components/narbar_admin";
-import { Box, Button } from "@mui/material";
-import PaginationCpn from "../../../components/pagination";
-import axiosClient from "../../../api/axiosClient";
-import { toastify } from "../../../utils/common";
-import LoadingBar from "../../../components/loadding/loading_bar";
-import ErrorEmpty from "../../../components/emty_data";
+import { Box } from "@mui/material";
+import Tab from "@mui/material/Tab";
 import _ from "lodash";
 import qs from "query-string";
-import OrderTableAdmin from "./table";
+import React, { useEffect, useState } from "react";
+import axiosClient from "../../../api/axiosClient";
+import ErrorEmpty from "../../../components/emty_data";
+import LoadingBar from "../../../components/loadding/loading_bar";
+import SidebarAdmin from "../../../components/narbar_admin";
+import PaginationCpn from "../../../components/pagination";
+import { toastify } from "../../../utils/common";
 import GetDataSaleAgent from "./modle_find_sale_agent";
+import "./style.scss";
+import OrderTableAdmin from "./table";
 
 const OrderManagement = () => {
   const [value, setValue] = React.useState("0");
@@ -22,7 +22,7 @@ const OrderManagement = () => {
   const [data, setData] = React.useState({});
   const [payload, setPayload] = React.useState({
     pageNumber: 1,
-    limit: 5,
+    limit: 6,
     status: "",
   });
 
@@ -110,17 +110,11 @@ const OrderManagement = () => {
             <div
               style={{
                 width: "100%",
-                height: "90vh",
+                height: "93%",
                 marginTop: "10px",
               }}
             >
-              <div
-                style={{
-                  width: "100%",
-                  height: "93%",
-                  overflow: "hidden",
-                }}
-              >
+              <div className="boxTable">
                 {loading ? (
                   <LoadingBar loading={loading} />
                 ) : _.isEmpty(data) ? (
@@ -132,7 +126,7 @@ const OrderManagement = () => {
               <div
                 style={{
                   width: "100%",
-                  height: "6%",
+                  height: "50px",
                 }}
               >
                 <PaginationCpn

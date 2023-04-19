@@ -3,7 +3,6 @@ export interface IPlace {
   name: string;
   location: string;
   address: string;
-  geographicalLocation: string;
   startingPrice: number;
   LastPrice: number;
   purpose: string;

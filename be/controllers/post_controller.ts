@@ -4,6 +4,7 @@ import { ICondition } from "../types/common";
 import { errorFunction } from "../utils/errorFunction";
 import Comments from "../models/comment";
 import RepComments from "../models/repComment";
+import { IPost } from "../types/post";
 
 const postController = {
   addPost: async (req: Request, res: Response, next: NextFunction) => {
@@ -68,23 +69,30 @@ const postController = {
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {
-      res.status(500).json(error);
+      res.status(400).json({
+        error: error,
+        message: "Bad request",
+      });
     }
   },
   updatePublicPost: async (req: Request, res: Response) => {
     try {
       await Posts.findByIdAndUpdate(req.params.id, {
         public: true,
+        time: Number(new Date())
       });
 
       res.json(errorFunction(true, 200, "Bài viết đã được công khai !"));
     } catch (error) {
-      res.status(500).json(error);
+      res.status(400).json({
+        error: error,
+        message: "Bad request",
+      });
     }
   },
   deletePost: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const id = await Posts.findById(req.params.id);
+      const id = await Posts.findById<IPost>(req.params.id);
 
       if (!id)
         return res
@@ -98,8 +106,8 @@ const postController = {
       await Posts.findByIdAndDelete(req.params.id);
       res.status(200).json(errorFunction(true, 200, "Xóa thành công !"));
     } catch (error) {
-      console.log("error: ", error);
       res.status(400).json({
+        error: error,
         message: "Bad request",
       });
     }

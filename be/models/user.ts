@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema<IUser>(
     isLock: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     numberPhone: {
       type: String,

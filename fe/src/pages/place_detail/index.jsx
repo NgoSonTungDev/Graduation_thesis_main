@@ -1,28 +1,30 @@
+import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
+import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
+import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import RoomOutlinedIcon from "@mui/icons-material/RoomOutlined";
+import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import { Button, Skeleton } from "@mui/material";
-import React, { useEffect } from "react";
+import Rating from "@mui/material/Rating";
+import _ from "lodash";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
+import { SiZalo } from "react-icons/si";
 import { useParams } from "react-router";
 import axiosClient from "../../api/axiosClient";
 import Footer from "../../components/footer";
-import { SiZalo } from "react-icons/si";
-
 import Navbar from "../../components/navbar";
 import { formatDate, formatMoney, toastify } from "../../utils/common";
-import ImageBox from "./image_box";
-import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
-import "./style.scss";
-import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
-import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
-import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
-import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
-import moment from "moment";
-import Rating from "@mui/material/Rating";
-import ChartPie from "./chart_pie";
-import _ from "lodash";
-import BoxEvaluate from "./box_evaluate";
-import ModalChooseSaleAgent from "./modal_choose_sale_agent";
 import { getUserDataLocalStorage } from "../../utils/localstorage";
+import BoxEvaluate from "./box_evaluate";
+import ChartPie from "./chart_pie";
+import ImageBox from "./image_box";
+import ModalChooseSaleAgent from "./modal_choose_sale_agent";
+import "./style.scss";
+import axios from "axios";
 import ModalVoucher from "./modal_voucher";
+import Map_controller from "../../components/map_controller";
+import { GoogleMap, InfoWindow, Marker } from "@react-google-maps/api";
 
 const PlaceDetail = () => {
   const [loading, setLoading] = React.useState(false);
@@ -32,6 +34,7 @@ const PlaceDetail = () => {
   const [openModalVoucher, setOpenModalVoucher] = React.useState(false);
   const [dataEvaluate, setDataEvaluate] = React.useState([]);
   const userIdStorage = getUserDataLocalStorage();
+  const [mapCenter, setMapCenter] = useState({ lat: 0, lon: 0 });
 
   const { id } = useParams();
 
@@ -84,6 +87,24 @@ const PlaceDetail = () => {
     }
   };
 
+  const handleSearchPlaceMap = async (query) => {
+    try {
+      const response = await axios.get(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          query
+        )}`
+      );
+      const { lat, lon } = response.data[0];
+      if (lat && lon && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lon))) {
+        setMapCenter({ lat: parseFloat(lat) , lon: parseFloat(lon) });
+      } else {
+        console.log("No valid search results found");
+      }
+    } catch (error) {
+      console.log("No search results found", error);
+    }
+  };
+
   const CallApiGetEvaluate = (url) => {
     setLoadingEvaluate(true);
     axiosClient
@@ -104,6 +125,7 @@ const PlaceDetail = () => {
       .get(url)
       .then((res) => {
         setData(res.data.data);
+        handleSearchPlaceMap(res.data.data.name);
         setLoading(false);
       })
       .catch((err) => {
@@ -204,7 +226,6 @@ const PlaceDetail = () => {
                       <Rating
                         name="simple-controlled"
                         value={Number(data.rating)}
-                        // disabled={true}
                       />
                     </i>
                     <span>({data.rating})</span>
@@ -296,16 +317,45 @@ const PlaceDetail = () => {
                     width: "100%",
                     height: "300px",
                     marginTop: "10px",
+                    overflow: "hidden",
                   }}
                 >
-                  <iframe
-                    src={data.geographicalLocation}
-                    width="100%"
-                    height="100%"
-                    allowfullscreen="true"
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"
-                  ></iframe>
+                  <Map_controller
+                    children={
+                      <GoogleMap
+                        mapContainerStyle={{
+                          width: "100%",
+                          height: "100%",
+                        }}
+                        center={{
+                          lat: mapCenter.lat,
+                          lng: mapCenter.lon,
+                        }}
+                        options={{
+                          styles: [
+                            {
+                              featureType: "poi",
+                              stylers: [{ visibility: "off" }],
+                            },
+                            {
+                              featureType: "transit.station",
+                              stylers: [{ visibility: "off" }],
+                            },
+                          ],
+                          maxZoom: 20,
+                          mapTypeControl: false,
+                        }}
+                        zoom={12}
+                      >
+                        <Marker
+                          position={{
+                            lat: mapCenter.lat,
+                            lng: mapCenter.lon,
+                          }}
+                        />
+                      </GoogleMap>
+                    }
+                  />
                 </div>
               </div>
             )}

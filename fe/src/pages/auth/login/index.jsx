@@ -16,7 +16,7 @@ import { setUser } from "../../../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 
 const validationInput = yup.object().shape({
-  userName: yup.string().required("Tên đăng nhập không được để trống"),
+  email: yup.string().required("Email đăng nhập không được để trống").email("Không đúng định dạng email"),
   password: yup
     .string()
     .min(6, "Mật khẩu ít nhất 6 ký tự !!!")
@@ -27,6 +27,7 @@ const validationInput = yup.object().shape({
 const Login = () => {
   const [check, setCheck] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [dataLogin, setDataLogin] = useState(null);
   const navigation = useNavigate();
   const dispatch = useDispatch()
 
@@ -39,22 +40,22 @@ const Login = () => {
     formState: { errors, isDirty, isValid },
   } = useForm({
     defaultValues: {
-      userName: "",
+      email: "",
       password: "",
     },
     mode: "all",
     resolver: yupResolver(validationInput),
   });
 
-  // function onPress_ENTER(event) {
-  //   var keyPressed = event.keyCode || event.which;
-  //   if (keyPressed === 13) {
-  //     handleLogin();
-  //     keyPressed = null;
-  //   } else {
-  //     return false;
-  //   }
-  // }
+  function onPress_ENTER(event) {
+    var keyPressed = event.keyCode || event.which;
+    if (keyPressed === 13) {
+      handleLogin(dataLogin);
+      keyPressed = null;
+    } else {
+      return false;
+    }
+  }
 
   const joinRoom = (id) => {
     ws.joinRoom(id);
@@ -62,9 +63,10 @@ const Login = () => {
 
   const handleLogin = (data) => {
     setCheck(true);
+    setDataLogin(data)
     axiosClient
       .post("/user/login", {
-        userName: data.userName,
+        email: data.email,
         password: data.password,
       })
       .then((res) => {
@@ -95,13 +97,13 @@ const Login = () => {
           <p style={{textAlign:"center",fontWeight:"bold", fontSize:"28px",color:"#636e72"}}>Chào mừng bạn trở lại</p>
           <div className="container_Login_form_text">
             <TextField
-              error={!!errors?.userName}
-              {...register("userName")}
+              error={!!errors?.email}
+              {...register("email")}
               type="text"
-              label="Tên đăng nhập của bạn"
+              label="Email đăng nhập của bạn"
               size="small"
               sx={{ width: "80%", marginLeft: "10%" }}
-              helperText={errors.userName?.message}
+              helperText={errors.email?.message}
             />
             <TextField
               error={!!errors?.password}
@@ -111,7 +113,7 @@ const Login = () => {
               size="small"
               sx={{ width: "80%", marginLeft: "10%", marginTop: "20px" }}
               helperText={errors.password?.message}
-              // onKeyDown={(e) => onPress_ENTER(e)}
+              onKeyDown={(e) => onPress_ENTER(e)}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">

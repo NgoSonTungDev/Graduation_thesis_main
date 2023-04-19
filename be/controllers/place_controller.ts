@@ -70,10 +70,16 @@ const placeController = {
         query.location = location;
       }
       if (purpose) {
-        query.purpose = purpose;
+        query.purpose = {
+          $regex: purpose,
+          $options: "i",
+        };
       }
       if (type) {
-        query.type = type;
+        query.type = {
+          $regex: type,
+          $options: "i",
+        };
       }
 
       console.log(query);
