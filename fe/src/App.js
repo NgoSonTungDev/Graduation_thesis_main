@@ -82,6 +82,7 @@ const App = () => {
           <Route path="/admin/voucher" element={<VoucherManagement />} />
           <Route path="/admin/ticket" element={<TicketManagement />} />
           <Route path="/admin/account" element={<AccountManagement />} />
+          <Route path="/admin/place" element={<PlaceMangement />} />
 
           {/* saleAgent */}
           <Route path="/sale-agent/home" element={<HomeSaleAgent />} />
