@@ -8,29 +8,11 @@ const authController = {
   register: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
-      // const user: IUser = {
-      //   userName: req.body.userName,
-      //   email: req.body.email,
-      //   password: hashedPassword,
-      //   isAdmin: false,
-      //   address: "",
-      //   avt: "",
-      //   description: "",
-      //   gender: "men",
-      //   numberPhone: "",
-      // };
-      // const data = await new AuthStore().createUser(user);
-
       const data = await Users.create({
         ...req.body,
-        // userName: req.body.userName,
-        // email: req.body.email,
         password: hashedPassword,
       });
-
       const { _id, userName, email, avt, isAdmin } = data;
-
       await Rooms.create({
         userId: _id,
         listInbox: [],
@@ -60,7 +42,7 @@ const authController = {
         res.status(404).json(errorFunction(false, 404, "Sai tên đăng nhập !"));
       } else {
         if (user.isLock === true) {
-         return res
+          return res
             .status(404)
             .json(errorFunction(false, 404, "Tài khoản của bạn đã bị khoá !"));
         }
@@ -71,9 +53,7 @@ const authController = {
           res.status(404).json(errorFunction(false, 404, "Sai mật khẩu !"));
         } else {
           const { _id, userName, email, avt, isAdmin } = user;
-
           const roomId = await Rooms.findOne({ userId: _id });
-
           res.json(
             errorFunction(false, 200, "Đăng nhập thành công !", {
               _id,
