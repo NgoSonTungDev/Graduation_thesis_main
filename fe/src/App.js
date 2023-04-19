@@ -91,8 +91,6 @@ const MainLayout = ({ children }) => {
 const App = () => {
   const open = useSelector(OpenChatBox);
 
-  const dispatch = useDispatch();
-
   useEffect(() => {
     const userIdStorage = getUserDataLocalStorage();
 
@@ -103,8 +101,6 @@ const App = () => {
     } else if (userIdStorage && userIdStorage.isAdmin === 2) {
       ws.joinRoom(userIdStorage?.roomId);
     }
-
-    dispatch(setUser(userIdStorage || null));
   }, []);
 
   return (
@@ -262,22 +258,8 @@ const App = () => {
           }
         />
 
-        <Route
-          path="/forbidden"
-          element={
-            <SaleAgentLayout>
-              <Forbidden />
-            </SaleAgentLayout>
-          }
-        />
-        <Route
-          path="*"
-          element={
-            <SaleAgentLayout>
-              <NotFound />
-            </SaleAgentLayout>
-          }
-        />
+        <Route path="/forbidden" element={<Forbidden />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       <ChatBot />

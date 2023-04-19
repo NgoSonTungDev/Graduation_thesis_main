@@ -16,6 +16,7 @@ import Fade from "@mui/material/Fade";
 import "./style.scss";
 import axiosClient from "../../../../api/axiosClient";
 import ws from "../../../../socket";
+import ModalConfirm from "../../../../components/modal_confirm";
 
 const style = {
   position: "absolute",
@@ -32,6 +33,12 @@ const style = {
 const OrderTable = ({ data, callBackApi }) => {
   const [open, setOpen] = React.useState(false);
   const [description, setDescription] = React.useState({});
+  const [dataDetail, setDataDetail] = React.useState({
+    orderId: "",
+    email: "",
+    userId: "",
+  });
+  const [openModalCancel, setOpenModalCancel] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -88,18 +95,20 @@ const OrderTable = ({ data, callBackApi }) => {
       });
   };
 
-  const handleCancel = (id, email, userId) => {
+  const handleCancel = () => {
     axiosClient
-      .put(`/order/update/${id}`, {
+      .put(`/order/update/${dataDetail.orderId}`, {
         status: 3,
       })
       .then((res) => {
         toastify("success", "Hủy đơn hàng thành công");
         callBackApi();
-        handleSendEmailCancel(email);
-        sendNotify(userId, "Đơn hàng của bạn đã bị hủy !!!");
+        setOpenModalCancel(false);
+        handleSendEmailCancel(dataDetail.email);
+        sendNotify(dataDetail.userId, "Đơn hàng của bạn đã bị hủy !!!");
       })
       .catch((err) => {
+        setOpenModalCancel(false);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
@@ -135,7 +144,12 @@ const OrderTable = ({ data, callBackApi }) => {
               <button
                 className="button-check cancel"
                 onClick={() => {
-                  handleCancel(id, email, userId);
+                  setDataDetail({
+                    userId: userId,
+                    orderId: id,
+                    email: email,
+                  });
+                  setOpenModalCancel(true);
                 }}
               >
                 Hủy
@@ -192,7 +206,11 @@ const OrderTable = ({ data, callBackApi }) => {
                   {item?.userId?.email}
                 </TableCell>
                 <TableCell align="left" size="medium">
-                {item?.placeId ? item.placeId.name : <p style={{ color: "red" }}>Không còn tồn tại</p> }
+                  {item?.placeId ? (
+                    item.placeId.name
+                  ) : (
+                    <p style={{ color: "red" }}>Không còn tồn tại</p>
+                  )}
                 </TableCell>
                 <TableCell align="left" size="medium">
                   {item.adultTicket}
@@ -313,6 +331,14 @@ const OrderTable = ({ data, callBackApi }) => {
           </Box>
         </Fade>
       </Modal>
+      <ModalConfirm
+        open={openModalCancel}
+        handleClose={() => {
+          setOpenModalCancel(false);
+        }}
+        content={"Bạn chắt chắn muốn hủy đơn hàng này !"}
+        callBackFunction={handleCancel}
+      />
     </div>
   );
 };

@@ -17,10 +17,6 @@ const placeSchema = new mongoose.Schema<IPlace>(
       type: String,
       required: true,
     },
-    geographicalLocation: {
-      type: String,
-      required: true,
-    },
     startingPrice: {
       type: Number,
       required: true,
