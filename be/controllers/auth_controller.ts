@@ -36,7 +36,7 @@ const authController = {
   },
   login: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const user = await Users.findOne({ userName: req.body.userName });
+      const user = await Users.findOne({ email: req.body.email });
 
       if (!user) {
         res.status(404).json(errorFunction(false, 404, "Sai tên đăng nhập !"));
