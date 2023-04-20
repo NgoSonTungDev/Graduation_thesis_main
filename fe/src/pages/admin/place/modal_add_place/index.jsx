@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { Button } from "@mui/material";
+import { Autocomplete, Button } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -46,10 +46,6 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       .string()
       .required("Không được để trống.")
       .typeError("Không được để trống"),
-    geographicalLocation: yup
-      .string()
-      .required("Không được để trống.")
-      .typeError("Không được để trống"),
     startingPrice: yup
       .number("Sai định dạng")
       .min(0, "Phải lớn hơn 0")
@@ -60,10 +56,10 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       .min(0, "Phải lớn hơn 0")
       .typeError("Không được để trống")
       .required("Không được để trống."),
-    purpose: yup
-      .string()
-      .typeError("Không được để trống")
-      .required("Không được để trống."),
+    // purpose: yup
+    //   .string()
+    //   .typeError("Không được để trống")
+    //   .required("Không được để trống."),
     type: yup
       .string()
       .typeError("Không được để trống")
@@ -139,10 +135,9 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
         name: data.name,
         location: data.location,
         address: data.address,
-        geographicalLocation: data.geographicalLocation,
         startingPrice: data.startingPrice,
         LastPrice: data.LastPrice,
-        purpose: data.purpose,
+        purpose: "hgekjahsakjhd jhg",
         type: data.type,
         description: data.description,
         image: url,
@@ -182,7 +177,11 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
     axiosClient
       .get("/purpose/all")
       .then((res) => {
-        setListPurpose(res.data.data);
+        setListPurpose(
+          res.data.data.map((item) => {
+            return { id: item._id, label: item.name };
+          })
+        );
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -250,21 +249,29 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 sx={{ width: "80%", marginLeft: "10%" }}
               />
 
-              <TextField
-                select
-                fullWidth
-                name="purpose"
-                label="Mục đích"
-                error={!!errors?.purpose}
-                {...register("purpose")}
-                helperText={errors.purpose?.message}
+              <Autocomplete
+                multiple
+                disablePortal
+                noOptionsText="Không có lựa chọn"
+                autoHighlight
+                name="name"
                 size="small"
+                limitTags={1}
+                options={listPurpose}
+                onChange={(event, item) => {
+                  // const labels = item.map((obj) => obj.label);
+                  // const result = labels.join(" ");
+                  console.log(item); // sẻ trả ra 1 string ví dụ : "chill du lịch vui chơi" . dùng nó để đẩy vào trường type hoặc purpose của place
+                }}
                 sx={{ width: "80%", marginLeft: "10%" }}
-              >
-                {listPurpose?.map((item) => (
-                  <MenuItem value={item.name}>{item.name}</MenuItem>
-                ))}
-              </TextField>
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Multi-select"
+                  />
+                )}
+              />
 
               <div style={{ width: "80%", marginLeft: "10%" }}>
                 <FormTime
@@ -299,15 +306,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 ))}
               </TextField>
 
-              <TextField
-                type="text"
-                label="Vị trí địa lí"
-                error={!!errors?.geographicalLocation}
-                {...register("geographicalLocation")}
-                helperText={errors.geographicalLocation?.message}
-                size="small"
-                sx={{ width: "80%", marginLeft: "10%" }}
-              />
+            
               <TextField
                 type="number"
                 label="Giá cao nhất"

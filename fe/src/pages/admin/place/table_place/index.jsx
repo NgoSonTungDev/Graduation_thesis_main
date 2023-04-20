@@ -20,6 +20,7 @@ import provinces from "../../../../asset/64_provinces_and_cities";
 import ModalUpdateImage from "../modal_update_images";
 import GetDataPlaceItem from "../../../../components/modle_find_place";
 import { useDispatch, useSelector } from "react-redux";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const TablePlace = ({ data, deleteData, updateData }) => {
   const [openModalUpdateImage, setOpenModalUpdateImage] = React.useState(false);
@@ -278,7 +279,7 @@ const TablePlace = ({ data, deleteData, updateData }) => {
                     )}
                   </TableCell>
 
-                  <TableCell align="center">
+                  {/* <TableCell align="center">
                     {editingRowIndex === index ? (
                       <TextField
                         select
@@ -296,7 +297,44 @@ const TablePlace = ({ data, deleteData, updateData }) => {
                     ) : (
                       item?.type
                     )}
+                  </TableCell> */}
+                  <TableCell
+                    align="left"
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      maxWidth: "150px",
+                    }}
+                  >
+                    {editingRowIndex === index ? (
+                      <Autocomplete
+                        multiple
+                        disablePortal
+                        noOptionsText="Không có lựa chọn"
+                        autoHighlight
+                        size="small"
+                        limitTags={1}
+                        options={dataType}
+                        onChange={(item) => {
+                          const labels = item.map((obj) => obj?._id);
+                          const result = labels.join(" ");
+                          // console.log(result); // sẻ trả ra 1 string ví dụ : "chill du lịch vui chơi" . dùng nó để đẩy vào trường type hoặc purpose của place
+                        }}
+                        sx={{ width: 150 }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            label="Loại"
+                          />
+                        )}
+                      />
+                    ) : (
+                      item?.type
+                    )}
                   </TableCell>
+
                   <TableCell align="center">
                     {editingRowIndex === index ? (
                       <TextField
