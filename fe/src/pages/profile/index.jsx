@@ -209,9 +209,9 @@ const Profile = () => {
                 style={{
                   objectFit: "cover",
                 }}
-                src={userIdStorage._id === id ? userIdStorage.avt : data.avt}
+                src={userIdStorage ? userIdStorage.avt : data.avt}
               />
-              {userIdStorage._id === id && (
+              {!userIdStorage ? null : userIdStorage._id === id && (
                 <IconButton
                   sx={{
                     position: "absolute",
@@ -228,7 +228,7 @@ const Profile = () => {
             </div>
           </div>
           <div className="profile-name">
-            <span style={{ fontSize: "20px", fontWeight: "500" }}>
+            <span style={{ fontSize: "20px", fontWeight: "500", textTransform :"capitalize" }}>
               {data.userName}
             </span>
           </div>
@@ -290,20 +290,22 @@ const Profile = () => {
                     {moment(data.createdAt).format("DD/MM/yyyy")}
                   </span>
                 </div>
-                {id === userIdStorage._id && (
-                  <div
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      justifyContent: "center",
-                      paddingBottom: "10px",
-                    }}
-                  >
-                    <Button onClick={handleOpenDialogInformation}>
-                      Chỉnh sửa
-                    </Button>
-                  </div>
-                )}
+                {!userIdStorage
+                  ? null
+                  : id === userIdStorage._id && (
+                      <div
+                        style={{
+                          width: "100%",
+                          display: "flex",
+                          justifyContent: "center",
+                          paddingBottom: "10px",
+                        }}
+                      >
+                        <Button onClick={handleOpenDialogInformation}>
+                          Chỉnh sửa
+                        </Button>
+                      </div>
+                    )}
               </div>
             </div>
             {loading ? (

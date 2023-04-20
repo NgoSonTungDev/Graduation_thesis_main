@@ -65,7 +65,7 @@ const postController = {
     try {
       const data = await Posts.find({ userId: req.params.id })
         .populate("placeId", "name")
-        .populate("userId", ["userName", "avt"]);
+        .populate("userId", ["userName", "avt"]).sort({ createdAt: -1 });
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {
