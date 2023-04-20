@@ -24,7 +24,8 @@ import "./style.scss";
 import axios from "axios";
 import ModalVoucher from "./modal_voucher";
 import Map_controller from "../../components/map_controller";
-import { GoogleMap, InfoWindow, Marker } from "@react-google-maps/api";
+import { GoogleMap, Marker } from "@react-google-maps/api";
+import { Link } from "react-router-dom";
 
 const PlaceDetail = () => {
   const [loading, setLoading] = React.useState(false);
@@ -33,8 +34,10 @@ const PlaceDetail = () => {
   const [openModal, setOpenModal] = React.useState(false);
   const [openModalVoucher, setOpenModalVoucher] = React.useState(false);
   const [dataEvaluate, setDataEvaluate] = React.useState([]);
-  const userIdStorage = getUserDataLocalStorage();
+  const [map, setMap] = useState(null);
+  const [location, setLocation] = useState("");
   const [mapCenter, setMapCenter] = useState({ lat: 0, lon: 0 });
+  const userIdStorage = getUserDataLocalStorage();
 
   const { id } = useParams();
 
@@ -94,9 +97,10 @@ const PlaceDetail = () => {
           query
         )}`
       );
-      const { lat, lon } = response.data[0];
+      const { lat, lon, display_name } = response.data[0];
+      setLocation(display_name);
       if (lat && lon && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lon))) {
-        setMapCenter({ lat: parseFloat(lat) , lon: parseFloat(lon) });
+        setMapCenter({ lat: parseFloat(lat), lon: parseFloat(lon) });
       } else {
         console.log("No valid search results found");
       }
@@ -134,6 +138,11 @@ const PlaceDetail = () => {
       });
   };
 
+  const handleZoomMap = () => {
+    map.panTo({ lat: mapCenter.lat, lng: mapCenter.lon });
+    map.setZoom(map.getZoom() + 4);
+  };
+
   useEffect(() => {
     let url = `/place/an/${id}`;
     fetchData(url);
@@ -156,7 +165,7 @@ const PlaceDetail = () => {
             <div className="box_banner_place">
               <div className="box_banner_place_title">
                 <p>{data.name}</p>
-                <span>
+                <span style={{ lineHeight: "30px" }}>
                   {data.description} Lorem ipsum dolor sit amet consectetur
                   adipisicing elit. Fugiat incidunt ab quaerat ipsa ipsam, hic
                   voluptatibus fuga dolor. Dolore dolores odit ipsa natus,
@@ -165,15 +174,38 @@ const PlaceDetail = () => {
               </div>
               <div
                 style={{
-                  padding: "0 15px",
+                  padding: "5px 12px",
                   display: "flex",
+                  gap: "10px",
                   alignItems: "center",
                   fontSize: "15px",
                 }}
               >
                 <RoomOutlinedIcon />
                 <i>
-                  {data.address} - {data.location}
+                  {location ? location : `${data.address} - ${data.location}`}
+                </i>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  flexDirection: "row",
+                  padding: "5px 12px",
+                }}
+              >
+                <AccessTimeOutlinedIcon />
+                <i
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  {renderItemCheckTime(data.openTime, data.closeTime)}
+                  <span style={{ marginLeft: "10px" }}>
+                    {formatDate(data.openTime, "HH:mm")} -{" "}
+                    {formatDate(data.closeTime, "HH:mm")}
+                  </span>
                 </i>
               </div>
               <div
@@ -281,9 +313,8 @@ const PlaceDetail = () => {
                     }}
                   >
                     <FacebookOutlinedIcon />{" "}
-                    <a
-                      href="https://www.facebook.com/"
-                      target={"_blank"}
+                    <Link
+                      to="https://www.facebook.com/"
                       style={{
                         textDecoration: "none",
                         color: "#3498db",
@@ -293,7 +324,7 @@ const PlaceDetail = () => {
                       }}
                     >
                       {data.name}
-                    </a>
+                    </Link>
                   </div>
                   <div
                     style={{
@@ -345,9 +376,14 @@ const PlaceDetail = () => {
                           maxZoom: 20,
                           mapTypeControl: false,
                         }}
-                        zoom={12}
+                        zoom={10}
+                        onLoad={(map) => {
+                          setMap(map);
+                          map.setMapTypeId("satellite");
+                        }}
                       >
                         <Marker
+                          onClick={handleZoomMap}
                           position={{
                             lat: mapCenter.lat,
                             lng: mapCenter.lon,

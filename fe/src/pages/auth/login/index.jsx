@@ -16,7 +16,10 @@ import { setUser } from "../../../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 
 const validationInput = yup.object().shape({
-  email: yup.string().required("Email đăng nhập không được để trống").email("Không đúng định dạng email"),
+  email: yup
+    .string()
+    .required("Email đăng nhập không được để trống")
+    .email("Chưa đúng định dạng email"),
   password: yup
     .string()
     .min(6, "Mật khẩu ít nhất 6 ký tự !!!")
@@ -27,9 +30,8 @@ const validationInput = yup.object().shape({
 const Login = () => {
   const [check, setCheck] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [dataLogin, setDataLogin] = useState(null);
   const navigation = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
@@ -37,6 +39,7 @@ const Login = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isDirty, isValid },
   } = useForm({
     defaultValues: {
@@ -50,7 +53,8 @@ const Login = () => {
   function onPress_ENTER(event) {
     var keyPressed = event.keyCode || event.which;
     if (keyPressed === 13) {
-      handleLogin(dataLogin);
+      const { email, password } = watch();
+      handleLogin({ email, password });
       keyPressed = null;
     } else {
       return false;
@@ -63,7 +67,6 @@ const Login = () => {
 
   const handleLogin = (data) => {
     setCheck(true);
-    setDataLogin(data)
     axiosClient
       .post("/user/login", {
         email: data.email,
@@ -94,7 +97,16 @@ const Login = () => {
     <div>
       <div className="container_Login">
         <div className={`container_Login_form `}>
-          <p style={{textAlign:"center",fontWeight:"bold", fontSize:"28px",color:"#636e72"}}>Chào mừng bạn trở lại</p>
+          <p
+            style={{
+              textAlign: "center",
+              fontWeight: "bold",
+              fontSize: "28px",
+              color: "#636e72",
+            }}
+          >
+            Chào mừng bạn trở lại
+          </p>
           <div className="container_Login_form_text">
             <TextField
               error={!!errors?.email}

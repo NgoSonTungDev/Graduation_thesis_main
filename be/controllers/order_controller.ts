@@ -5,6 +5,7 @@ import { Request, Response, NextFunction } from "express";
 import Orders from "../models/order";
 import Payments from "../models/payment";
 import Tickets from "../models/ticket";
+import { ObjectId } from "mongodb";
 
 const fakeCode = (length: number) => {
   let result = "";
@@ -36,9 +37,203 @@ const orderController = {
   },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pageNumber, limit, status, salesAgentId } = req.query;
+      const { pageNumber, limit, status, salesAgentId, dateTime } = req.query;
 
       const SkipNumber = (Number(pageNumber) - 1) * Number(limit);
+
+      let query: any = {};
+
+      if (status) {
+        query.status = status;
+      }
+
+      if (salesAgentId) {
+        query.salesAgentId = new ObjectId(String(salesAgentId));
+      }
+
+      // if (!dateTime) {
+      //   const result = await Orders.find(query)
+      //     .sort({ createdAt: -1 })
+      //     .skip(SkipNumber)
+      //     .limit(Number(limit))
+      //     .populate("userId", ["userName", "email", "address", "numberPhone"])
+      //     .populate("placeId", "name")
+      //     .populate("salesAgentId", ["userName", "email"])
+      //     .populate("ticketId", [
+      //       "adultTicket",
+      //       "childTicket",
+      //       "numberTickets",
+      //     ]);
+
+      //   const allOrder = await Orders.find(query);
+
+      //   let totalPage = 0;
+      //   if (allOrder.length % Number(limit) === 0) {
+      //     totalPage = allOrder.length / Number(limit);
+      //   } else {
+      //     totalPage = Math.floor(allOrder.length / Number(limit) + 1);
+      //   }
+
+      //   res.json(
+      //     errorFunction(false, 200, "Lấy thành công !", {
+      //       totalPage: totalPage,
+      //       total: allOrder.length,
+      //       data: result,
+      //     })
+      //   );
+      // } else {
+      //   const result = await Orders.aggregate([
+      //     {
+      //       $addFields: {
+      //         format: {
+      //           $dateToString: {
+      //             format: "%Y-%m-%d",
+      //             date: "$createdAt",
+      //           },
+      //         },
+      //       },
+      //     },
+      //     {
+      //       $match: {
+      //         $and: [
+      //           {
+      //             status: 1,
+      //             amount: 7,
+      //           },
+      //           {
+      //             format: {
+      //               $eq: "2023-03-17",
+      //             },
+      //           },
+      //         ],
+      //       },
+      //     },
+      //     {
+      //       $lookup: {
+      //         from: "places",
+      //         localField: "placeId",
+      //         foreignField: "_id",
+      //         as: "placeId",
+      //       },
+      //     },
+      //     {
+      //       $unwind: {
+      //         path: "$placeId",
+      //       },
+      //     },
+      //     {
+      //       $lookup: {
+      //         from: "users",
+      //         localField: "userId",
+      //         foreignField: "_id",
+      //         as: "userId",
+      //       },
+      //     },
+      //     {
+      //       $unwind: {
+      //         path: "$userId",
+      //       },
+      //     },
+      //     {
+      //       $lookup: {
+      //         from: "users",
+      //         localField: "salesAgentId",
+      //         foreignField: "_id",
+      //         as: "salesAgentId",
+      //       },
+      //     },
+      //     {
+      //       $unwind: {
+      //         path: "$salesAgentId",
+      //       },
+      //     },
+      //   ])
+
+      //   // [
+      //   //   {
+      //   //     '$addFields': {
+      //   //       'format': {
+      //   //         '$dateToString': {
+      //   //           'format': '%Y-%m-%d', 
+      //   //           'date': '$createdAt'
+      //   //         }
+      //   //       }
+      //   //     }
+      //   //   }, {
+      //   //     '$lookup': {
+      //   //       'from': 'tickets', 
+      //   //       'localField': 'ticketId', 
+      //   //       'foreignField': '_id', 
+      //   //       'as': 'ticketId'
+      //   //     }
+      //   //   }, {
+      //   //     '$unwind': {
+      //   //       'path': '$ticketId'
+      //   //     }
+      //   //   }, {
+      //   //     '$lookup': {
+      //   //       'from': 'places', 
+      //   //       'localField': 'placeId', 
+      //   //       'foreignField': '_id', 
+      //   //       'as': 'placeId'
+      //   //     }
+      //   //   }, {
+      //   //     '$unwind': {
+      //   //       'path': '$placeId'
+      //   //     }
+      //   //   }, {
+      //   //     '$lookup': {
+      //   //       'from': 'users', 
+      //   //       'localField': 'userId', 
+      //   //       'foreignField': '_id', 
+      //   //       'as': 'userId'
+      //   //     }
+      //   //   }, {
+      //   //     '$unwind': {
+      //   //       'path': '$userId'
+      //   //     }
+      //   //   }, {
+      //   //     '$lookup': {
+      //   //       'from': 'users', 
+      //   //       'localField': 'salesAgentId', 
+      //   //       'foreignField': '_id', 
+      //   //       'as': 'salesAgentId'
+      //   //     }
+      //   //   }, {
+      //   //     '$unwind': {
+      //   //       'path': '$salesAgentId'
+      //   //     }
+      //   //   }
+      //   // ]
+      //     .sort({ createdAt: -1 })
+      //     .skip(SkipNumber)
+      //     .limit(Number(limit));
+      //   // .populate("userId", ["userName", "email", "address", "numberPhone"])
+      //   // .populate("placeId", "name")
+      //   // .populate("salesAgentId", ["userName", "email"])
+      //   // .populate("ticketId", [
+      //   //   "adultTicket",
+      //   //   "childTicket",
+      //   //   "numberTickets",
+      //   // ]);
+
+      //   const allOrder = await Orders.find(query);
+
+      //   let totalPage = 0;
+      //   if (allOrder.length % Number(limit) === 0) {
+      //     totalPage = allOrder.length / Number(limit);
+      //   } else {
+      //     totalPage = Math.floor(allOrder.length / Number(limit) + 1);
+      //   }
+
+      //   res.json(
+      //     errorFunction(false, 200, "Lấy thành công !", {
+      //       totalPage: totalPage,
+      //       total: allOrder.length,
+      //       data: result,
+      //     })
+      //   );
+      // }
 
       const condition = status ? { status: status } : {};
 
