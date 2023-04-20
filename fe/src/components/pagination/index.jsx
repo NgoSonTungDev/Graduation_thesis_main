@@ -11,12 +11,18 @@ const PaginationCpn = ({ count, page, onChange }) => {
     <div
       style={{
         width: "100%",
-        display: "grid",
-        placeItems: "center",
-        padding: "8px 0",
+        height: "100%",
+        position: "relative",
+        display: "flex",
+        justifyContent: "center",
       }}
     >
-      <Pagination count={count} page={page} onChange={handleChange} />
+      <Pagination
+        count={count}
+        page={page}
+        onChange={handleChange}
+        sx={{ position: "absolute", top: "50%", transform: "translateY(-50%)" }}
+      />
     </div>
   );
 };

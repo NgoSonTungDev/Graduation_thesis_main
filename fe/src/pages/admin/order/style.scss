@@ -1,0 +1,9 @@
+.boxTable {
+  width: 100%;
+  height: 90%;
+  overflow: hidden;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 0px;
+  }
+}

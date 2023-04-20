@@ -12,6 +12,7 @@ import MenuSaleAgent from "../../../components/navbar_sale_agent";
 import PaginationCpn from "../../../components/pagination";
 import { toastify } from "../../../utils/common";
 import { getUserDataLocalStorage } from "../../../utils/localstorage";
+import "./style.scss";
 import OrderTable from "./table";
 
 const OrderSaleAgent = () => {
@@ -20,7 +21,7 @@ const OrderSaleAgent = () => {
   const [data, setData] = React.useState({});
   const [payload, setPayload] = React.useState({
     pageNumber: 1,
-    limit: 5,
+    limit: 6,
     status: "",
   });
   const userIdStorage = getUserDataLocalStorage();
@@ -94,13 +95,7 @@ const OrderSaleAgent = () => {
                 marginTop: "10px",
               }}
             >
-              <div
-                style={{
-                  width: "100%",
-                  height: "93%",
-                  overflow: "hidden",
-                }}
-              >
+              <div className="boxTable">
                 {loading ? (
                   <LoadingBar loading={loading} />
                 ) : _.isEmpty(data.data) ? (
@@ -112,7 +107,7 @@ const OrderSaleAgent = () => {
               <div
                 style={{
                   width: "100%",
-                  height: "6%",
+                  height: "50px",
                 }}
               >
                 <PaginationCpn

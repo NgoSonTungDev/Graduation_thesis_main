@@ -53,6 +53,7 @@ import { checkNotify, listNotify } from "../../redux/selectors";
 import ErrorEmpty from "../emty_data";
 import _ from "lodash";
 import LoadingBar from "../loadding/loading_bar";
+import { setUser } from "../../redux/user/userSlice";
 
 const Navbar = ({ loading, valueTab }) => {
   const [loadingNotify, setLoadingNotify] = useState(false);
@@ -362,6 +363,7 @@ const Navbar = ({ loading, valueTab }) => {
                         onClick={() => {
                           handleClose();
                           removeUserDataLocalStorage();
+                          dispatch(setUser(null));
                           navigation("/home");
                         }}
                       >
