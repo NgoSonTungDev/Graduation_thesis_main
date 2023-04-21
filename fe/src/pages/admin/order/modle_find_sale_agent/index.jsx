@@ -15,6 +15,7 @@ import React, { useCallback, useEffect } from "react";
 import axiosClient from "../../../../api/axiosClient";
 import ErrorEmpty from "../../../../components/emty_data";
 import { toastify } from "../../../../utils/common";
+import "./style.scss";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -24,6 +25,26 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     padding: theme.spacing(1),
   },
 }));
+
+const imageStyle = {
+  width: "50px",
+  height: "50px",
+  marginRight: "16px",
+  borderRadius: "50%",
+  objectFit: "cover",
+};
+
+const nameStyle = {
+  margin: "0",
+  fontSize: "20px",
+  fontWeight: "500",
+};
+
+const emailStyle = {
+  margin: "0",
+  fontSize: "14px",
+  color: "#999",
+};
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -134,13 +155,7 @@ export default function GetDataSaleAgent({ openDialog, onClose }) {
                 <SearchIcon />
               </IconButton>
             </Paper>
-            <Box
-              sx={{
-                marginTop: 2,
-                width: "100%",
-                height: "50%",
-              }}
-            >
+            <Box className="boxSealAgent">
               {loading ? (
                 [1, 1].map((item, index) => (
                   <Skeleton
@@ -156,8 +171,29 @@ export default function GetDataSaleAgent({ openDialog, onClose }) {
               ) : (
                 data.map((item, index) => {
                   return (
-                    // <PlaceItem data={item} key={index} onClose={onClose} />
-                    <p>hello</p>
+                    <div
+                      style={{
+                        cursor: "pointer",
+                        borderRadius: "6px",
+                        width: "95%",
+                        height: "60px",
+                        padding: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                        backgroundColor: "#fff",
+                        boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
+                      }}
+                    >
+                      <img
+                        src={item.avt}
+                        alt="Agency Logo"
+                        style={imageStyle}
+                      />
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <h2 style={nameStyle}>{item.userName}</h2>
+                        <p style={emailStyle}>{item.email}</p>
+                      </div>
+                    </div>
                   );
                 })
               )}
