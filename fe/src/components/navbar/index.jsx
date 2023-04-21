@@ -32,6 +32,7 @@ import BarLoader from "react-spinners/BarLoader";
 import axiosClient from "../../api/axiosClient";
 import {
   changeListInbox,
+  closeChatBox,
   openChatBox,
 } from "../../redux/chat_box/chatBoxSlice";
 import ws from "../../socket";
@@ -364,6 +365,7 @@ const Navbar = ({ loading, valueTab }) => {
                           handleClose();
                           removeUserDataLocalStorage();
                           dispatch(setUser(null));
+                          dispatch(closeChatBox());
                           navigation("/home");
                         }}
                       >

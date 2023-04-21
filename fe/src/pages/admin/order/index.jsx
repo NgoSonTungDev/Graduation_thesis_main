@@ -1,6 +1,6 @@
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
-import { Box } from "@mui/material";
+import { Box, Button, IconButton } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import _ from "lodash";
 import qs from "query-string";
@@ -14,6 +14,9 @@ import { toastify } from "../../../utils/common";
 import GetDataSaleAgent from "./modle_find_sale_agent";
 import "./style.scss";
 import OrderTableAdmin from "./table";
+import FormDate from "../../../hook-form/form_date";
+import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
+import moment from "moment";
 
 const OrderManagement = () => {
   const [value, setValue] = React.useState("0");
@@ -24,6 +27,8 @@ const OrderManagement = () => {
     pageNumber: 1,
     limit: 6,
     status: "",
+    salesAgentId: "",
+    dateTime: "",
   });
 
   const handleChangeTab = (e, newValue) => {
@@ -42,6 +47,11 @@ const OrderManagement = () => {
       status: Number(newValue),
       pageNumber: 1,
     });
+  };
+
+  const handleGetSalesAgentID = (value) => {
+    setPayload({ ...payload, salesAgentId: value });
+    setOpenModal(false);
   };
 
   const handleChangePage = (page) => {
@@ -85,8 +95,8 @@ const OrderManagement = () => {
                 borderBottom: 1,
                 borderColor: "divider",
                 marginTop: 1,
-                // display: "flex",
-                // justifyContent: "space-between",
+                display: "flex",
+                justifyContent: "space-between",
               }}
             >
               <TabList
@@ -99,13 +109,55 @@ const OrderManagement = () => {
                 <Tab label="Đã hủy" value="3" />
                 <Tab label="Đã thanh toán" value="4" />
               </TabList>
-              {/* <Button
-                size="medium"
-                sx={{ marginRight: "30px" }}
-                onClick={handleOpenModal}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  flexDirection: "row",
+                }}
               >
-                Tìm kiếm đại lý
-              </Button> */}
+                <Box sx={{ transform: "translateY(-5px)" }}>
+                  <FormDate
+                    value={payload.dateTime}
+                    maxDate={new Date()}
+                    label={"Thời gian"}
+                    onChange={(value) => {
+                      setPayload({
+                        ...payload,
+                        dateTime: moment(value).format("YYYY-MM-DD"),
+                      });
+                    }}
+                  />
+                </Box>
+
+                <Button
+                  size="medium"
+                  variant="outlined"
+                  sx={{ marginRight: "30px" }}
+                  onClick={handleOpenModal}
+                >
+                  Tìm kiếm đại lý
+                </Button>
+
+                <IconButton
+                  onClick={() => {
+                    setPayload({
+                      pageNumber: 1,
+                      limit: 6,
+                      status: "",
+                      salesAgentId: "",
+                      dateTime: "",
+                    });
+                  }}
+                  size="small"
+                  sx={{
+                    border: "1px solid",
+                  }}
+                >
+                  <ReplayOutlinedIcon />
+                </IconButton>
+              </Box>
             </Box>
             <div
               style={{
@@ -117,7 +169,7 @@ const OrderManagement = () => {
               <div className="boxTable">
                 {loading ? (
                   <LoadingBar loading={loading} />
-                ) : _.isEmpty(data) ? (
+                ) : _.isEmpty(data.data) ? (
                   <ErrorEmpty />
                 ) : (
                   <OrderTableAdmin data={data.data} callBackApi={fetchData} />
@@ -129,17 +181,23 @@ const OrderManagement = () => {
                   height: "50px",
                 }}
               >
-                <PaginationCpn
-                  count={data.totalPage}
-                  page={payload.pageNumber}
-                  onChange={handleChangePage}
-                />
+                {data?.data && (
+                  <PaginationCpn
+                    count={data.totalPage}
+                    page={payload.pageNumber}
+                    onChange={handleChangePage}
+                  />
+                )}
               </div>
             </div>
           </TabContext>
         </Box>
         {openModal && (
-          <GetDataSaleAgent openDialog={openModal} onClose={handleCloseModal} />
+          <GetDataSaleAgent
+            openDialog={openModal}
+            onClose={handleCloseModal}
+            GetSaleAgentId={handleGetSalesAgentID}
+          />
         )}
       </div>
     );

@@ -49,7 +49,7 @@ const likeController = {
       });
 
       if (check) {
-        await Posts.updateMany(
+        await Posts.updateOne(
           { _id: req.params.id },
           { $pull: { like: req.body.userId } }
         );
@@ -103,7 +103,7 @@ const likeController = {
     next: NextFunction
   ) => {
     try {
-      await Places.updateMany(
+      await Places.updateOne(
         { _id: req.params.id },
         { $pull: { favourite: req.body.userId } }
       );
@@ -164,7 +164,7 @@ const likeController = {
       });
 
       if (check) {
-        await Comments.updateMany(
+        await Comments.updateOne(
           { _id: req.params.id },
           { $pull: { like: req.body.userId } }
         );
@@ -232,7 +232,7 @@ const likeController = {
       });
 
       if (check) {
-        await RepComments.updateMany(
+        await RepComments.updateOne(
           { _id: req.params.id },
           { $pull: { like: req.body.userId } }
         );

@@ -5,6 +5,7 @@ import { Request, Response, NextFunction } from "express";
 import Orders from "../models/order";
 import Payments from "../models/payment";
 import Tickets from "../models/ticket";
+import { ObjectId } from "mongodb";
 
 const fakeCode = (length: number) => {
   let result = "";
@@ -36,37 +37,177 @@ const orderController = {
   },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pageNumber, limit, status, salesAgentId } = req.query;
+      const { pageNumber, limit, status, salesAgentId, dateTime } = req.query;
 
       const SkipNumber = (Number(pageNumber) - 1) * Number(limit);
 
-      const condition = status ? { status: status } : {};
+      let query: any = {};
 
-      const result = await Orders.find(condition)
-        .sort({ createdAt: -1 })
-        .skip(SkipNumber)
-        .limit(Number(limit))
-        .populate("userId", ["userName", "email", "address", "numberPhone"])
-        .populate("placeId", "name")
-        .populate("salesAgentId", ["userName", "email"])
-        .populate("ticketId", ["adultTicket", "childTicket", "numberTickets"]);
-
-      const allOrder = await Orders.find(condition);
-
-      let totalPage = 0;
-      if (allOrder.length % Number(limit) === 0) {
-        totalPage = allOrder.length / Number(limit);
-      } else {
-        totalPage = Math.floor(allOrder.length / Number(limit) + 1);
+      if (status) {
+        query.status = Number(status);
       }
 
-      res.json(
-        errorFunction(false, 200, "Lấy thành công !", {
-          totalPage: totalPage,
-          total: allOrder.length,
-          data: result,
-        })
-      );
+      if (salesAgentId) {
+        query.salesAgentId = new ObjectId(String(salesAgentId));
+      }
+
+      if (!dateTime) {
+        const result = await Orders.find(query)
+          .sort({ createdAt: -1 })
+          .skip(SkipNumber)
+          .limit(Number(limit))
+          .populate("userId", ["userName", "email", "address", "numberPhone"])
+          .populate("placeId", "name")
+          .populate("ticketId", ["adultTicket", "childTicket", "numberTickets"])
+          .populate("salesAgentId", ["userName", "email"]);
+
+        const allOrder = await Orders.find(query);
+
+        let totalPage = 0;
+        if (allOrder.length % Number(limit) === 0) {
+          totalPage = allOrder.length / Number(limit);
+        } else {
+          totalPage = Math.floor(allOrder.length / Number(limit) + 1);
+        }
+
+        res.json(
+          errorFunction(false, 200, "Lấy thành công !", {
+            totalPage: totalPage,
+            total: allOrder.length,
+            data: result,
+          })
+        );
+      } else {
+        const result = await Orders.aggregate([
+          {
+            $addFields: {
+              format: {
+                $dateToString: {
+                  format: "%Y-%m-%d",
+                  date: "$createdAt",
+                },
+              },
+            },
+          },
+          {
+            $match: {
+              $and: [
+                query,
+                {
+                  format: {
+                    $eq: dateTime,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $lookup: {
+              from: "tickets",
+              localField: "ticketId",
+              foreignField: "_id",
+              as: "ticketId",
+            },
+          },
+          {
+            $unwind: {
+              path: "$ticketId",
+            },
+          },
+          {
+            $lookup: {
+              from: "places",
+              localField: "placeId",
+              foreignField: "_id",
+              as: "placeId",
+            },
+          },
+          {
+            $unwind: {
+              path: "$placeId",
+            },
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "userId",
+              foreignField: "_id",
+              as: "userId",
+            },
+          },
+          {
+            $unwind: {
+              path: "$userId",
+            },
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "salesAgentId",
+              foreignField: "_id",
+              as: "salesAgentId",
+            },
+          },
+          {
+            $unwind: {
+              path: "$salesAgentId",
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              codeOrder: 1,
+              adultTicket: 1,
+              childTicket: 1,
+              amount: 1,
+              total: 1,
+              description: 1,
+              status: 1,
+              dateTime: 1,
+              format: 1,
+              userId: {
+                _id: "$userId._id",
+                userName: "$userId.userName",
+                email: "$userId.email",
+                address: "$userId.address",
+                numberPhone: "$userId.numberPhone",
+              },
+              placeId: {
+                _id: "$placeId._id",
+                name: "$placeId.name",
+              },
+              salesAgentId: {
+                _id: "$salesAgentId._id",
+                userName: "$salesAgentId.userName",
+                email: "$salesAgentId.email",
+              },
+              ticketId: {
+                _id: "$ticketId._id",
+                adultTicket: "$ticketId.adultTicket",
+                childTicket: "$ticketId.childTicket",
+                numberTickets: "$ticketId.numberTickets",
+              },
+            },
+          },
+        ])
+          .sort({ createdAt: -1 })
+          .skip(SkipNumber)
+          .limit(Number(limit));
+
+        let totalPage = 0;
+
+        if (result.length) {
+          totalPage = Math.ceil(result.length / Number(limit));
+        }
+
+        res.json(
+          errorFunction(false, 200, "Lấy thành công !", {
+            totalPage: totalPage,
+            total: result.length,
+            data: result,
+          })
+        );
+      }
     } catch (error) {
       res.status(400).json({
         error: error,
