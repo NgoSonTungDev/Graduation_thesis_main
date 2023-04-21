@@ -1,17 +1,14 @@
 import React, { useEffect } from "react";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import moment from "moment";
 import axiosClient from "../../../../api/axiosClient";
 import { toastify } from "../../../../utils/common";
 import { formatMoney } from "../../../../utils/common";
+import FormDate from "../../../../hook-form/form_date";
 
 const ChartStatisticDay = () => {
-  const [value, setValue] = React.useState("");
+  const [dateTime, setDateTime] = React.useState(moment(new Date()).format());
   const [data, setData] = React.useState({});
 
   const options = {
@@ -20,9 +17,9 @@ const ChartStatisticDay = () => {
       height: "35%",
     },
     title: {
-      text: `Số lượng mua và doanh thu trong ngày (${
-        value ? moment(value?.$d).format("DD/MM/yyyy") : "--/--/----"
-      })`,
+      text: `Số lượng mua và doanh thu trong ngày (${moment(dateTime).format(
+        "DD/MM/yyyy"
+      )})`,
     },
     xAxis: {
       categories: data?.detail?.map((e) =>
@@ -51,7 +48,6 @@ const ChartStatisticDay = () => {
     axiosClient
       .get(url)
       .then((res) => {
-        console.log(res.data.data);
         setData(res.data.data);
       })
       .catch((err) => {
@@ -60,9 +56,9 @@ const ChartStatisticDay = () => {
   };
 
   useEffect(() => {
-    let url = `/statistic/payment-statistics-day?dayTime=${Number(value?.$d)}`;
+    let url = `/statistic/payment-statistics-day?dayTime=${Number(dateTime)}`;
     fetchData(url);
-  }, [value]);
+  }, [dateTime]);
 
   return (
     <div style={{ width: "100%", height: "100%" }}>
@@ -75,15 +71,16 @@ const ChartStatisticDay = () => {
           justifyContent: "space-between",
         }}
       >
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            label="Ngày"
-            value={value}
-            onChange={(newValue) => setValue(newValue)}
-          />
-        </LocalizationProvider>
+        <FormDate
+          value={dateTime}
+          maxDate={new Date()}
+          label={"Thời gian"}
+          onChange={(value) => {
+            setDateTime(value);
+          }}
+        />
 
-        {value && (
+        {data && (
           <div>
             Tổng doanh thu :{" "}
             <span style={{ color: "#d63031" }}>
@@ -101,20 +98,7 @@ const ChartStatisticDay = () => {
           flexDirection: "column",
         }}
       >
-        {!value ? (
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              display: "grid",
-              placeItems: "center",
-            }}
-          >
-            <span>Hãy chọn ngày thống kê</span>
-          </div>
-        ) : (
-          <HighchartsReact highcharts={Highcharts} options={options} />
-        )}
+        <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
     </div>
   );

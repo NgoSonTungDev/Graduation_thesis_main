@@ -20,7 +20,6 @@ import moment from "moment";
 
 const OrderManagement = () => {
   const [value, setValue] = React.useState("0");
-  const [dateTime, setDateTime] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = React.useState({});
@@ -48,6 +47,11 @@ const OrderManagement = () => {
       status: Number(newValue),
       pageNumber: 1,
     });
+  };
+
+  const handleGetSalesAgentID = (value) => {
+    setPayload({ ...payload, salesAgentId: value });
+    setOpenModal(false);
   };
 
   const handleChangePage = (page) => {
@@ -165,7 +169,7 @@ const OrderManagement = () => {
               <div className="boxTable">
                 {loading ? (
                   <LoadingBar loading={loading} />
-                ) : _.isEmpty(data) ? (
+                ) : _.isEmpty(data.data) ? (
                   <ErrorEmpty />
                 ) : (
                   <OrderTableAdmin data={data.data} callBackApi={fetchData} />
@@ -177,17 +181,23 @@ const OrderManagement = () => {
                   height: "50px",
                 }}
               >
-                <PaginationCpn
-                  count={data.totalPage}
-                  page={payload.pageNumber}
-                  onChange={handleChangePage}
-                />
+                {data?.data && (
+                  <PaginationCpn
+                    count={data.totalPage}
+                    page={payload.pageNumber}
+                    onChange={handleChangePage}
+                  />
+                )}
               </div>
             </div>
           </TabContext>
         </Box>
         {openModal && (
-          <GetDataSaleAgent openDialog={openModal} onClose={handleCloseModal} />
+          <GetDataSaleAgent
+            openDialog={openModal}
+            onClose={handleCloseModal}
+            GetSaleAgentId={handleGetSalesAgentID}
+          />
         )}
       </div>
     );

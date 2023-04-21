@@ -70,7 +70,11 @@ function BootstrapDialogTitle(props) {
   );
 }
 
-export default function GetDataSaleAgent({ openDialog, onClose }) {
+export default function GetDataSaleAgent({
+  openDialog,
+  onClose,
+  GetSaleAgentId,
+}) {
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState([]);
   const [payload, setPayload] = React.useState({
@@ -172,6 +176,10 @@ export default function GetDataSaleAgent({ openDialog, onClose }) {
                 data.map((item, index) => {
                   return (
                     <div
+                      key={index}
+                      onClick={() => {
+                        GetSaleAgentId(item._id);
+                      }}
                       style={{
                         cursor: "pointer",
                         borderRadius: "6px",
