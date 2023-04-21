@@ -38,6 +38,7 @@ import { OpenChatBox } from "./redux/selectors";
 import { setUser } from "./redux/user/userSlice";
 import ws from "./socket";
 import { getUserDataLocalStorage } from "./utils/localstorage";
+import InformationAgent from "./components/information_agent";
 
 const AdminLayout = ({ children }) => {
   const { user } = useSelector((state) => state.User);
@@ -259,6 +260,7 @@ const App = () => {
         />
 
         <Route path="/forbidden" element={<Forbidden />} />
+        <Route path="/information-agent" element={<InformationAgent />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
 

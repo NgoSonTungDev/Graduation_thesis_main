@@ -1,6 +1,7 @@
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import React, { useState } from "react";
 import {
   AiFillHome,
@@ -36,6 +37,7 @@ import {
 import ChangePassword from "../change_password";
 import "./style.scss";
 import { setUser } from "../../redux/user/userSlice";
+import InformationAgent from "../information_agent";
 
 const MenuSaleAgent = ({ ReactNode }) => {
   const [menuCollapse, setMenuCollapse] = useState(true);
@@ -46,6 +48,7 @@ const MenuSaleAgent = ({ ReactNode }) => {
 
   const [openModalChangePassword, setOpenModalChangePassword] =
     React.useState(false);
+  const [openModalInformation, setOpenModalInformation] = React.useState(false);
 
   const pathName = location.pathname;
 
@@ -79,6 +82,13 @@ const MenuSaleAgent = ({ ReactNode }) => {
 
   const handleOpenChangePassword = () => {
     setOpenModalChangePassword(true);
+  };
+  const handleCloseInformation = () => {
+    setOpenModalInformation(false);
+  };
+
+  const handleOpenInformation = () => {
+    setOpenModalInformation(true);
   };
 
   return (
@@ -188,6 +198,25 @@ const MenuSaleAgent = ({ ReactNode }) => {
                   </MenuItem>
                   <MenuItem
                     active={false}
+                    icon={<AccountCircleIcon />}
+                    onClick={handleOpenInformation}
+                  >
+                    Information
+                  </MenuItem>
+                  <MenuItem
+                    active={pathName === "/sales-agent/statistic" && true}
+                    icon={<AiOutlineBarChart />}
+                    onClick={() => {
+                      movePage("/sales-agent/statistic");
+                    }}
+                  >
+                    statistic
+                  </MenuItem>
+                  <MenuItem active={false} icon={<AiOutlineSetting />}>
+                    Account management
+                  </MenuItem>
+                  <MenuItem
+                    active={false}
                     icon={<LockOpenIcon />}
                     onClick={handleOpenChangePassword}
                   >
@@ -213,6 +242,11 @@ const MenuSaleAgent = ({ ReactNode }) => {
           <ChangePassword
             open={openModalChangePassword}
             handleClose={handleCloseChangePassword}
+          />
+
+          <InformationAgent
+            open={openModalInformation}
+            handleClose={handleCloseInformation}
           />
         </div>
         <div className="body_scroll">{ReactNode}</div>
