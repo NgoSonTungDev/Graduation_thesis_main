@@ -28,18 +28,15 @@ import VoucherManagement from "./pages/admin/voucher";
 import TicketSaleAgent from "./pages/sale_agent/ticket";
 import ws from "./socket";
 import PlaceDetail from "./pages/place_detail";
-<<<<<<< HEAD
-import Favourite from "./pages/favourite";
-=======
 import RegisterAgency from "./pages/auth/register_agency";
 import ForgotPassword from "./pages/auth/forgot_password";
 import ChangePassword from "./components/change_password";
 import TicketManagement from "./pages/admin/ticket";
 import PlaceMangement from "./pages/admin/place";
 import SaleAgentStatistic from "./pages/sale_agent/statistic";
+import Favourite from "./pages/favourite";
 import { getUserDataLocalStorage } from "./utils/localstorage";
 
->>>>>>> fed31f4bd3e8592391b877c27dc9a16be87d5512
 const App = () => {
   const open = useSelector(OpenChatBox);
   const userIdStorage = getUserDataLocalStorage();
@@ -116,7 +113,7 @@ const App = () => {
         />
         <ToastContainer />
       </BrowserRouter>
-    </div> 
+    </div>
   );
 };
 

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axiosClient from "../../api/axiosClient";
-import { toastify } from "../../utils/common";
+import { formatDate, toastify } from "../../utils/common";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { DataPlaceById } from "../../redux/selectors";
-import { formatDate } from "../../../utils/common";
+// import { formatDate } from "../../../utils/common";
 import qs from "query-string";
 import _ from "lodash";
 import moment from "moment";
