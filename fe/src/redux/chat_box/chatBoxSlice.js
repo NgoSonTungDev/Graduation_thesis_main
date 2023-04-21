@@ -10,7 +10,7 @@ const ChatBoxSlice = createSlice({
   initialState,
   reducers: {
     openChatBox: (state) => {
-      state.open = true;
+      state.open = !state.open;
     },
 
     closeChatBox: (state) => {

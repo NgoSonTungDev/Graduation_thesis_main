@@ -25,6 +25,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axiosClient from "../../api/axiosClient";
 import {
   changeListInbox,
+  closeChatBox,
   openChatBox,
 } from "../../redux/chat_box/chatBoxSlice";
 import ws from "../../socket";
@@ -202,6 +203,7 @@ const MenuSaleAgent = ({ ReactNode }) => {
                 onClick={() => {
                   removeUserDataLocalStorage();
                   dispatch(setUser(null));
+                  dispatch(closeChatBox());
                   navigation("/home");
                 }}
               >
