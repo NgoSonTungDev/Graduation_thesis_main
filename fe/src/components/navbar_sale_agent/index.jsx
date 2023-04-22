@@ -1,11 +1,10 @@
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import React, { useState } from "react";
 import {
   AiFillHome,
   AiOutlineBarChart,
+  AiOutlineLock,
   AiOutlineSetting,
 } from "react-icons/ai";
 import { BiPackage } from "react-icons/bi";
@@ -29,6 +28,7 @@ import {
   closeChatBox,
   openChatBox,
 } from "../../redux/chat_box/chatBoxSlice";
+import { setUser } from "../../redux/user/userSlice";
 import ws from "../../socket";
 import { toastify } from "../../utils/common";
 import {
@@ -36,9 +36,8 @@ import {
   removeUserDataLocalStorage,
 } from "../../utils/localstorage";
 import ChangePassword from "../change_password";
-import "./style.scss";
-import { setUser } from "../../redux/user/userSlice";
 import InformationAgent from "../information_agent";
+import "./style.scss";
 
 const MenuSaleAgent = ({ ReactNode }) => {
   const [menuCollapse, setMenuCollapse] = useState(true);
@@ -128,13 +127,10 @@ const MenuSaleAgent = ({ ReactNode }) => {
                 <div className="information_admin">
                   <div className="information_item">
                     <div className="information_item_avt">
-                      <img
-                        src="https://i.pinimg.com/736x/4a/4c/29/4a4c29807499a1a8085e9bde536a570a.jpg"
-                        alt=""
-                      />
+                      <img src={userIdStorage.avt} alt="" />
                     </div>
                     <div className="information_item_name">
-                      <p>Ngo Son Tung</p>
+                      <p>{userIdStorage.userName}</p>
                     </div>
                   </div>
                 </div>
@@ -194,16 +190,7 @@ const MenuSaleAgent = ({ ReactNode }) => {
                   >
                     statistic
                   </MenuItem>
-                  <MenuItem active={false} icon={<AiOutlineSetting />}>
-                    Account management
-                  </MenuItem>
-                  <MenuItem
-                    active={false}
-                    icon={<AccountCircleIcon />}
-                    onClick={handleOpenInformation}
-                  >
-                    Information
-                  </MenuItem>
+
                   <MenuItem
                     active={pathName === "/sales-agent/statistic" && true}
                     icon={<AiOutlineBarChart />}
@@ -213,12 +200,16 @@ const MenuSaleAgent = ({ ReactNode }) => {
                   >
                     statistic
                   </MenuItem>
-                  <MenuItem active={false} icon={<AiOutlineSetting />}>
+                  <MenuItem
+                    active={false}
+                    icon={<AiOutlineSetting />}
+                    onClick={handleOpenInformation}
+                  >
                     Account management
                   </MenuItem>
                   <MenuItem
                     active={false}
-                    icon={<LockOpenIcon />}
+                    icon={<AiOutlineLock />}
                     onClick={handleOpenChangePassword}
                   >
                     Change password

@@ -342,16 +342,6 @@ const Navbar = ({ loading, valueTab }) => {
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          movePage("/admin/home");
-                        }}
-                      >
-                        <ListItemIcon>
-                          <ManageAccountsIcon fontSize="medium" />
-                        </ListItemIcon>
-                        Quản lý hệ thống
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
                           handleOpenChangePassword();
                         }}
                       >
