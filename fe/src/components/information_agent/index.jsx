@@ -18,6 +18,7 @@ import {
   getUserDataLocalStorage,
   setUserDataLocalStorage,
 } from "../../utils/localstorage";
+import LoadingBar from "../loadding/loading_bar";
 
 const validationInput = yup.object().shape({
   username: yup
@@ -40,8 +41,8 @@ const validationInput = yup.object().shape({
 const InformationAgent = ({ open, handleClose }) => {
   const [check, setCheck] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingGetApi, setLoadingGetApi] = useState(false);
   const [data, setData] = useState({});
-  const [openDialogAvt, setOpenDialogAvt] = React.useState(false);
   const [image, setImage] = useState("");
   const [file, setFile] = useState(null);
 
@@ -65,15 +66,12 @@ const InformationAgent = ({ open, handleClose }) => {
   const handleCloseDialogAvt = () => {
     setImage("");
     setFile(null);
-    setOpenDialogAvt(false);
   };
 
   const handleUpdateInformation = (data, urlImage) => {
-    setLoading(true);
-
     axiosClient
       .put(`/user/update/${userIdStorage._id}`, {
-        avt: urlImage,
+        avt: urlImage ? urlImage : data.avt,
         userName: data.username,
         address: data.address,
         numberPhone: data.phone,
@@ -82,13 +80,13 @@ const InformationAgent = ({ open, handleClose }) => {
         setLoading(false);
         setUserDataLocalStorage({
           ...userIdStorage,
-          avt: urlImage,
+          avt: urlImage ? urlImage : data.avt,
           userName: data.username,
           address: data.address,
           numberPhone: data.phone,
         });
         handleClose();
-        toastify("success", "Cập nhật thông tin cá nhân thành công!!!");
+        toastify("success", "Cập nhật thông tin thành công!!!");
       })
       .catch((err) => {
         setLoading(false);
@@ -103,6 +101,7 @@ const InformationAgent = ({ open, handleClose }) => {
   };
 
   const handleSubmitAvt = async (data) => {
+    setLoading(true);
     if (file === null) {
       handleUpdateInformation(data, "");
       return;
@@ -122,7 +121,6 @@ const InformationAgent = ({ open, handleClose }) => {
       })
       .then((res) => {
         handleCloseDialogAvt();
-        toastify("success", "Cập nhật ảnh đại diện thành công!!!");
         handleUpdateInformation(data, res.data.url);
       })
       .catch((error) => {
@@ -131,12 +129,12 @@ const InformationAgent = ({ open, handleClose }) => {
   };
 
   const handleGetDataUser = async () => {
-    setLoading(true);
+    setLoadingGetApi(true);
     axiosClient
       .get(`/user/get-an/${userIdStorage._id}`)
       .then((res) => {
         setData(res.data.data);
-        setLoading(false);
+        setLoadingGetApi(false);
         reset({
           username: res.data.data.userName,
           address: res.data.data.address,
@@ -144,7 +142,7 @@ const InformationAgent = ({ open, handleClose }) => {
         });
       })
       .catch((err) => {
-        setLoading(false);
+        setLoadingGetApi(false);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
@@ -165,147 +163,169 @@ const InformationAgent = ({ open, handleClose }) => {
         >
           {"Thay đổi thông tin đại lý"}
         </DialogTitle>
-        <DialogContent>
-          <div
-            style={{
-              width: "400px",
-              height: "350px ",
-              display: "grid",
-              palignItems: "center",
-              border: "2px dashed #dedede",
-              backgroundImage: `url(${data.avt})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            {image ? (
-              <img
-                style={{
-                  width: "100%",
-                  height: "350px",
-                  objectFit: "cover",
-                }}
-                src={image}
-                alt=""
-              />
-            ) : (
+        {loadingGetApi ? (
+          <LoadingBar />
+        ) : (
+          <>
+            <DialogContent>
               <div
                 style={{
-                  width: "100%",
-                  height: "100%",
+                  width: "400px",
+                  height: "350px ",
                   display: "grid",
-                  placeItems: "center",
-                  backgroundColor: "#403e3ea3",
+                  palignItems: "center",
+                  border: "2px dashed #dedede",
+                  backgroundImage: `url(${data.avt})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
                 }}
               >
-                <Button
-                  //   variant="outlined"
-                  component="label"
-                  disabled={loading}
-                  sx={{ color: "#fff", border: "1px dashed #fff" }}
-                >
-                  Đổi ảnh đại diện
-                  <input
-                    type="file"
-                    hidden
-                    name="photo"
-                    accept="image/*"
-                    onChange={handleChangeFileImage}
+                {image ? (
+                  <img
+                    style={{
+                      width: "100%",
+                      height: "350px",
+                      objectFit: "cover",
+                    }}
+                    src={image}
+                    alt=""
                   />
-                </Button>
+                ) : (
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      display: "grid",
+                      placeItems: "center",
+                      backgroundColor: "#403e3ea3",
+                    }}
+                  >
+                    <Button
+                      //   variant="outlined"
+                      component="label"
+                      sx={{ color: "#fff", border: "1px dashed #fff" }}
+                    >
+                      Đổi ảnh đại diện
+                      <input
+                        type="file"
+                        hidden
+                        name="photo"
+                        accept="image/*"
+                        onChange={handleChangeFileImage}
+                      />
+                    </Button>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <div style={{ padding: "10px" }}>
-            {check ? (
-              <TextField
-                error={!!errors?.username}
-                {...register("username")}
-                helperText={errors.username?.message}
-                type="text"
-                size="small"
-                sx={{ width: "100%", marginTop: "10px" }}
-                label={"Tên đại lý"}
-              />
-            ) : (
-              <span style={{ display: "flex" }}>
-                <p style={{ marginRight: "10px" }}>Tên đại lý:</p>
-                <p style={{ fontWeight: "600" }}>{data.userName}</p>
-              </span>
-            )}
-          </div>
-          <div style={{ padding: "10px" }}>
-            {check ? (
-              <TextField
-                error={!!errors?.address}
-                {...register("address")}
-                helperText={errors.address?.message}
-                type="text"
-                size="small"
-                sx={{ width: "100%", marginTop: "10px" }}
-                label={"Địa chỉ"}
-              />
-            ) : (
-              <span style={{ display: "flex" }}>
-                <p style={{ marginRight: "10px" }}>Địa chỉ:</p>
-                <p style={{ fontWeight: "600" }}>{data.address}</p>
-              </span>
-            )}
-          </div>
-          <div style={{ padding: "10px" }}>
-            {check ? (
-              <TextField
-                error={!!errors?.phone}
-                {...register("phone")}
-                helperText={errors.phone?.message}
-                type="text"
-                size="small"
-                sx={{ width: "100%", marginTop: "10px" }}
-                label={"Số điện thoại"}
-              />
-            ) : (
-              <span style={{ display: "flex" }}>
-                <p style={{ marginRight: "10px" }}>Số điện thoại:</p>
-                <p style={{ fontWeight: "600" }}>{data.numberPhone}</p>
-              </span>
-            )}
-          </div>
-        </DialogContent>
-        <DialogActions style={{ paddingBottom: "15px" }}>
-          {!check ? (
-            <>
-              <Button variant="outlined" onClick={handleClose}>
-                Huỷ
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  setCheck(true);
-                }}
-              >
-                Chỉnh sửa
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  setCheck(false);
-                }}
-              >
-                Huỷ
-              </Button>
-              <LoadingButton
-                //   loading={loadingInformation}
-                variant="outlined"
-                onClick={handleSubmit(handleSubmitAvt)}
-              >
-                Cập nhật
-              </LoadingButton>
-            </>
-          )}
-        </DialogActions>
+              <div>
+                {check ? (
+                  <TextField
+                    error={!!errors?.username}
+                    {...register("username")}
+                    helperText={errors.username?.message}
+                    type="text"
+                    size="small"
+                    sx={{ width: "100%", marginTop: "12px" }}
+                    label={"Tên đại lý"}
+                  />
+                ) : (
+                  <span style={{ display: "flex" }}>
+                    <p style={{ marginRight: "10px" }}>Tên đại lý:</p>
+                    <p style={{ fontWeight: "600" }}>{data.userName}</p>
+                  </span>
+                )}
+              </div>
+              <div>
+                {check ? (
+                  <TextField
+                    type="text"
+                    size="small"
+                    sx={{ width: "100%", marginTop: "12px" }}
+                    label={"Email đại lý"}
+                    value={data.email}
+                    disabled
+                  />
+                ) : (
+                  <span style={{ display: "flex" }}>
+                    <p style={{ marginRight: "10px" }}>Email:</p>
+                    <p style={{ fontWeight: "600" }}>{data.email}</p>
+                  </span>
+                )}
+              </div>
+              <div>
+                {check ? (
+                  <TextField
+                    error={!!errors?.address}
+                    {...register("address")}
+                    helperText={errors.address?.message}
+                    type="text"
+                    size="small"
+                    sx={{ width: "100%", marginTop: "12px" }}
+                    label={"Địa chỉ"}
+                  />
+                ) : (
+                  <span style={{ display: "flex" }}>
+                    <p style={{ marginRight: "10px" }}>Địa chỉ:</p>
+                    <p style={{ fontWeight: "600" }}>{data.address}</p>
+                  </span>
+                )}
+              </div>
+              <div>
+                {check ? (
+                  <TextField
+                    error={!!errors?.phone}
+                    {...register("phone")}
+                    helperText={errors.phone?.message}
+                    type="text"
+                    size="small"
+                    sx={{ width: "100%", marginTop: "12px" }}
+                    label={"Số điện thoại"}
+                  />
+                ) : (
+                  <span style={{ display: "flex" }}>
+                    <p style={{ marginRight: "10px" }}>Số điện thoại:</p>
+                    <p style={{ fontWeight: "600" }}>{data.numberPhone}</p>
+                  </span>
+                )}
+              </div>
+            </DialogContent>
+            <DialogActions style={{ paddingBottom: "15px" }}>
+              {!check ? (
+                <>
+                  <Button variant="outlined" onClick={handleClose}>
+                    Huỷ
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setCheck(true);
+                    }}
+                  >
+                    Chỉnh sửa
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setCheck(false);
+                    }}
+                  >
+                    Huỷ
+                  </Button>
+                  <LoadingButton
+                    loading={loading}
+                    variant="outlined"
+                    onClick={handleSubmit(handleSubmitAvt)}
+                  >
+                    Cập nhật
+                  </LoadingButton>
+                </>
+              )}
+            </DialogActions>
+          </>
+        )}
       </Dialog>
     </div>
   );
