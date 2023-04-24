@@ -177,11 +177,11 @@ const userController = {
           .json(errorFunction(true, 404, "Không tồn tại !"));
 
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      await id.updateOne({
-        $set: {
-          password: hashedPassword,
-        },
-      });
+
+      await Users.findByIdAndUpdate(req.params.id,{
+        password: hashedPassword
+      })
+      
       res.json(errorFunction(true, 200, "Cập nhật mật khẩu thành công !"));
     } catch (error) {
       console.log("error: ", error);

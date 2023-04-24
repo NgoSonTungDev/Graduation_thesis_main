@@ -23,10 +23,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import axiosClient from "../../../../api/axiosClient";
 import { toastify } from "../../../../utils/common";
-import {
-  getUserDataLocalStorage,
-  setUserIdLocalStorage,
-} from "../../../../utils/localstorage";
+import { getUserDataLocalStorage } from "../../../../utils/localstorage";
 import "./style.scss";
 
 const validationInput = yup.object().shape({
@@ -50,6 +47,7 @@ const AccountTable = ({
 }) => {
   const [open, setOpen] = React.useState(false);
   const [check, setCheck] = useState(false);
+  const [userId, setUserId] = useState("");
   const userIdStorage = getUserDataLocalStorage();
 
   const handleOpen = () => {
@@ -88,7 +86,7 @@ const AccountTable = ({
   const handleChangePassword = (data) => {
     setCheck(true);
     axiosClient
-      .put(`/user/change-password/${userIdStorage?._id}`, {
+      .put(`/user/change-password/${userId}`, {
         password: data.new_password,
       })
       .then((res) => {
@@ -241,7 +239,10 @@ const AccountTable = ({
                       color: "red",
                       backgroundColor: "white",
                     }}
-                    onClick={handleOpen}
+                    onClick={() => {
+                      handleOpen();
+                      setUserId(item._id)
+                    }}
                   >
                     Đổi mật khẩu
                   </button>
