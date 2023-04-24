@@ -49,7 +49,7 @@ const userController = {
       if (userName) {
         query.userName = {
           $regex: userName,
-          $options: "$i",
+          $options: "i",
         };
       }
 
