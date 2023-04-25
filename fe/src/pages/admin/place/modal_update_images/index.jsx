@@ -1,32 +1,43 @@
+import { CloseOutlined } from "@ant-design/icons";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import _ from "lodash";
-import React, { useEffect, useRef, useState } from "react";
 import axiosClient from "../../../../api/axiosClient";
 import { toastify } from "../../../../utils/common";
-import { CloseOutlined } from "@ant-design/icons";
-import axios from "axios";
 import "./style.scss";
-const ModalUpdateImage = ({ open, handleClose, callBackApi, dataPlace }) => {
-  const [loading, setLoading] = useState(false);
-  const [placeId, setPlaceId] = useState("");
-  const [files, setFile] = useState(null);
-  const [data, setData] = React.useState("");
+import ErrorEmpty from "../../../../components/emty_data";
 
-  let listImageUpdate = [...dataPlace];
+const ModalUpdateImage = ({ open, handleClose, dataPlace, placeId }) => {
+  const [loading, setLoading] = useState(false);
+  const [files, setFile] = useState([]);
+  const [listImageUpdate, setListImageUpdate] = useState([]);
+
+  const [showAllImages, setShowAllImages] = useState(false);
+
+  const handleShowAllImages = () => {
+    setShowAllImages(true);
+  };
+
+  const imageList = showAllImages
+    ? listImageUpdate
+    : listImageUpdate.slice(0, 2);
 
   const handleChangeFileImage = (e) => {
     setFile(e.target.files);
   };
 
-  const deleteImage = (index) => {
-    listImageUpdate.filter((item) => {
-      return item !== index;
-    });
+  const deleteImage = (link) => {
+    setListImageUpdate(
+      listImageUpdate.filter((item) => {
+        return item !== link;
+      })
+    );
   };
 
   const uploadFiles = async () => {
@@ -47,19 +58,42 @@ const ModalUpdateImage = ({ open, handleClose, callBackApi, dataPlace }) => {
     try {
       const responses = await Promise.all(requests);
       setLoading(false);
-      listImageUpdate.push(...responses.map((res) => res.data.url));
+      setListImageUpdate(
+        listImageUpdate.push(...responses.map((res) => res.data.url))
+      );
     } catch (error) {
       setLoading(false);
     }
   };
 
-  const handleUpdateImage = async (url) => {
+  const handleUpdateImage = async () => {
+    setLoading(true);
+
+    if (!files) {
+      axiosClient
+        .put(`/place/update/${placeId}`, {
+          image: listImageUpdate,
+        })
+        .then((res) => {
+          setLoading(false);
+          handleClose();
+          toastify("success", "Cập nhật thành công !");
+        })
+        .catch((err) => {
+          setLoading(false);
+          toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        });
+      return;
+    }
+
     await uploadFiles();
     await axiosClient
       .put(`/place/update/${placeId}`, {
         image: listImageUpdate,
       })
       .then((res) => {
+        setLoading(false);
+        handleClose();
         toastify("success", "Cập nhật thành công !");
       })
       .catch((err) => {
@@ -68,53 +102,60 @@ const ModalUpdateImage = ({ open, handleClose, callBackApi, dataPlace }) => {
       });
   };
 
+  useEffect(() => {
+    setListImageUpdate(dataPlace);
+  }, []);
+
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle sx={{ textAlign: "center" }}>
-          {/* Địa điểm : <span style={{ color: "red" }}>áđâfas</span> */}
-        </DialogTitle>
+        <DialogTitle sx={{ textAlign: "center" }}></DialogTitle>
         <DialogContent>
-          <div style={{ width: "500px", display: "flex" }}>
+          <div style={{ display: "flex",width:"500px"}}>
             <div
               style={{
-                width: "50%",
                 marginTop: "15px",
                 display: "flex",
                 gap: "15px",
                 flexDirection: "row",
               }}
             >
-              {listImageUpdate.slice(0, 2).map((item, index) => {
-                return (
-                  <div key={index} style={{ position: "relative" }}>
-                    <img src={item} width={176} height={178} />
-                    <Button
-                      onClick={() => deleteImage(index)}
-                      type="primary"
-                      danger
-                      style={{
-                        position: "absolute",
-                        top: "5px",
-                        right: "5px",
-                        color: "red",
-                      }}
-                    >
-                      <CloseOutlined
+              {_.isEmpty(listImageUpdate) ? (
+                <ErrorEmpty />
+              ) : (
+                imageList.map((item, index) => {
+                  return (
+                    <div key={index} style={{ position: "relative" }}>
+                      <img src={item} width={176} height={178} />
+                      <Button
+                        type="primary"
+                        danger
                         style={{
-                          fontSize: "30px",
-                          backgroundColor: "red",
-                          color: "white",
+                          position: "absolute",
+                          top: "5px",
+                          right: "5px",
                         }}
-                      />
-                    </Button>
-                  </div>
-                );
-              })}
+                      >
+                        <IconButton
+                          size="small"
+                          sx={{
+                            border: "1px solid",
+                          }}
+                          onClick={() => deleteImage(item)}
+                        >
+                          <CloseOutlined />
+                        </IconButton>
+                      </Button>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
           <div
             style={{
+              display: "flex",
+              justifyContent: "space-between",
               marginLeft: "5%",
               width: "90%",
               marginTop: "15px",
@@ -126,7 +167,7 @@ const ModalUpdateImage = ({ open, handleClose, callBackApi, dataPlace }) => {
               component="label"
               disabled={loading}
             >
-              Thêm ảnh
+              Thêm ảnh ({files.length})
               <input
                 type="file"
                 multiple
@@ -136,12 +177,21 @@ const ModalUpdateImage = ({ open, handleClose, callBackApi, dataPlace }) => {
                 onChange={handleChangeFileImage}
               />
             </Button>
+            <Button
+              sx={{ marginTop: "15px" }}
+              variant="outlined"
+              component="label"
+              disabled={loading}
+              onClick={handleShowAllImages}
+            >
+              Tất Cả ảnh ({listImageUpdate.length})
+            </Button>
           </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Hủy</Button>
           <LoadingButton loading={loading} onClick={handleUpdateImage}>
-            Thêm
+            Chỉnh sửa
           </LoadingButton>
         </DialogActions>
       </Dialog>

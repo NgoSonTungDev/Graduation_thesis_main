@@ -36,7 +36,6 @@ const TablePlace = ({ data, deleteData, updateData }) => {
 
   const handleClickOpenModalUpdateImage = (placeId) => {
     getApiAnPlace(placeId);
-    setOpenModalUpdateImage(true);
   };
 
   const handleCloseModalUpdateImage = () => {
@@ -151,7 +150,9 @@ const TablePlace = ({ data, deleteData, updateData }) => {
     axiosClient
       .get(`/place/an/${id}`)
       .then((res) => {
-        setDataPlaceImage(res.data.data.image);
+        setDataPlaceImage(res.data.data.image || []);
+        setPlaceId(id);
+        setOpenModalUpdateImage(true);
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -402,12 +403,14 @@ const TablePlace = ({ data, deleteData, updateData }) => {
           </Table>
         </TableContainer>
       )}
-      <ModalUpdateImage
-        dataPlace={dataPlaceImage}
-        open={openModalUpdateImage}
-        handleClose={handleCloseModalUpdateImage}
-      />
-      ;
+      {openModalUpdateImage && (
+        <ModalUpdateImage
+          dataPlace={dataPlaceImage}
+          open={openModalUpdateImage}
+          handleClose={handleCloseModalUpdateImage}
+          placeId={placeId}
+        />
+      )}
       {openModal && (
         <GetDataPlaceItem openDialog={openModal} onClose={handleCloseModal} />
       )}

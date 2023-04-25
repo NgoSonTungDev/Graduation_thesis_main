@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { Autocomplete, Button } from "@mui/material";
+import { Autocomplete, Button, Skeleton } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -20,6 +20,8 @@ import GetDataPlaceItem from "../../../../components/modle_find_place";
 import FormTime from "../../../../hook-form/form_time";
 import { clearByIdPlace } from "../../../../redux/place/placeSlice";
 import { toastify } from "../../../../utils/common";
+import { Marker, GoogleMap,useJsApiLoader  } from "@react-google-maps/api";
+import Map_controller from "../../../../components/map_controller";
 
 const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
   const [openModal, setOpenModal] = useState(false);
@@ -27,11 +29,16 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
   const [listPurpose, setListPurpose] = useState([]);
   const [listType, setListType] = useState([]);
   const [listImage, setListImage] = useState([]);
-  const [files, setFile] = useState(null);
+  const [files, setFile] = useState([]);
   const [data, setData] = useState(null);
   const [valueOpen, setValueOpen] = React.useState("");
   const dispatch = useDispatch();
   const [valueClose, setValueClose] = React.useState("");
+  const [type, setType] = useState([]);
+  const [purpose, setPurpose] = useState([]);
+  const [map, setMap] = useState(null);
+  const [mapCenter, setMapCenter] = useState({ lat: 0, lon: 0 });
+  const [location, setLocation] = useState("");
 
   const validationInput = yup.object().shape({
     name: yup
@@ -60,10 +67,10 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
     //   .string()
     //   .typeError("Không được để trống")
     //   .required("Không được để trống."),
-    type: yup
-      .string()
-      .typeError("Không được để trống")
-      .required("Không được để trống."),
+    // type: yup
+    //   .string()
+    //   .typeError("Không được để trống")
+    //   .required("Không được để trống."),
     description: yup
       .string()
       .typeError("Không được để trống")
@@ -99,7 +106,33 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
     setFile(e.target.files);
   };
 
+  const handleSearchPlaceMap = async (query) => {
+    try {
+      const response = await axios.get(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          query
+        )}`
+      );
+      const { lat, lon, display_name } = response.data[0];
+      setLocation(display_name);
+      if (lat && lon && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lon))) {
+        setMapCenter({ lat: parseFloat(lat), lon: parseFloat(lon) });
+      } else {
+        console.log("No valid search results found");
+      }
+    } catch (error) {
+      console.log("No search results found", error);
+    }
+  };
+
+  const handleZoomMap = () => {
+    map.panTo({ lat: mapCenter.lat, lng: mapCenter.lon });
+    map.setZoom(map.getZoom() + 4);
+  };
+  
   const uploadFiles = async () => {
+    setLoading(true);
+
     const url = [];
 
     const formData = new FormData();
@@ -128,7 +161,9 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
 
   const handleAddPlace = (url) => {
     if (_.isEmpty(url)) {
-      toastify("chưa có ảnh");
+      toastify("info", "chưa có ảnh");
+      setLoading(true);
+      return;
     }
     axiosClient
       .post("/place/add", {
@@ -137,8 +172,8 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
         address: data.address,
         startingPrice: data.startingPrice,
         LastPrice: data.LastPrice,
-        purpose: "hgekjahsakjhd jhg",
-        type: data.type,
+        purpose: purpose.join(" , "),
+        type: type.join(" , "),
         description: data.description,
         image: url,
         openTime: valueOpen,
@@ -146,10 +181,13 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       })
       .then((res) => {
         callBackApi();
+        // handleSearchPlaceMap(res.name);
         setLoading(false);
         reset();
         setValueClose("");
         setValueOpen("");
+        setPurpose("");
+        setType("");
         handleClose();
         dispatch(clearByIdPlace());
         toastify("success", res.data.message || "Thêm thành công!");
@@ -161,7 +199,12 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
   };
 
   const handleCheckAddPlace = (data) => {
-    if (valueOpen === "" || valueClose === "") {
+    if (
+      valueOpen === "" ||
+      valueClose === "" ||
+      purpose === "" ||
+      type === ""
+    ) {
       message.error("Vui lòng điền đầy đủ thông tin!");
     } else {
       setData(data);
@@ -192,7 +235,11 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
     axiosClient
       .get("/type/all")
       .then((res) => {
-        setListType(res.data.data);
+        setListType(
+          res.data.data.map((item) => {
+            return { id: item._id, label: item.name };
+          })
+        );
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -204,6 +251,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
     getApiType();
   }, []);
 
+  
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
@@ -229,7 +277,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 sx={{ width: "80%", marginLeft: "10%" }}
               />
 
-              <TextField
+              {/* <TextField
                 type="text"
                 label="Địa chỉ"
                 error={!!errors?.address}
@@ -237,7 +285,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 helperText={errors.address?.message}
                 size="small"
                 sx={{ width: "80%", marginLeft: "10%" }}
-              />
+              /> */}
 
               <TextField
                 type="number"
@@ -248,7 +296,6 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 size="small"
                 sx={{ width: "80%", marginLeft: "10%" }}
               />
-
               <Autocomplete
                 multiple
                 disablePortal
@@ -256,31 +303,36 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 autoHighlight
                 name="name"
                 size="small"
+                value={purpose}
+                onChange={(event, newValue) => {
+                  setPurpose(newValue);
+                }}
+                getOptionLabel={(option) => option.label}
                 limitTags={1}
                 options={listPurpose}
-                onChange={(event, item) => {
-                  // const labels = item.map((obj) => obj.label);
-                  // const result = labels.join(" ");
-                  console.log(item); // sẻ trả ra 1 string ví dụ : "chill du lịch vui chơi" . dùng nó để đẩy vào trường type hoặc purpose của place
-                }}
                 sx={{ width: "80%", marginLeft: "10%" }}
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    label="Multi-select"
-                  />
+                  <TextField {...params} variant="outlined" label="Mục đích" />
                 )}
               />
-
-              <div style={{ width: "80%", marginLeft: "10%" }}>
-                <FormTime
-                  label="Giờ mở cửa"
-                  size="small"
-                  value={valueOpen}
-                  onChange={(newValueOpen) => setValueOpen(newValueOpen)}
-                />
-              </div>
+              <Autocomplete
+                multiple
+                disablePortal
+                noOptionsText="Không có lựa chọn"
+                autoHighlight
+                name="name"
+                size="small"
+                value={type}
+                onChange={(event, newValue) => {
+                  setType(newValue);
+                }}
+                limitTags={1}
+                options={listType}
+                sx={{ width: "80%", marginLeft: "10%" }}
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" label="Loại hình" />
+                )}
+              />
             </div>
             <div
               style={{
@@ -306,7 +358,6 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 ))}
               </TextField>
 
-            
               <TextField
                 type="number"
                 label="Giá cao nhất"
@@ -316,21 +367,14 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 size="small"
                 sx={{ width: "80%", marginLeft: "10%" }}
               />
-              <TextField
-                select
-                fullWidth
-                label="Loại hình"
-                // label={item?.type}
-                error={!!errors?.type}
-                {...register("type")}
-                helperText={errors.type?.message}
-                size="small"
-                sx={{ width: "80%", marginLeft: "10%" }}
-              >
-                {listType?.map((item) => (
-                  <MenuItem value={item.name}>{item.name}</MenuItem>
-                ))}
-              </TextField>
+              <div style={{ width: "80%", marginLeft: "10%" }}>
+                <FormTime
+                  label="Giờ mở cửa"
+                  size="small"
+                  value={valueOpen}
+                  onChange={(newValueOpen) => setValueOpen(newValueOpen)}
+                />
+              </div>
               <div style={{ width: "80%", marginLeft: "10%" }}>
                 <FormTime
                   label="Giờ đóng cửa"
@@ -358,7 +402,63 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
               label="Mô tả"
               sx={{ width: "100%" }}
             />
-
+            {loading ? (
+              <Skeleton variant="rounded" width="69%" height="350px" />
+            ) : (
+              <div className="box_body_content_map">
+                <p>Địa điểm cụ thể</p>
+                <div
+                  style={{
+                    width: "100%",
+                    height: "300px",
+                    marginTop: "10px",
+                    overflow: "hidden",
+                  }}
+                >
+                  <Map_controller
+                    children={
+                      <GoogleMap
+                        mapContainerStyle={{
+                          width: "100%",
+                          height: "100%",
+                        }}
+                        center={{
+                          lat: mapCenter.lat,
+                          lng: mapCenter.lon,
+                        }}
+                        options={{
+                          styles: [
+                            {
+                              featureType: "poi",
+                              stylers: [{ visibility: "off" }],
+                            },
+                            {
+                              featureType: "transit.station",
+                              stylers: [{ visibility: "off" }],
+                            },
+                          ],
+                          maxZoom: 20,
+                          mapTypeControl: false,
+                        }}
+                        zoom={10}
+                        onLoad={(map) => {
+                          setMap(map);
+                          map.setMapTypeId("satellite");
+                        }}
+                      >
+                        <Marker
+                          onClick={handleZoomMap}
+                          position={{
+                            lat: mapCenter.lat,
+                            lng: mapCenter.lon,
+                          }}
+                        />
+                      </GoogleMap>
+                    }
+                  />
+                </div>
+              </div>
+            )}
             {/* <div style={{ width: "50%", marginLeft:"10%" ,backgroundColor:"red"}}>
                         {listImage.map((url) => (
                             <img style={{ width: "30%", height: "30%" }} key={url} src={url} alt="uploaded image" />
@@ -370,7 +470,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
               component="label"
               disabled={loading}
             >
-              Thêm ảnh
+              Thêm ảnh ({files.length})
               <input
                 type="file"
                 multiple

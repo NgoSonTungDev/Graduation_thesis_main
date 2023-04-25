@@ -74,7 +74,7 @@ const PlaceMangement = () => {
       .get(
         `/place/all?${queryString.stringify({
           pageNumber: !_.isEmpty(dataPlace) ? 1 : Number(pageNumber),
-          limit: 12,
+          limit: 10,
           placeName: !_.isEmpty(dataPlace) ? dataPlace.name : "",
           type: "",
           variability: "",

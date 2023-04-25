@@ -212,13 +212,13 @@ const Review = () => {
                   >
                     <div
                       style={{
-                        width: "47%",
+                        // width: "47%",
                       }}
                     >
                       <img
                         style={{
-                          width: "100%",
-                          height: "100%",
+                          width: "176px",
+                          height: "178px",
                           // paddingTop: "2px",
                           borderBottomLeftRadius: "10px",
                           borderTopLeftRadius: "10px",
@@ -238,7 +238,6 @@ const Review = () => {
                       <b>{dataPlace.name}</b>
 
                       <span>{dataPlace.address}</span>
-
                       <span>
                         {renderItemCheckTime(
                           dataPlace.openTime,
@@ -252,7 +251,7 @@ const Review = () => {
             </div>
             <div className="review-input" style={{ paddingTop: "20px" }}>
               <div className="show_images">
-                {image && <img style={{ width: "225px" }} src={image} alt="" />}
+                {image && <img style={{ width: "176px",height:"178px "}} src={image} alt="" />}
               </div>
               <div style={{ display: "flex" }}>
                 <Button variant="outlined" component="label" disabled={loading}>
