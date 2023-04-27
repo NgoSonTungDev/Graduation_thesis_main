@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import axiosClient from "../../../api/axiosClient";
 import SidebarAdmin from "../../../components/narbar_admin";
 import { toastify } from "../../../utils/common";
@@ -7,6 +7,7 @@ import LoadingBar from "../../../components/loadding/loading_bar";
 import ErrorEmpty from "../../../components/emty_data";
 import _ from "lodash";
 import PaginationCpn from "../../../components/pagination";
+import ModalConfirm from "../../../components/modal_confirm";
 import AccountTable from "./table_account";
 import { Box } from "@mui/system";
 import TabContext from "@mui/lab/TabContext";
@@ -25,6 +26,13 @@ const fakeCode = (length) => {
 
 const AccountManagement = () => {
   const [loading, setLoading] = React.useState(false);
+  const [openModal, setOpenModal] = React.useState(false);
+  const [checkCase, setCheckCase] = React.useState(1);
+  const [getDataTable, setGetDataTable] = React.useState({
+    userId: "",
+    email: "",
+  });
+  const [loadingFunction, setLoadingFunction] = React.useState(false);
   const [data, setData] = React.useState({});
   const [payload, setPayload] = React.useState({
     pageNumber: 1,
@@ -32,17 +40,19 @@ const AccountManagement = () => {
     status: "",
   });
 
-  const handleLockAccount = (userId) => {
-    console.log("lock", userId);
+  const handleLockAccount = () => {
+    setLoadingFunction(true);
     axiosClient
-      .put(`/user/lock-user/${userId}`)
+      .put(`/user/lock-user/${getDataTable.userId}`)
       .then((res) => {
-        setLoading(false);
+        setLoadingFunction(false);
         handleGetAllUsers();
-        toastify("success", "Khoá thành công tài khoản thành công!");
+        setOpenModal(false);
+        toastify("success", "Khoá tài khoản thành công!");
       })
       .catch((err) => {
-        setLoading(false);
+        setLoadingFunction(false);
+        setOpenModal(false);
         toastify("error", err.response.data.message || "Lỗi hệ thống !");
       });
   };
@@ -54,41 +64,46 @@ const AccountManagement = () => {
         code,
       })
       .catch((err) => {
-        setLoading(false);
+        setLoadingFunction(false);
+        setOpenModal(false);
         toastify("error", err.response.data.message || "Lỗi hệ thống !");
       });
   };
 
-  const handleUnlockAccount = (userId, email) => {
-    console.log("unlock", userId);
+  const handleUnlockAccount = () => {
+    setLoadingFunction(true);
     const codePass = fakeCode(8);
     axiosClient
-      .put(`/user/un-lock-user/${userId}`, {
+      .put(`/user/un-lock-user/${getDataTable.userId}`, {
         fakeCode: codePass,
       })
       .then((res) => {
-        setLoading(false);
-        sendEmailUnlock(email, codePass);
+        setLoadingFunction(false);
+        setOpenModal(false);
+        sendEmailUnlock(getDataTable.email, codePass);
         handleGetAllUsers();
-        toastify("success", "Mở khoá thành công tài khoản thành công!");
+        toastify("success", "Mở khoá tài khoản thành công!");
       })
       .catch((err) => {
-        setLoading(false);
+        setLoadingFunction(false);
+        setOpenModal(false);
         toastify("error", err.response.data.message || "Lỗi hệ thống !");
       });
   };
 
-  const handleDeleteData = (userId) => {
-    console.log("id", userId);
+  const handleDeleteData = () => {
+    setLoadingFunction(true);
     axiosClient
-      .delete(`user/delete/${userId}`)
+      .delete(`user/delete/${getDataTable.userId}`)
       .then((res) => {
-        setLoading(false);
+        setLoadingFunction(false);
         handleGetAllUsers();
+        setOpenModal(false);
         toastify("success", "Xoá dữ liệu thành công!");
       })
       .catch((err) => {
-        setLoading(false);
+        setLoadingFunction(false);
+        setOpenModal(false);
         toastify("error", err.response.data.message || "Lỗi hệ thống !");
       });
   };
@@ -102,7 +117,6 @@ const AccountManagement = () => {
       .get(`/user/get-all?${qs.stringify(payload)}`)
       .then((res) => {
         setLoading(false);
-        console.log(res.data.data);
         setData(res.data.data);
       })
       .catch((err) => {
@@ -143,10 +157,18 @@ const AccountManagement = () => {
                 ) : (
                   <AccountTable
                     data={data.data}
-                    handleLockAccount={handleLockAccount}
-                    handleUnlockAccount={handleUnlockAccount}
-                    callBackHandleDeleteData={handleDeleteData}
-                    callBackApi={handleGetAllUsers}
+                    openModal={() => {
+                      setOpenModal(true);
+                    }}
+                    checkCase={(number) => {
+                      setCheckCase(number);
+                    }}
+                    getDataTable={(userId, email) => {
+                      setGetDataTable({
+                        userId,
+                        email,
+                      });
+                    }}
                   />
                 )}
               </div>
@@ -168,6 +190,29 @@ const AccountManagement = () => {
         {/* {openModal && (
           <GetDataSaleAgent openDialog={openModal} onClose={handleCloseModal} />
         )} */}
+        {openModal && (
+          <ModalConfirm
+            open={openModal}
+            handleClose={() => {
+              setOpenModal(false);
+            }}
+            loading={loadingFunction}
+            content={
+              checkCase === 1
+                ? "Bạn chắc chắn muốn khoá tài khoản này ?"
+                : checkCase === 2
+                ? "Bạn chắc chắn muốn xoá tất cả dữ liệu của tài khoản này ?"
+                : "Bạn chắc chắn muốn mở khoá tài khoản này ?"
+            }
+            callBackFunction={
+              checkCase === 1
+                ? handleLockAccount
+                : checkCase === 2
+                ? handleDeleteData
+                : handleUnlockAccount
+            }
+          />
+        )}
       </div>
     );
   };

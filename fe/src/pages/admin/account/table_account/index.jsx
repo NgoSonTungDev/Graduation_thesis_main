@@ -38,17 +38,10 @@ const validationInput = yup.object().shape({
     .oneOf([yup.ref("new_password"), null], "Không trùng khớp."),
 });
 
-const AccountTable = ({
-  data,
-  callBackApi,
-  handleLockAccount,
-  handleUnlockAccount,
-  callBackHandleDeleteData,
-}) => {
+const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
   const [open, setOpen] = React.useState(false);
   const [check, setCheck] = useState(false);
   const [userId, setUserId] = useState("");
-  const userIdStorage = getUserDataLocalStorage();
 
   const handleOpen = () => {
     setOpen(true);
@@ -72,15 +65,21 @@ const AccountTable = ({
   });
 
   const handleBlockAcc = (userId) => {
-    handleLockAccount(userId);
+    openModal();
+    checkCase(1);
+    getDataTable(userId, "");
   };
 
   const handleUnlockAcc = (userId, email) => {
-    handleUnlockAccount(userId, email);
+    openModal();
+    checkCase(3);
+    getDataTable(userId, email);
   };
 
   const handleDeleteData = (userId) => {
-    callBackHandleDeleteData(userId);
+    openModal();
+    checkCase(2);
+    getDataTable(userId, "");
   };
 
   const handleChangePassword = (data) => {
@@ -241,7 +240,7 @@ const AccountTable = ({
                     }}
                     onClick={() => {
                       handleOpen();
-                      setUserId(item._id)
+                      setUserId(item._id);
                     }}
                   >
                     Đổi mật khẩu
