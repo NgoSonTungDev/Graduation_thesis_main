@@ -28,7 +28,7 @@ const AccountManagement = () => {
   const [data, setData] = React.useState({});
   const [payload, setPayload] = React.useState({
     pageNumber: 1,
-    limit: 6,
+    limit: 5,
     status: "",
   });
 

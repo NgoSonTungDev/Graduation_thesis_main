@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  MenuItem,
   TextField,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
@@ -48,16 +49,24 @@ const AccountTable = ({
   handleUnlockAccount,
   callBackHandleDeleteData,
 }) => {
-  const [open, setOpen] = React.useState(false);
+  const [openChangePassword, setOpenChangePassword] = React.useState(false);
+  const [openUpdateAccount, setOpenUpdateAccount] = React.useState(false);
   const [check, setCheck] = useState(false);
   const userIdStorage = getUserDataLocalStorage();
 
-  const handleOpen = () => {
-    setOpen(true);
+  const handleOpenChangePassword = () => {
+    setOpenChangePassword(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseChangePassword = () => {
+    setOpenChangePassword(false);
+  };
+  const handleOpenUpdateAccount = () => {
+    setOpenUpdateAccount(true);
+  };
+
+  const handleCloseUpdateAccount = () => {
+    setOpenUpdateAccount(false);
   };
 
   const {
@@ -94,10 +103,27 @@ const AccountTable = ({
       .then((res) => {
         setCheck(false);
         toastify("success", "Đổi mật khẩu thành công!!!");
-        handleClose();
+        handleCloseChangePassword();
       })
       .catch((err) => {
         setCheck(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
+
+  const handleUpdateAccount = (data) => {
+    axiosClient
+      .put(`/user/update/${"id"}`, {
+        userName: data.username,
+        isAdmin: data.quyen,
+        gender: data.gender,
+        address: data.address,
+        numberPhone: data.phone,
+      })
+      .then((res) => {
+        toastify("success", "Cập nhật thông tin cá nhân thành công!!!");
+      })
+      .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
@@ -173,7 +199,7 @@ const AccountTable = ({
                 >
                   <button
                     style={{
-                      padding: "5px 15px",
+                      padding: "7px 15px",
                       width: "130px",
                       marginLeft: "10px",
                       outline: "none",
@@ -193,7 +219,7 @@ const AccountTable = ({
                   </button>
                   <button
                     style={{
-                      padding: "5px 15px",
+                      padding: "7px 15px",
                       marginLeft: "10px",
                       marginTop: "10px",
                       width: "130px",
@@ -212,7 +238,7 @@ const AccountTable = ({
                   </button>
                   <button
                     style={{
-                      padding: "5px 15px",
+                      padding: "7px 15px",
                       marginTop: "10px",
                       marginLeft: "10px",
                       width: "130px",
@@ -223,25 +249,25 @@ const AccountTable = ({
                       color: "green",
                       backgroundColor: "white",
                     }}
-                    // onClick={handleDeleteData}
+                    onClick={handleOpenUpdateAccount}
                   >
                     Chỉnh sửa
                   </button>
                   <button
                     style={{
-                      padding: "5px 15px",
+                      padding: "7px 15px",
                       margin: "5px",
                       marginTop: "10px",
                       marginLeft: "10px",
                       width: "130px",
                       outline: "none",
-                      border: "1px solid red",
+                      border: "1px solid #000",
                       cursor: "pointer",
                       borderRadius: "4px",
-                      color: "red",
+                      color: "#000",
                       backgroundColor: "white",
                     }}
-                    onClick={handleOpen}
+                    onClick={handleOpenChangePassword}
                   >
                     Đổi mật khẩu
                   </button>
@@ -254,8 +280,8 @@ const AccountTable = ({
 
       {/* dialog đổi mật khẩu */}
       <Dialog
-        open={open}
-        onClose={handleClose}
+        open={openChangePassword}
+        onClose={handleCloseChangePassword}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -290,13 +316,102 @@ const AccountTable = ({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Hủy</Button>
+          <Button onClick={handleCloseChangePassword}>Hủy</Button>
           <LoadingButton
             loading={check}
             onClick={handleSubmit(handleChangePassword)}
             autoFocus
           >
             Xác nhận
+          </LoadingButton>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog chỉnh sửa thông tin tài khoản */}
+      <Dialog
+        open={openUpdateAccount}
+        keepMounted
+        onClose={handleCloseUpdateAccount}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle
+          style={{ color: "#000", fontWeight: "600", textAlign: "center" }}
+        >
+          {"Thay đổi thông tin"}
+        </DialogTitle>
+        <DialogContent>
+          <div style={{ padding: "10px" }}>
+            <TextField
+              error={!!errors?.username}
+              {...register("username")}
+              helperText={errors.username?.message}
+              type="text"
+              size="small"
+              sx={{ width: "100%", marginTop: "10px" }}
+              label={"Tên tài khoản"}
+            />
+          </div>
+          <div style={{ padding: "10px", display: "flex" }}>
+            <TextField
+              style={{ width: "100%", height: "30px" }}
+              select
+              label="Giới Tính"
+              name="gender"
+              inputProps={register("gender")}
+              size="small"
+            >
+              <MenuItem value="Nam">Nam</MenuItem>
+              <MenuItem value="Nữ">Nữ</MenuItem>
+              <MenuItem value="Khác">Khác</MenuItem>
+            </TextField>
+          </div>
+          <div style={{ padding: "10px", display: "flex" }}>
+            <TextField
+              style={{ width: "100%", height: "30px" }}
+              select
+              label="Phân quyền"
+              name="quyen"
+              inputProps={register("quyen")}
+              size="small"
+            >
+              <MenuItem value="1">Người dùng</MenuItem>
+              <MenuItem value="2">Đại lý</MenuItem>
+              <MenuItem value="3">Admin</MenuItem>
+            </TextField>
+          </div>
+          <div style={{ padding: "10px" }}>
+            <TextField
+              error={!!errors?.address}
+              {...register("address")}
+              helperText={errors.address?.message}
+              type="text"
+              size="small"
+              sx={{ width: "350px" }}
+              label={"Địa chỉ"}
+            />
+          </div>
+          <div style={{ padding: "10px" }}>
+            <TextField
+              error={!!errors?.phone}
+              {...register("phone")}
+              helperText={errors.phone?.message}
+              type="text"
+              size="small"
+              sx={{ width: "100%" }}
+              label={"Số điện thoại"}
+            />
+          </div>
+        </DialogContent>
+        <DialogActions style={{ paddingBottom: "15px" }}>
+          <Button variant="outlined" onClick={handleCloseUpdateAccount}>
+            Huỷ
+          </Button>
+          <LoadingButton
+            // loading={loadingInformation}
+            variant="outlined"
+            // onClick={handleSubmit(handleUpdateInformation)}
+          >
+            Cập nhật
           </LoadingButton>
         </DialogActions>
       </Dialog>
