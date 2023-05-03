@@ -23,13 +23,16 @@ const OrderManagement = () => {
   const [loading, setLoading] = React.useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = React.useState({});
+  const LIMIT = 10
+
   const [payload, setPayload] = React.useState({
     pageNumber: 1,
-    limit: 6,
+    limit: LIMIT,
     status: "",
     salesAgentId: "",
     dateTime: "",
   });
+
 
   const handleChangeTab = (e, newValue) => {
     setValue(newValue);
@@ -144,7 +147,7 @@ const OrderManagement = () => {
                   onClick={() => {
                     setPayload({
                       pageNumber: 1,
-                      limit: 6,
+                      limit: LIMIT,
                       status: "",
                       salesAgentId: "",
                       dateTime: "",
@@ -181,7 +184,7 @@ const OrderManagement = () => {
                   height: "50px",
                 }}
               >
-                {data?.data && (
+                {!_.isEmpty(data?.data) && (
                   <PaginationCpn
                     count={data.totalPage}
                     page={payload.pageNumber}

@@ -409,7 +409,7 @@ const AccountTable = ({
           <LoadingButton
             // loading={loadingInformation}
             variant="outlined"
-            // onClick={handleSubmit(handleUpdateInformation)}
+            onClick={handleSubmit(handleUpdateAccount)}
           >
             Cập nhật
           </LoadingButton>

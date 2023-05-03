@@ -14,7 +14,6 @@ import GetDataPlaceItem from "../../../components/modle_find_place";
 import VoucherItem from "./voucher_item";
 
 const VoucherManagement = () => {
-  const [value, setValue] = React.useState("true");
   const [loading, setLoading] = React.useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = React.useState({});
@@ -22,14 +21,6 @@ const VoucherManagement = () => {
     placeID: "",
     active: true,
   });
-
-  const handleChangeTab = (e, newValue) => {
-    setValue(newValue);
-    setPayload({
-      ...payload,
-      active: newValue,
-    });
-  };
 
   const fetchData = () => {
     axiosClient
@@ -62,29 +53,22 @@ const VoucherManagement = () => {
     return (
       <div>
         <Box sx={{ width: "100%", height: "100vh", overflow: "hidden" }}>
-          <TabContext value={value}>
+          <TabContext>
             <Box
               sx={{
                 borderBottom: 1,
                 borderColor: "divider",
                 marginTop: 1,
                 display: "flex",
-                justifyContent: "space-between",
+                justifyContent: "right",
               }}
             >
-              <TabList
-                onChange={handleChangeTab}
-                aria-label="lab API tabs example"
-              >
-                <Tab label="Đang mở" value="true" />
-                <Tab label="Đang đóng" value="false" />
-              </TabList>
               <Button
                 size="medium"
                 sx={{ marginRight: "30px" }}
                 onClick={handleOpenModal}
               >
-                Tìm kiếm Đại điểm
+                Thêm mới
               </Button>
             </Box>
             <div
@@ -107,7 +91,7 @@ const VoucherManagement = () => {
                   <ErrorEmpty />
                 ) : (
                   <VoucherItem />
-                  //   <OrderTableAdmin data={data.data} callBackApi={fetchData} />
+                  // <OrderTableAdmin data={data.data} callBackApi={fetchData} />
                 )}
               </div>
               <div
@@ -120,7 +104,7 @@ const VoucherManagement = () => {
           </TabContext>
         </Box>
         {openModal && (
-          <GetDataPlaceItem openDialog={openModal} onClose={handleCloseModal} />
+          <VoucherItem open={openModal} handleClose={handleCloseModal} />
         )}
       </div>
     );
