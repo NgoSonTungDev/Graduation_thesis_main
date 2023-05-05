@@ -74,11 +74,11 @@ const PlaceMangement = () => {
       .get(
         `/place/all?${queryString.stringify({
           pageNumber: !_.isEmpty(dataPlace) ? 1 : Number(pageNumber),
-          limit: 12,
+          limit: 10,
           placeName: !_.isEmpty(dataPlace) ? dataPlace.name : "",
-          type: "",
+          type: [],
           variability: "",
-          purpose: "",
+          purpose: [],
           location: "",
         })}`
       )
@@ -146,6 +146,7 @@ const PlaceMangement = () => {
                 data={listData}
                 deleteData={handleDeleteData}
                 updateData={handleUpdateData}
+                callBackApi={fetchData}
               />
             </div>
           )}

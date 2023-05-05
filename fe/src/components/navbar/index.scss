@@ -155,3 +155,57 @@
     top: 0;
   }
 }
+// @media(max-width:768px){
+//   .Navbar_Container{
+//     width: 100%;
+//     display: flex;
+//       flex-wrap: wrap;
+//       justify-content: center;
+//       align-items: center;
+//       padding: 0;
+//     .navbar_container_box{
+//       width: 90%;
+
+//     }
+//   }
+// }
+
+@media only screen and (max-width: 768px) {
+  .Navbar_Container .navbar_container_box {
+    width: 85%;
+    margin-left: 7.5%;
+    justify-content: space-between;
+  }
+  .Navbar_Container .navbar_container_box .Navbar_Logo nav {
+    height: 60px;
+    display: flex;
+    align-items: center;
+  }
+  .Navbar_Container .navbar_container_box .Navbar_Logo nav label.logo {
+    font-size: 24px;
+    line-height: 60px;
+  }
+  .Navbar_Container .navbar_container_box .Navbar_Menu {
+    display: none;
+  }
+  .Navbar_Container .navbar_container_box .Navbar_Icon {
+    display: flex;
+    align-items: center;
+  }
+  .Navbar_Container .navbar_container_box .Navbar_Icon .Icon .material-icons {
+    margin: 0;
+  }
+  .Navbar_Container .navbar_container_box .Navbar_Icon .Icon Button {
+    display: none;
+  }
+  .Navbar_Container .navbar_container_box .Contents {
+    margin-left: 0;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    padding: 10px;
+    overflow-y: auto;
+  }
+}
