@@ -23,7 +23,7 @@ const ChartStatisticDay = () => {
     },
     xAxis: {
       categories: data?.detail?.map((e) =>
-        moment(e.dateTime).format("DD/mm/yyyy HH:mm")
+        moment(e.dateTime).format("DD/MM/YYYY HH:mm")
       ),
     },
     yAxis: {
@@ -56,7 +56,7 @@ const ChartStatisticDay = () => {
   };
 
   useEffect(() => {
-    let url = `/statistic/payment-statistics-day?dayTime=${Number(dateTime)}`;
+    let url = `/statistic/payment-statistics-day?dayTime=${Number(dateTime)|| Number(new Date())}`;
     fetchData(url);
   }, [dateTime]);
 
