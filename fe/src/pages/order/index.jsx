@@ -15,7 +15,6 @@ import { toastify } from "../../utils/common";
 import "./style.scss";
 import TableOrderUser from "./table";
 
-
 const Order = () => {
   const [value, setValue] = React.useState("0");
   const [loading, setLoading] = React.useState(false);
@@ -78,7 +77,7 @@ const Order = () => {
       <Box
         sx={{
           width: "100%",
-          height: "90vh",
+          height: "93vh",
           overflow: "hidden",
         }}
       >
@@ -112,8 +111,7 @@ const Order = () => {
               marginTop: "10px",
             }}
           >
-            <div className="boxTable">
-              <div>
+              <div className="boxTableUser">
                 {loading ? (
                   <LoadingBar />
                 ) : _.isEmpty(data) ? (
@@ -144,7 +142,6 @@ const Order = () => {
                   />
                 </div>
               )}
-            </div>
           </div>
         </TabContext>
       </Box>

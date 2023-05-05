@@ -1,10 +1,10 @@
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import React, { useState } from "react";
 import {
   AiFillHome,
   AiOutlineBarChart,
+  AiOutlineLock,
   AiOutlineSetting,
 } from "react-icons/ai";
 import { BiPackage } from "react-icons/bi";
@@ -25,8 +25,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axiosClient from "../../api/axiosClient";
 import {
   changeListInbox,
+  closeChatBox,
   openChatBox,
 } from "../../redux/chat_box/chatBoxSlice";
+import { setUser } from "../../redux/user/userSlice";
 import ws from "../../socket";
 import { toastify } from "../../utils/common";
 import {
@@ -34,8 +36,8 @@ import {
   removeUserDataLocalStorage,
 } from "../../utils/localstorage";
 import ChangePassword from "../change_password";
+import InformationAgent from "../information_agent";
 import "./style.scss";
-import { setUser } from "../../redux/user/userSlice";
 
 const MenuSaleAgent = ({ ReactNode }) => {
   const [menuCollapse, setMenuCollapse] = useState(true);
@@ -46,6 +48,7 @@ const MenuSaleAgent = ({ ReactNode }) => {
 
   const [openModalChangePassword, setOpenModalChangePassword] =
     React.useState(false);
+  const [openModalInformation, setOpenModalInformation] = React.useState(false);
 
   const pathName = location.pathname;
 
@@ -79,6 +82,13 @@ const MenuSaleAgent = ({ ReactNode }) => {
 
   const handleOpenChangePassword = () => {
     setOpenModalChangePassword(true);
+  };
+  const handleCloseInformation = () => {
+    setOpenModalInformation(false);
+  };
+
+  const handleOpenInformation = () => {
+    setOpenModalInformation(true);
   };
 
   return (
@@ -117,13 +127,10 @@ const MenuSaleAgent = ({ ReactNode }) => {
                 <div className="information_admin">
                   <div className="information_item">
                     <div className="information_item_avt">
-                      <img
-                        src="https://i.pinimg.com/736x/4a/4c/29/4a4c29807499a1a8085e9bde536a570a.jpg"
-                        alt=""
-                      />
+                      <img src={userIdStorage.avt} alt="" />
                     </div>
                     <div className="information_item_name">
-                      <p>Ngo Son Tung</p>
+                      <p>{userIdStorage.userName}</p>
                     </div>
                   </div>
                 </div>
@@ -183,12 +190,26 @@ const MenuSaleAgent = ({ ReactNode }) => {
                   >
                     statistic
                   </MenuItem>
-                  <MenuItem active={false} icon={<AiOutlineSetting />}>
+
+                  <MenuItem
+                    active={pathName === "/sales-agent/statistic" && true}
+                    icon={<AiOutlineBarChart />}
+                    onClick={() => {
+                      movePage("/sales-agent/statistic");
+                    }}
+                  >
+                    statistic
+                  </MenuItem>
+                  <MenuItem
+                    active={false}
+                    icon={<AiOutlineSetting />}
+                    onClick={handleOpenInformation}
+                  >
                     Account management
                   </MenuItem>
                   <MenuItem
                     active={false}
-                    icon={<LockOpenIcon />}
+                    icon={<AiOutlineLock />}
                     onClick={handleOpenChangePassword}
                   >
                     Change password
@@ -202,6 +223,7 @@ const MenuSaleAgent = ({ ReactNode }) => {
                 onClick={() => {
                   removeUserDataLocalStorage();
                   dispatch(setUser(null));
+                  dispatch(closeChatBox());
                   navigation("/home");
                 }}
               >
@@ -213,6 +235,11 @@ const MenuSaleAgent = ({ ReactNode }) => {
           <ChangePassword
             open={openModalChangePassword}
             handleClose={handleCloseChangePassword}
+          />
+
+          <InformationAgent
+            open={openModalInformation}
+            handleClose={handleCloseInformation}
           />
         </div>
         <div className="body_scroll">{ReactNode}</div>

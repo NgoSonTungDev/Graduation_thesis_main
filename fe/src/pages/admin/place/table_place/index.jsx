@@ -22,19 +22,22 @@ import GetDataPlaceItem from "../../../../components/modle_find_place";
 import { useDispatch, useSelector } from "react-redux";
 import Autocomplete from "@mui/material/Autocomplete";
 
-const TablePlace = ({ data, deleteData, updateData }) => {
+const TablePlace = ({ data, deleteData, updateData, callBackApi }) => {
   const [openModalUpdateImage, setOpenModalUpdateImage] = React.useState(false);
   const [editingRowIndex, setEditingRowIndex] = useState(null);
   const [placeId, setPlaceId] = useState("");
   const [loading, setLoading] = React.useState(false);
   const [openDelete, setOpenDelete] = React.useState(false);
-  const [dataType, setDataType] = React.useState([]);
-  const [dataPurpose, setDataPurpose] = React.useState([]);
+  const [dataType, setDataType] = useState([]);
+  const [dataPurpose, setDataPurpose] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const dispatch = useDispatch();
   const [dataPlaceImage, setDataPlaceImage] = React.useState([]);
+  const [type, setType] = useState([]);
+  const [purpose, setPurpose] = useState([]);
 
   const handleClickOpenModalUpdateImage = (placeId) => {
+    setOpenModalUpdateImage(true);
     getApiAnPlace(placeId);
   };
 
@@ -52,13 +55,13 @@ const TablePlace = ({ data, deleteData, updateData }) => {
     reset,
   } = useForm({
     defaultValues: {
-      type: "",
-      purpose: "",
+      // type: [],
+      // purpose: [],
       location: "",
       address: "",
       name: "",
-      startingPrice: 0,
-      LastPrice: 0,
+      startingPrice: 100000,
+      LastPrice: 200000,
     },
   });
 
@@ -73,6 +76,8 @@ const TablePlace = ({ data, deleteData, updateData }) => {
   const handleEditButtonClick = (id, rowIndex) => {
     setEditingRowIndex(rowIndex);
     setPlaceId(id);
+
+    getApiAnPlace(id);
     const row = data[rowIndex];
 
     reset({
@@ -83,21 +88,23 @@ const TablePlace = ({ data, deleteData, updateData }) => {
   const handleCancelButtonClick = () => {
     setEditingRowIndex(null);
   };
-
   const handleSaveButtonClick = (data) => {
     updateData(placeId, data);
     axiosClient
       .put(`/place/update/${placeId}`, {
         location: data.location,
-        type: data.type,
-        purpose: data.purpose,
+        purpose: purpose.map((item) => item.name).join(" , "),
+        type: type.map((item) => item.name).join(" , "),
         address: data.address,
         name: data.name,
         startingPrice: data.startingPrice,
         LastPrice: data.LastPrice,
       })
       .then((res) => {
+        setPurpose([]);
+        setType([]);
         toastify("success", "Cập nhật thành công !");
+        callBackApi();
       })
       .catch((err) => {
         setLoading(false);
@@ -126,7 +133,11 @@ const TablePlace = ({ data, deleteData, updateData }) => {
     axiosClient
       .get(`type/all`)
       .then((res) => {
-        setDataType(res.data.data);
+        setDataType(
+          res.data.data.map((item) => {
+            return { id: item._id, name: item.name };
+          })
+        );
       })
       .catch((err) => {
         setLoading(false);
@@ -138,7 +149,11 @@ const TablePlace = ({ data, deleteData, updateData }) => {
     axiosClient
       .get(`purpose/all`)
       .then((res) => {
-        setDataPurpose(res.data.data);
+        setDataPurpose(
+          res.data.data.map((item) => {
+            return { id: item._id, name: item.name };
+          })
+        );
       })
       .catch((err) => {
         setLoading(false);
@@ -150,9 +165,23 @@ const TablePlace = ({ data, deleteData, updateData }) => {
     axiosClient
       .get(`/place/an/${id}`)
       .then((res) => {
+        console.log(
+          res.data.data.type.split(" , ").map((item) => {
+            return { id: "2d1s5tg43sd12fs3f", name: item };
+          })
+        );
         setDataPlaceImage(res.data.data.image || []);
+        setType(
+          res.data.data.type.split(" , ").map((item) => {
+            return { id: "2d1s5tg43sd12fs3f", name: item };
+          })
+        );
+        setPurpose(
+          res.data.data.purpose.split(" , ").map((item) => {
+            return { id: "2d1s5tg43sd12fs3f", name: item };
+          })
+        );
         setPlaceId(id);
-        setOpenModalUpdateImage(true);
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
@@ -173,14 +202,30 @@ const TablePlace = ({ data, deleteData, updateData }) => {
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
               <TableRow sx={{ padding: "5px 0" }}>
-                <TableCell align="center">Tên Địa Điểm</TableCell>
-                <TableCell align="center">Địa Điểm</TableCell>
-                <TableCell align="center">Tỉnh/Thành phố</TableCell>
-                <TableCell align="center">Giá Thấp Nhất</TableCell>
-                <TableCell align="center">Giá Cao Nhất</TableCell>
-                <TableCell align="center">Loại</TableCell>
-                <TableCell align="center">Mục đích</TableCell>
-                <TableCell align="center">Chức năng</TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Tên Địa Điểm
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Tỉnh/Thành phố
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Địa Điểm
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Giá Thấp Nhất
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Giá Cao Nhất
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Loại
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Mục đích
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Chức năng
+                </TableCell>
               </TableRow>
             </TableHead>
 
@@ -193,20 +238,20 @@ const TablePlace = ({ data, deleteData, updateData }) => {
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
-                      maxWidth: "150px",
+                      maxWidth: "100px",
                     }}
                   >
                     {editingRowIndex === index ? (
                       <TextField
                         fullWidth
-                        label={item?.name}
+                        // label={item?.name}
                         error={!!errors?.name}
                         {...register("name")}
                         helperText={errors.name?.message}
                         size="small"
                       ></TextField>
                     ) : (
-                      item?.name
+                      <span title={item?.name}>{item?.name}</span>
                     )}
                   </TableCell>
                   <TableCell align="center">
@@ -214,6 +259,8 @@ const TablePlace = ({ data, deleteData, updateData }) => {
                       <TextField
                         select
                         fullWidth
+                        // getOptionLabel={(option) => option.location}
+
                         label={item?.location}
                         error={!!errors?.location}
                         {...register("location")}
@@ -225,7 +272,7 @@ const TablePlace = ({ data, deleteData, updateData }) => {
                         ))}
                       </TextField>
                     ) : (
-                      item?.location
+                      <span title={item?.location}>{item?.location}</span>
                     )}
                   </TableCell>
                   <TableCell
@@ -240,65 +287,66 @@ const TablePlace = ({ data, deleteData, updateData }) => {
                     {editingRowIndex === index ? (
                       <TextField
                         fullWidth
-                        label={item?.address}
+                        // label={item?.address}
                         error={!!errors?.address}
                         {...register("address")}
                         helperText={errors.address?.message}
                         size="small"
                       ></TextField>
                     ) : (
-                      item?.address
+                      <span title={item?.address}> {item?.address}</span>
                     )}
                   </TableCell>
 
-                  <TableCell align="center">
+                  <TableCell
+                    align="center"
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      maxWidth: "150px",
+                    }}
+                  >
                     {editingRowIndex === index ? (
                       <TextField
                         fullWidth
-                        label={item?.startingPrice}
+                        // label={item?.startingPrice}
                         error={!!errors?.startingPrice}
                         {...register("startingPrice")}
                         helperText={errors.startingPrice?.message}
                         size="small"
                       ></TextField>
                     ) : (
-                      formatMoney(item?.startingPrice)
+                      <span title={formatMoney(item?.startingPrice)}>
+                        {formatMoney(item?.startingPrice)}
+                      </span>
                     )}
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell
+                    align="center"
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      maxWidth: "150px",
+                    }}
+                  >
                     {editingRowIndex === index ? (
                       <TextField
                         fullWidth
-                        label={item?.LastPrice}
+                        // label={item?.LastPrice}
                         error={!!errors?.LastPrice}
                         {...register("LastPrice")}
                         helperText={errors.LastPrice?.message}
                         size="small"
                       ></TextField>
                     ) : (
-                      formatMoney(item?.LastPrice)
+                      <span title={formatMoney(item?.LastPrice)}>
+                        {formatMoney(item?.LastPrice)}
+                      </span>
                     )}
                   </TableCell>
 
-                  {/* <TableCell align="center">
-                    {editingRowIndex === index ? (
-                      <TextField
-                        select
-                        fullWidth
-                        label={item?.type}
-                        error={!!errors?.type}
-                        {...register("type")}
-                        helperText={errors.type?.message}
-                        size="small"
-                      >
-                        {dataType?.map((type) => (
-                          <MenuItem value={type.name}>{type.name}</MenuItem>
-                        ))}
-                      </TextField>
-                    ) : (
-                      item?.type
-                    )}
-                  </TableCell> */}
                   <TableCell
                     align="left"
                     sx={{
@@ -314,48 +362,64 @@ const TablePlace = ({ data, deleteData, updateData }) => {
                         disablePortal
                         noOptionsText="Không có lựa chọn"
                         autoHighlight
+                        name="loại"
                         size="small"
+                        value={type}
+                        onChange={(event, newValue) => {
+                          setType(newValue);
+                        }}
                         limitTags={1}
                         options={dataType}
-                        onChange={(item) => {
-                          const labels = item.map((obj) => obj?._id);
-                          const result = labels.join(" ");
-                          // console.log(result); // sẻ trả ra 1 string ví dụ : "chill du lịch vui chơi" . dùng nó để đẩy vào trường type hoặc purpose của place
-                        }}
-                        sx={{ width: 150 }}
+                        getOptionLabel={(option) => option.name}
+                        sx={{ width: "80%", marginLeft: "10%" }}
                         renderInput={(params) => (
                           <TextField
                             {...params}
                             variant="outlined"
-                            label="Loại"
+                            label="Loại hình"
                           />
                         )}
                       />
                     ) : (
-                      item?.type
+                      <span title={item?.type}>{item?.type}</span>
                     )}
                   </TableCell>
 
-                  <TableCell align="center">
+                  <TableCell
+                    align="left"
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      maxWidth: "150px",
+                    }}
+                  >
                     {editingRowIndex === index ? (
-                      <TextField
-                        select
-                        fullWidth
-                        name="purpose"
-                        label={item?.purpose}
-                        error={!!errors?.purpose}
-                        {...register("purpose")}
-                        helperText={errors.purpose?.message}
+                      <Autocomplete
+                        multiple
+                        disablePortal
+                        noOptionsText="Không có lựa chọn"
+                        autoHighlight
+                        name="mục đích"
                         size="small"
-                      >
-                        {dataPurpose?.map((purpose) => (
-                          <MenuItem value={purpose.name}>
-                            {purpose.name}
-                          </MenuItem>
-                        ))}
-                      </TextField>
+                        value={purpose}
+                        onChange={(event, newValue) => {
+                          setPurpose(newValue);
+                        }}
+                        limitTags={1}
+                        options={dataPurpose}
+                        getOptionLabel={(option) => option.name}
+                        sx={{ width: "100%" }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            label="Mục đích"
+                          />
+                        )}
+                      />
                     ) : (
-                      item?.purpose
+                      <span title={item?.purpose}>{item?.purpose}</span>
                     )}
                   </TableCell>
                   <TableCell align="center" sx={{ flexWrap: "nowrap" }}>
@@ -376,26 +440,32 @@ const TablePlace = ({ data, deleteData, updateData }) => {
                       <Button
                         onClick={() => {
                           handleEditButtonClick(item._id, index);
+                          setEditingRowIndex(index);
                         }}
                       >
                         Chỉnh sửa
                       </Button>
                     )}
-                    <Button
-                      onClick={() => {
-                        handleClickOpenModalDelete();
-                        setPlaceId(item._id);
-                      }}
-                    >
-                      Xóa
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        handleClickOpenModalUpdateImage(item._id);
-                      }}
-                    >
-                      Chỉnh Ảnh
-                    </Button>
+
+                    {editingRowIndex !== index && (
+                      <>
+                        <Button
+                          onClick={() => {
+                            handleClickOpenModalDelete();
+                            setPlaceId(item._id);
+                          }}
+                        >
+                          Xóa
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            handleClickOpenModalUpdateImage(item._id);
+                          }}
+                        >
+                          Chỉnh ảnh
+                        </Button>
+                      </>
+                    )}
                   </TableCell>
                 </TableBody>
               );

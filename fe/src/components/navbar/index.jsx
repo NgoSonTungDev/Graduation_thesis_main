@@ -32,6 +32,7 @@ import BarLoader from "react-spinners/BarLoader";
 import axiosClient from "../../api/axiosClient";
 import {
   changeListInbox,
+  closeChatBox,
   openChatBox,
 } from "../../redux/chat_box/chatBoxSlice";
 import ws from "../../socket";
@@ -341,16 +342,6 @@ const Navbar = ({ loading, valueTab }) => {
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          movePage("/admin/home");
-                        }}
-                      >
-                        <ListItemIcon>
-                          <ManageAccountsIcon fontSize="medium" />
-                        </ListItemIcon>
-                        Quản lý hệ thống
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
                           handleOpenChangePassword();
                         }}
                       >
@@ -364,6 +355,7 @@ const Navbar = ({ loading, valueTab }) => {
                           handleClose();
                           removeUserDataLocalStorage();
                           dispatch(setUser(null));
+                          dispatch(closeChatBox());
                           navigation("/home");
                         }}
                       >

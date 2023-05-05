@@ -76,9 +76,9 @@ const PlaceMangement = () => {
           pageNumber: !_.isEmpty(dataPlace) ? 1 : Number(pageNumber),
           limit: 10,
           placeName: !_.isEmpty(dataPlace) ? dataPlace.name : "",
-          type: "",
+          type: [],
           variability: "",
-          purpose: "",
+          purpose: [],
           location: "",
         })}`
       )
@@ -146,6 +146,7 @@ const PlaceMangement = () => {
                 data={listData}
                 deleteData={handleDeleteData}
                 updateData={handleUpdateData}
+                callBackApi={fetchData}
               />
             </div>
           )}

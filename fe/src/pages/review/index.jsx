@@ -16,6 +16,7 @@ import { getUserDataLocalStorage } from "../../utils/localstorage";
 import moment from "moment";
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
+import Footer from "../../components/footer/index";
 
 const Review = () => {
   const desc = ["Tệ", "Khá tệ", "Trung bình", "Tốt", "Tuyệt vời"];
@@ -31,7 +32,7 @@ const Review = () => {
   });
 
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dataPlace = useSelector(DataPlaceById);
   const userIdStorage = getUserDataLocalStorage();
 
@@ -55,7 +56,7 @@ const Review = () => {
       })
       .then((res) => {
         toastify("success", res.data.message || "Tạo bài thành công !");
-        navigate("/explore")
+        navigate("/explore");
         setFile(null);
         setRate({
           rate: 4,
@@ -188,8 +189,9 @@ const Review = () => {
                 </div>
               ) : (
                 <div
+                  className="review_select_place_content"
                   style={{
-                    width: "100%",
+                    // width: "100%",
                     border: "0.1px solid #E5E5E5",
                     borderRadius: "10px",
                   }}
@@ -211,9 +213,11 @@ const Review = () => {
                     }}
                   >
                     <div
-                      style={{
-                        // width: "47%",
-                      }}
+                      style={
+                        {
+                          // width: "47%",
+                        }
+                      }
                     >
                       <img
                         style={{
@@ -250,8 +254,14 @@ const Review = () => {
               )}
             </div>
             <div className="review-input" style={{ paddingTop: "20px" }}>
-              <div className="show_images">
-                {image && <img style={{ width: "176px",height:"178px "}} src={image} alt="" />}
+              <div className="show_images" style={{ paddingBottom: "5px" }}>
+                {image && (
+                  <img
+                    style={{ width: "176px", height: "178px " }}
+                    src={image}
+                    alt=""
+                  />
+                )}
               </div>
               <div style={{ display: "flex" }}>
                 <Button variant="outlined" component="label" disabled={loading}>
@@ -281,6 +291,9 @@ const Review = () => {
       {openModal && (
         <GetDataPlaceItem openDialog={openModal} onClose={handleCloseModal} />
       )}
+      <div className="footer">
+        <Footer />
+      </div>
     </div>
   );
 };

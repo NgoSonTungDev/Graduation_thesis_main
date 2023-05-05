@@ -18,6 +18,49 @@
     }
   }
 
+  // @media (max-width: 768px) {
+  //   margin-bottom: 10px;
+  //   box-shadow: 0 1px 4px rgb(0 0 0 / 15%);
+  //   .header {
+  //     h1 {
+  //       font-size: 20px;
+  //     }
+  //   }
+  //   .Review {
+  //     flex-direction: column;
+  //     .review-place {
+  //       order: 1;
+  //       width: 100%;
+  //       margin-left: 0;
+  //     }
+  //     .review-input {
+  //       .rate-item {
+  //         justify-content: space-between;
+
+  //         .rate-item-cate {
+  //           font-size: 16px;
+  //         }
+
+  //         .ant-rate {
+  //           flex: 0 0 auto;
+  //           font-size: 32px;
+  //         }
+
+  //         .rate-type {
+  //           display: none;
+  //         }
+  //       }
+  //       .review-input {
+  //         width: 100%;
+  //       }
+  //     }
+  //     .review_left {
+  //       .review-select-place {
+  //         // width: 682px;
+  //       }
+  //     }
+  //   }
+  // }
   .Review {
     display: flex;
     width: 100%;
@@ -95,25 +138,6 @@
         font-size: 16px;
         border-radius: 10px;
       }
-
-      // @media (max-width: 991px) {
-      //     .rate-item {
-      //         justify-content: space-between;
-
-      //         .rate-item-cate {
-      //             font-size: 16px;
-      //         }
-
-      //         .ant-rate {
-      //             flex: 0 0 auto;
-      //             font-size: 32px;
-      //         }
-
-      //         .rate-type {
-      //             display: none;
-      //         }
-      //     }
-      // }
     }
 
     .review_left {
@@ -135,13 +159,65 @@
         margin-bottom: 16px;
         border: 1px dashed #d9d9d9;
         border-radius: 10px;
-        width: 690px;
-        height: 110px;
+        width: 90%;
         span {
           font-size: 16px;
           color: #717171;
         }
       }
     }
+  }
+}
+@media (max-width: 768px) {
+  .Review_Container {
+    margin-bottom: 10px;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 15%);
+    width: 80%;
+    .header {
+      h1 {
+        font-size: 20px;
+      }
+    }
+    .Review {
+      flex-direction: column;
+      .review-place {
+        order: 1;
+        width: 100%;
+        margin-left: 0;
+      }
+      .review-input {
+        .rate-item {
+          justify-content: space-between;
+
+          .rate-item-cate {
+            font-size: 16px;
+          }
+
+          .ant-rate {
+            flex: 0 0 auto;
+            font-size: 32px;
+          }
+
+          .rate-type {
+            display: none;
+          }
+        }
+        .review-input {
+          width: 100%;
+        }
+      }
+      .review_left {
+        .review-select-place {
+          // width: 682px;
+          // width: 9%;
+        }
+        .review_select_place_content {
+          width: 90%;
+        }
+      }
+    }
+  }
+  .footer {
+    display: none;
   }
 }

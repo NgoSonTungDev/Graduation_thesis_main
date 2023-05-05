@@ -10,7 +10,7 @@ import TextField from "@mui/material/TextField";
 import { message } from "antd";
 import axios from "axios";
 import _ from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
@@ -20,15 +20,15 @@ import GetDataPlaceItem from "../../../../components/modle_find_place";
 import FormTime from "../../../../hook-form/form_time";
 import { clearByIdPlace } from "../../../../redux/place/placeSlice";
 import { toastify } from "../../../../utils/common";
-import { Marker, GoogleMap,useJsApiLoader  } from "@react-google-maps/api";
+import { Marker, GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 import Map_controller from "../../../../components/map_controller";
 
 const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [listPurpose, setListPurpose] = useState([]);
+  const [uploadedUrls, setUploadedUrls] = useState([]);
   const [listType, setListType] = useState([]);
-  const [listImage, setListImage] = useState([]);
   const [files, setFile] = useState([]);
   const [data, setData] = useState(null);
   const [valueOpen, setValueOpen] = React.useState("");
@@ -38,15 +38,14 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
   const [purpose, setPurpose] = useState([]);
   const [map, setMap] = useState(null);
   const [mapCenter, setMapCenter] = useState({ lat: 0, lon: 0 });
-  const [location, setLocation] = useState("");
-
+  
   const validationInput = yup.object().shape({
-    name: yup
+    placeName: yup
       .string()
       .required("Không được để trống.")
       .typeError("Không được để trống"),
     location: yup
-      .string()
+      .string()    
       .required("Không được để trống.")
       .typeError("Không được để trống"),
     address: yup
@@ -63,14 +62,6 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       .min(0, "Phải lớn hơn 0")
       .typeError("Không được để trống")
       .required("Không được để trống."),
-    // purpose: yup
-    //   .string()
-    //   .typeError("Không được để trống")
-    //   .required("Không được để trống."),
-    // type: yup
-    //   .string()
-    //   .typeError("Không được để trống")
-    //   .required("Không được để trống."),
     description: yup
       .string()
       .typeError("Không được để trống")
@@ -79,25 +70,29 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
 
   const {
     register,
+    watch,
+    setValue,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm({
     defaultValues: {
-      name: "",
+      placeName: "",
       location: "",
       address: "",
-      geographicalLocation: "",
       startingPrice: 100000,
       LastPrice: 200000,
-      purpose: "",
-      type: "",
+      purpose: [],
+      type: [],
       description: "",
       image: "",
     },
     resolver: yupResolver(validationInput),
   });
-
+  const address = watch("address", "");
+  const filteredProvinces = provinces.filter((province) =>
+  province.name.toLowerCase().includes(address.toLowerCase())
+);
   const handleCloseModal = () => {
     setOpenModal(false);
   };
@@ -106,15 +101,22 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
     setFile(e.target.files);
   };
 
-  const handleSearchPlaceMap = async (query) => {
+  const debounceFnLocattion = useCallback(
+    _.debounce((value) => {
+      handleSearchPlaceMap(value);
+    }, 500),
+    []
+  );
+
+  const handleSearchPlaceMap = async (value) => {
     try {
       const response = await axios.get(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          query
+          value
         )}`
       );
       const { lat, lon, display_name } = response.data[0];
-      setLocation(display_name);
+      setValue("address", display_name);
       if (lat && lon && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lon))) {
         setMapCenter({ lat: parseFloat(lat), lon: parseFloat(lon) });
       } else {
@@ -129,11 +131,9 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
     map.panTo({ lat: mapCenter.lat, lng: mapCenter.lon });
     map.setZoom(map.getZoom() + 4);
   };
-  
+
   const uploadFiles = async () => {
     setLoading(true);
-
-    const url = [];
 
     const formData = new FormData();
     const api = "https://api.cloudinary.com/v1_1/djo1gzatx/image/upload";
@@ -142,20 +142,24 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
     formData.append("upload_preset", presetName);
     formData.append("folder", folderName);
 
-    const requests = Object.values(files).map((file) => {
+    const uploadPromises = [];
+
+    Object.values(files).forEach((file) => {
       formData.append("file", file);
-      return axios.post(api, formData, {
+      const uploadPromise = axios.post(api, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+      uploadPromises.push(uploadPromise);
     });
 
     try {
-      const responses = await Promise.all(requests);
-      setLoading(false);
-      url.push(...responses.map((res) => res.data.url));
-      handleAddPlace(url);
+      const responses = await Promise.all(uploadPromises);
+      const uploadedUrls = responses.map((res) => res.data.url);
+      setUploadedUrls((prevState) => [...prevState, ...uploadedUrls]);
+      handleAddPlace(uploadedUrls);
     } catch (error) {
       setLoading(false);
+      console.log(error);
     }
   };
 
@@ -167,13 +171,13 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
     }
     axiosClient
       .post("/place/add", {
-        name: data.name,
+        name: data.placeName,
         location: data.location,
         address: data.address,
         startingPrice: data.startingPrice,
         LastPrice: data.LastPrice,
-        purpose: purpose.join(" , "),
-        type: type.join(" , "),
+        purpose: purpose.map((item) => item.label).join(" , "),
+        type: type.map((item) => item.label).join(" , "),
         description: data.description,
         image: url,
         openTime: valueOpen,
@@ -181,13 +185,13 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       })
       .then((res) => {
         callBackApi();
-        // handleSearchPlaceMap(res.name);
         setLoading(false);
         reset();
         setValueClose("");
         setValueOpen("");
-        setPurpose("");
-        setType("");
+        setPurpose([]);
+        setType([]);
+        setFile(null);
         handleClose();
         dispatch(clearByIdPlace());
         toastify("success", res.data.message || "Thêm thành công!");
@@ -205,7 +209,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       purpose === "" ||
       type === ""
     ) {
-      message.error("Vui lòng điền đầy đủ thông tin!");
+      toastify("error", "Vui lòng điền đầy đủ thông tin");
     } else {
       setData(data);
       if (_.isEmpty(files)) {
@@ -251,16 +255,15 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
     getApiType();
   }, []);
 
-  
   return (
     <div>
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} maxWidth="1000px">
         <DialogTitle sx={{ textAlign: "center" }}>Thêm địa điểm</DialogTitle>
         <DialogContent>
-          <div style={{ width: "500px", display: "flex" }}>
+          <div style={{ width: "1000px", display: "flex" }}>
             <div
               style={{
-                width: "50%",
+                width: "33%",
                 marginTop: "15px",
                 display: "flex",
                 gap: "15px",
@@ -270,22 +273,25 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
               <TextField
                 type="text"
                 label="Tên địa điểm"
-                error={!!errors?.name}
-                {...register("name")}
-                helperText={errors.name?.message}
+                error={!!errors?.placeName}
+                {...register("placeName")}
+                helperText={errors.placeName?.message}
                 size="small"
-                sx={{ width: "80%", marginLeft: "10%" }}
+                sx={{ width: "63%", marginLeft: "10%" }}
+                onChange={(e) => {
+                  debounceFnLocattion(e.target.value);
+                }}
               />
 
-              {/* <TextField
+              <TextField
                 type="text"
-                label="Địa chỉ"
+                // label="Địa chỉ"
                 error={!!errors?.address}
                 {...register("address")}
                 helperText={errors.address?.message}
                 size="small"
-                sx={{ width: "80%", marginLeft: "10%" }}
-              /> */}
+                sx={{ width: "63%", marginLeft: "10%" }}
+              />
 
               <TextField
                 type="number"
@@ -294,7 +300,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 {...register("startingPrice")}
                 helperText={errors.startingPrice?.message}
                 size="small"
-                sx={{ width: "80%", marginLeft: "10%" }}
+                sx={{ width: "63%", marginLeft: "10%" }}
               />
               <Autocomplete
                 multiple
@@ -307,14 +313,14 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 onChange={(event, newValue) => {
                   setPurpose(newValue);
                 }}
-                getOptionLabel={(option) => option.label}
                 limitTags={1}
                 options={listPurpose}
-                sx={{ width: "80%", marginLeft: "10%" }}
+                sx={{ width: "63%", marginLeft: "10%" }}
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" label="Mục đích" />
                 )}
               />
+
               <Autocomplete
                 multiple
                 disablePortal
@@ -328,7 +334,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 }}
                 limitTags={1}
                 options={listType}
-                sx={{ width: "80%", marginLeft: "10%" }}
+                sx={{ width: "63%", marginLeft: "10%" }}
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" label="Loại hình" />
                 )}
@@ -336,7 +342,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
             </div>
             <div
               style={{
-                width: "50%",
+                width: "33%",
                 marginTop: "15px",
                 display: "flex",
                 gap: "15px",
@@ -351,9 +357,9 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 {...register("location")}
                 helperText={errors.location?.message}
                 size="small"
-                sx={{ width: "80%", marginLeft: "10%" }}
+                sx={{ width: "63%" }}
               >
-                {provinces.map((item) => (
+                {filteredProvinces.map((item) => (
                   <MenuItem value={item.name}>{item.name}</MenuItem>
                 ))}
               </TextField>
@@ -365,9 +371,9 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 {...register("LastPrice")}
                 helperText={errors.LastPrice?.message}
                 size="small"
-                sx={{ width: "80%", marginLeft: "10%" }}
+                sx={{ width: "63%" }}
               />
-              <div style={{ width: "80%", marginLeft: "10%" }}>
+              <div style={{ width: "80%", marginTop: "-3%" }}>
                 <FormTime
                   label="Giờ mở cửa"
                   size="small"
@@ -375,42 +381,54 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                   onChange={(newValueOpen) => setValueOpen(newValueOpen)}
                 />
               </div>
-              <div style={{ width: "80%", marginLeft: "10%" }}>
+              <div style={{ width: "80%", marginTop: "-3%" }}>
                 <FormTime
                   label="Giờ đóng cửa"
                   value={valueClose}
                   onChange={(newValueClose) => setValueClose(newValueClose)}
                 />
               </div>
+              <TextField
+                type="text"
+                size="small"
+                error={!!errors?.description}
+                {...register("description")}
+                helperText={errors.description?.message}
+                label="Mô tả"
+                sx={{ width: "63%" }}
+              />
+              <Button
+                sx={{ width: "63%" }}
+                variant="outlined"
+                component="label"
+                disabled={loading}
+              >
+                Thêm ảnh ({files?.length})
+                <input
+                  type="file"
+                  multiple
+                  hidden
+                  name="photo"
+                  accept="image/*"
+                  onChange={handleChangeFileImage}
+                />
+              </Button>
             </div>
-          </div>
-          <div
-            style={{
-              marginLeft: "5%",
-              width: "90%",
-              marginTop: "15px",
-              // display: "flex",
-              // gap: "15px",
-              // flexDirection: "column",
-            }}
-          >
-            <TextField
-              type="text"
-              error={!!errors?.description}
-              {...register("description")}
-              helperText={errors.description?.message}
-              label="Mô tả"
-              sx={{ width: "100%" }}
-            />
             {loading ? (
               <Skeleton variant="rounded" width="69%" height="350px" />
             ) : (
-              <div className="box_body_content_map">
+              <div
+                className="box_body_content_map"
+                style={{
+                  width: "33%",
+                  marginLeft: "-29px",
+                }}
+              >
                 <p>Địa điểm cụ thể</p>
                 <div
                   style={{
                     width: "100%",
-                    height: "300px",
+                    height: "220px",
                     marginTop: "10px",
                     overflow: "hidden",
                   }}
@@ -440,46 +458,27 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                           maxZoom: 20,
                           mapTypeControl: false,
                         }}
-                        zoom={10}
+                        zoom={15}
                         onLoad={(map) => {
                           setMap(map);
                           map.setMapTypeId("satellite");
                         }}
                       >
-                        <Marker
-                          onClick={handleZoomMap}
-                          position={{
-                            lat: mapCenter.lat,
-                            lng: mapCenter.lon,
-                          }}
-                        />
+                        {mapCenter && (
+                          <Marker
+                            onClick={handleZoomMap}
+                            position={{
+                              lat: mapCenter.lat,
+                              lng: mapCenter.lon,
+                            }}
+                          />
+                        )}
                       </GoogleMap>
                     }
                   />
                 </div>
               </div>
             )}
-            {/* <div style={{ width: "50%", marginLeft:"10%" ,backgroundColor:"red"}}>
-                        {listImage.map((url) => (
-                            <img style={{ width: "30%", height: "30%" }} key={url} src={url} alt="uploaded image" />
-                        ))}
-                    </div> */}
-            <Button
-              sx={{ marginTop: "15px" }}
-              variant="outlined"
-              component="label"
-              disabled={loading}
-            >
-              Thêm ảnh ({files.length})
-              <input
-                type="file"
-                multiple
-                hidden
-                name="photo"
-                accept="image/*"
-                onChange={handleChangeFileImage}
-              />
-            </Button>
           </div>
         </DialogContent>
         <DialogActions>

@@ -25,11 +25,10 @@ const fakeCode = (length) => {
 
 const AccountManagement = () => {
   const [loading, setLoading] = React.useState(false);
-  const [openModal, setOpenModal] = useState(false);
   const [data, setData] = React.useState({});
   const [payload, setPayload] = React.useState({
     pageNumber: 1,
-    limit: 10,
+    limit: 6,
     status: "",
   });
 
@@ -40,6 +39,7 @@ const AccountManagement = () => {
       .then((res) => {
         setLoading(false);
         handleGetAllUsers();
+        toastify("success", "Khoá thành công tài khoản thành công!");
       })
       .catch((err) => {
         setLoading(false);
@@ -68,8 +68,24 @@ const AccountManagement = () => {
       })
       .then((res) => {
         setLoading(false);
-        // handleGetAllUsers();
         sendEmailUnlock(email, codePass);
+        handleGetAllUsers();
+        toastify("success", "Mở khoá thành công tài khoản thành công!");
+      })
+      .catch((err) => {
+        setLoading(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thống !");
+      });
+  };
+
+  const handleDeleteData = (userId) => {
+    console.log("id", userId);
+    axiosClient
+      .delete(`user/delete/${userId}`)
+      .then((res) => {
+        setLoading(false);
+        handleGetAllUsers();
+        toastify("success", "Xoá dữ liệu thành công!");
       })
       .catch((err) => {
         setLoading(false);
@@ -129,6 +145,7 @@ const AccountManagement = () => {
                     data={data.data}
                     handleLockAccount={handleLockAccount}
                     handleUnlockAccount={handleUnlockAccount}
+                    callBackHandleDeleteData={handleDeleteData}
                     callBackApi={handleGetAllUsers}
                   />
                 )}

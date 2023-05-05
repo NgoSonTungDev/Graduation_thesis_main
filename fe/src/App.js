@@ -15,6 +15,7 @@ import Statistic from "./pages/admin/statistic";
 import TicketManagement from "./pages/admin/ticket";
 import VoucherManagement from "./pages/admin/voucher";
 import AccountManagement from "./pages/admin/account";
+import PostManagement from "./pages/admin/posts";
 import ForgotPassword from "./pages/auth/forgot_password";
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
@@ -38,6 +39,7 @@ import { OpenChatBox } from "./redux/selectors";
 import { setUser } from "./redux/user/userSlice";
 import ws from "./socket";
 import { getUserDataLocalStorage } from "./utils/localstorage";
+import InformationAgent from "./components/information_agent";
 
 const AdminLayout = ({ children }) => {
   const { user } = useSelector((state) => state.User);
@@ -223,7 +225,14 @@ const App = () => {
             </AdminLayout>
           }
         />
-
+        <Route
+          path="/admin/post"
+          element={
+            <AdminLayout>
+              <PostManagement />
+            </AdminLayout>
+          }
+        />
         {/* saleAgent */}
         <Route
           path="/sale-agent/home"
@@ -259,6 +268,7 @@ const App = () => {
         />
 
         <Route path="/forbidden" element={<Forbidden />} />
+        <Route path="/information-agent" element={<InformationAgent />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
 

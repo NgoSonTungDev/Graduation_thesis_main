@@ -17,7 +17,6 @@ const ModalUpdateImage = ({ open, handleClose, dataPlace, placeId }) => {
   const [loading, setLoading] = useState(false);
   const [files, setFile] = useState([]);
   const [listImageUpdate, setListImageUpdate] = useState([]);
-
   const [showAllImages, setShowAllImages] = useState(false);
 
   const handleShowAllImages = () => {
@@ -109,15 +108,25 @@ const ModalUpdateImage = ({ open, handleClose, dataPlace, placeId }) => {
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle sx={{ textAlign: "center" }}></DialogTitle>
+        <DialogTitle sx={{ textAlign: "center" }}>Chỉnh Sửa Ảnh</DialogTitle>
         <DialogContent>
-          <div style={{ display: "flex",width:"500px"}}>
+          <div
+            style={{
+              display: "flex",
+              width: "500px",
+              // flexWrap: "wrap",
+              justifyContent: "center",
+              overflow: "hidden",
+            }}
+          >
             <div
               style={{
                 marginTop: "15px",
                 display: "flex",
                 gap: "15px",
-                flexDirection: "row",
+                // flexDirection: "row",
+                justifyContent: "center",
+                flexWrap: "wrap",
               }}
             >
               {_.isEmpty(listImageUpdate) ? (
@@ -126,7 +135,7 @@ const ModalUpdateImage = ({ open, handleClose, dataPlace, placeId }) => {
                 imageList.map((item, index) => {
                   return (
                     <div key={index} style={{ position: "relative" }}>
-                      <img src={item} width={176} height={178} />
+                      <img src={item} width={176} height={178} style={{borderRadius:"5px"}} />
                       <Button
                         type="primary"
                         danger
@@ -139,7 +148,7 @@ const ModalUpdateImage = ({ open, handleClose, dataPlace, placeId }) => {
                         <IconButton
                           size="small"
                           sx={{
-                            border: "1px solid",
+                            border: "1px solid",color:"red"
                           }}
                           onClick={() => deleteImage(item)}
                         >
@@ -159,6 +168,7 @@ const ModalUpdateImage = ({ open, handleClose, dataPlace, placeId }) => {
               marginLeft: "5%",
               width: "90%",
               marginTop: "15px",
+              marginBottom: "15px",
             }}
           >
             <Button

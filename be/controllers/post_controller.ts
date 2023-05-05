@@ -20,12 +20,15 @@ const postController = {
   },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pageNumber, placeID, active } = req.query;
+      const { pageNumber, placeID, active , limit} = req.query;
 
-      const SkipNumber = (Number(pageNumber) - 1) * Number(5);
+      const SkipNumber = (Number(pageNumber) - 1) * Number(limit);
 
-      const condition: ICondition = { public: Boolean(active) };
+      const condition: any = {};
 
+      if (active) {
+        condition.public = active;
+      }
       if (placeID) {
         condition.placeId = placeID;
       }
@@ -35,16 +38,16 @@ const postController = {
       const result = await Posts.find(condition)
         .sort({ createdAt: -1 })
         .skip(SkipNumber)
-        .limit(Number(5))
+        .limit(Number(limit))
         .populate("userId", ["userName", "avt"])
         .populate("placeId", "name");
 
       let totalPage = 0;
 
-      if (allPost.length % Number(5) === 0) {
+      if (allPost.length % Number(limit) === 0) {
         totalPage = allPost.length / Number(5);
       } else {
-        totalPage = Math.floor(allPost.length / Number(5) + 1);
+        totalPage = Math.floor(allPost.length / Number(limit) + 1);
       }
 
       res.json(
