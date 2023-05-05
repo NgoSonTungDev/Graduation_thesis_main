@@ -20,7 +20,7 @@ const postController = {
   },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pageNumber, placeID, active , limit} = req.query;
+      const { pageNumber, placeId, active , limit} = req.query;
 
       const SkipNumber = (Number(pageNumber) - 1) * Number(limit);
 
@@ -29,8 +29,8 @@ const postController = {
       if (active) {
         condition.public = active;
       }
-      if (placeID) {
-        condition.placeId = placeID;
+      if (placeId) {
+        condition.placeId = placeId;
       }
 
       const allPost = await Posts.find(condition);
