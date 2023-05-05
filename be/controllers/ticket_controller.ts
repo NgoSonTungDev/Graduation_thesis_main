@@ -52,15 +52,20 @@ const ticketController = {
   },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pageNumber, limit, placeId } = req.query;
+      const { pageNumber, limit, placeId , salesAgentId } = req.query;
 
       const SkipNumber = (Number(pageNumber) - 1) * Number(limit);
 
-      const condition = placeId
-        ? {
-            placeId: placeId,
-          }
-        : {};
+      let condition:any = {}
+      
+      if(placeId){
+        condition.placeId = placeId
+      }
+
+      if(salesAgentId){
+        condition.salesAgentId = salesAgentId
+      }
+     
 
       const result = await Tickets.find(condition)
         .skip(SkipNumber)
