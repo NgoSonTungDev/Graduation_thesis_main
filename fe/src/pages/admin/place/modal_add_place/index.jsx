@@ -299,7 +299,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
 
               <TextField
                 type="text"
-                // label="Địa chỉ"
+                label="Địa chỉ"
                 error={!!errors?.address}
                 {...register("address")}
                 helperText={errors.address?.message}

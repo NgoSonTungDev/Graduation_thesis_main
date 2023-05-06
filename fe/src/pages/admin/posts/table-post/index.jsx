@@ -13,6 +13,8 @@ import axiosClient from "../../../../api/axiosClient";
 import ErrorEmpty from "../../../../components/emty_data";
 import ModalConfirm from "../../../../components/modal_confirm";
 import { toastify } from "../../../../utils/common";
+import { Image } from "antd";
+
 
 const TablePost = ({ data, deleteData, active,callBackApi }) => {
   const [postId, setPostId] = useState("");
@@ -123,7 +125,7 @@ const TablePost = ({ data, deleteData, active,callBackApi }) => {
                       maxWidth: "150px",
                     }}
                   >
-                    <img width={56} height={56} src={item?.image} alt="" />
+                    <Image width={56} height={56} src={item?.image} alt="" />
                   </TableCell>
                   <TableCell
                     align="center"

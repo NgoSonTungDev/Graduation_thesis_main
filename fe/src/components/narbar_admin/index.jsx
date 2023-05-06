@@ -116,10 +116,13 @@ const Header = ({ ReactNode }) => {
                     Message
                   </MenuItem>
                   <MenuItem
-                    active={pathName === "admin" && true}
+                    active={pathName === "/admin/evaluate" && true}
                     icon={<FaRegHeart />}
+                    onClick={() => {
+                      movePage("/admin/evaluate");
+                    }}
                   >
-                    General Management
+                    Evaluate Management
                   </MenuItem>
                   <MenuItem
                     active={pathName === "/admin/place" && true}
