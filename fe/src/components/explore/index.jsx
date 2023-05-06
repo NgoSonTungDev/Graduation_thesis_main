@@ -24,6 +24,7 @@ const Explore = () => {
   const navigate = useNavigate();
   const [payloadPost, setpayLoadPost] = useState({
     pageNumber: 1,
+    limit: 5,
     placeID: "",
     active: true,
   });
@@ -32,10 +33,10 @@ const Explore = () => {
     pageNumber: 1,
     limit: 5,
     placeName: "",
-    type: "",
+    type: [],
     variability: "",
     purpose: "",
-    location: "",
+    location: [],
   });
 
   const debounceFn = useCallback(
@@ -95,7 +96,7 @@ const Explore = () => {
   const handelDeleteDataPost = (id) => {
     getApiAllPost();
   };
-
+console.log("vào",dataPost);
   useEffect(() => {
     Promise.all([getApiUser(), getApiPlace(), getApiAllPost()]);
 
