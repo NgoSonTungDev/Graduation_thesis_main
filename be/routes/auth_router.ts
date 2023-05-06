@@ -1,4 +1,3 @@
-import { salesAgentValidation } from "./../helpers/salesAgent";
 import { Router } from "express";
 import authController from "../controllers/auth_controller";
 import { userValidation } from "../helpers/user";
@@ -12,14 +11,7 @@ export const authRouter = (router: Router) => {
     authController.register
   );
 
-  router.post(
-    "/sales-agent/register",
-    verifyToken,
-    salesAgentValidation,
-    authController.registerSalesAgent
-  );
 
   router.post("/user/login", authController.login);
 
-  router.post("/sales-agent/login", authController.loginSalesAgent);
 };

@@ -27,7 +27,7 @@ const Explore = () => {
     placeID: "",
     active: true,
   });
-
+  console.log("a", dataPost);
   const [payload1, setPayload] = useState({
     pageNumber: 1,
     limit: 5,

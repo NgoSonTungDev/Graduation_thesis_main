@@ -162,7 +162,7 @@ const CardPost = ({ data, callBackApi }) => {
         placeId: data.placeId._id,
       })
       .then((res) => {
-        toastify("success", res.data.message || "Tạo bài thành công !");
+        toastify("success",  "Chia sẻ bài viết thành công !!!");
         handleClose();
         sendNotify("đã chia sẻ bài viết của bạn !!!");
       })
@@ -420,7 +420,7 @@ const CardPost = ({ data, callBackApi }) => {
               justifyContent: "space-between",
             }}
           >
-            <div className="avatar" style={{ width: "46px", height: "46px" }}>
+            <div style={{ width: "46px", height: "46px" }}>
               <img
                 style={{
                   width: "46px",
@@ -463,10 +463,10 @@ const CardPost = ({ data, callBackApi }) => {
           {"Bạn có chắc muốn xóa bài viết ?"}
         </DialogTitle>
         <DialogActions>
-          <Button onClick={handleDeletePost}>xóa</Button>
           <Button onClick={handleCloseDelete} autoFocus>
             thoát
           </Button>
+          <Button onClick={handleDeletePost}>xóa</Button>
         </DialogActions>
       </Dialog>
       {/* deleteshare */}
@@ -480,10 +480,10 @@ const CardPost = ({ data, callBackApi }) => {
           {"Bạn có chắc muốn chia sẻ ?"}
         </DialogTitle>
         <DialogActions>
-          <Button onClick={handleShare}>chia sẻ</Button>
           <Button onClick={handleClose} autoFocus>
             thoát
           </Button>
+          <Button onClick={handleShare}>chia sẻ</Button>
         </DialogActions>
       </Dialog>
     </div>

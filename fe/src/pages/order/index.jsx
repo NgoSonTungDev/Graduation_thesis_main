@@ -1,18 +1,19 @@
-import React, { useEffect } from "react";
-import Navbar from "../../components/navbar";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import { Box } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import _ from "lodash";
 import qs from "query-string";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axiosClient from "../../api/axiosClient";
-import { toastify } from "../../utils/common";
-import PaginationCpn from "../../components/pagination";
-import TableOrderUser from "./table";
 import ErrorEmpty from "../../components/emty_data";
 import LoadingBar from "../../components/loadding/loading_bar";
+import Navbar from "../../components/navbar";
+import PaginationCpn from "../../components/pagination";
+import { toastify } from "../../utils/common";
+import "./style.scss";
+import TableOrderUser from "./table";
 
 const Order = () => {
   const [value, setValue] = React.useState("0");
@@ -20,7 +21,7 @@ const Order = () => {
   const [data, setData] = React.useState({});
   const [payload, setPayload] = React.useState({
     pageNumber: 1,
-    limit: 5,
+    limit: 6,
     status: "",
   });
 
@@ -76,7 +77,7 @@ const Order = () => {
       <Box
         sx={{
           width: "100%",
-          height: "90vh",
+          height: "93vh",
           overflow: "hidden",
         }}
       >
@@ -110,16 +111,10 @@ const Order = () => {
               marginTop: "10px",
             }}
           >
-            <div
-              style={{
-                width: "100%",
-                height: "90%",
-                overflow: "hidden",
-                position: "relative",
-              }}
-            >
-              <div>
-                {!loading && _.isEmpty(data) ? (
+              <div className="boxTableUser">
+                {loading ? (
+                  <LoadingBar />
+                ) : _.isEmpty(data) ? (
                   <ErrorEmpty />
                 ) : (
                   <TableOrderUser
@@ -135,7 +130,10 @@ const Order = () => {
                 <ErrorEmpty />
               ) : (
                 <div
-                  style={{ width: "100%", position: "absolute", bottom: 25 }}
+                  style={{
+                    width: "100%",
+                    height: "50px",
+                  }}
                 >
                   <PaginationCpn
                     count={data.totalPage}
@@ -144,7 +142,6 @@ const Order = () => {
                   />
                 </div>
               )}
-            </div>
           </div>
         </TabContext>
       </Box>

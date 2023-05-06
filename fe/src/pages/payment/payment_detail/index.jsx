@@ -169,7 +169,7 @@ export default function PaymentDetail() {
           ticketId: ticketId,
         })
         .then((res) => {
-          toastify("success", res.data.message || "Đặt hàng thành công !");
+          toastify("success", "Đặt vé thành công !");
           setContent("");
           setLoadingPayment(false);
           navigate("/home");

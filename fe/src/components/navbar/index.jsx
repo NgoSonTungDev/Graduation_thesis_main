@@ -32,6 +32,7 @@ import BarLoader from "react-spinners/BarLoader";
 import axiosClient from "../../api/axiosClient";
 import {
   changeListInbox,
+  closeChatBox,
   openChatBox,
 } from "../../redux/chat_box/chatBoxSlice";
 import ws from "../../socket";
@@ -53,6 +54,7 @@ import { checkNotify, listNotify } from "../../redux/selectors";
 import ErrorEmpty from "../emty_data";
 import _ from "lodash";
 import LoadingBar from "../loadding/loading_bar";
+import { setUser } from "../../redux/user/userSlice";
 
 const Navbar = ({ loading, valueTab }) => {
   const [loadingNotify, setLoadingNotify] = useState(false);
@@ -236,7 +238,11 @@ const Navbar = ({ loading, valueTab }) => {
             <div className="Icon">
               {userIdStorage ? (
                 <>
-                  <IconButton>
+                  <IconButton
+                    onClick={() => {
+                      movePage(`/favourite/${userIdStorage._id}`);
+                    }}
+                  >
                     <FavoriteBorderIcon />
                   </IconButton>
                   <IconButton
@@ -340,16 +346,6 @@ const Navbar = ({ loading, valueTab }) => {
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          movePage("/admin/home");
-                        }}
-                      >
-                        <ListItemIcon>
-                          <ManageAccountsIcon fontSize="medium" />
-                        </ListItemIcon>
-                        Quản lý hệ thống
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
                           handleOpenChangePassword();
                         }}
                       >
@@ -362,6 +358,8 @@ const Navbar = ({ loading, valueTab }) => {
                         onClick={() => {
                           handleClose();
                           removeUserDataLocalStorage();
+                          dispatch(setUser(null));
+                          dispatch(closeChatBox());
                           navigation("/home");
                         }}
                       >

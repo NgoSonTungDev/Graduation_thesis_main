@@ -26,6 +26,7 @@ import ErrorEmpty from "../../../components/emty_data";
 import { useDispatch } from "react-redux";
 import { addNotify } from "../../../redux/notify/notifySlice";
 import ws from "../../../socket";
+import ModalConfirm from "../../../components/modal_confirm";
 
 const style = {
   position: "absolute",
@@ -50,6 +51,7 @@ const TableOrderUser = ({
   const [open, setOpen] = React.useState(false);
   const [placeId, setPlaceId] = React.useState("");
   const [openEvaluate, setOpenEvaluate] = React.useState(false);
+  const [openModalCancel, setOpenModalCancel] = React.useState(false);
   const userIdStorage = getUserDataLocalStorage();
   const dispatch = useDispatch();
 
@@ -63,17 +65,19 @@ const TableOrderUser = ({
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleCancel = (id) => {
+  const handleCancel = () => {
     axiosClient
-      .put(`/order/update/${id}`, {
+      .put(`/order/update/${placeId}`, {
         status: 3,
       })
       .then((res) => {
         toastify("success", "Hủy đơn hàng thành công");
         callBackApi();
         sendNotify();
+        setOpenModalCancel(false);
       })
       .catch((err) => {
+        setOpenModalCancel(false);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
@@ -137,7 +141,8 @@ const TableOrderUser = ({
             <button
               className="button-check cancel"
               onClick={() => {
-                handleCancel(id);
+                setOpenModalCancel(true);
+                setPlaceId(id);
               }}
               disabled={loading}
             >
@@ -236,7 +241,11 @@ const TableOrderUser = ({
                     {item?.userId?.email}
                   </TableCell>
                   <TableCell align="center" size="medium">
-                    {item?.placeId ? item.placeId.name : <p style={{ color: "red" }}>Không còn tồn tại</p> }
+                    {item?.placeId ? (
+                      item.placeId.name
+                    ) : (
+                      <p style={{ color: "red" }}>Không còn tồn tại</p>
+                    )}
                   </TableCell>
                   <TableCell align="center" size="medium">
                     {item.adultTicket}
@@ -357,6 +366,14 @@ const TableOrderUser = ({
           </Box>
         </Fade>
       </Modal>
+      <ModalConfirm
+        open={openModalCancel}
+        handleClose={() => {
+          setOpenModalCancel(false);
+        }}
+        content={"Bạn chắt chắn muốn hủy đơn hàng này !"}
+        callBackFunction={handleCancel}
+      />
       <ModalEvaluate
         open={openEvaluate}
         handleClose={handleCloseEvaluate}

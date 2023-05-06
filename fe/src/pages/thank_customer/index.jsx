@@ -69,7 +69,7 @@ const ThankCustomer = () => {
       handleChangeDataPayment();
     } else {
       setLoading(false);
-      toastify("error", "Đặt hàng thất bại !");
+      toastify("error", "Đặt vé không thành công !");
     }
   };
 

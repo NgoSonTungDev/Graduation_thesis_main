@@ -236,8 +236,6 @@ const statisticController = {
       const { dayTime } = req.query;
       let sum = 0;
 
-      console.log(dayTime, moment(Number(dayTime)).format("YYYY-MM-DD"));
-
       const result = await Payments.aggregate([
         {
           $project: {

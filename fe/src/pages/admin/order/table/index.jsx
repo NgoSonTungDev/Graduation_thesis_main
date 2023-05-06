@@ -27,7 +27,7 @@ const style = {
   p: 4,
 };
 
-const OrderTableAdmin = ({ data, callBackApi }) => {
+const OrderTableAdmin = ({ data }) => {
   const [open, setOpen] = React.useState(false);
   const [description, setDescription] = React.useState({});
   const handleOpen = () => setOpen(true);
