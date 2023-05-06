@@ -1,0 +1,9 @@
+.evaluate {
+  width: 100%;
+  height: 85%;
+  overflow: hidden;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 0px;
+  }
+}

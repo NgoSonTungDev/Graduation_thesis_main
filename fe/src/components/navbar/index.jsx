@@ -238,7 +238,11 @@ const Navbar = ({ loading, valueTab }) => {
             <div className="Icon">
               {userIdStorage ? (
                 <>
-                  <IconButton>
+                  <IconButton
+                    onClick={() => {
+                      movePage(`/favourite/${userIdStorage._id}`);
+                    }}
+                  >
                     <FavoriteBorderIcon />
                   </IconButton>
                   <IconButton
