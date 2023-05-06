@@ -14,6 +14,7 @@ import { DataPlaceById } from "../../../redux/selectors";
 import { toastify } from "../../../utils/common";
 import ModalAddPlace from "./modal_add_place";
 import TablePlace from "./table_place";
+import "./style.scss";
 
 const PlaceMangement = () => {
   const [openModalAddPlace, setOpenModalAddPlace] = React.useState(false);
@@ -103,8 +104,6 @@ const PlaceMangement = () => {
     };
   }, []);
 
-
-
   const renderForm = () => {
     return (
       <div style={{ width: "100%", height: "100vh" }}>
@@ -141,7 +140,7 @@ const PlaceMangement = () => {
           {loading ? (
             <LoadingBar />
           ) : (
-            <div className="box_table">
+            <div className="box_table_place">
               <TablePlace
                 data={listData}
                 deleteData={handleDeleteData}
@@ -150,11 +149,6 @@ const PlaceMangement = () => {
               />
             </div>
           )}
-          <ModalAddPlace
-            open={openModalAddPlace}
-            handleClose={handleCloseModalAddPlace}
-            callBackApi={fetchData}
-          />
         </div>
         <div style={{ witdh: "100%", height: "10%" }}>
           {data?.data && data?.data?.length > 0 && (
@@ -168,6 +162,11 @@ const PlaceMangement = () => {
         {openModal && (
           <GetDataPlaceItem openDialog={openModal} onClose={handleCloseModal} />
         )}
+        <ModalAddPlace
+          open={openModalAddPlace}
+          handleClose={handleCloseModalAddPlace}
+          callBackApi={fetchData}
+        />
       </div>
     );
   };

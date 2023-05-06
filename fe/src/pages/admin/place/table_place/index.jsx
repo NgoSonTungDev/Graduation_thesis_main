@@ -371,7 +371,7 @@ const TablePlace = ({ data, deleteData, updateData, callBackApi }) => {
                         limitTags={1}
                         options={dataType}
                         getOptionLabel={(option) => option.name}
-                        sx={{ width: "80%", marginLeft: "10%" }}
+                        sx={{ width: "100%"}}
                         renderInput={(params) => (
                           <TextField
                             {...params}

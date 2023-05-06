@@ -6,7 +6,7 @@ import { errorFunction } from "../utils/errorFunction";
 const validation = joi.object<IPlace>({
   name: joi.string().required().min(1).max(50),
   location: joi.string().required().min(1).max(50),
-  address: joi.string().required().min(1).max(100),
+  address: joi.string().required().min(1).max(1000),
   startingPrice: joi.number().required(),
   LastPrice: joi.number().required(),
   purpose: joi.string().required(),

@@ -28,7 +28,11 @@ const ModalUpdateImage = ({ open, handleClose, dataPlace, placeId }) => {
     : listImageUpdate.slice(0, 2);
 
   const handleChangeFileImage = (e) => {
-    setFile(e.target.files);
+    if (e.target.files.length > 5) {
+      toastify("error", "Tối đa bạn thêm được 5 ảnh");
+    } else {
+      setFile(e.target.files);
+    }
   };
 
   const deleteImage = (link) => {
@@ -135,7 +139,12 @@ const ModalUpdateImage = ({ open, handleClose, dataPlace, placeId }) => {
                 imageList.map((item, index) => {
                   return (
                     <div key={index} style={{ position: "relative" }}>
-                      <img src={item} width={176} height={178} style={{borderRadius:"5px"}} />
+                      <img
+                        src={item}
+                        width={176}
+                        height={178}
+                        style={{ borderRadius: "5px" }}
+                      />
                       <Button
                         type="primary"
                         danger
@@ -148,7 +157,8 @@ const ModalUpdateImage = ({ open, handleClose, dataPlace, placeId }) => {
                         <IconButton
                           size="small"
                           sx={{
-                            border: "1px solid",color:"red"
+                            border: "1px solid",
+                            color: "red",
                           }}
                           onClick={() => deleteImage(item)}
                         >

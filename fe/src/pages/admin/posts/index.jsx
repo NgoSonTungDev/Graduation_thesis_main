@@ -30,7 +30,7 @@ const PostManagement = () => {
     pageNumber: 1,
     placeId: "",
     active: value,
-    limit: 5,
+    limit: 6,
   });
 
   const handleChangeTab = (e, newValue) => {
@@ -73,7 +73,7 @@ const PostManagement = () => {
         setListData(res.data.data.data);
         setLoading(false);
         // setOpenModal(false);
-        // dispatch(clearByIdPlace());
+        dispatch(clearByIdPlace());
       })
       .catch((err) => {
         setLoading(false);
@@ -95,7 +95,7 @@ const PostManagement = () => {
           pageNumber: 1,
           placeId: !_.isEmpty(dataPlace) ? dataPlace._id : "",
           active: value,
-          limit: 5,
+          limit: 6,
         })}`
       )
       .then((res) => {

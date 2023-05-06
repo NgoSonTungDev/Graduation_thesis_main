@@ -1,13 +1,13 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { Autocomplete, Button, Skeleton } from "@mui/material";
+import { Autocomplete, Button } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
-import { message } from "antd";
+import { GoogleMap, Marker } from "@react-google-maps/api";
 import axios from "axios";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
@@ -16,21 +16,21 @@ import { useDispatch } from "react-redux";
 import * as yup from "yup";
 import axiosClient from "../../../../api/axiosClient";
 import provinces from "../../../../asset/64_provinces_and_cities";
+import Map_controller from "../../../../components/map_controller";
 import GetDataPlaceItem from "../../../../components/modle_find_place";
 import FormTime from "../../../../hook-form/form_time";
 import { clearByIdPlace } from "../../../../redux/place/placeSlice";
 import { toastify } from "../../../../utils/common";
-import { Marker, GoogleMap, useJsApiLoader } from "@react-google-maps/api";
-import Map_controller from "../../../../components/map_controller";
 
 const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [listPurpose, setListPurpose] = useState([]);
-  const [uploadedUrls, setUploadedUrls] = useState([]);
+  const [uploadedUrls, setUploadedUrls] = useState(null);
   const [listType, setListType] = useState([]);
+  const [listLocation, setListLocation] = useState(provinces);
   const [files, setFile] = useState([]);
-  const [data, setData] = useState(null);
+  const [dataPlace, setDataPlace] = useState(null);
   const [valueOpen, setValueOpen] = React.useState("");
   const dispatch = useDispatch();
   const [valueClose, setValueClose] = React.useState("");
@@ -82,23 +82,21 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       address: "",
       startingPrice: 100000,
       LastPrice: 200000,
-      purpose: [],
-      type: [],
       description: "",
-      image: "",
     },
     resolver: yupResolver(validationInput),
   });
-  const address = watch("address", "");
-  const filteredProvinces = provinces.filter((province) =>
-    province.name.toLowerCase().includes(address.toLowerCase())
-  );
+
   const handleCloseModal = () => {
     setOpenModal(false);
   };
 
   const handleChangeFileImage = (e) => {
-    setFile(e.target.files);
+    if (e.target.files.length > 5) {
+      toastify("error", "Tối đa bạn thêm được 5 ảnh");
+    } else {
+      setFile(e.target.files);
+    }
   };
 
   const debounceFnLocattion = useCallback(
@@ -117,6 +115,12 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       );
       const { lat, lon, display_name } = response.data[0];
       setValue("address", display_name);
+      listLocation.forEach((item) => {
+        if (display_name.includes(item.name)) {
+          setListLocation([{ id: "1q3w5r7g8n9j9k", name: item.name }]);
+        }
+      });
+
       if (lat && lon && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lon))) {
         setMapCenter({ lat: parseFloat(lat), lon: parseFloat(lon) });
       } else {
@@ -155,23 +159,22 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
     try {
       const responses = await Promise.all(uploadPromises);
       const uploadedUrls = responses.map((res) => res.data.url);
-      setUploadedUrls((prevState) => [...prevState, ...uploadedUrls]);
-      handleAddPlace(uploadedUrls);
+      setUploadedUrls(uploadedUrls);
     } catch (error) {
       setLoading(false);
       console.log(error);
     }
   };
-
-  const handleAddPlace = (url) => {
-    if (_.isEmpty(url)) {
-      toastify("info", "chưa có ảnh");
-      setLoading(true);
-      return;
-    }
+  console.log("vào dây", uploadedUrls);
+  const handleAddPlace = (data) => {
+    // if (_.isEmpty(uploadedUrls)) {
+    //   toastify("info", "chưa có ảnh");
+    //   setLoading(true);
+    //   return;
+    // }
     axiosClient
       .post("/place/add", {
-        name: data.placeName,
+        name: data.placeName || "",
         location: data.location,
         address: data.address,
         startingPrice: data.startingPrice,
@@ -179,7 +182,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
         purpose: purpose.map((item) => item.label).join(" , "),
         type: type.map((item) => item.label).join(" , "),
         description: data.description,
-        image: url,
+        image: uploadedUrls,
         openTime: valueOpen,
         closeTime: valueClose,
       })
@@ -198,11 +201,18 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       })
       .catch((err) => {
         setLoading(false);
+        reset();
+        setValueClose("");
+        setValueOpen("");
+        setPurpose([]);
+        setType([]);
+        setFile(null);
         toastify("error", err.response?.data?.message || "Lỗi hệ thống!");
       });
   };
 
   const handleCheckAddPlace = (data) => {
+    setDataPlace(data);
     if (
       valueOpen === "" ||
       valueClose === "" ||
@@ -211,11 +221,14 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
     ) {
       toastify("error", "Vui lòng điền đầy đủ thông tin");
     } else {
-      setData(data);
+      setDataPlace(dataPlace);
       if (_.isEmpty(files)) {
         return toastify("error", "Chưa có file");
       } else {
         uploadFiles();
+        setTimeout(() => {
+          handleAddPlace(data);
+        }, 10000);
       }
     }
   };
@@ -260,7 +273,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       <Dialog open={open} onClose={handleClose} maxWidth="1000px">
         <DialogTitle sx={{ textAlign: "center" }}>Thêm địa điểm</DialogTitle>
         <DialogContent>
-          <div style={{ height: "350px", display: "flex",gap:"20px", }}>
+          <div style={{ height: "350px", display: "flex", gap: "20px" }}>
             <div
               style={{
                 width: "210px",
@@ -286,7 +299,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
 
               <TextField
                 type="text"
-                label="Địa chỉ"
+                // label="Địa chỉ"
                 error={!!errors?.address}
                 {...register("address")}
                 helperText={errors.address?.message}
@@ -361,7 +374,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 size="small"
                 sx={{ width: "100%" }}
               >
-                {filteredProvinces.map((item) => (
+                {listLocation.map((item) => (
                   <MenuItem value={item.name}>{item.name}</MenuItem>
                 ))}
               </TextField>
@@ -448,7 +461,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                       maxZoom: 20,
                       mapTypeControl: false,
                     }}
-                    zoom={15}
+                    zoom={12}
                     onLoad={(map) => {
                       setMap(map);
                       map.setMapTypeId("satellite");
