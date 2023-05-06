@@ -55,15 +55,33 @@ const TableTicket = ({ data, deleteData }) => {
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
               <TableRow sx={{ padding: "5px 0" }}>
-                <TableCell align="center">Đại lý</TableCell>
-                <TableCell align="center">Email</TableCell>
-                <TableCell align="center">Địa điểm</TableCell>
-                <TableCell align="center">Tỉnh/Thành phố</TableCell>
-                <TableCell align="center">Khoảng giá</TableCell>
-                <TableCell align="center">Giá vé trẻ em</TableCell>
-                <TableCell align="center">Giá vé người lớn</TableCell>
-                <TableCell align="center">Số lượng vé</TableCell>
-                <TableCell align="center">Chức năng</TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Đại lý
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Email
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Địa điểm
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Tỉnh/Thành phố
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Khoảng giá
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Giá vé trẻ em
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Giá vé người lớn
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Số lượng vé
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Chức năng
+                </TableCell>
               </TableRow>
             </TableHead>
 

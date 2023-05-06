@@ -6,7 +6,8 @@ import LoadingBar from "../loadding/loading_bar";
 const MapController = ({ children }) => {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyDb5xOZiLOJAtKJWj4spvQf3UEQvE-3sc4",
+    // googleMapsApiKey: "AIzaSyDb5xOZiLOJAtKJWj4spvQf3UEQvE-3sc4",
+    googleMapsApiKey: "AIzaSyBVJskN7rc-UYFkQ1JMIrcr6wL2lUd6i9o",
   });
 
   if (!isLoaded) {

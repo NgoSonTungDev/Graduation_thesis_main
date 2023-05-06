@@ -165,7 +165,7 @@ const OrderManagement = () => {
             <div
               style={{
                 width: "100%",
-                height: "93%",
+                height: "90%",
                 marginTop: "10px",
               }}
             >
