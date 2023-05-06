@@ -24,6 +24,7 @@ const FormDate = ({
             onChange(new Date(newValue));
           }}
           label={label}
+          fullWidth
           slotProps={{
             textField: {
               size,

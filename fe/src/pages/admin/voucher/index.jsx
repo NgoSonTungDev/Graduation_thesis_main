@@ -14,27 +14,20 @@ import GetDataPlaceItem from "../../../components/modle_find_place";
 import VoucherItem from "./voucher_item";
 
 const VoucherManagement = () => {
-  const [value, setValue] = React.useState("true");
   const [loading, setLoading] = React.useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = React.useState({});
+  const [value, setValue] = React.useState("true");
   const [payload, setPayload] = React.useState({
     placeID: "",
     active: true,
   });
 
-  const handleChangeTab = (e, newValue) => {
-    setValue(newValue);
-    setPayload({
-      ...payload,
-      active: newValue,
-    });
-  };
-
   const fetchData = () => {
     axiosClient
       .get(`/voucher/get-all?${qs.stringify(payload)}`)
       .then((res) => {
+        console.log("res.data.data: ", res.data.data);
         setLoading(false);
         setData(res.data.data);
       })
@@ -42,6 +35,14 @@ const VoucherManagement = () => {
         setLoading(false);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
+  };
+
+  const handleChangeTab = (e, newValue) => {
+    setValue(newValue);
+    setPayload({
+      ...payload,
+      active: newValue,
+    });
   };
 
   useEffect(() => {
@@ -84,7 +85,7 @@ const VoucherManagement = () => {
                 sx={{ marginRight: "30px" }}
                 onClick={handleOpenModal}
               >
-                Tìm kiếm Đại điểm
+                Thêm voucher mới
               </Button>
             </Box>
             <div
@@ -106,8 +107,7 @@ const VoucherManagement = () => {
                 ) : _.isEmpty(data) ? (
                   <ErrorEmpty />
                 ) : (
-                  <VoucherItem />
-                  //   <OrderTableAdmin data={data.data} callBackApi={fetchData} />
+                  <VoucherItem data={data} fetchData={fetchData} />
                 )}
               </div>
               <div
@@ -120,7 +120,7 @@ const VoucherManagement = () => {
           </TabContext>
         </Box>
         {openModal && (
-          <GetDataPlaceItem openDialog={openModal} onClose={handleCloseModal} />
+          <VoucherItem open={openModal} handleClose={handleCloseModal} />
         )}
       </div>
     );
