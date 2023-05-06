@@ -41,7 +41,8 @@ import ws from "./socket";
 import { getUserDataLocalStorage } from "./utils/localstorage";
 import InformationAgent from "./components/information_agent";
 import Favourite from "./pages/favourite";
-
+import EvaluateManagement from "./pages/admin/evaluate";
+import TableEvaluate from "./pages/admin/evaluate/table-evaluate";
 const AdminLayout = ({ children }) => {
   const { user } = useSelector((state) => state.User);
 
@@ -239,6 +240,14 @@ const App = () => {
           element={
             <AdminLayout>
               <PostManagement />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/evaluate"
+          element={
+            <AdminLayout>
+              <EvaluateManagement />
             </AdminLayout>
           }
         />
