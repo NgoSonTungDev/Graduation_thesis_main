@@ -15,6 +15,7 @@ import Statistic from "./pages/admin/statistic";
 import TicketManagement from "./pages/admin/ticket";
 import VoucherManagement from "./pages/admin/voucher";
 import AccountManagement from "./pages/admin/account";
+import PostManagement from "./pages/admin/posts";
 import ForgotPassword from "./pages/auth/forgot_password";
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
@@ -233,7 +234,14 @@ const App = () => {
             </AdminLayout>
           }
         />
-
+        <Route
+          path="/admin/post"
+          element={
+            <AdminLayout>
+              <PostManagement />
+            </AdminLayout>
+          }
+        />
         {/* saleAgent */}
         <Route
           path="/sale-agent/home"

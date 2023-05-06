@@ -190,16 +190,6 @@ const MenuSaleAgent = ({ ReactNode }) => {
                   >
                     statistic
                   </MenuItem>
-
-                  <MenuItem
-                    active={pathName === "/sales-agent/statistic" && true}
-                    icon={<AiOutlineBarChart />}
-                    onClick={() => {
-                      movePage("/sales-agent/statistic");
-                    }}
-                  >
-                    statistic
-                  </MenuItem>
                   <MenuItem
                     active={false}
                     icon={<AiOutlineSetting />}

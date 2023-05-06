@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axiosClient";
 import Navbar from "../../components/navbar";
 import { toastify } from "../../utils/common";
-import Favourite_Item from "./facourite_item";
+import Favourite_Item from "./favourite_item";
 import Footer from "../../components/footer";
 import "./style.scss";
 import { getUserDataLocalStorage } from "../../utils/localstorage";

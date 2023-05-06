@@ -133,6 +133,9 @@ const Header = ({ ReactNode }) => {
                   <MenuItem
                     active={pathName === "admin" && true}
                     icon={<MdEditNote />}
+                    onClick={() => {
+                      movePage("/admin/post");
+                    }}
                   >
                     Post management
                   </MenuItem>
