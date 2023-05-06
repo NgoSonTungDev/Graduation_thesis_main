@@ -38,14 +38,14 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
   const [purpose, setPurpose] = useState([]);
   const [map, setMap] = useState(null);
   const [mapCenter, setMapCenter] = useState({ lat: 0, lon: 0 });
-  
+
   const validationInput = yup.object().shape({
     placeName: yup
       .string()
       .required("Không được để trống.")
       .typeError("Không được để trống"),
     location: yup
-      .string()    
+      .string()
       .required("Không được để trống.")
       .typeError("Không được để trống"),
     address: yup
@@ -91,8 +91,8 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
   });
   const address = watch("address", "");
   const filteredProvinces = provinces.filter((province) =>
-  province.name.toLowerCase().includes(address.toLowerCase())
-);
+    province.name.toLowerCase().includes(address.toLowerCase())
+  );
   const handleCloseModal = () => {
     setOpenModal(false);
   };
@@ -260,10 +260,11 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       <Dialog open={open} onClose={handleClose} maxWidth="1000px">
         <DialogTitle sx={{ textAlign: "center" }}>Thêm địa điểm</DialogTitle>
         <DialogContent>
-          <div style={{ width: "1000px", display: "flex" }}>
+          <div style={{ height: "350px", display: "flex",gap:"20px", }}>
             <div
               style={{
-                width: "33%",
+                width: "210px",
+                height: "315px",
                 marginTop: "15px",
                 display: "flex",
                 gap: "15px",
@@ -277,7 +278,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 {...register("placeName")}
                 helperText={errors.placeName?.message}
                 size="small"
-                sx={{ width: "63%", marginLeft: "10%" }}
+                sx={{ width: "100%" }}
                 onChange={(e) => {
                   debounceFnLocattion(e.target.value);
                 }}
@@ -285,12 +286,12 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
 
               <TextField
                 type="text"
-                // label="Địa chỉ"
+                label="Địa chỉ"
                 error={!!errors?.address}
                 {...register("address")}
                 helperText={errors.address?.message}
                 size="small"
-                sx={{ width: "63%", marginLeft: "10%" }}
+                sx={{ width: "100%" }}
               />
 
               <TextField
@@ -300,7 +301,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 {...register("startingPrice")}
                 helperText={errors.startingPrice?.message}
                 size="small"
-                sx={{ width: "63%", marginLeft: "10%" }}
+                sx={{ width: "100%" }}
               />
               <Autocomplete
                 multiple
@@ -315,7 +316,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 }}
                 limitTags={1}
                 options={listPurpose}
-                sx={{ width: "63%", marginLeft: "10%" }}
+                sx={{ width: "100%" }}
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" label="Mục đích" />
                 )}
@@ -334,7 +335,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 }}
                 limitTags={1}
                 options={listType}
-                sx={{ width: "63%", marginLeft: "10%" }}
+                sx={{ width: "100%" }}
                 renderInput={(params) => (
                   <TextField {...params} variant="outlined" label="Loại hình" />
                 )}
@@ -342,7 +343,8 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
             </div>
             <div
               style={{
-                width: "33%",
+                width: "210px",
+                height: "315px",
                 marginTop: "15px",
                 display: "flex",
                 gap: "15px",
@@ -357,7 +359,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 {...register("location")}
                 helperText={errors.location?.message}
                 size="small"
-                sx={{ width: "63%" }}
+                sx={{ width: "100%" }}
               >
                 {filteredProvinces.map((item) => (
                   <MenuItem value={item.name}>{item.name}</MenuItem>
@@ -371,9 +373,9 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 {...register("LastPrice")}
                 helperText={errors.LastPrice?.message}
                 size="small"
-                sx={{ width: "63%" }}
+                sx={{ width: "100%" }}
               />
-              <div style={{ width: "80%", marginTop: "-3%" }}>
+              <div style={{ width: "100%" }}>
                 <FormTime
                   label="Giờ mở cửa"
                   size="small"
@@ -381,7 +383,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                   onChange={(newValueOpen) => setValueOpen(newValueOpen)}
                 />
               </div>
-              <div style={{ width: "80%", marginTop: "-3%" }}>
+              <div style={{ width: "100%" }}>
                 <FormTime
                   label="Giờ đóng cửa"
                   value={valueClose}
@@ -395,10 +397,10 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 {...register("description")}
                 helperText={errors.description?.message}
                 label="Mô tả"
-                sx={{ width: "63%" }}
+                sx={{ width: "100%" }}
               />
               <Button
-                sx={{ width: "63%" }}
+                sx={{ width: "100%" }}
                 variant="outlined"
                 component="label"
                 disabled={loading}
@@ -414,71 +416,57 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
                 />
               </Button>
             </div>
-            {loading ? (
-              <Skeleton variant="rounded" width="69%" height="350px" />
-            ) : (
-              <div
-                className="box_body_content_map"
-                style={{
-                  width: "33%",
-                  marginLeft: "-29px",
-                }}
-              >
-                <p>Địa điểm cụ thể</p>
-                <div
-                  style={{
-                    width: "100%",
-                    height: "220px",
-                    marginTop: "10px",
-                    overflow: "hidden",
-                  }}
-                >
-                  <Map_controller
-                    children={
-                      <GoogleMap
-                        mapContainerStyle={{
-                          width: "100%",
-                          height: "100%",
-                        }}
-                        center={{
+            <div
+              style={{
+                width: "310px",
+                height: "93%",
+                marginTop: "15px",
+              }}
+            >
+              <Map_controller
+                children={
+                  <GoogleMap
+                    mapContainerStyle={{
+                      width: "100%",
+                      height: "100%",
+                    }}
+                    center={{
+                      lat: mapCenter.lat,
+                      lng: mapCenter.lon,
+                    }}
+                    options={{
+                      styles: [
+                        {
+                          featureType: "poi",
+                          stylers: [{ visibility: "off" }],
+                        },
+                        {
+                          featureType: "transit.station",
+                          stylers: [{ visibility: "off" }],
+                        },
+                      ],
+                      maxZoom: 20,
+                      mapTypeControl: false,
+                    }}
+                    zoom={15}
+                    onLoad={(map) => {
+                      setMap(map);
+                      map.setMapTypeId("satellite");
+                    }}
+                  >
+                    {mapCenter && (
+                      <Marker
+                        onClick={handleZoomMap}
+                        position={{
                           lat: mapCenter.lat,
                           lng: mapCenter.lon,
                         }}
-                        options={{
-                          styles: [
-                            {
-                              featureType: "poi",
-                              stylers: [{ visibility: "off" }],
-                            },
-                            {
-                              featureType: "transit.station",
-                              stylers: [{ visibility: "off" }],
-                            },
-                          ],
-                          maxZoom: 20,
-                          mapTypeControl: false,
-                        }}
-                        zoom={15}
-                        onLoad={(map) => {
-                          setMap(map);
-                          map.setMapTypeId("satellite");
-                        }}
-                      >
-                        {mapCenter && (
-                          <Marker
-                            onClick={handleZoomMap}
-                            position={{
-                              lat: mapCenter.lat,
-                              lng: mapCenter.lon,
-                            }}
-                          />
-                        )}
-                      </GoogleMap>
-                    }
-                  />
-                </div>
-              </div>
-            )}
+                      />
+                    )}
+                  </GoogleMap>
+                }
+              />
+            </div>
           </div>
         </DialogContent>
         <DialogActions>
