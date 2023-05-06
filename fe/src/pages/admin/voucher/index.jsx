@@ -17,6 +17,7 @@ const VoucherManagement = () => {
   const [loading, setLoading] = React.useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = React.useState({});
+  const [value, setValue] = React.useState("true");
   const [payload, setPayload] = React.useState({
     placeID: "",
     active: true,
@@ -26,6 +27,7 @@ const VoucherManagement = () => {
     axiosClient
       .get(`/voucher/get-all?${qs.stringify(payload)}`)
       .then((res) => {
+        console.log("res.data.data: ", res.data.data);
         setLoading(false);
         setData(res.data.data);
       })
@@ -33,6 +35,14 @@ const VoucherManagement = () => {
         setLoading(false);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
+  };
+
+  const handleChangeTab = (e, newValue) => {
+    setValue(newValue);
+    setPayload({
+      ...payload,
+      active: newValue,
+    });
   };
 
   useEffect(() => {
@@ -53,22 +63,29 @@ const VoucherManagement = () => {
     return (
       <div>
         <Box sx={{ width: "100%", height: "100vh", overflow: "hidden" }}>
-          <TabContext>
+          <TabContext value={value}>
             <Box
               sx={{
                 borderBottom: 1,
                 borderColor: "divider",
                 marginTop: 1,
                 display: "flex",
-                justifyContent: "right",
+                justifyContent: "space-between",
               }}
             >
+              <TabList
+                onChange={handleChangeTab}
+                aria-label="lab API tabs example"
+              >
+                <Tab label="Đang mở" value="true" />
+                <Tab label="Đang đóng" value="false" />
+              </TabList>
               <Button
                 size="medium"
                 sx={{ marginRight: "30px" }}
                 onClick={handleOpenModal}
               >
-                Thêm mới
+                Thêm voucher mới
               </Button>
             </Box>
             <div
@@ -90,8 +107,7 @@ const VoucherManagement = () => {
                 ) : _.isEmpty(data) ? (
                   <ErrorEmpty />
                 ) : (
-                  <VoucherItem />
-                  // <OrderTableAdmin data={data.data} callBackApi={fetchData} />
+                  <VoucherItem data={data} fetchData={fetchData} />
                 )}
               </div>
               <div

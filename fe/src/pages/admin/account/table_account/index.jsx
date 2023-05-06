@@ -24,10 +24,8 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import axiosClient from "../../../../api/axiosClient";
 import { toastify } from "../../../../utils/common";
-import {
-  getUserDataLocalStorage,
-  setUserIdLocalStorage,
-} from "../../../../utils/localstorage";
+import { getUserDataLocalStorage } from "../../../../utils/localstorage";
+import ModalUpdate from "../modal_update";
 import "./style.scss";
 
 const validationInput = yup.object().shape({
@@ -42,36 +40,40 @@ const validationInput = yup.object().shape({
     .oneOf([yup.ref("new_password"), null], "Không trùng khớp."),
 });
 
-const AccountTable = ({
-  data,
-  callBackApi,
-  handleLockAccount,
-  handleUnlockAccount,
-  callBackHandleDeleteData,
-}) => {
-  const [openChangePassword, setOpenChangePassword] = React.useState(false);
-  const [openUpdateAccount, setOpenUpdateAccount] = React.useState(false);
+const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
+  const [open, setOpen] = React.useState(false);
+  const [openUpdate, setOpenUpdate] = React.useState(false);
+  const [openModalUpdate, setOpenModalUpdate] = React.useState(false);
+
   const [check, setCheck] = useState(false);
-  const userIdStorage = getUserDataLocalStorage();
+  const [userId, setUserId] = useState("");
 
-  const handleOpenChangePassword = () => {
-    setOpenChangePassword(true);
+  const handleOpen = () => {
+    setOpen(true);
   };
 
-  const handleCloseChangePassword = () => {
-    setOpenChangePassword(false);
+  const handleClose = () => {
+    setOpen(false);
   };
-  const handleOpenUpdateAccount = () => {
-    setOpenUpdateAccount(true);
+  const handleOpenUpdate = () => {
+    setOpenUpdate(true);
   };
 
-  const handleCloseUpdateAccount = () => {
-    setOpenUpdateAccount(false);
+  const handleCloseUpdate = () => {
+    setOpenUpdate(false);
+  };
+
+  const handleOpenModalUpdate = () => {
+    setOpenModalUpdate(true);
+  };
+  const handleCloseModalUpdate = () => {
+    setOpenModalUpdate(false);
   };
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -83,27 +85,33 @@ const AccountTable = ({
   });
 
   const handleBlockAcc = (userId) => {
-    handleLockAccount(userId);
+    openModal();
+    checkCase(1);
+    getDataTable(userId, "");
   };
 
   const handleUnlockAcc = (userId, email) => {
-    handleUnlockAccount(userId, email);
+    openModal();
+    checkCase(3);
+    getDataTable(userId, email);
   };
 
   const handleDeleteData = (userId) => {
-    callBackHandleDeleteData(userId);
+    openModal();
+    checkCase(2);
+    getDataTable(userId, "");
   };
 
   const handleChangePassword = (data) => {
     setCheck(true);
     axiosClient
-      .put(`/user/change-password/${userIdStorage?._id}`, {
+      .put(`/user/change-password/${userId}`, {
         password: data.new_password,
       })
       .then((res) => {
         setCheck(false);
         toastify("success", "Đổi mật khẩu thành công!!!");
-        handleCloseChangePassword();
+        handleClose();
       })
       .catch((err) => {
         setCheck(false);
@@ -111,20 +119,15 @@ const AccountTable = ({
       });
   };
 
-  const handleUpdateAccount = (data) => {
+  const handleGetDataUserId = (userId) => {
     axiosClient
-      .put(`/user/update/${"id"}`, {
-        userName: data.username,
-        isAdmin: data.quyen,
-        gender: data.gender,
-        address: data.address,
-        numberPhone: data.phone,
-      })
+      .get(`/user/get-an/${userId}`)
       .then((res) => {
-        toastify("success", "Cập nhật thông tin cá nhân thành công!!!");
+        const { userName, isAdmin, numberPhone, address } = res.data.data;
+        reset({ userName, isAdmin, numberPhone, address });
       })
       .catch((err) => {
-        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+        console.log("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
 
@@ -199,7 +202,7 @@ const AccountTable = ({
                 >
                   <button
                     style={{
-                      padding: "7px 15px",
+                      padding: "5px 15px",
                       width: "130px",
                       marginLeft: "10px",
                       outline: "none",
@@ -219,7 +222,7 @@ const AccountTable = ({
                   </button>
                   <button
                     style={{
-                      padding: "7px 15px",
+                      padding: "5px 15px",
                       marginLeft: "10px",
                       marginTop: "10px",
                       width: "130px",
@@ -238,7 +241,7 @@ const AccountTable = ({
                   </button>
                   <button
                     style={{
-                      padding: "7px 15px",
+                      padding: "5px 15px",
                       marginTop: "10px",
                       marginLeft: "10px",
                       width: "130px",
@@ -249,25 +252,32 @@ const AccountTable = ({
                       color: "green",
                       backgroundColor: "white",
                     }}
-                    onClick={handleOpenUpdateAccount}
+                    onClick={() => {
+                      handleOpenModalUpdate();
+                      handleGetDataUserId(item._id);
+                      setUserId(item._id);
+                    }}
                   >
                     Chỉnh sửa
                   </button>
                   <button
                     style={{
-                      padding: "7px 15px",
+                      padding: "5px 15px",
                       margin: "5px",
                       marginTop: "10px",
                       marginLeft: "10px",
                       width: "130px",
                       outline: "none",
-                      border: "1px solid #000",
+                      border: "1px solid red",
                       cursor: "pointer",
                       borderRadius: "4px",
-                      color: "#000",
+                      color: "red",
                       backgroundColor: "white",
                     }}
-                    onClick={handleOpenChangePassword}
+                    onClick={() => {
+                      handleOpen();
+                      setUserId(item._id);
+                    }}
                   >
                     Đổi mật khẩu
                   </button>
@@ -280,8 +290,8 @@ const AccountTable = ({
 
       {/* dialog đổi mật khẩu */}
       <Dialog
-        open={openChangePassword}
-        onClose={handleCloseChangePassword}
+        open={open}
+        onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -316,7 +326,7 @@ const AccountTable = ({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseChangePassword}>Hủy</Button>
+          <Button onClick={handleClose}>Hủy</Button>
           <LoadingButton
             loading={check}
             onClick={handleSubmit(handleChangePassword)}
@@ -326,95 +336,11 @@ const AccountTable = ({
           </LoadingButton>
         </DialogActions>
       </Dialog>
-
-      {/* Dialog chỉnh sửa thông tin tài khoản */}
-      <Dialog
-        open={openUpdateAccount}
-        keepMounted
-        onClose={handleCloseUpdateAccount}
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle
-          style={{ color: "#000", fontWeight: "600", textAlign: "center" }}
-        >
-          {"Thay đổi thông tin"}
-        </DialogTitle>
-        <DialogContent>
-          <div style={{ padding: "10px" }}>
-            <TextField
-              error={!!errors?.username}
-              {...register("username")}
-              helperText={errors.username?.message}
-              type="text"
-              size="small"
-              sx={{ width: "100%", marginTop: "10px" }}
-              label={"Tên tài khoản"}
-            />
-          </div>
-          <div style={{ padding: "10px", display: "flex" }}>
-            <TextField
-              style={{ width: "100%", height: "30px" }}
-              select
-              label="Giới Tính"
-              name="gender"
-              inputProps={register("gender")}
-              size="small"
-            >
-              <MenuItem value="Nam">Nam</MenuItem>
-              <MenuItem value="Nữ">Nữ</MenuItem>
-              <MenuItem value="Khác">Khác</MenuItem>
-            </TextField>
-          </div>
-          <div style={{ padding: "10px", display: "flex" }}>
-            <TextField
-              style={{ width: "100%", height: "30px" }}
-              select
-              label="Phân quyền"
-              name="quyen"
-              inputProps={register("quyen")}
-              size="small"
-            >
-              <MenuItem value="1">Người dùng</MenuItem>
-              <MenuItem value="2">Đại lý</MenuItem>
-              <MenuItem value="3">Admin</MenuItem>
-            </TextField>
-          </div>
-          <div style={{ padding: "10px" }}>
-            <TextField
-              error={!!errors?.address}
-              {...register("address")}
-              helperText={errors.address?.message}
-              type="text"
-              size="small"
-              sx={{ width: "350px" }}
-              label={"Địa chỉ"}
-            />
-          </div>
-          <div style={{ padding: "10px" }}>
-            <TextField
-              error={!!errors?.phone}
-              {...register("phone")}
-              helperText={errors.phone?.message}
-              type="text"
-              size="small"
-              sx={{ width: "100%" }}
-              label={"Số điện thoại"}
-            />
-          </div>
-        </DialogContent>
-        <DialogActions style={{ paddingBottom: "15px" }}>
-          <Button variant="outlined" onClick={handleCloseUpdateAccount}>
-            Huỷ
-          </Button>
-          <LoadingButton
-            // loading={loadingInformation}
-            variant="outlined"
-            onClick={handleSubmit(handleUpdateAccount)}
-          >
-            Cập nhật
-          </LoadingButton>
-        </DialogActions>
-      </Dialog>
+      <ModalUpdate
+        open={openModalUpdate}
+        handleClose={handleCloseModalUpdate}
+        userId={userId}
+      />
     </div>
   );
 };

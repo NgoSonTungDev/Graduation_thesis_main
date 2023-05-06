@@ -11,6 +11,7 @@ import ModalConfirm from "../../../components/modal_confirm";
 import AccountTable from "./table_account";
 import { Box } from "@mui/system";
 import TabContext from "@mui/lab/TabContext";
+import ModalUpdate from "./modal_update";
 
 const fakeCode = (length) => {
   let result = "";
@@ -36,7 +37,7 @@ const AccountManagement = () => {
   const [data, setData] = React.useState({});
   const [payload, setPayload] = React.useState({
     pageNumber: 1,
-    limit: 5,
+    limit: 6,
     status: "",
   });
 
@@ -188,9 +189,7 @@ const AccountManagement = () => {
             </div>
           </TabContext>
         </Box>
-        {/* {openModal && (
-          <GetDataSaleAgent openDialog={openModal} onClose={handleCloseModal} />
-        )} */}
+
         {openModal && (
           <ModalConfirm
             open={openModal}
@@ -214,6 +213,7 @@ const AccountManagement = () => {
             }
           />
         )}
+        <ModalUpdate fetchData={handleGetAllUsers} />
       </div>
     );
   };

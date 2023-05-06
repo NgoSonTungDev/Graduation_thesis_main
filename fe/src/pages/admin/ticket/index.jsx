@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, MenuItem } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import axiosClient from "../../../api/axiosClient";
 import LoadingBar from "../../../components/loadding/loading_bar";
@@ -18,9 +18,17 @@ import "./style.scss";
 const TicketManagement = () => {
   const [data, setData] = React.useState({});
   const [listData, setListData] = React.useState([]);
+  const [listDataAgent, setListDataAgent] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const [agentId, setAgentId] = React.useState("");
   const dataPlace = useSelector(DataPlaceById);
   const [openModal, setOpenModal] = useState(false);
+  const [payload, setPayload] = useState({
+    pageNumber: 1,
+    limit: 10,
+    placeId: "",
+  });
+
   const dispatch = useDispatch();
 
   const handleOpenModal = () => {
@@ -31,27 +39,35 @@ const TicketManagement = () => {
     setOpenModal(false);
   };
 
-  const [payload, setPayload] = useState({
-    pageNumber: 1,
-    limit: 10,
-    placeId: "",
-  });
-
   const handleChangePage = (page) => {
     setPayload({ ...payload, pageNumber: Number(page) });
   };
 
   const handleDeleteData = (id) => {
-    // setData(
-    //   {...data, data.data: data.data.filter((item) => {
-    //     return item._id !== id;
-    //   })}
-    // );
     setListData(
       listData?.filter((item) => {
         return item._id !== id;
       })
     );
+  };
+
+  const fetchDataAgent = () => {
+    setLoading(true);
+    axiosClient
+      .get(`/user/get-all?isAdmin=2&isLock=false`)
+      .then((res) => {
+        setListDataAgent([
+          { id: "", label: "Tất cả" },
+          ...res.data.data.data.map((item) => {
+            return { id: item._id, label: item.userName };
+          }),
+        ]);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
   };
 
   const fetchData = () => {
@@ -71,6 +87,7 @@ const TicketManagement = () => {
 
   useEffect(() => {
     fetchData();
+    fetchDataAgent();
   }, [payload]);
 
   useEffect(() => {
@@ -81,6 +98,7 @@ const TicketManagement = () => {
           pageNumber: 1,
           limit: 10,
           placeId: dataPlace ? dataPlace._id : "",
+          salesAgentId: agentId === "Tất cả" ? "" : agentId,
         })}`
       )
       .then((res) => {
@@ -92,34 +110,59 @@ const TicketManagement = () => {
         setLoading(false);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
-  }, [dataPlace]);
+  }, [dataPlace, agentId]);
 
   const renderForm = () => {
     return (
       <div style={{ width: "100%", height: "100vh" }}>
         <div style={{ width: "100%", height: "90%" }}>
-          <Button
-            variant="outlined"
-            style={{ marginTop: "10px" }}
-            onClick={handleOpenModal}
-          >
-            Tìm kiếm
-          </Button>
-          <IconButton
-            size="small"
-            sx={{
-              border: "1px solid",
-              marginLeft: "20px",
-              marginTop: "10px",
-              // margin:"10px 0px 20px 0px"
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              alignItems: "center",
+              gap: "15px",
+              flexDirection: "row",
             }}
           >
-            <ReplayOutlinedIcon
-              onClick={() => {
-                dispatch(clearByIdPlace());
+            <TextField
+              select
+              label="Đại lý"
+              style={{ width: "200px", marginTop: "10px" }}
+              size="small"
+              onChange={(e) => {
+                setAgentId(e.target.value);
               }}
-            />
-          </IconButton>
+            >
+              {listDataAgent?.map((item, index) => (
+                <MenuItem value={item.id} key={index}>
+                  {item.label}
+                </MenuItem>
+              ))}
+            </TextField>
+            <Button
+              variant="outlined"
+              style={{ marginTop: "10px" }}
+              onClick={handleOpenModal}
+            >
+              Tìm kiếm theo địa điểm
+            </Button>
+            <IconButton
+              size="small"
+              sx={{
+                border: "1px solid",
+                marginTop: "10px",
+                // margin:"10px 0px 20px 0px"
+              }}
+            >
+              <ReplayOutlinedIcon
+                onClick={() => {
+                  dispatch(clearByIdPlace());
+                  setAgentId("")
+                }}
+              />
+            </IconButton>
+          </div>
           {loading ? (
             <LoadingBar />
           ) : (

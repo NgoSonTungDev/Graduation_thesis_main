@@ -178,6 +178,8 @@ const InformationAgent = ({ open, handleClose }) => {
                   backgroundImage: `url(${data.avt})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
+                  overflow: "hidden",
+                  overflowY: "scroll",
                 }}
               >
                 {image ? (

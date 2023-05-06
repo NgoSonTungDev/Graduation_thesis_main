@@ -7,13 +7,21 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { EnvironmentOutlined } from "@ant-design/icons";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import moment from "moment";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
 import axiosClient from "../../../../api/axiosClient";
 import LoadingBar from "../../../../components/loadding/loading_bar";
-import { toastify } from "../../../../utils/common";
+import FormDate from "../../../../hook-form/form_date";
+import { DataPlaceById } from "../../../../redux/selectors";
+import { formatMoney, toastify } from "../../../../utils/common";
+import _ from "lodash";
+import { clearByIdPlace } from "../../../../redux/place/placeSlice";
+import GetDataPlaceItem from "../../../../components/modle_find_place";
 
 const validationInput = yup.object().shape({
   title: yup
@@ -22,8 +30,6 @@ const validationInput = yup.object().shape({
     .max(30, "Tên voucher tối đa 30 ký tự !!!")
     .required("Tên voucher không được để trống !!!"),
   price: yup.number().required("Giá tiền không được để trống !!!"),
-  startDate: yup.date().required("Ngày bắt đầu không được để trống !!!"),
-  endDate: yup.date("Ngày kết thúc không được để trống !!!"),
 });
 
 const styles = {
@@ -55,12 +61,19 @@ const styles = {
   },
 };
 
-const VoucherItem = ({ open, handleClose }) => {
-  const [check, setCheck] = useState(false);
+const VoucherItem = ({ open, handleClose, data, fetchData }) => {
   const [loading, setLoading] = useState(false);
-  const [image, setImage] = useState("");
-  const [data, setData] = useState({});
-  const [file, setFile] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [startDay, setStartDay] = React.useState(moment(new Date()).format());
+  const [endDay, setEndDay] = React.useState(
+    moment(new Date()).add(1, "days").format()
+  );
+  const dataPlace = useSelector(DataPlaceById);
+  const dispatch = useDispatch();
+
+  const handleGetAllVouchers = () => {
+    fetchData();
+  };
 
   const {
     register,
@@ -75,18 +88,29 @@ const VoucherItem = ({ open, handleClose }) => {
     resolver: yupResolver(validationInput),
   });
 
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
   const handleAddVoucher = (data) => {
     setLoading(true);
     axiosClient
       .post("/voucher/add", {
+        placeId: dataPlace._id,
         title: data.title,
         price: data.price,
-        startDate: data.startDate,
-        endDate: data.endDay,
+        startDate: Number(startDay),
+        endDate: Number(endDay),
       })
       .then((res) => {
         setLoading(false);
         toastify("success", "Thêm voucher thành công!");
+        handleClose();
+        handleGetAllVouchers();
       })
       .catch((err) => {
         setLoading(false);
@@ -94,93 +118,81 @@ const VoucherItem = ({ open, handleClose }) => {
       });
   };
 
-  const handleGetAllVoucher = () => {
+  const handleDeleteVoucher = (voucherId) => {
     setLoading(true);
     axiosClient
-      .get("/voucher/get-all")
+      .delete(`/voucher/delete/${voucherId}`)
       .then((res) => {
         setLoading(false);
-        setData(res.data.data);
+        toastify("success", "Xoá voucher thành công!");
+        handleGetAllVouchers();
       })
       .catch((err) => {
         setLoading(false);
         toastify("error", err.response.data.message || "Lỗi hệ thống !");
       });
   };
-
-  const handleChangeFileImage = (e) => {
-    setImage(URL.createObjectURL(e.target.files[0]));
-    setFile(e.target.files[0]);
-  };
-
-  const handleSubmitAvt = async () => {
-    const api = "https://api.cloudinary.com/v1_1/djo1gzatx/image/upload";
-    const presetName = "mafline-upload";
-    const folderName = "mafline";
-
-    const formData = new FormData();
-    formData.append("upload_preset", presetName);
-    formData.append("folder", folderName);
-    formData.append("file", file);
-
-    axios
-      .post(api, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((res) => {
-        toastify("success", "Cập nhật ảnh đại diện thành công!!!");
-        // handleUpdateImage(res.data.url);
-        // setLoadingImage(false);
-      })
-      .catch((error) => {});
-  };
-
-  useEffect(() => {
-    setLoading(true);
-    handleGetAllVoucher();
-  }, []);
 
   return (
     <div
       style={{
-        backgroundColor: "#fff",
-        width: 200,
-        borderRadius: "10px",
-        boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
-        maxWidth: "300px",
-        margin: "10px",
-        padding: "20px",
-        textAlign: "center",
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "flex-start",
       }}
     >
-      <h2
-        style={{
-          color: "#4CAF50",
-          fontSize: "28px",
-          fontWeight: "bold",
-          padding: 0,
-        }}
-      >
-        VOUCHER
-      </h2>
-      <span style={styles.code}>{data.title}</span>
-      <hr
-        style={{
-          borderTop: "3px solid #4CAF50",
-          width: "50%",
-        }}
-      />
-      <p
-        style={{
-          fontSize: "18px",
-        }}
-      >
-        <div style={styles.discount}>địa điểm</div>
-        <div style={styles.discount}>Giảm giá: {data.price}</div>
-      </p>
-      <p style={{ fontSize: "13px" }}>
-        {data.startDate} - {data.endDate}
-      </p>
+      {data?.map((item, index) => (
+        <div
+          key={index}
+          style={{
+            backgroundColor: "#fff",
+            width: "250px",
+            borderRadius: "10px",
+            boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
+            maxWidth: "400px",
+            marginLeft: "10px",
+            marginTop: "15px",
+            padding: "20px",
+            textAlign: "center",
+          }}
+        >
+          <span>
+            <HighlightOffIcon
+              sx={{ marginLeft: "230px", cursor: "pointer" }}
+              onClick={() => {
+                handleDeleteVoucher(item._id);
+              }}
+            />
+          </span>
+          <h2
+            style={{
+              color: "#4CAF50",
+              fontSize: "28px",
+              fontWeight: "bold",
+            }}
+          >
+            {item.title}
+          </h2>
+          <hr
+            style={{
+              borderTop: "3px solid #4CAF50",
+              width: "50%",
+            }}
+          />
+          <p
+            style={{
+              fontSize: "18px",
+            }}
+          >
+            <div style={styles.discount}>Giá: {formatMoney(item.price)}</div>
+            <div style={styles.discount}>Mã giảm giá: {item.codeVoucher}</div>
+          </p>
+          <p style={{ fontSize: "13px" }}>
+            {moment(item.startDate).format("DD/MM/yyyy")} -
+            {moment(item.endDate).format("DD/MM/yyyy")}
+          </p>
+        </div>
+      ))}
 
       {/* Dialog thêm mới voucher */}
       <Dialog
@@ -196,7 +208,64 @@ const VoucherItem = ({ open, handleClose }) => {
         </DialogTitle>
         <LoadingBar />
         <>
-          <DialogContent>
+          <DialogContent style={{ width: "400px" }}>
+            <div>
+              {_.isEmpty(dataPlace) ? (
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "30px 0",
+                    marginTop: "12px",
+                    border: "1px dashed #d9d9d9",
+                    borderRadius: "10px",
+                  }}
+                  onClick={handleOpenModal}
+                >
+                  <span>
+                    <EnvironmentOutlined /> Nhấn vào đây để chọn địa điểm
+                  </span>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    width: "100%",
+                    border: "0.1px solid #E5E5E5",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <Button
+                    sx={{
+                      float: "right",
+                    }}
+                    component="label"
+                    onClick={() => {
+                      dispatch(clearByIdPlace());
+                    }}
+                  >
+                    <HighlightOffIcon sx={{ paddingLeft: "5px" }} />
+                  </Button>
+                  <div
+                    style={{
+                      display: "flex",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "100%",
+                        padding: "10px",
+                        gap: "7px",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <b>{dataPlace.name}</b>
+
+                      <span>{dataPlace.address}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
             <div>
               <TextField
                 error={!!errors?.title}
@@ -208,39 +277,6 @@ const VoucherItem = ({ open, handleClose }) => {
                 label={"Tên voucher"}
               />
             </div>
-            <div
-              style={{
-                width: "500px",
-                marginTop: "12px",
-                height: "427px ",
-                display: "grid",
-                palignItems: "center",
-                border: "2px dashed #dedede",
-              }}
-            >
-              {image ? (
-                <img
-                  style={{
-                    width: "100%",
-                    height: "427px",
-                    objectFit: "contain",
-                  }}
-                  src={image}
-                  alt=""
-                />
-              ) : (
-                <Button variant="text" component="label" disabled={loading}>
-                  Thêm ảnh
-                  <input
-                    type="file"
-                    hidden
-                    name="photo"
-                    accept="image/*"
-                    onChange={handleChangeFileImage}
-                  />
-                </Button>
-              )}
-            </div>
 
             <div>
               <TextField
@@ -250,28 +286,31 @@ const VoucherItem = ({ open, handleClose }) => {
                 type="number"
                 size="small"
                 sx={{ width: "100%", marginTop: "12px" }}
-                label={"Giảm giá"}
+                label={"Giá"}
+              />
+            </div>
+
+            <div>
+              <FormDate
+                value={startDay}
+                maxDate={new Date()}
+                label={"Ngày bắt đầu"}
+                sx={{ width: "100%", marginTop: "12px" }}
+                onChange={(value) => {
+                  setStartDay(value);
+                }}
               />
             </div>
             <div>
-              <TextField
-                error={!!errors?.startDate}
-                {...register("startDate")}
-                helperText={errors.startDate?.message}
-                type="date"
-                size="small"
-                sx={{ width: "100%", marginTop: "12px" }}
-              />
-            </div>
-            <div>
-              <TextField
-                error={!!errors?.endDate}
-                {...register("endDate")}
-                helperText={errors.endDate?.message}
-                type="date"
-                size="small"
-                sx={{ width: "100%", marginTop: "12px" }}
-                // label={"Ngày hết hạn"}
+              <FormDate
+                value={endDay}
+                minDate={startDay}
+                label={"Ngày hết hạn"}
+                fullWidth
+                style={{ width: "100%", marginTop: "12px" }}
+                onChange={(value) => {
+                  setEndDay(value);
+                }}
               />
             </div>
           </DialogContent>
@@ -279,12 +318,20 @@ const VoucherItem = ({ open, handleClose }) => {
             <Button variant="outlined" onClick={handleClose}>
               Huỷ
             </Button>
-            <Button variant="outlined" onClick={() => {}}>
+            <Button
+              variant="outlined"
+              loading={loading}
+              onClick={handleSubmit(handleAddVoucher)}
+            >
               Thêm
             </Button>
           </DialogActions>
         </>
       </Dialog>
+
+      {openModal && (
+        <GetDataPlaceItem openDialog={openModal} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };
