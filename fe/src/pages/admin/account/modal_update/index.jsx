@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import axiosClient from "../../../../api/axiosClient";
@@ -35,23 +35,22 @@ const validationInput = yup.object().shape({
     .required("Số điện thoại không được để trống"),
 });
 
-function ModalUpdate({ open, handleClose, userId, fetchData }) {
+function ModalUpdate({ open, handleClose, userId, dataUser }) {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      new_password: "",
-      confirmPassword: "",
+      userName: dataUser?.userName,
+      address: dataUser?.address,
+      numberPhone: dataUser?.numberPhone,
     },
     mode: "all",
     resolver: yupResolver(validationInput),
   });
 
   const handleUpdateAccount = (data) => {
-    console.log(userId);
     axiosClient
       .put(`/user/update/${userId}`, {
         userName: data.userName,
@@ -62,12 +61,13 @@ function ModalUpdate({ open, handleClose, userId, fetchData }) {
       .then((res) => {
         toastify("success", "Cập nhật thông tin cá nhân thành công!!!");
         handleClose();
-        fetchData();
       })
       .catch((err) => {
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
+
+  
 
   return (
     <Dialog

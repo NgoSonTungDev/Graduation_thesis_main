@@ -42,7 +42,7 @@ const validationInput = yup.object().shape({
 
 const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
   const [open, setOpen] = React.useState(false);
-  const [openUpdate, setOpenUpdate] = React.useState(false);
+  const [dataUser, setDataUser] = React.useState(null);
   const [openModalUpdate, setOpenModalUpdate] = React.useState(false);
 
   const [check, setCheck] = useState(false);
@@ -54,13 +54,6 @@ const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
 
   const handleClose = () => {
     setOpen(false);
-  };
-  const handleOpenUpdate = () => {
-    setOpenUpdate(true);
-  };
-
-  const handleCloseUpdate = () => {
-    setOpenUpdate(false);
   };
 
   const handleOpenModalUpdate = () => {
@@ -124,7 +117,7 @@ const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
       .get(`/user/get-an/${userId}`)
       .then((res) => {
         const { userName, isAdmin, numberPhone, address } = res.data.data;
-        reset({ userName, isAdmin, numberPhone, address });
+        setDataUser({ userName, isAdmin, numberPhone, address })
       })
       .catch((err) => {
         console.log("error", err.response.data.message || "Lỗi hệ thông !");
@@ -340,6 +333,7 @@ const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
         open={openModalUpdate}
         handleClose={handleCloseModalUpdate}
         userId={userId}
+        dataUser={dataUser}
       />
     </div>
   );
