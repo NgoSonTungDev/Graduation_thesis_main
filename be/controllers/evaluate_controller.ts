@@ -145,8 +145,8 @@ const evaluateController = {
       }
 
       const data = await Evaluates.find(query)
-        // .populate("userId", ["userName", "avt"])
-        // .populate("placeId", "name");
+        .populate("userId", ["userName", "avt"])
+        .populate("placeId", "name");
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {
