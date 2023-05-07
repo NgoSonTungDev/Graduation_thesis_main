@@ -85,22 +85,29 @@ const EvaluateManagement = () => {
     window.scrollTo(0, 0);
   }, [payload]);
 
-  //   useEffect(() => {
-  //     setLoading(true);
-  //     axiosClient
-  //       .get(`/evaluate/get-by-id/`)
-  //       .then((res) => {
-  //         setData(res.data.data);
-  //         setListData(res.data.data);
-  //         setLoading(false);
-  //         // setOpenModal(false);
-  //         // dispatch(clearByIdPlace());
-  //       })
-  //       .catch((err) => {
-  //         setLoading(false);
-  //         toastify("error", err.response.data.message || "Lỗi hệ thông !");
-  //       });
-  //   }, [dataPlace]);
+  useEffect(() => {
+    setLoading(true);
+    axiosClient
+      .get(
+        `/evaluate/get-all?${queryString.stringify({
+          pageNumber: 1,
+          placeId: !_.isEmpty(dataPlace) ? dataPlace._id : "",
+          active: value,
+          limit: 6,
+        })}`
+      )
+      .then((res) => {
+        setData(res.data.data);
+        setListData(res.data.data);
+        setLoading(false);
+        // setOpenModal(false);
+        // dispatch(clearByIdPlace());
+      })
+      .catch((err) => {
+        setLoading(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  }, [dataPlace]);
 
   const renderForm = () => {
     return (
