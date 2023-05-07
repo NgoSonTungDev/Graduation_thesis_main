@@ -178,39 +178,16 @@ const TableEvaluate = ({ data, deleteData, active, callBackApi }) => {
                   >
                     {item?.content}
                   </TableCell>
-                  {active === true ? (
-                    <TableCell align="center">
-                      <Button
-                        onClick={() => {
-                          handleClickOpenModalDelete();
-                          setEvaluateId(item._id);
-                        }}
-                      >
-                        Xóa
-                      </Button>
-                    </TableCell>
-                  ) : (
-                    <TableCell align="center">
-                      <div>
-                        <Button
-                          onClick={() => {
-                            handleClickOpenModalUpdate();
-                            setEvaluateId(item._id);
-                          }}
-                        >
-                          Phê duyệt
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            handleClickOpenModalDelete();
-                            setEvaluateId(item._id);
-                          }}
-                        >
-                          Xóa
-                        </Button>
-                      </div>
-                    </TableCell>
-                  )}
+                  <TableCell align="center">
+                    <Button
+                      onClick={() => {
+                        handleClickOpenModalDelete();
+                        setEvaluateId(item._id);
+                      }}
+                    >
+                      Xóa
+                    </Button>
+                  </TableCell>
                 </TableBody>
               );
             })}
@@ -224,13 +201,6 @@ const TableEvaluate = ({ data, deleteData, active, callBackApi }) => {
         loading={loading}
         callBackFunction={handleDelete}
       />
-      {/* <ModalConfirm
-        open={openUpdate}
-        handleClose={handleCloseModalUpdate}
-        content={"Bạn có chắt chắn muốn duyệt bài viết không?"}
-        loading={loading}
-        // callBackFunction={handleUpdatePullic}
-      /> */}
     </div>
   );
 };

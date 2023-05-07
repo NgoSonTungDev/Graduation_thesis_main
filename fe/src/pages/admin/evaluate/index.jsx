@@ -1,6 +1,5 @@
-import TabContext from "@mui/lab/TabContext/TabContext";
-import TabList from "@mui/lab/TabList/TabList";
-import { Box, Button, Tab } from "@mui/material";
+import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
+import { Box, Button, IconButton } from "@mui/material";
 import _ from "lodash";
 import queryString from "query-string";
 import React, { useEffect, useState } from "react";
@@ -10,35 +9,17 @@ import ErrorEmpty from "../../../components/emty_data";
 import LoadingBar from "../../../components/loadding/loading_bar";
 import GetDataPlaceItem from "../../../components/modle_find_place";
 import SidebarAdmin from "../../../components/narbar_admin";
+import { clearByIdPlace } from "../../../redux/place/placeSlice";
 import { DataPlaceById } from "../../../redux/selectors";
 import { toastify } from "../../../utils/common";
 import "./style.scss";
 import TableEvaluate from "./table-evaluate";
 
 const EvaluateManagement = () => {
-  const [data, setData] = React.useState({});
   const [listData, setListData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [openModal, setOpenModal] = useState(false);
   const dataPlace = useSelector(DataPlaceById);
-  const [value, setValue] = React.useState(true);
-
-  const [payload, setpayLoad] = useState({
-    // pageNumber: 1,
-    // placeId: "",
-    // active: value,
-    // limit: 5,
-  });
-
-  const handleChangeTab = (e, newValue) => {
-    setValue(newValue);
-    setpayLoad({
-      ...payload,
-      active: newValue,
-      pageNumber: 1,
-    });
-  };
-
   const dispatch = useDispatch();
 
   const handleOpenModal = () => {
@@ -47,10 +28,6 @@ const EvaluateManagement = () => {
 
   const handleCloseModal = () => {
     setOpenModal(false);
-  };
-
-  const handleChangePage = (page) => {
-    setpayLoad({ ...payload, pageNumber: Number(page) });
   };
 
   const handleDeleteData = (id) => {
@@ -64,14 +41,14 @@ const EvaluateManagement = () => {
   const fetchData = () => {
     setLoading(true);
     axiosClient
-      .get(`/evaluate/get-all${queryString.stringify(payload)}`)
+      .get(
+        `/evaluate/get-all?${queryString.stringify({
+          placeId: !_.isEmpty(dataPlace) ? dataPlace._id : "",
+        })}`
+      )
       .then((res) => {
-        setData(res.data.data);
-        console.log("vào đay rồi", res.data.data);
         setListData(res.data.data);
         setLoading(false);
-        // setOpenModal(false);
-        // dispatch(clearByIdPlace());
       })
       .catch((err) => {
         setLoading(false);
@@ -80,86 +57,71 @@ const EvaluateManagement = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
     fetchData();
     window.scrollTo(0, 0);
-  }, [payload]);
+  }, [dataPlace._id]);
 
   useEffect(() => {
-    setLoading(true);
-    axiosClient
-      .get(
-        `/evaluate/get-all?${queryString.stringify({
-          pageNumber: 1,
-          placeId: !_.isEmpty(dataPlace) ? dataPlace._id : "",
-          active: value,
-          limit: 6,
-        })}`
-      )
-      .then((res) => {
-        setData(res.data.data);
-        setListData(res.data.data);
-        setLoading(false);
-        // setOpenModal(false);
-        // dispatch(clearByIdPlace());
-      })
-      .catch((err) => {
-        setLoading(false);
-        toastify("error", err.response.data.message || "Lỗi hệ thông !");
-      });
-  }, [dataPlace]);
+    return () => {
+      dispatch(clearByIdPlace());
+    };
+  }, []);
 
   const renderForm = () => {
     return (
       <div>
         <Box sx={{ width: "100%", height: "100vh", overflow: "hidden" }}>
-          <TabContext value={value}>
-            <Box
+          <Box
+            sx={{
+              height: "7%",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              variant="outlined"
+              size="medium"
+              sx={{ marginRight: "30px" }}
+              onClick={handleOpenModal}
+            >
+              Tìm Kiếm Bài Viết
+            </Button>
+            <IconButton
+              size="small"
               sx={{
-                borderBottom: 1,
-                borderColor: "divider",
-                marginTop: 1,
-                display: "flex",
-                justifyContent: "space-between",
+                border: "1px solid",
+                marginLeft: "20px",
               }}
             >
-              <TabList
-                onChange={handleChangeTab}
-                aria-label="lab API tabs example"
-              >
-                <Tab label="Đánh Giá" value={true} />
-                <Button
-                  size="medium"
-                  sx={{ marginRight: "30px" }}
-                  onClick={handleOpenModal}
-                >
-                  Tìm Kiếm Bài Viết
-                </Button>
-              </TabList>
-            </Box>
-            <div
-              style={{
-                width: "100%",
-                height: "90vh",
-                marginTop: "10px",
-              }}
-            >
-              <div className="evaluate">
-                {loading ? (
-                  <LoadingBar loading={loading} />
-                ) : _.isEmpty(data) ? (
-                  <ErrorEmpty />
-                ) : (
-                  <TableEvaluate
-                    data={listData}
-                    deleteData={handleDeleteData}
-                    active={value}
-                    callBackApi={fetchData}
-                  />
-                )}
-              </div>
+              <ReplayOutlinedIcon
+                onClick={() => {
+                  dispatch(clearByIdPlace());
+                }}
+              />
+            </IconButton>
+          </Box>
+
+          <div
+            style={{
+              width: "100%",
+              height: "90vh",
+              marginTop: "10px",
+            }}
+          >
+            <div className="evaluate">
+              {loading ? (
+                <LoadingBar loading={loading} />
+              ) : _.isEmpty(listData) ? (
+                <ErrorEmpty />
+              ) : (
+                <TableEvaluate
+                  data={listData}
+                  deleteData={handleDeleteData}
+                  callBackApi={fetchData}
+                />
+              )}
             </div>
-          </TabContext>
+          </div>
         </Box>
         {openModal && (
           <GetDataPlaceItem openDialog={openModal} onClose={handleCloseModal} />

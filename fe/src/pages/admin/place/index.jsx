@@ -96,7 +96,7 @@ const PlaceMangement = () => {
 
   useEffect(() => {
     fetchData();
-  }, [dataPlace, pageNumber]);
+  }, [dataPlace.name, pageNumber]);
 
   useEffect(() => {
     return () => {
