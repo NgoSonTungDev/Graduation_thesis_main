@@ -22,16 +22,17 @@ const Explore = () => {
   const [dataUser, setDataUser] = useState([]);
   const [dataPost, setDataPost] = useState([]);
   const navigate = useNavigate();
+  const LIMIT = 5
   const [payloadPost, setpayLoadPost] = useState({
     pageNumber: 1,
-    limit: 5,
-    placeID: "",
+    limit: LIMIT,
+    placeId: "",
     active: true,
   });
-  console.log("a", dataPost);
+
   const [payload1, setPayload] = useState({
     pageNumber: 1,
-    limit: 5,
+    limit: LIMIT,
     placeName: "",
     type: [],
     variability: "",
@@ -51,7 +52,7 @@ const Explore = () => {
   };
 
   const handleFindPostById = (id) => {
-    setpayLoadPost({ pageNumber: 1, placeID: id, active: true });
+    setpayLoadPost({ pageNumber: 1, placeId: id, active: true, limit: LIMIT, });
   };
 
   const getApiPlace = () => {
@@ -157,7 +158,7 @@ console.log("vào",dataPost);
                 })
               )}
             </div>
-            <div>
+            <div style={{width:"100%", height: "50px", display:'flex', justifyContent:"center", marginTop:'20px'}}>
               {dataPost?.data && dataPost?.data?.length > 0 && (
                 <PaginationCpn
                   count={dataPost.totalPage}

@@ -4,6 +4,7 @@ import { errorFunction } from "../utils/errorFunction";
 import { Request, Response, NextFunction } from "express";
 import { Configuration, OpenAIApi } from "openai";
 import dotenv from "dotenv";
+import { ObjectId } from "mongodb";
 
 dotenv.config();
 const configuration = new Configuration({
@@ -135,10 +136,17 @@ const evaluateController = {
   },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = await Evaluates.find().populate("userId", [
-        "userName",
-        "avt",
-      ]).populate("placeId","name");
+      const { placeId } = req.query;
+
+      let query: any = {};
+
+      if (placeId) {
+        query.placeId = new ObjectId(placeId + "");
+      }
+
+      const data = await Evaluates.find(query)
+        // .populate("userId", ["userName", "avt"])
+        // .populate("placeId", "name");
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {
