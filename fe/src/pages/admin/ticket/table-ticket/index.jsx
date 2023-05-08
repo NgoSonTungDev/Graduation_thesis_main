@@ -1,5 +1,4 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, TextField } from "@mui/material";
+import { Button } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,12 +8,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import _ from "lodash";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
 import axiosClient from "../../../../api/axiosClient";
 import ErrorEmpty from "../../../../components/emty_data";
 import ModalConfirm from "../../../../components/modal_confirm";
 import { formatMoney, toastify } from "../../../../utils/common";
+import "./style.scss";
 
 const TableTicket = ({ data, deleteData }) => {
   const [ticketId, setTicketId] = useState("");

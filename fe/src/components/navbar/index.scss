@@ -175,7 +175,13 @@
     width: 85%;
     margin-left: 7.5%;
     justify-content: space-between;
+    
   }
+  // .Navbar_Container .navbar_container_box .Navbar_Menu{
+  //   flex-direction: column;
+  //           text-align: center;
+  //           background-color: red;
+  // }
   .Navbar_Container .navbar_container_box .Navbar_Logo nav {
     height: 60px;
     display: flex;
@@ -186,7 +192,9 @@
     line-height: 60px;
   }
   .Navbar_Container .navbar_container_box .Navbar_Menu {
-    display: none;
+    // display: none;
+    flex-direction: column;
+            text-align: center;
   }
   .Navbar_Container .navbar_container_box .Navbar_Icon {
     display: flex;
@@ -196,7 +204,7 @@
     margin: 0;
   }
   .Navbar_Container .navbar_container_box .Navbar_Icon .Icon Button {
-    display: none;
+    // display: none;
   }
   .Navbar_Container .navbar_container_box .Contents {
     margin-left: 0;
