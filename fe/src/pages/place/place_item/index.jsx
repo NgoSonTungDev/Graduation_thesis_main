@@ -45,7 +45,7 @@ const PlaceItem = ({ data }) => {
     // e.stopPropagation();
     axiosClient
       .post(`/favourite-place/${data._id}`, {
-        userId: "63fcc3b2ebe41cb6c68dd48e",
+        userId: userIdStorage._id,
       })
       .then((res) => {
         setCheck(true);

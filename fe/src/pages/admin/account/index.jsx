@@ -11,6 +11,7 @@ import ModalConfirm from "../../../components/modal_confirm";
 import AccountTable from "./table_account";
 import { Box } from "@mui/system";
 import TabContext from "@mui/lab/TabContext";
+import ModalUpdate from "./modal_update";
 
 const fakeCode = (length) => {
   let result = "";
@@ -113,6 +114,7 @@ const AccountManagement = () => {
   };
 
   const handleGetAllUsers = () => {
+    setLoading(true);
     axiosClient
       .get(`/user/get-all?${qs.stringify(payload)}`)
       .then((res) => {
@@ -187,9 +189,7 @@ const AccountManagement = () => {
             </div>
           </TabContext>
         </Box>
-        {/* {openModal && (
-          <GetDataSaleAgent openDialog={openModal} onClose={handleCloseModal} />
-        )} */}
+
         {openModal && (
           <ModalConfirm
             open={openModal}
@@ -213,6 +213,7 @@ const AccountManagement = () => {
             }
           />
         )}
+        <ModalUpdate fetchData={handleGetAllUsers} />
       </div>
     );
   };

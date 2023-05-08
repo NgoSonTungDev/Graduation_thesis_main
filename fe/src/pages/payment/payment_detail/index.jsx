@@ -58,11 +58,13 @@ export default function PaymentDetail() {
   const sumTicket =
     Number(dataOrder.numberChildTicket) + Number(dataOrder.numberAdultTicket);
 
-  const sumTotalPrice =
+  const sumTotalPrice = Math.max(
     totalPriceChildTicket +
-    totalPriceAdultTicket +
-    Number(sumTicket > 2 ? 0 : 30000) -
-    Number(dataVoucher ? dataVoucher : 0);
+      totalPriceAdultTicket +
+      Number(sumTicket > 2 ? 0 : 30000) -
+      Number(dataVoucher ? dataVoucher : 0),
+    0
+  );
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -611,7 +613,9 @@ export default function PaymentDetail() {
                       <input
                         disabled
                         placeholder={
-                          sumTotalPrice ? formatMoney(sumTotalPrice) : "0"
+                          sumTotalPrice
+                            ? formatMoney(sumTotalPrice)
+                            : "0"
                         }
                       />
                     </div>

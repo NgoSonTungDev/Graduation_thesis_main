@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  MenuItem,
   TextField,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
@@ -24,6 +25,7 @@ import * as yup from "yup";
 import axiosClient from "../../../../api/axiosClient";
 import { toastify } from "../../../../utils/common";
 import { getUserDataLocalStorage } from "../../../../utils/localstorage";
+import ModalUpdate from "../modal_update";
 import "./style.scss";
 
 const validationInput = yup.object().shape({
@@ -40,6 +42,9 @@ const validationInput = yup.object().shape({
 
 const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
   const [open, setOpen] = React.useState(false);
+  const [dataUser, setDataUser] = React.useState(null);
+  const [openModalUpdate, setOpenModalUpdate] = React.useState(false);
+
   const [check, setCheck] = useState(false);
   const [userId, setUserId] = useState("");
 
@@ -51,9 +56,17 @@ const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
     setOpen(false);
   };
 
+  const handleOpenModalUpdate = () => {
+    setOpenModalUpdate(true);
+  };
+  const handleCloseModalUpdate = () => {
+    setOpenModalUpdate(false);
+  };
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -96,6 +109,18 @@ const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
       .catch((err) => {
         setCheck(false);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
+
+  const handleGetDataUserId = (userId) => {
+    axiosClient
+      .get(`/user/get-an/${userId}`)
+      .then((res) => {
+        const { userName, isAdmin, numberPhone, address } = res.data.data;
+        setDataUser({ userName, isAdmin, numberPhone, address })
+      })
+      .catch((err) => {
+        console.log("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
 
@@ -220,7 +245,11 @@ const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
                       color: "green",
                       backgroundColor: "white",
                     }}
-                    // onClick={handleDeleteData}
+                    onClick={() => {
+                      handleOpenModalUpdate();
+                      handleGetDataUserId(item._id);
+                      setUserId(item._id);
+                    }}
                   >
                     Chỉnh sửa
                   </button>
@@ -300,6 +329,12 @@ const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
           </LoadingButton>
         </DialogActions>
       </Dialog>
+      <ModalUpdate
+        open={openModalUpdate}
+        handleClose={handleCloseModalUpdate}
+        userId={userId}
+        dataUser={dataUser}
+      />
     </div>
   );
 };

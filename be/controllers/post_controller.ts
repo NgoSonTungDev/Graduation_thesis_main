@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import Posts from "../models/post";
-import { ICondition } from "../types/common";
 import { errorFunction } from "../utils/errorFunction";
 import Comments from "../models/comment";
 import RepComments from "../models/repComment";

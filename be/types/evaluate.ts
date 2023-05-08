@@ -4,5 +4,5 @@ export interface IEValuate {
   content: string;
   rating: number;
   dateTime: number;
-  placeId: string;
+  placeId: any;
 }

@@ -17,10 +17,7 @@ const evaluateSchema = new mongoose.Schema<IEValuate>(
       type: Number,
       required: true,
     },
-    placeId: {
-      type: String,
-      required: true,
-    },
+    placeId: { type: Schema.Types.ObjectId, ref: "Place" },
   },
   {
     timestamps: true,

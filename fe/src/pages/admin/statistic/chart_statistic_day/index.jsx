@@ -56,7 +56,9 @@ const ChartStatisticDay = () => {
   };
 
   useEffect(() => {
-    let url = `/statistic/payment-statistics-day?dayTime=${Number(dateTime)|| Number(new Date())}`;
+    let url = `/statistic/payment-statistics-day?dayTime=${
+      Number(dateTime) || Number(new Date())
+    }`;
     fetchData(url);
   }, [dateTime]);
 

@@ -13,11 +13,9 @@ import axiosClient from "../../../../api/axiosClient";
 import ErrorEmpty from "../../../../components/emty_data";
 import ModalConfirm from "../../../../components/modal_confirm";
 import { toastify } from "../../../../utils/common";
-import { Image } from "antd";
 
-
-const TablePost = ({ data, deleteData, active,callBackApi }) => {
-  const [postId, setPostId] = useState("");
+const TableEvaluate = ({ data, deleteData, active, callBackApi }) => {
+  const [evaluateId, setEvaluateId] = useState("");
   const [loading, setLoading] = React.useState(false);
   const [openDelete, setOpenDelete] = React.useState(false);
   const [openUpdate, setOpenUpdate] = React.useState(false);
@@ -42,12 +40,12 @@ const TablePost = ({ data, deleteData, active,callBackApi }) => {
     setLoading(true);
 
     axiosClient
-      .delete(`/post/delete/${postId}`)
+      .delete(`/evaluate/delete/${evaluateId}`)
       .then((res) => {
         setLoading(false);
         toastify("success", res.data.message || "Xóa thành công !");
         handleCloseModalDelete();
-        deleteData(postId);
+        deleteData(evaluateId);
       })
       .catch((err) => {
         setLoading(false);
@@ -55,23 +53,23 @@ const TablePost = ({ data, deleteData, active,callBackApi }) => {
       });
   };
 
-  const handleUpdatePullic = () => {
-    setLoading(true);
+  //   const handleUpdatePullic = () => {
+  //     setLoading(true);
 
-    axiosClient
-      .put(`/post/update-status/${postId}`)
-      .then((res) => {
-        setLoading(false);
-        toastify("success", res.data.message || "Cập nhật thành công !");
-        handleCloseModalDelete();
-        callBackApi()
-      })
-      .catch((err) => {
-        setLoading(false);
-        toastify("error", err.response.data.message || "Lỗi hệ thông !");
-        handleCloseModalDelete();
-      });
-  };
+  //     axiosClient
+  //       .put(`/post/update-status/${evaluateId}`)
+  //       .then((res) => {
+  //         setLoading(false);
+  //         toastify("success", res.data.message || "Cập nhật thành công !");
+  //         handleCloseModalDelete();
+  //         callBackApi();
+  //       })
+  //       .catch((err) => {
+  //         setLoading(false);
+  //         toastify("error", err.response.data.message || "Lỗi hệ thông !");
+  //         handleCloseModalDelete();
+  //       });
+  //   };
 
   return (
     <div>
@@ -82,12 +80,27 @@ const TablePost = ({ data, deleteData, active,callBackApi }) => {
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
               <TableRow sx={{ padding: "5px 0" }}>
-                <TableCell align="center"  style={{ fontWeight: "600" }}>Tên người đăng</TableCell>
-                <TableCell align="center"  style={{ fontWeight: "600" }}>Tên bài viết</TableCell>
-                <TableCell align="center"  style={{ fontWeight: "600" }}>Ảnh bài viết</TableCell>
-                <TableCell align="center"  style={{ fontWeight: "600" }}>Ngày tạo</TableCell>
-                <TableCell align="center"  style={{ fontWeight: "600" }}>Nôi dung</TableCell>
-                <TableCell align="center"  style={{ fontWeight: "600" }}>Chức năng</TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Tên người đánh giá
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Tên địa điểm
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Đánh Giá
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Ảnh đại diện
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Ngày tạo
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Nôi dung
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: "600" }}>
+                  Chức năng
+                </TableCell>
               </TableRow>
             </TableHead>
 
@@ -103,7 +116,7 @@ const TablePost = ({ data, deleteData, active,callBackApi }) => {
                       maxWidth: "150px",
                     }}
                   >
-                    {item.userId?.userName}
+                    {item?.userId?.userName}
                   </TableCell>
                   <TableCell
                     align="center"
@@ -114,7 +127,7 @@ const TablePost = ({ data, deleteData, active,callBackApi }) => {
                       maxWidth: "150px",
                     }}
                   >
-                    {item.placeId?.name}
+                    {item?.placeId?.name}
                   </TableCell>
                   <TableCell
                     align="center"
@@ -125,7 +138,7 @@ const TablePost = ({ data, deleteData, active,callBackApi }) => {
                       maxWidth: "150px",
                     }}
                   >
-                    <Image width={56} height={56} src={item?.image} alt="" />
+                    {item.rating}
                   </TableCell>
                   <TableCell
                     align="center"
@@ -136,7 +149,23 @@ const TablePost = ({ data, deleteData, active,callBackApi }) => {
                       maxWidth: "150px",
                     }}
                   >
-                    {moment(item?.createdAt).format("DD/MM/YYYY")}
+                    <img
+                      width={56}
+                      height={56}
+                      src={item?.userId?.avt}
+                      alt=""
+                    />
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      maxWidth: "150px",
+                    }}
+                  >
+                    {moment(item?.dateTime).format("DD/MM/YYYY")}
                   </TableCell>
                   <TableCell
                     align="center"
@@ -149,39 +178,16 @@ const TablePost = ({ data, deleteData, active,callBackApi }) => {
                   >
                     {item?.content}
                   </TableCell>
-                  {active === true ? (
-                    <TableCell align="center">
-                      <Button
-                        onClick={() => {
-                          handleClickOpenModalDelete();
-                          setPostId(item._id);
-                        }}
-                      >
-                        Xóa
-                      </Button>
-                    </TableCell>
-                  ) : (
-                    <TableCell align="center">
-                      <div>
-                        <Button
-                          onClick={() => {
-                            handleClickOpenModalUpdate();
-                            setPostId(item._id);
-                          }}
-                        >
-                          Phê duyệt
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            handleClickOpenModalDelete();
-                            setPostId(item._id);
-                          }}
-                        >
-                          Xóa
-                        </Button>
-                      </div>
-                    </TableCell>
-                  )}
+                  <TableCell align="center">
+                    <Button
+                      onClick={() => {
+                        handleClickOpenModalDelete();
+                        setEvaluateId(item._id);
+                      }}
+                    >
+                      Xóa
+                    </Button>
+                  </TableCell>
                 </TableBody>
               );
             })}
@@ -195,15 +201,8 @@ const TablePost = ({ data, deleteData, active,callBackApi }) => {
         loading={loading}
         callBackFunction={handleDelete}
       />
-      <ModalConfirm
-        open={openUpdate}
-        handleClose={handleCloseModalUpdate}
-        content={"Bạn có chắt chắn muốn duyệt bài viết không?"}
-        loading={loading}
-        callBackFunction={handleUpdatePullic}
-      />
     </div>
   );
 };
 
-export default TablePost;
+export default TableEvaluate;
