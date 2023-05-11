@@ -36,9 +36,9 @@ const TablePlace = ({ data, deleteData, updateData, callBackApi }) => {
   const [type, setType] = useState([]);
   const [purpose, setPurpose] = useState([]);
 
-  const handleClickOpenModalUpdateImage = (placeId) => {
+  const handleClickOpenModalUpdateImage = async (placeId) => {
+    setPlaceId(placeId)
     setOpenModalUpdateImage(true);
-    getApiAnPlace(placeId);
   };
 
   const handleCloseModalUpdateImage = () => {
@@ -162,14 +162,12 @@ const TablePlace = ({ data, deleteData, updateData, callBackApi }) => {
   };
 
   const getApiAnPlace = (id) => {
+    setLoading(true);
     axiosClient
       .get(`/place/an/${id}`)
       .then((res) => {
-        console.log(
-          res.data.data.type.split(" , ").map((item) => {
-            return { id: "2d1s5tg43sd12fs3f", name: item };
-          })
-        );
+        setLoading(false);
+
         setDataPlaceImage(res.data.data.image || []);
         setType(
           res.data.data.type.split(" , ").map((item) => {
@@ -184,6 +182,8 @@ const TablePlace = ({ data, deleteData, updateData, callBackApi }) => {
         setPlaceId(id);
       })
       .catch((err) => {
+        setLoading(false);
+
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
@@ -206,7 +206,7 @@ const TablePlace = ({ data, deleteData, updateData, callBackApi }) => {
                   Tên Địa Điểm
                 </TableCell>
                 <TableCell align="center" style={{ fontWeight: "600" }}>
-                  Tỉnh/Thành phố
+                  Tỉnh/Thành Phố
                 </TableCell>
                 <TableCell align="center" style={{ fontWeight: "600" }}>
                   Địa Điểm
@@ -221,10 +221,10 @@ const TablePlace = ({ data, deleteData, updateData, callBackApi }) => {
                   Loại
                 </TableCell>
                 <TableCell align="center" style={{ fontWeight: "600" }}>
-                  Mục đích
+                  Mục Đích
                 </TableCell>
                 <TableCell align="center" style={{ fontWeight: "600" }}>
-                  Chức năng
+                  Chức Năng
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -371,7 +371,7 @@ const TablePlace = ({ data, deleteData, updateData, callBackApi }) => {
                         limitTags={1}
                         options={dataType}
                         getOptionLabel={(option) => option.name}
-                        sx={{ width: "100%"}}
+                        sx={{ width: "100%" }}
                         renderInput={(params) => (
                           <TextField
                             {...params}
@@ -475,7 +475,6 @@ const TablePlace = ({ data, deleteData, updateData, callBackApi }) => {
       )}
       {openModalUpdateImage && (
         <ModalUpdateImage
-          dataPlace={dataPlaceImage}
           open={openModalUpdateImage}
           handleClose={handleCloseModalUpdateImage}
           placeId={placeId}

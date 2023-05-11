@@ -97,7 +97,7 @@ const Explore = () => {
   const handelDeleteDataPost = (id) => {
     getApiAllPost();
   };
-console.log("vào",dataPost);
+
   useEffect(() => {
     Promise.all([getApiUser(), getApiPlace(), getApiAllPost()]);
 
@@ -158,7 +158,7 @@ console.log("vào",dataPost);
                 })
               )}
             </div>
-            <div style={{width:"100%", height: "50px", display:'flex', justifyContent:"center", marginTop:'20px'}}>
+            <div style={{width:"100%",height:"10%",paddingTop:"5%"}}>
               {dataPost?.data && dataPost?.data?.length > 0 && (
                 <PaginationCpn
                   count={dataPost.totalPage}

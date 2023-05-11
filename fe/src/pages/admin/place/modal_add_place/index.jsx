@@ -12,15 +12,19 @@ import axios from "axios";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
 import axiosClient from "../../../../api/axiosClient";
 import provinces from "../../../../asset/64_provinces_and_cities";
 import Map_controller from "../../../../components/map_controller";
 import GetDataPlaceItem from "../../../../components/modle_find_place";
 import FormTime from "../../../../hook-form/form_time";
-import { clearByIdPlace } from "../../../../redux/place/placeSlice";
+import {
+  clearByIdPlace,
+  setListImage,
+} from "../../../../redux/place/placeSlice";
 import { toastify } from "../../../../utils/common";
+import { ListImage } from "../../../../redux/selectors";
 
 const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
   const [openModal, setOpenModal] = useState(false);
@@ -38,6 +42,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
   const [purpose, setPurpose] = useState([]);
   const [map, setMap] = useState(null);
   const [mapCenter, setMapCenter] = useState({ lat: 0, lon: 0 });
+  const listImage = useSelector(ListImage);
 
   const validationInput = yup.object().shape({
     placeName: yup
@@ -96,13 +101,15 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       toastify("error", "Tối đa bạn thêm được 5 ảnh");
     } else {
       setFile(e.target.files);
+
+      uploadFiles(e.target.files);
     }
   };
 
   const debounceFnLocattion = useCallback(
     _.debounce((value) => {
       handleSearchPlaceMap(value);
-    }, 500),
+    }, 300),
     []
   );
 
@@ -136,9 +143,8 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
     map.setZoom(map.getZoom() + 4);
   };
 
-  const uploadFiles = async () => {
+  const uploadFiles = async (listFile) => {
     setLoading(true);
-
     const formData = new FormData();
     const api = "https://api.cloudinary.com/v1_1/djo1gzatx/image/upload";
     const presetName = "mafline-upload";
@@ -148,7 +154,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
 
     const uploadPromises = [];
 
-    Object.values(files).forEach((file) => {
+    Object.values(listFile).forEach((file) => {
       formData.append("file", file);
       const uploadPromise = axios.post(api, formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -158,20 +164,24 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
 
     try {
       const responses = await Promise.all(uploadPromises);
+
       const uploadedUrls = responses.map((res) => res.data.url);
-      setUploadedUrls(uploadedUrls);
+      dispatch(setListImage(uploadedUrls));
+      setLoading(false);
     } catch (error) {
       setLoading(false);
       console.log(error);
     }
   };
-  console.log("vào dây", uploadedUrls);
+
   const handleAddPlace = (data) => {
-    // if (_.isEmpty(uploadedUrls)) {
-    //   toastify("info", "chưa có ảnh");
-    //   setLoading(true);
-    //   return;
-    // }
+    setLoading(true);
+
+    if (_.isEmpty(listImage)) {
+      toastify("info", "chưa có ảnh");
+      setLoading(true);
+      return;
+    }
     axiosClient
       .post("/place/add", {
         name: data.placeName || "",
@@ -182,11 +192,12 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
         purpose: purpose.map((item) => item.label).join(" , "),
         type: type.map((item) => item.label).join(" , "),
         description: data.description,
-        image: uploadedUrls,
+        image: listImage,
         openTime: valueOpen,
         closeTime: valueClose,
       })
       .then((res) => {
+        dispatch(setListImage([]));
         callBackApi();
         setLoading(false);
         reset();
@@ -211,7 +222,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       });
   };
 
-  const handleCheckAddPlace = (data) => {
+  const handleCheckAddPlace = async (data) => {
     setDataPlace(data);
     if (
       valueOpen === "" ||
@@ -225,10 +236,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
       if (_.isEmpty(files)) {
         return toastify("error", "Chưa có file");
       } else {
-        uploadFiles();
-        setTimeout(() => {
-          handleAddPlace(data);
-        }, 10000);
+        handleAddPlace(data);
       }
     }
   };
@@ -264,8 +272,10 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
   };
 
   useEffect(() => {
-    getApiPurpose();
-    getApiType();
+    Promise.all([getApiPurpose(), getApiType()]);
+    return () => {
+      dispatch(setListImage([]));
+    };
   }, []);
 
   return (

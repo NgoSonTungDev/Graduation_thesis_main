@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  listImage: [],
   placeById: {},
   payload: {
     pageNumber: 1,
@@ -29,10 +30,18 @@ const PlaceSlice = createSlice({
     resetPayload: (state, { payload }) => {
       state.payload = initialState.payload;
     },
+    setListImage: (state, { payload }) => {
+      state.listImage = payload;
+    },
   },
 });
 
-export const { objectByIdPlace, clearByIdPlace, changePayload, resetPayload } =
-  PlaceSlice.actions;
+export const {
+  objectByIdPlace,
+  clearByIdPlace,
+  changePayload,
+  resetPayload,
+  setListImage,
+} = PlaceSlice.actions;
 
 export default PlaceSlice.reducer;

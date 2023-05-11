@@ -1,19 +1,20 @@
-import { Button, MenuItem } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import axiosClient from "../../../api/axiosClient";
-import LoadingBar from "../../../components/loadding/loading_bar";
-import { toastify } from "../../../utils/common";
+import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
+import { Button, IconButton, MenuItem, TextField } from "@mui/material";
+import _ from "lodash";
 import queryString from "query-string";
-import TableTicket from "./table-ticket";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import axiosClient from "../../../api/axiosClient";
+import ErrorEmpty from "../../../components/emty_data";
+import LoadingBar from "../../../components/loadding/loading_bar";
+import GetDataPlaceItem from "../../../components/modle_find_place";
 import SidebarAdmin from "../../../components/narbar_admin";
 import PaginationCpn from "../../../components/pagination";
-import { DataPlaceById } from "../../../redux/selectors";
-import { useSelector, useDispatch } from "react-redux";
-import GetDataPlaceItem from "../../../components/modle_find_place";
 import { clearByIdPlace } from "../../../redux/place/placeSlice";
-import { IconButton, TextField } from "@mui/material";
-import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
+import { DataPlaceById } from "../../../redux/selectors";
+import { toastify } from "../../../utils/common";
 import "./style.scss";
+import TableTicket from "./table-ticket";
 
 const TicketManagement = () => {
   const [data, setData] = React.useState({});
@@ -152,19 +153,20 @@ const TicketManagement = () => {
               sx={{
                 border: "1px solid",
                 marginTop: "10px",
-                // margin:"10px 0px 20px 0px"
               }}
             >
               <ReplayOutlinedIcon
                 onClick={() => {
                   dispatch(clearByIdPlace());
-                  setAgentId("")
+                  setAgentId("");
                 }}
               />
             </IconButton>
           </div>
           {loading ? (
-            <LoadingBar />
+            <LoadingBar loading={loading} />
+          ) : _.isEmpty(listData) ? (
+            <ErrorEmpty />
           ) : (
             <div className="box_table">
               <TableTicket data={listData} deleteData={handleDeleteData} />

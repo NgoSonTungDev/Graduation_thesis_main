@@ -15,15 +15,24 @@ import { toastify } from "../../../utils/common";
 import ModalAddPlace from "./modal_add_place";
 import TablePlace from "./table_place";
 import "./style.scss";
+import ModalType from "./modal_type";
+import ModalPurpose from "./modal_purpose";
+import ErrorEmpty from "../../../components/emty_data";
 
 const PlaceMangement = () => {
   const [openModalAddPlace, setOpenModalAddPlace] = React.useState(false);
   const [data, setData] = React.useState({});
   const [listData, setListData] = React.useState([]);
+  const [listType, setListType] = useState([]);
+  const [listPurpose, setListPurpose] = useState([]);
+
   const [loading, setLoading] = React.useState(false);
   const dataPlace = useSelector(DataPlaceById);
   const [openModal, setOpenModal] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
+  const [openModalType, setOpenModalType] = useState(false);
+  const [openModalPurpose, setOpenModalPurpose] = useState(false);
+
   const dispatch = useDispatch();
 
   const handleClickOpenModalAddPlace = () => {
@@ -32,6 +41,22 @@ const PlaceMangement = () => {
 
   const handleCloseModalAddPlace = () => {
     setOpenModalAddPlace(false);
+  };
+
+  const handleClickOpenModalType = () => {
+    setOpenModalType(true);
+  };
+
+  const handleCloseModalAdType = () => {
+    setOpenModalType(false);
+  };
+
+  const handleClickOpenModalPurpose = () => {
+    setOpenModalPurpose(true);
+  };
+
+  const handleCloseModalPurpose = () => {
+    setOpenModalPurpose(false);
   };
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -69,6 +94,22 @@ const PlaceMangement = () => {
     );
   };
 
+  const handleDeleteDataType = (id) => {
+    setListType(
+      listType?.filter((item) => {
+        return item._id !== id;
+      })
+    );
+  };
+
+  const handleDeleteDataPurpose = (id) => {
+    setListPurpose(
+      listPurpose?.filter((item) => {
+        return item._id !== id;
+      })
+    );
+  };
+
   const fetchData = () => {
     setLoading(true);
     axiosClient
@@ -94,6 +135,33 @@ const PlaceMangement = () => {
       });
   };
 
+  const getApiType = () => {
+    axiosClient
+      .get("/type/all")
+      .then((res) => {
+        setListType(res.data.data);
+      })
+      .catch((err) => {
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
+
+  const getApiPurpose = () => {
+    axiosClient
+      .get("/purpose/all")
+      .then((res) => {
+        setListPurpose(res.data.data);
+      })
+      .catch((err) => {
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
+
+  useEffect(() => {
+    getApiType();
+    getApiPurpose();
+  }, []);
+
   useEffect(() => {
     fetchData();
   }, [dataPlace.name, pageNumber]);
@@ -107,7 +175,7 @@ const PlaceMangement = () => {
   const renderForm = () => {
     return (
       <div style={{ width: "100%", height: "100vh" }}>
-        <div style={{ width: "100%", height: "90%" }}>
+        <div style={{ width: "100%", height: "90%", paddingTop: "1%" }}>
           <Button
             variant="outlined"
             style={{ marginTop: "10px" }}
@@ -121,6 +189,20 @@ const PlaceMangement = () => {
             onClick={handleOpenModal}
           >
             Tìm kiếm
+          </Button>
+          <Button
+            variant="outlined"
+            style={{ marginTop: "10px", marginLeft: "20px" }}
+            onClick={handleClickOpenModalType}
+          >
+            Quản lý loại
+          </Button>
+          <Button
+            variant="outlined"
+            style={{ marginTop: "10px", marginLeft: "20px" }}
+            onClick={handleClickOpenModalPurpose}
+          >
+            Quản lý mục đích
           </Button>
           <IconButton
             size="small"
@@ -137,9 +219,12 @@ const PlaceMangement = () => {
               }}
             />
           </IconButton>
+
           {loading ? (
-            <LoadingBar />
-          ) : (
+          <LoadingBar loading={loading} />
+        ) : _.isEmpty(listData) ? (
+          <ErrorEmpty />
+        ) :  (
             <div className="box_table_place">
               <TablePlace
                 data={listData}
@@ -167,6 +252,33 @@ const PlaceMangement = () => {
           handleClose={handleCloseModalAddPlace}
           callBackApi={fetchData}
         />
+        {loading ? (
+          <LoadingBar />
+        ) : (
+          <div>
+            <ModalType
+              dataType={listType}
+              open={openModalType}
+              deleDataType={handleDeleteDataType}
+              handleClose={handleCloseModalAdType}
+              callBackApi={getApiType}
+            />
+          </div>
+        )}
+
+        {loading ? (
+          <LoadingBar  />
+        ) : (
+          <div>
+            <ModalPurpose
+              dataPurpose={listPurpose}
+              open={openModalPurpose}
+              deleDataPurpose={handleDeleteDataPurpose}
+              handleClose={handleCloseModalPurpose}
+              callBackApi={getApiPurpose}
+            />
+          </div>
+        )}
       </div>
     );
   };
