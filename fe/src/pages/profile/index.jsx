@@ -209,26 +209,38 @@ const Profile = () => {
                 style={{
                   objectFit: "cover",
                 }}
-                src={userIdStorage ? userIdStorage.avt : data.avt}
+                src={
+                  !userIdStorage || userIdStorage._id !== id
+                    ? data.avt
+                    : userIdStorage.avt
+                }
               />
-              {!userIdStorage ? null : userIdStorage._id === id && (
-                <IconButton
-                  sx={{
-                    position: "absolute",
-                    bottom: "0",
-                    right: "0",
-                  }}
-                  variant=""
-                  component="label"
-                  disabled={loading}
-                >
-                  <AddAPhotoIcon onClick={handleOpenDialogAvt} />
-                </IconButton>
-              )}
+              {!userIdStorage
+                ? null
+                : userIdStorage._id === id && (
+                    <IconButton
+                      sx={{
+                        position: "absolute",
+                        bottom: "0",
+                        right: "0",
+                      }}
+                      variant=""
+                      component="label"
+                      disabled={loading}
+                    >
+                      <AddAPhotoIcon onClick={handleOpenDialogAvt} />
+                    </IconButton>
+                  )}
             </div>
           </div>
           <div className="profile-name">
-            <span style={{ fontSize: "20px", fontWeight: "500", textTransform :"capitalize" }}>
+            <span
+              style={{
+                fontSize: "20px",
+                fontWeight: "500",
+                textTransform: "capitalize",
+              }}
+            >
               {data.userName}
             </span>
           </div>

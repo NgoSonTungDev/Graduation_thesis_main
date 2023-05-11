@@ -14,13 +14,26 @@ import ErrorEmpty from "../../../../components/emty_data";
 import ModalConfirm from "../../../../components/modal_confirm";
 import { toastify } from "../../../../utils/common";
 import { Image } from "antd";
+import ws from "../../../../socket";
 
 
 const TablePost = ({ data, deleteData, active,callBackApi }) => {
   const [postId, setPostId] = useState("");
+  const [userId, setUserId] = useState("");
   const [loading, setLoading] = React.useState(false);
   const [openDelete, setOpenDelete] = React.useState(false);
   const [openUpdate, setOpenUpdate] = React.useState(false);
+
+  const sendNotify = async () => {
+    const NotifyData = {
+      room: userId,
+      content: `Bài viết của bạn đã được duyêt.`,
+      status: true,
+      dateTime: Number(new Date()),
+    };
+
+    ws.sendNotify(NotifyData);
+  };
 
   const handleClickOpenModalDelete = () => {
     setOpenDelete(true);
@@ -55,7 +68,7 @@ const TablePost = ({ data, deleteData, active,callBackApi }) => {
       });
   };
 
-  const handleUpdatePullic = () => {
+  const handleUpdatePublic = () => {
     setLoading(true);
 
     axiosClient
@@ -64,6 +77,7 @@ const TablePost = ({ data, deleteData, active,callBackApi }) => {
         setLoading(false);
         toastify("success", res.data.message || "Cập nhật thành công !");
         handleCloseModalDelete();
+        sendNotify()
         callBackApi()
       })
       .catch((err) => {
@@ -167,6 +181,7 @@ const TablePost = ({ data, deleteData, active,callBackApi }) => {
                           onClick={() => {
                             handleClickOpenModalUpdate();
                             setPostId(item._id);
+                            setUserId(item.userId?._id)
                           }}
                         >
                           Phê duyệt
@@ -200,7 +215,7 @@ const TablePost = ({ data, deleteData, active,callBackApi }) => {
         handleClose={handleCloseModalUpdate}
         content={"Bạn có chắt chắn muốn duyệt bài viết không?"}
         loading={loading}
-        callBackFunction={handleUpdatePullic}
+        callBackFunction={handleUpdatePublic}
       />
     </div>
   );
