@@ -54,31 +54,31 @@ const TableTicket = ({ data, deleteData }) => {
             <TableHead>
               <TableRow sx={{ padding: "5px 0" }}>
                 <TableCell align="center" style={{ fontWeight: "600" }}>
-                  Đại lý
+                  Đại Lý
                 </TableCell>
                 <TableCell align="center" style={{ fontWeight: "600" }}>
                   Email
                 </TableCell>
                 <TableCell align="center" style={{ fontWeight: "600" }}>
-                  Địa điểm
+                  Địa Điểm
                 </TableCell>
                 <TableCell align="center" style={{ fontWeight: "600" }}>
-                  Tỉnh/Thành phố
+                  Tỉnh/Thành Phố
                 </TableCell>
                 <TableCell align="center" style={{ fontWeight: "600" }}>
-                  Khoảng giá
+                  Khoảng Giá
                 </TableCell>
                 <TableCell align="center" style={{ fontWeight: "600" }}>
-                  Giá vé trẻ em
+                  Giá Vé Trẻ Em
                 </TableCell>
                 <TableCell align="center" style={{ fontWeight: "600" }}>
-                  Giá vé người lớn
+                  Giá Vé Người Lớn
                 </TableCell>
                 <TableCell align="center" style={{ fontWeight: "600" }}>
                   Số lượng vé
                 </TableCell>
                 <TableCell align="center" style={{ fontWeight: "600" }}>
-                  Chức năng
+                  Chức Năng
                 </TableCell>
               </TableRow>
             </TableHead>

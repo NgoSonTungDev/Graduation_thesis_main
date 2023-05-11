@@ -82,12 +82,12 @@ const TablePost = ({ data, deleteData, active,callBackApi }) => {
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
               <TableRow sx={{ padding: "5px 0" }}>
-                <TableCell align="center"  style={{ fontWeight: "600" }}>Tên người đăng</TableCell>
-                <TableCell align="center"  style={{ fontWeight: "600" }}>Tên bài viết</TableCell>
-                <TableCell align="center"  style={{ fontWeight: "600" }}>Ảnh bài viết</TableCell>
-                <TableCell align="center"  style={{ fontWeight: "600" }}>Ngày tạo</TableCell>
-                <TableCell align="center"  style={{ fontWeight: "600" }}>Nôi dung</TableCell>
-                <TableCell align="center"  style={{ fontWeight: "600" }}>Chức năng</TableCell>
+                <TableCell align="center"  style={{ fontWeight: "600" }}>Tên Người Đăng</TableCell>
+                <TableCell align="center"  style={{ fontWeight: "600" }}>Tên Bài Viết</TableCell>
+                <TableCell align="center"  style={{ fontWeight: "600" }}>Ảnh Bài Viết</TableCell>
+                <TableCell align="center"  style={{ fontWeight: "600" }}>Ngày Tạo</TableCell>
+                <TableCell align="center"  style={{ fontWeight: "600" }}>Nôi Dung</TableCell>
+                <TableCell align="center"  style={{ fontWeight: "600" }}>Chức Năng</TableCell>
               </TableRow>
             </TableHead>
 

@@ -4,6 +4,7 @@ export const DataChat = (state) => state.ChatBot.ListChat;
 // Place
 export const DataPlaceById = (state) => state.Place.placeById;
 export const payloadPlace = (state) => state.Place.payload;
+export const ListImage = (state) => state.Place.listImage;
 
 //Chat box
 export const OpenChatBox = (state) => state.ChatBox.open;

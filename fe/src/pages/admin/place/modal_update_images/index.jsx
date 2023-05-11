@@ -6,12 +6,12 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
 import _ from "lodash";
+import React, { useEffect, useState } from "react";
 import axiosClient from "../../../../api/axiosClient";
-import { toastify } from "../../../../utils/common";
-import "./style.scss";
 import ErrorEmpty from "../../../../components/emty_data";
+import LoadingBar from "../../../../components/loadding/loading_bar";
+import { toastify } from "../../../../utils/common";
 
 const ModalUpdateImage = ({ open, handleClose, dataPlace, placeId }) => {
   const [loading, setLoading] = useState(false);
@@ -105,8 +105,22 @@ const ModalUpdateImage = ({ open, handleClose, dataPlace, placeId }) => {
       });
   };
 
+  const fetchData = () => {
+    setLoading(true);
+    axiosClient
+      .get(`/place/an/${placeId}`)
+      .then((res) => {
+        setLoading(false);
+        setListImageUpdate(res.data.data.image || []);
+      })
+      .catch((err) => {
+        setLoading(false);
+        toastify("error", err.response.data.message || "Lỗi hệ thông !");
+      });
+  };
+
   useEffect(() => {
-    setListImageUpdate(dataPlace);
+    fetchData();
   }, []);
 
   return (
@@ -133,7 +147,7 @@ const ModalUpdateImage = ({ open, handleClose, dataPlace, placeId }) => {
                 flexWrap: "wrap",
               }}
             >
-              {_.isEmpty(listImageUpdate) ? (
+              {loading ? <LoadingBar loading={loading}/> : _.isEmpty(listImageUpdate) ? (
                 <ErrorEmpty />
               ) : (
                 imageList.map((item, index) => {
