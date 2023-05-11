@@ -90,7 +90,7 @@ const ModalType = ({
             }}
           >
             <TextField
-              label="Nhập thêm loại muốn thêm"
+              label="Tên thể loại muốn thêm"
               value={type}
               onChange={(e) => {
                 setType(e.target.value);

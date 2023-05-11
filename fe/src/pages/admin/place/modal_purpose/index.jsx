@@ -94,7 +94,7 @@ const ModalPurpose = ({
             }}
           >
             <TextField
-              label="Nhập thêm mục đích muốn thêm"
+              label="Nhập mục đích muốn thêm"
               value={purpose}
               onChange={(e) => {
                 setPurpose(e.target.value);

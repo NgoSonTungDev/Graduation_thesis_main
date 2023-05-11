@@ -175,7 +175,7 @@ const PlaceMangement = () => {
   const renderForm = () => {
     return (
       <div style={{ width: "100%", height: "100vh" }}>
-        <div style={{ width: "100%", height: "90%", paddingTop: "1%" }}>
+        <div style={{ width: "100%", height: "90%" }}>
           <Button
             variant="outlined"
             style={{ marginTop: "10px" }}
