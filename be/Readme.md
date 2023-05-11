@@ -1,3 +1,4 @@
+```javascript
 import mongoose from "mongoose";
 import { IUser } from "./../types/user";
 
@@ -8,8 +9,10 @@ const userSchema = new mongoose.Schema<IUser>({
 const Users = mongoose.model("User", userSchema);
 
 export default Users;
+```
 
-///////////////////////
+
+```javascript
 import { Request, Response, NextFunction } from "express";
 import { errorFunction } from "../utils/errorFunction";
 import Users from "../models/user";
@@ -28,3 +31,4 @@ message: "Bad request",
 };
 
 export default userController;
+```
