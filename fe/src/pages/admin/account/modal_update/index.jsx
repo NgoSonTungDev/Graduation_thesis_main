@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import axiosClient from "../../../../api/axiosClient";
@@ -9,7 +9,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   MenuItem,
   TextField,
@@ -36,6 +35,9 @@ const validationInput = yup.object().shape({
 });
 
 function ModalUpdate({ open, handleClose, userId, dataUser }) {
+  const [check, setCheck] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -44,6 +46,7 @@ function ModalUpdate({ open, handleClose, userId, dataUser }) {
     defaultValues: {
       userName: dataUser?.userName,
       address: dataUser?.address,
+      isAdmin: Number(dataUser?.isAdmin) === 1 && "Người dùng",
       numberPhone: dataUser?.numberPhone,
     },
     mode: "all",
@@ -51,6 +54,7 @@ function ModalUpdate({ open, handleClose, userId, dataUser }) {
   });
 
   const handleUpdateAccount = (data) => {
+    setLoading(true);
     axiosClient
       .put(`/user/update/${userId}`, {
         userName: data.userName,
@@ -59,15 +63,15 @@ function ModalUpdate({ open, handleClose, userId, dataUser }) {
         numberPhone: data.numberPhone,
       })
       .then((res) => {
+        setLoading(false);
         toastify("success", "Cập nhật thông tin cá nhân thành công!!!");
         handleClose();
       })
       .catch((err) => {
+        setLoading(false);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
-
-  
 
   return (
     <Dialog
@@ -83,64 +87,127 @@ function ModalUpdate({ open, handleClose, userId, dataUser }) {
       </DialogTitle>
       <DialogContent>
         <div style={{ padding: "10px" }}>
-          <TextField
-            error={!!errors?.userName}
-            {...register("userName")}
-            helperText={errors.userName?.message}
-            type="text"
-            size="small"
-            sx={{ width: "100%", marginTop: "10px" }}
-            label={"Tên tài khoản"}
-          />
+          {check ? (
+            <TextField
+              error={!!errors?.userName}
+              {...register("userName")}
+              helperText={errors.userName?.message}
+              type="text"
+              size="small"
+              sx={{ width: "100%", marginTop: "10px" }}
+              label={"Tên tài khoản"}
+            />
+          ) : (
+            <span style={{ display: "flex" }}>
+              <p style={{ marginRight: "10px" }}>Tên tài khoản:</p>
+              <p style={{ fontWeight: "600" }}>
+                {dataUser?.userName || "Chưa cặp nhật"}
+              </p>
+            </span>
+          )}
         </div>
         <div style={{ padding: "10px", display: "flex" }}>
-          <TextField
-            style={{ width: "100%", height: "30px" }}
-            select
-            label="Phân quyền"
-            name="quyen"
-            inputProps={register("isAdmin")}
-            size="small"
-          >
-            <MenuItem value="1">Người dùng</MenuItem>
-            <MenuItem value="2">Đại lý</MenuItem>
-            <MenuItem value="3">Admin</MenuItem>
-          </TextField>
+          {check ? (
+            <TextField
+              style={{ width: "100%", height: "30px" }}
+              select
+              label="Phân quyền"
+              name="quyen"
+              inputProps={register("isAdmin")}
+              size="small"
+            >
+              <MenuItem value="1">Người dùng</MenuItem>
+              <MenuItem value="2">Đại lý</MenuItem>
+              <MenuItem value="3">Quản trị viên</MenuItem>
+            </TextField>
+          ) : (
+            <span style={{ display: "flex" }}>
+              <p style={{ marginRight: "10px" }}>Phân quyền:</p>
+              <p style={{ fontWeight: "600" }}>
+                {dataUser?.isAdmin === 1
+                  ? "Người dùng"
+                  : dataUser?.isAdmin === 2
+                  ? "Đại lý"
+                  : "Quản trị viên" || "Chưa cặp nhật"}
+              </p>
+            </span>
+          )}
         </div>
         <div style={{ padding: "10px" }}>
-          <TextField
-            error={!!errors?.address}
-            {...register("address")}
-            helperText={errors.address?.message}
-            type="text"
-            size="small"
-            sx={{ width: "350px" }}
-            label={"Địa chỉ"}
-          />
+          {check ? (
+            <TextField
+              error={!!errors?.address}
+              {...register("address")}
+              helperText={errors.address?.message}
+              type="text"
+              size="small"
+              sx={{ width: "350px" }}
+              label={"Địa chỉ"}
+            />
+          ) : (
+            <span style={{ display: "flex" }}>
+              <p style={{ marginRight: "10px" }}>Địa chỉ:</p>
+              <p style={{ fontWeight: "600" }}>
+                {dataUser?.address || "Chưa cập nhật"}
+              </p>
+            </span>
+          )}
         </div>
         <div style={{ padding: "10px" }}>
-          <TextField
-            error={!!errors?.numberPhone}
-            {...register("numberPhone")}
-            helperText={errors.numberPhone?.message}
-            type="text"
-            size="small"
-            sx={{ width: "100%" }}
-            label={"Số điện thoại"}
-          />
+          {check ? (
+            <TextField
+              error={!!errors?.numberPhone}
+              {...register("numberPhone")}
+              helperText={errors.numberPhone?.message}
+              type="text"
+              size="small"
+              sx={{ width: "100%" }}
+              label={"Số điện thoại"}
+            />
+          ) : (
+            <span style={{ display: "flex" }}>
+              <p style={{ marginRight: "10px" }}>Số điện thoại:</p>
+              <p style={{ fontWeight: "600" }}>
+                {dataUser?.numberPhone || "Chưa cập nhật"}
+              </p>
+            </span>
+          )}
         </div>
       </DialogContent>
       <DialogActions style={{ paddingBottom: "15px" }}>
-        <Button variant="outlined" onClick={handleClose}>
-          Huỷ
-        </Button>
-        <LoadingButton
-          loading={false}
-          variant="outlined"
-          onClick={handleSubmit(handleUpdateAccount)}
-        >
-          Cập nhật
-        </LoadingButton>
+        {!check ? (
+          <>
+            <Button variant="outlined" onClick={handleClose}>
+              Huỷ
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setCheck(true);
+              }}
+            >
+              Chỉnh sửa
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setCheck(false);
+              }}
+            >
+              Huỷ
+            </Button>
+            <LoadingButton
+              loading={loading}
+              variant="outlined"
+              onClick={handleSubmit(handleUpdateAccount)}
+            >
+              Cập nhật
+            </LoadingButton>
+          </>
+        )}
       </DialogActions>
     </Dialog>
   );

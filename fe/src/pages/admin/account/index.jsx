@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import axiosClient from "../../../api/axiosClient";
 import SidebarAdmin from "../../../components/narbar_admin";
 import { toastify } from "../../../utils/common";
@@ -6,12 +6,15 @@ import qs from "query-string";
 import LoadingBar from "../../../components/loadding/loading_bar";
 import ErrorEmpty from "../../../components/emty_data";
 import _ from "lodash";
+import { useForm } from "react-hook-form";
 import PaginationCpn from "../../../components/pagination";
 import ModalConfirm from "../../../components/modal_confirm";
 import AccountTable from "./table_account";
 import { Box } from "@mui/system";
 import TabContext from "@mui/lab/TabContext";
 import ModalUpdate from "./modal_update";
+import TabList from "@mui/lab/TabList/TabList";
+import { Button, MenuItem, Tab, TextField } from "@mui/material";
 
 const fakeCode = (length) => {
   let result = "";
@@ -35,11 +38,43 @@ const AccountManagement = () => {
   });
   const [loadingFunction, setLoadingFunction] = React.useState(false);
   const [data, setData] = React.useState({});
+  const [value, setValue] = React.useState(true);
   const [payload, setPayload] = React.useState({
     pageNumber: 1,
     limit: 6,
-    status: "",
+    userName: "",
+    isAdmin: "",
+    isLock: "",
   });
+
+  const { watch, register, reset } = useForm({
+    defaultValues: {
+      userName: "",
+      isAdmin: "",
+      isLock: "",
+    },
+  });
+
+  const debounceFnPlaceName = useCallback(
+    _.debounce((value) => {
+      setPayload({
+        ...payload,
+        userName: value,
+        pageNumber: 1,
+      });
+    }, 500),
+    []
+  );
+
+  const handleChange = (e) => {
+    const { isLock, isAdmin } = watch();
+
+    setPayload({
+      ...payload,
+      isAdmin: isAdmin === " " ? "" : isAdmin,
+      isLock: isLock === " " ? "" : isLock,
+    });
+  };
 
   const handleLockAccount = () => {
     setLoadingFunction(true);
@@ -128,7 +163,6 @@ const AccountManagement = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
     handleGetAllUsers();
     window.scrollTo(0, 0);
   }, [payload]);
@@ -137,7 +171,52 @@ const AccountManagement = () => {
     return (
       <div>
         <Box sx={{ width: "100%", height: "100vh", overflow: "hidden" }}>
-          <TabContext>
+          <TabContext value={value}>
+            <Box
+              sx={{
+                borderBottom: 1,
+                borderColor: "divider",
+                marginTop: 1,
+                display: "flex",
+                justifyContent: "right",
+              }}
+            >
+              <TextField
+                type="text"
+                label="Tên người dùng"
+                fullWidth
+                size="small"
+                inputProps={register("userName")}
+                onChange={(e) => {
+                  debounceFnPlaceName(e.target.value);
+                }}
+              />
+              <TextField
+                select
+                label="Loại người dùng"
+                fullWidth
+                inputProps={register("isAdmin")}
+                size="small"
+                onChange={handleChange}
+              >
+                <MenuItem value=" ">Tất cả</MenuItem>
+                <MenuItem value="1">Người dùng</MenuItem>
+                <MenuItem value="2">Đại lý</MenuItem>
+                <MenuItem value="3">Quản trị viên</MenuItem>
+              </TextField>
+              <TextField
+                select
+                label="Tài khoản"
+                fullWidth
+                inputProps={register("isLock")}
+                size="small"
+                onChange={handleChange}
+              >
+                <MenuItem value=" ">Tất cả</MenuItem>
+                <MenuItem value="false">Đang hoạt động</MenuItem>
+                <MenuItem value="true">Đang bị khóa</MenuItem>
+              </TextField>
+            </Box>
             <div
               style={{
                 width: "100%",
@@ -213,7 +292,7 @@ const AccountManagement = () => {
             }
           />
         )}
-        <ModalUpdate fetchData={handleGetAllUsers} />
+        <ModalUpdate fetchData={handleGetAllUsers} data={data.data} />
       </div>
     );
   };

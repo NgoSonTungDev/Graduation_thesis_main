@@ -56,9 +56,6 @@ const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
     setOpen(false);
   };
 
-  const handleOpenModalUpdate = () => {
-    setOpenModalUpdate(true);
-  };
   const handleCloseModalUpdate = () => {
     setOpenModalUpdate(false);
   };
@@ -117,7 +114,8 @@ const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
       .get(`/user/get-an/${userId}`)
       .then((res) => {
         const { userName, isAdmin, numberPhone, address } = res.data.data;
-        setDataUser({ userName, isAdmin, numberPhone, address })
+        setDataUser({ userName, isAdmin, numberPhone, address });
+        setOpenModalUpdate(true);
       })
       .catch((err) => {
         console.log("error", err.response.data.message || "Lỗi hệ thông !");
@@ -171,7 +169,11 @@ const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
                   {item.userName}
                 </TableCell>
                 <TableCell align="left" size="medium">
-                  {item.isAdmin === 1 ? "Người dùng" : "Đại lý"}
+                  {item.isAdmin === 1
+                    ? "Người dùng"
+                    : item.isAdmin === 2
+                    ? "Đại lý"
+                    : "Quản trị viên"}
                 </TableCell>
                 <TableCell align="left" size="medium">
                   {item.email}
@@ -246,7 +248,6 @@ const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
                       backgroundColor: "white",
                     }}
                     onClick={() => {
-                      handleOpenModalUpdate();
                       handleGetDataUserId(item._id);
                       setUserId(item._id);
                     }}
@@ -329,12 +330,14 @@ const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
           </LoadingButton>
         </DialogActions>
       </Dialog>
-      <ModalUpdate
-        open={openModalUpdate}
-        handleClose={handleCloseModalUpdate}
-        userId={userId}
-        dataUser={dataUser}
-      />
+      {openModalUpdate && (
+        <ModalUpdate
+          open={openModalUpdate}
+          handleClose={handleCloseModalUpdate}
+          userId={userId}
+          dataUser={dataUser}
+        />
+      )}
     </div>
   );
 };
