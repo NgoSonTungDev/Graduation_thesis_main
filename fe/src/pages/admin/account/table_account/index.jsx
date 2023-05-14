@@ -8,8 +8,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  MenuItem,
-  TextField,
+  TextField
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -24,7 +23,6 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import axiosClient from "../../../../api/axiosClient";
 import { toastify } from "../../../../utils/common";
-import { getUserDataLocalStorage } from "../../../../utils/localstorage";
 import ModalUpdate from "../modal_update";
 import "./style.scss";
 
@@ -63,7 +61,6 @@ const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {

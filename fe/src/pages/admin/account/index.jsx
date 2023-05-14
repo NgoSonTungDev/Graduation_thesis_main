@@ -1,20 +1,19 @@
-import React, { useCallback, useEffect } from "react";
-import axiosClient from "../../../api/axiosClient";
-import SidebarAdmin from "../../../components/narbar_admin";
-import { toastify } from "../../../utils/common";
-import qs from "query-string";
-import LoadingBar from "../../../components/loadding/loading_bar";
-import ErrorEmpty from "../../../components/emty_data";
-import _ from "lodash";
-import { useForm } from "react-hook-form";
-import PaginationCpn from "../../../components/pagination";
-import ModalConfirm from "../../../components/modal_confirm";
-import AccountTable from "./table_account";
-import { Box } from "@mui/system";
 import TabContext from "@mui/lab/TabContext";
+import { MenuItem, TextField } from "@mui/material";
+import { Box } from "@mui/system";
+import _ from "lodash";
+import qs from "query-string";
+import React, { useCallback, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import axiosClient from "../../../api/axiosClient";
+import ErrorEmpty from "../../../components/emty_data";
+import LoadingBar from "../../../components/loadding/loading_bar";
+import ModalConfirm from "../../../components/modal_confirm";
+import SidebarAdmin from "../../../components/narbar_admin";
+import PaginationCpn from "../../../components/pagination";
+import { toastify } from "../../../utils/common";
 import ModalUpdate from "./modal_update";
-import TabList from "@mui/lab/TabList/TabList";
-import { Button, MenuItem, Tab, TextField } from "@mui/material";
+import AccountTable from "./table_account";
 
 const fakeCode = (length) => {
   let result = "";
@@ -174,11 +173,10 @@ const AccountManagement = () => {
           <TabContext value={value}>
             <Box
               sx={{
-                borderBottom: 1,
-                borderColor: "divider",
+                paddingBottom:1,
                 marginTop: 1,
                 display: "flex",
-                justifyContent: "right",
+                justifyContent: "right"
               }}
             >
               <TextField
@@ -227,7 +225,7 @@ const AccountManagement = () => {
               <div
                 style={{
                   width: "100%",
-                  height: "93%",
+                  height: "94%",
                   overflow: "hidden",
                 }}
               >
