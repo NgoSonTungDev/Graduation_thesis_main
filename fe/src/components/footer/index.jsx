@@ -1,11 +1,14 @@
-import React, { useEffect } from "react";
+import { Button } from "@mui/material";
+import React from "react";
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
-import logo from "./images/logo.png";
-import { Box, Tabs, Tab, Button } from "@mui/material";
-import logo1 from "./images/logo1.svg";
 
 const Footer = () => {
+  const navigation = useNavigate();
+
+  const movePage = (path) => {
+    navigation(path);
+  };
   return (
     <div>
       <div className="container_footer">
@@ -28,16 +31,38 @@ const Footer = () => {
             <span>VỀ CHÚNG TÔI</span>
             <ul>
               <li>
-                <span>Giới thiệu</span>
+                <span
+                  onClick={() => {
+                    movePage("/introduce");
+                  }}
+                >
+                  Giới thiệu
+                </span>
+              </li>
+              <li
+                onClick={() => {
+                  movePage("/place");
+                }}
+              >
+                <span>Địa điểm</span>
               </li>
               <li>
-                <span>Giải đáp thắc mắc</span>
+                <span
+                  onClick={() => {
+                    movePage("/explore");
+                  }}
+                >
+                  Khám phá
+                </span>
               </li>
               <li>
-                <span>Liên hệ góp ý</span>
-              </li>
-              <li>
-                <span>Điều khoản sử dụng</span>
+                <span
+                  onClick={() => {
+                    movePage("/voucher");
+                  }}
+                >
+                  Khuyến mãi
+                </span>
               </li>
             </ul>
           </div>

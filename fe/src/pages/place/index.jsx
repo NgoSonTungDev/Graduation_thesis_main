@@ -113,7 +113,7 @@ const Place = () => {
             )}
           </div>
 
-          <div>
+          <div style={{marginTop:"30px"}}>
             {data?.data && data?.data?.length > 0 && (
               <PaginationCpn
                 count={data.totalPage}

@@ -15,6 +15,7 @@ import advertisement from "./images/advertisement.png";
 import _ from "lodash";
 import "./style.scss";
 import { useNavigate } from "react-router-dom";
+import Footer from "../footer";
 
 const Explore = () => {
   const [loading, setLoading] = useState(true);
@@ -158,7 +159,7 @@ const Explore = () => {
                 })
               )}
             </div>
-            <div style={{width:"100%",height:"10%",paddingTop:"5%"}}>
+            <div style={{width:"100%",height:"10%",padding:"10px 0", marginTop: "20px "}}>
               {dataPost?.data && dataPost?.data?.length > 0 && (
                 <PaginationCpn
                   count={dataPost.totalPage}
@@ -331,6 +332,7 @@ const Explore = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

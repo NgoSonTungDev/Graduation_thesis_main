@@ -21,6 +21,7 @@ import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
 import RegisterAgency from "./pages/auth/register_agency";
 import Forbidden from "./pages/forbidden";
+import Introduce from "./pages/introduce";
 import Home from "./pages/home";
 import NotFound from "./pages/not_found";
 import Order from "./pages/order";
@@ -36,13 +37,12 @@ import TicketSaleAgent from "./pages/sale_agent/ticket";
 import ThankCustomer from "./pages/thank_customer";
 import Voucher from "./pages/voucher";
 import { OpenChatBox } from "./redux/selectors";
-import { setUser } from "./redux/user/userSlice";
 import ws from "./socket";
 import { getUserDataLocalStorage } from "./utils/localstorage";
 import InformationAgent from "./components/information_agent";
 import Favourite from "./pages/favourite";
 import EvaluateManagement from "./pages/admin/evaluate";
-import TableEvaluate from "./pages/admin/evaluate/table-evaluate";
+
 const AdminLayout = ({ children }) => {
   const { user } = useSelector((state) => state.User);
 
@@ -129,6 +129,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/register-agency" element={<RegisterAgency />} />
+        <Route path="/introduce" element={<Introduce />} />
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/place" element={<Place />} />
