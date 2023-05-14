@@ -124,6 +124,7 @@ export default function PaymentDetail() {
       })
       .catch((err) => {
         setLoading(false);
+        setDataVoucher(0);
         toastify("error", err.response.data.message || "Lỗi hệ thông !");
       });
   };
@@ -140,6 +141,8 @@ export default function PaymentDetail() {
 
         if (voucher !== "") {
           return getApiVoucher();
+        } else{
+          setDataVoucher(0)
         }
       }
     }
@@ -384,7 +387,10 @@ export default function PaymentDetail() {
                       sx={{ border: "none", outline: "none" }}
                       size="small"
                       value={voucher}
-                      onChange={(e) => setVoucher(e.target.value)}
+                      onChange={(e) => {
+                        setVoucher(e.target.value);
+                        setCheck(true)
+                      }}
                     />
                   </div>
                 </div>
@@ -643,7 +649,7 @@ export default function PaymentDetail() {
                         onClick={handleOrder}
                         loading={loadingPayment}
                       >
-                        Xác nhận đơn hàng
+                        {check ? "Vui lòng nhấn xác nhận" : "Xác nhận đơn hàng"}
                       </LoadingButton>
                     </div>
                   </form>

@@ -161,14 +161,14 @@ const PlaceFilter = () => {
         <MenuItem value="asc">Tăng dần</MenuItem>
       </TextField>
 
-      <div
+      {/* <div
         style={{
           width: "100%",
           display: "grid",
           placeItems: "center",
         }}
       >
-        {/* <IconButton
+        <IconButton
           onClick={() => {
             reset({
               placeName: "",
@@ -185,8 +185,8 @@ const PlaceFilter = () => {
           }}
         >
           <ReplayOutlinedIcon />
-        </IconButton> */}
-      </div>
+        </IconButton>
+      </div> */}
     </div>
   );
 };

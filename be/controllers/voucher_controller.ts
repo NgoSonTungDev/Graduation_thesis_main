@@ -63,7 +63,7 @@ const voucherController = {
         res
           .status(402)
           .json(
-            errorFunction(false, 402, "Không sử dụng được mã giảm giá này!")
+            errorFunction(false, 402, "Mã này không tồn tại !")
           );
       }
     } catch (error) {
