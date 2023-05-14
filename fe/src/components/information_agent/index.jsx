@@ -171,7 +171,7 @@ const InformationAgent = ({ open, handleClose }) => {
               <div
                 style={{
                   width: "400px",
-                  height: "350px ",
+                  height: "300px ",
                   display: "grid",
                   palignItems: "center",
                   border: "2px dashed #dedede",
@@ -179,7 +179,6 @@ const InformationAgent = ({ open, handleClose }) => {
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   overflow: "hidden",
-                  overflowY: "scroll",
                 }}
               >
                 {image ? (

@@ -165,6 +165,10 @@ const evaluateController = {
           .status(404)
           .json(errorFunction(true, 404, "Không tồn tại !"));
 
+      await Places.updateMany(
+        { statisticCmt: req.params.id },
+        { $pull: { statisticCmt: req.params.id } }
+      );
       await Evaluates.findByIdAndDelete(req.params.id);
       res.status(200).json(errorFunction(true, 200, "Xóa thành công !"));
     } catch (error) {

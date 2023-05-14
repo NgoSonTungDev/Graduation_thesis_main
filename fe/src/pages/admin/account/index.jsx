@@ -46,7 +46,7 @@ const AccountManagement = () => {
     isLock: "",
   });
 
-  const { watch, register, reset } = useForm({
+  const { watch, register } = useForm({
     defaultValues: {
       userName: "",
       isAdmin: "",
@@ -248,6 +248,7 @@ const AccountManagement = () => {
                         email,
                       });
                     }}
+                    fetchData={handleGetAllUsers}
                   />
                 )}
               </div>
@@ -289,9 +290,7 @@ const AccountManagement = () => {
                 : handleUnlockAccount
             }
           />
-        )}
-        <ModalUpdate fetchData={handleGetAllUsers} data={data.data} />
-      </div>
+        )}      </div>
     );
   };
 

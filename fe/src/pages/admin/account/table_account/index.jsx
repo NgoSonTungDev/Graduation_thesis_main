@@ -38,7 +38,7 @@ const validationInput = yup.object().shape({
     .oneOf([yup.ref("new_password"), null], "Không trùng khớp."),
 });
 
-const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
+const AccountTable = ({ data, openModal, checkCase, getDataTable , fetchData}) => {
   const [open, setOpen] = React.useState(false);
   const [dataUser, setDataUser] = React.useState(null);
   const [openModalUpdate, setOpenModalUpdate] = React.useState(false);
@@ -333,6 +333,7 @@ const AccountTable = ({ data, openModal, checkCase, getDataTable }) => {
           handleClose={handleCloseModalUpdate}
           userId={userId}
           dataUser={dataUser}
+          fetchData={fetchData}
         />
       )}
     </div>

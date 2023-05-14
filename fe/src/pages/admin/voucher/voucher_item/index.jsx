@@ -184,12 +184,12 @@ const VoucherItem = ({ open, handleClose, data, fetchData }) => {
               fontSize: "18px",
             }}
           >
+            <div style={styles.discount}>Địa điểm: {item?.placeId?.name}</div>
             <div style={styles.discount}>Giá: {formatMoney(item.price)}</div>
             <div style={styles.discount}>Mã giảm giá: {item.codeVoucher}</div>
           </p>
           <p style={{ fontSize: "13px" }}>
-            {moment(item.startDate).format("DD/MM/yyyy")} -
-            {moment(item.endDate).format("DD/MM/yyyy")}
+            {moment(item.startDate).format("DD/MM/yyyy")} - {moment(item.endDate).format("DD/MM/yyyy")}
           </p>
         </div>
       ))}

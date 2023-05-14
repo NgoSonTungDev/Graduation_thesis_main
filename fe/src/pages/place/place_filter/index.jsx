@@ -168,7 +168,7 @@ const PlaceFilter = () => {
           placeItems: "center",
         }}
       >
-        <IconButton
+        {/* <IconButton
           onClick={() => {
             reset({
               placeName: "",
@@ -185,7 +185,7 @@ const PlaceFilter = () => {
           }}
         >
           <ReplayOutlinedIcon />
-        </IconButton>
+        </IconButton> */}
       </div>
     </div>
   );

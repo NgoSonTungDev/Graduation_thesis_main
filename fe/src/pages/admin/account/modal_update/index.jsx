@@ -7,7 +7,7 @@ import {
   DialogContent,
   DialogTitle,
   MenuItem,
-  TextField
+  TextField,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -24,16 +24,17 @@ const validationInput = yup.object().shape({
   address: yup
     .string()
     .min(6, "Địa chỉ ít nhất 6 ký tự !!!")
-    .max(30, "Địa chỉ tối đa 30 ký tự !!!")
-    .required("Địa chỉ không được để trống"),
+    .max(30, "Địa chỉ tối đa 30 ký tự !!!"),
+  // .required("Địa chỉ không được để trống"),
   numberPhone: yup
     .string()
     .min(10, "Số điện thoại ít nhất 10 ký tự !!!")
-    .max(11, "Số điện thoại tối đa 11 ký tự !!!")
-    .required("Số điện thoại không được để trống"),
+    .max(11, "Số điện thoại tối đa 11 ký tự !!!"),
+  // .required("Số điện thoại không được để trống"),
+  isAdmin: yup.string().required("Phân quyền không được để trống"),
 });
 
-function ModalUpdate({ open, handleClose, userId, dataUser }) {
+function ModalUpdate({ open, handleClose, userId, dataUser,fetchData }) {
   const [check, setCheck] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -45,7 +46,7 @@ function ModalUpdate({ open, handleClose, userId, dataUser }) {
     defaultValues: {
       userName: dataUser?.userName,
       address: dataUser?.address,
-      isAdmin: Number(dataUser?.isAdmin) === 1 && "Người dùng",
+      isAdmin: Number(dataUser?.isAdmin) === 1 && "1",
       numberPhone: dataUser?.numberPhone,
     },
     mode: "all",
@@ -63,6 +64,7 @@ function ModalUpdate({ open, handleClose, userId, dataUser }) {
       })
       .then((res) => {
         setLoading(false);
+        fetchData()
         toastify("success", "Cập nhật thông tin cá nhân thành công!!!");
         handleClose();
       })
@@ -112,7 +114,9 @@ function ModalUpdate({ open, handleClose, userId, dataUser }) {
               select
               label="Phân quyền"
               name="quyen"
+              error={!!errors?.isAdmin}
               inputProps={register("isAdmin")}
+              helperText={errors.isAdmin?.message}
               size="small"
             >
               <MenuItem value="1">Người dùng</MenuItem>
@@ -127,7 +131,7 @@ function ModalUpdate({ open, handleClose, userId, dataUser }) {
                   ? "Người dùng"
                   : dataUser?.isAdmin === 2
                   ? "Đại lý"
-                  : "Quản trị viên" || "Chưa cặp nhật"}
+                  : "Quản trị viên" || "Chưa cập nhật"}
               </p>
             </span>
           )}
