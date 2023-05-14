@@ -12,6 +12,7 @@ import LoadingBar from "../../../components/loadding/loading_bar";
 import ErrorEmpty from "../../../components/emty_data";
 import GetDataPlaceItem from "../../../components/modle_find_place";
 import VoucherItem from "./voucher_item";
+import "./style.scss";
 
 const VoucherManagement = () => {
   const [loading, setLoading] = React.useState(false);
@@ -95,13 +96,7 @@ const VoucherManagement = () => {
                 marginTop: "10px",
               }}
             >
-              <div
-                style={{
-                  width: "100%",
-                  height: "98%",
-                  overflowY: "scroll",
-                }}
-              >
+              <div className="boxVoucher">
                 {loading ? (
                   <LoadingBar loading={loading} />
                 ) : _.isEmpty(data) ? (

@@ -77,7 +77,7 @@ const Order = () => {
       <Box
         sx={{
           width: "100%",
-          height: "93vh",
+          height: "91vh",
           overflow: "hidden",
         }}
       >

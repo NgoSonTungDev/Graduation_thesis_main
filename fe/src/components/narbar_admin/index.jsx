@@ -34,7 +34,7 @@ const Header = ({ ReactNode }) => {
   const location = useLocation();
   const pathName = location.pathname;
   const navigation = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const menuIconClick = () => {
     menuCollapse ? setMenuCollapse(false) : setMenuCollapse(true);
@@ -107,42 +107,6 @@ const Header = ({ ReactNode }) => {
                     Dashboard
                   </MenuItem>
                   <MenuItem
-                    active={pathName === "/admin/message" && true}
-                    icon={<AiOutlineMessage />}
-                    onClick={() => {
-                      movePage("/admin/message");
-                    }}
-                  >
-                    Message
-                  </MenuItem>
-                  <MenuItem
-                    active={pathName === "/admin/evaluate" && true}
-                    icon={<FaRegHeart />}
-                    onClick={() => {
-                      movePage("/admin/evaluate");
-                    }}
-                  >
-                    Evaluate Management
-                  </MenuItem>
-                  <MenuItem
-                    active={pathName === "/admin/place" && true}
-                    icon={<MdEditLocationAlt />}
-                    onClick={() => {
-                      movePage("/admin/place");
-                    }}
-                  >
-                    Location management
-                  </MenuItem>
-                  <MenuItem
-                    active={pathName === "admin" && true}
-                    icon={<MdEditNote />}
-                    onClick={() => {
-                      movePage("/admin/post");
-                    }}
-                  >
-                    Post management
-                  </MenuItem>
-                  <MenuItem
                     active={pathName === "/admin/account" && true}
                     icon={<MdOutlineManageAccounts />}
                     onClick={() => {
@@ -161,13 +125,22 @@ const Header = ({ ReactNode }) => {
                     Order management
                   </MenuItem>
                   <MenuItem
-                    active={pathName === "/admin/voucher" && true}
-                    icon={<BiCreditCardFront />}
+                    active={pathName === "/admin/message" && true}
+                    icon={<AiOutlineMessage />}
                     onClick={() => {
-                      movePage("/admin/voucher");
+                      movePage("/admin/message");
                     }}
                   >
-                    Voucher manager
+                    Message
+                  </MenuItem>
+                  <MenuItem
+                    active={pathName === "/admin/place" && true}
+                    icon={<MdEditLocationAlt />}
+                    onClick={() => {
+                      movePage("/admin/place");
+                    }}
+                  >
+                    Location management
                   </MenuItem>
                   <MenuItem
                     active={pathName === "/admin/ticket" && true}
@@ -177,6 +150,33 @@ const Header = ({ ReactNode }) => {
                     }}
                   >
                     Ticket manager
+                  </MenuItem>
+                  <MenuItem
+                    active={pathName === "admin" && true}
+                    icon={<MdEditNote />}
+                    onClick={() => {
+                      movePage("/admin/post");
+                    }}
+                  >
+                    Post management
+                  </MenuItem>
+                  <MenuItem
+                    active={pathName === "/admin/voucher" && true}
+                    icon={<BiCreditCardFront />}
+                    onClick={() => {
+                      movePage("/admin/voucher");
+                    }}
+                  >
+                    Voucher manager
+                  </MenuItem>
+                  <MenuItem
+                    active={pathName === "/admin/evaluate" && true}
+                    icon={<FaRegHeart />}
+                    onClick={() => {
+                      movePage("/admin/evaluate");
+                    }}
+                  >
+                    Evaluate Management
                   </MenuItem>
                   <MenuItem
                     active={pathName === "/admin/statistic" && true}

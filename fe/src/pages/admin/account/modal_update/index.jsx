@@ -23,18 +23,20 @@ const validationInput = yup.object().shape({
     .required("Tên đăng nhập không được để trống"),
   address: yup
     .string()
-    .min(6, "Địa chỉ ít nhất 6 ký tự !!!")
+    .min(0, "Địa chỉ ít nhất 6 ký tự !!!")
     .max(30, "Địa chỉ tối đa 30 ký tự !!!"),
   // .required("Địa chỉ không được để trống"),
   numberPhone: yup
-    .string()
-    .min(10, "Số điện thoại ít nhất 10 ký tự !!!")
-    .max(11, "Số điện thoại tối đa 11 ký tự !!!"),
+    .string(),
+    // .matches(
+    //   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/,
+    //   "Không đúng định dạng số điện thoại"
+    // ),
   // .required("Số điện thoại không được để trống"),
   isAdmin: yup.string().required("Phân quyền không được để trống"),
 });
 
-function ModalUpdate({ open, handleClose, userId, dataUser,fetchData }) {
+function ModalUpdate({ open, handleClose, userId, dataUser, fetchData }) {
   const [check, setCheck] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -46,7 +48,7 @@ function ModalUpdate({ open, handleClose, userId, dataUser,fetchData }) {
     defaultValues: {
       userName: dataUser?.userName,
       address: dataUser?.address,
-      isAdmin: Number(dataUser?.isAdmin) === 1 && "1",
+      isAdmin: dataUser?.isAdmin,
       numberPhone: dataUser?.numberPhone,
     },
     mode: "all",
@@ -64,7 +66,7 @@ function ModalUpdate({ open, handleClose, userId, dataUser,fetchData }) {
       })
       .then((res) => {
         setLoading(false);
-        fetchData()
+        fetchData();
         toastify("success", "Cập nhật thông tin cá nhân thành công!!!");
         handleClose();
       })
@@ -112,11 +114,24 @@ function ModalUpdate({ open, handleClose, userId, dataUser,fetchData }) {
             <TextField
               style={{ width: "100%", height: "30px" }}
               select
-              label="Phân quyền"
+              label={`Đang ở phân quyền (${
+                dataUser?.isAdmin === 1
+                  ? "Người dùng"
+                  : dataUser?.isAdmin === 2
+                  ? "Đại lý"
+                  : "Quản trị viên" || "Chưa cập nhật"
+              })`}
               name="quyen"
               error={!!errors?.isAdmin}
               inputProps={register("isAdmin")}
               helperText={errors.isAdmin?.message}
+              defaultValue={
+                dataUser?.isAdmin === 1
+                  ? "1"
+                  : dataUser?.isAdmin === 2
+                  ? "2"
+                  : "3"
+              }
               size="small"
             >
               <MenuItem value="1">Người dùng</MenuItem>

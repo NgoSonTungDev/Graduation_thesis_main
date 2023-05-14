@@ -29,7 +29,10 @@ const validationInput = yup.object().shape({
     .min(6, "Tên voucher ít nhất 6 ký tự !!!")
     .max(30, "Tên voucher tối đa 30 ký tự !!!")
     .required("Tên voucher không được để trống !!!"),
-  price: yup.number().required("Giá tiền không được để trống !!!"),
+  price: yup
+    .number()
+    .min(5000, "Giảm ít nhất 5000VNĐ")
+    .required("Giá tiền giảm không được để trống !!!"),
 });
 
 const styles = {
@@ -84,7 +87,7 @@ const VoucherItem = ({ open, handleClose, data, fetchData }) => {
       new_password: "",
       confirmPassword: "",
     },
-    mode: "all",
+    // mode: "all",
     resolver: yupResolver(validationInput),
   });
 
@@ -138,7 +141,7 @@ const VoucherItem = ({ open, handleClose, data, fetchData }) => {
       style={{
         display: "flex",
         flexWrap: "wrap",
-        justifyContent: "flex-start",
+        justifyContent: "space-between",
       }}
     >
       {data?.map((item, index) => (
@@ -189,7 +192,8 @@ const VoucherItem = ({ open, handleClose, data, fetchData }) => {
             <div style={styles.discount}>Mã giảm giá: {item.codeVoucher}</div>
           </p>
           <p style={{ fontSize: "13px" }}>
-            {moment(item.startDate).format("DD/MM/yyyy")} - {moment(item.endDate).format("DD/MM/yyyy")}
+            {moment(item.startDate).format("DD/MM/yyyy")} -{" "}
+            {moment(item.endDate).format("DD/MM/yyyy")}
           </p>
         </div>
       ))}
@@ -218,6 +222,7 @@ const VoucherItem = ({ open, handleClose, data, fetchData }) => {
                     marginTop: "12px",
                     border: "1px dashed #d9d9d9",
                     borderRadius: "10px",
+                    cursor:"pointer",
                   }}
                   onClick={handleOpenModal}
                 >
@@ -242,7 +247,9 @@ const VoucherItem = ({ open, handleClose, data, fetchData }) => {
                       dispatch(clearByIdPlace());
                     }}
                   >
-                    <HighlightOffIcon sx={{ paddingLeft: "5px" }} />
+                    <HighlightOffIcon
+                      sx={{ paddingLeft: "5px", color: "red" }}
+                    />
                   </Button>
                   <div
                     style={{
@@ -259,55 +266,54 @@ const VoucherItem = ({ open, handleClose, data, fetchData }) => {
                       }}
                     >
                       <b>{dataPlace.name}</b>
-
                       <span>{dataPlace.address}</span>
                     </div>
                   </div>
                 </div>
               )}
             </div>
-            <div>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems:"center",
+                flexDirection: "column",
+                gap:"15px",
+                marginTop:"15px"
+              }}
+            >
               <TextField
                 error={!!errors?.title}
                 {...register("title")}
                 helperText={errors.title?.message}
                 type="text"
                 size="small"
-                sx={{ width: "100%", marginTop: "12px" }}
+                sx={{ width: "246px" }}
                 label={"Tên voucher"}
               />
-            </div>
-
-            <div>
               <TextField
                 error={!!errors?.price}
                 {...register("price")}
                 helperText={errors.price?.message}
                 type="number"
                 size="small"
-                sx={{ width: "100%", marginTop: "12px" }}
+                sx={{ width: "246px" }}
                 label={"Giá"}
               />
-            </div>
-
-            <div>
               <FormDate
                 value={startDay}
-                maxDate={new Date()}
+                minDate={new Date()}
                 label={"Ngày bắt đầu"}
-                sx={{ width: "100%", marginTop: "12px" }}
                 onChange={(value) => {
                   setStartDay(value);
                 }}
               />
-            </div>
-            <div>
+
               <FormDate
                 value={endDay}
                 minDate={startDay}
                 label={"Ngày hết hạn"}
                 fullWidth
-                style={{ width: "100%", marginTop: "12px" }}
                 onChange={(value) => {
                   setEndDay(value);
                 }}

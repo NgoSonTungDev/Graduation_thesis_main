@@ -130,7 +130,8 @@ const TableOrderUser = ({
     total,
     amount,
     numberTickets,
-    placeId
+    placeId,
+    dateTime
   ) => {
     if (number === 1) {
       return (
@@ -151,6 +152,8 @@ const TableOrderUser = ({
           )}
         </div>
       );
+    } else if(number === 2 && new Date().getDate() > new Date(dateTime).getDate()){
+      return <p style={{ color: "#d63031" }}>Quá hạn để thanh toán</p>
     } else if (number === 2) {
       return (
         <>
@@ -296,7 +299,8 @@ const TableOrderUser = ({
                       item.total,
                       item.amount,
                       item?.ticketId ? item?.ticketId.numberTickets : "",
-                      item?.placeId ? item?.placeId?._id : ""
+                      item?.placeId ? item?.placeId?._id : "",
+                      item.dateTime,
                     )}
                   </TableCell>
                 </TableRow>
