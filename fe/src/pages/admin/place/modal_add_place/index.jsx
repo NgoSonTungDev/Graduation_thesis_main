@@ -76,6 +76,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
   const {
     register,
     watch,
+    getValues,
     setValue,
     handleSubmit,
     formState: { errors },
@@ -310,6 +311,7 @@ const ModalAddPlace = ({ open, handleClose, callBackApi }) => {
               <TextField
                 type="text"
                 label="Địa chỉ"
+                value={getValues("address")}
                 error={!!errors?.address}
                 {...register("address")}
                 helperText={errors.address?.message}
