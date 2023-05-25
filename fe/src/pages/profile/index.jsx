@@ -196,7 +196,7 @@ const Profile = () => {
   useEffect(() => {
     getApiAllPost();
     fetchData();
-  }, []);
+  }, [id]);
 
   return (
     <div>
@@ -271,7 +271,11 @@ const Profile = () => {
                     Email
                   </span>
 
-                  <span className="text-detail">{data?.email}</span>
+                  <span className="text-detail">
+                    {!userIdStorage || userIdStorage._id !== id
+                      ? "Ẩn thông tin"
+                      : data.email}
+                  </span>
                 </div>
                 <div className="details">
                   <span>
@@ -279,7 +283,11 @@ const Profile = () => {
                     Địa chỉ
                   </span>
                   <span className="text-detail">
-                    {data.address ? data.address : "Chưa cập nhật"}
+                    {!userIdStorage || userIdStorage._id !== id
+                      ? "Ẩn thông tin"
+                      : data.address
+                      ? data.address
+                      : "Chưa cập nhật"}
                   </span>
                 </div>
                 <div className="details">
@@ -289,7 +297,11 @@ const Profile = () => {
                   </span>
 
                   <span className="text-detail">
-                    {data.numberPhone ? data.numberPhone : "Chưa cập nhật"}
+                    {!userIdStorage || userIdStorage._id !== id
+                      ? "Ẩn thông tin"
+                      : data.numberPhone
+                      ? data.numberPhone
+                      : "Chưa cập nhật"}
                   </span>
                 </div>
                 <div className="details">

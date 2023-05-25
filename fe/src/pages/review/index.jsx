@@ -71,13 +71,15 @@ const Review = () => {
   };
 
   const handleSubmit = async () => {
-    if (file === "" || content === "" || image === "") {
+    if (file === null || content === "" || image === "") {
       message.error("Vui lòng điền đầy đủ thông tin!");
       return;
     }
 
     if (_.isEmpty(dataPlace)) {
-      return toastify("info", "Vui lòng chọn địa điểm.");
+      // return toastify("info", "Vui lòng chọn địa điểm.");
+      message.error("Vui lòng điền đầy đủ thông tin!");
+      return;
     }
     setLoading(true);
 
