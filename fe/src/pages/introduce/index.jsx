@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import Navbar from "../../components/navbar";
+import Footer from "../../components/footer";
 import "./style.scss";
 
 const Introduce = () => {
@@ -11,66 +12,36 @@ const Introduce = () => {
     <div>
       <Navbar />
       <div className="introduce-container">
-        <div className="introduce-left"></div>
-        <div className="introduce-content">
+        <div className="introdude-main">
           <div className="introduce-title">
-            <h2>Giới thiệu</h2>
+            MAF<span style={{ color: "red" }}>LINE</span>
           </div>
-
-          <div className="introduce-logo">
-            <div className="introduce-logo-color">
-              <b>
-                <span className="text-application1">MAF</span>
-                <span className="text-application2">LINE</span>
-              </b>
+          <div className="introduce-content">
+            <div className="introduce-text">
+              <span style={{ fontWeight: "600" }}>MAF</span>
+              <span style={{ color: "red", fontWeight: "600" }}>LINE</span> là
+              một mạng xã hội thu nhỏ được sinh ra nhằm mục đích review và bán
+              vé các địa điểm du lịch trong nước.
+            </div>
+            <div className="introduce-text">
+              Với nổ lực không ngừng nghỉ,{" "}
+              <span style={{ fontWeight: "600" }}>MAF</span>
+              <span style={{ color: "red", fontWeight: "600" }}>LINE</span> hứa
+              hẹn sẽ đem đến cho khách hàng trải nghiệm tốt nhất về giá cả cũng
+              như chất lượng của các tour du lịch.
+            </div>
+            <div className="introduce-text">
+              Cùng đón chờ những tin tức mới nhất của{" "}
+              <span style={{ fontWeight: "600" }}>MAF</span>
+              <span style={{ color: "red", fontWeight: "600" }}>LINE</span>{" "}
+              nhé!.
+              <div className="introduce-text"></div>
+              Cảm ơn cả nhà!!!
             </div>
           </div>
-
-          <div className="introduce-text">
-            <p>
-              <b>
-                &emsp;<span className="text-application">MAF</span>
-                <span className="text-application2">LINE</span> là một mạng xã
-                hội thu nhỏ được sinh ra nhằm mục đích review và bán vé các địa
-                điểm du lịch trong nước.
-              </b>
-            </p>
-            <i>
-              <p>
-                &emsp;&emsp;Với nổ lực không ngừng{" "}
-                <b>
-                  <span className="text-application1">MAF</span>
-                  <span className="text-application2">LINE</span>
-                </b>{" "}
-                đã mang đến người dùng trải nghiệm du lịch dễ dàng hơn bao giờ
-                hết.
-                <b>VIỆT</b> Bước ngoặc lớn nhất vào tháng 05-2021{" "}
-                <b>
-                  <span className="text-application1">MAF</span>
-                  <span className="text-application2">LINE</span>
-                </b>{" "}
-                hi vọng sẽ là dịch vụ du lịch đưa đến người dùng các tour du
-                dịch tốt với mức gía phù hợp nhất/
-              </p>
-
-              <p>
-                &emsp;&emsp;Và hứa hẹn trong tương lai chúng ta sẽ cùng bùng nổ
-                hơn nữa chứ không phải chỉ riêng khoảnh khắc này.
-              </p>
-
-              <p>
-                &emsp;&emsp;Hãy cùng nhau đón chờ những thông tin mới nhất từ{" "}
-                <b>
-                  <span className="text-application1">MAF</span>
-                  <span className="text-application2">LINE</span>
-                </b>{" "}
-                nhé. <b>Cảm ơn các bạn rất nhiều!</b>
-              </p>
-            </i>
-          </div>
         </div>
-        <div className="introduce-right"></div>
       </div>
+      <Footer />
     </div>
   );
 };

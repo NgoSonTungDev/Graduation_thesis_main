@@ -6,81 +6,34 @@
   object-fit: contain;
   background-repeat: no-repeat;
   background-size: cover;
+  position: relative;
 
-  .introduce-left {
-    width: 20%;
-  }
-
-  .introduce-content {
-    width: 60%;
+  .introdude-main {
+    position: absolute;
+    width: 400px;
+    height: 350px;
+    top: 150px;
+    right: 100px;
+    background-color: #fff;
 
     .introduce-title {
-      color: rgb(74, 38, 215);
-      width: 100%;
-      height: auto;
-      margin-left: 50px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
       margin-top: 20px;
     }
 
-    .introduce-logo {
-      position: relative;
-      width: 100%;
-
-      .introduce-logo-color {
-        position: absolute;
-        width: 300px;
-        height: auto;
-        margin-left: 200px;
-        letter-spacing: 12px;
-
-        b {
-          position: absolute;
-          // color: #000;
-          font-size: 50px;
-          left: 165px;
-          font-weight: 600;
-        }
-
-        .text-application1 {
-          color: #3742fa;
-        }
-        .text-application2 {
-          color: #009432;
-        }
-      }
-    }
-
-    .introduce-text {
-      margin-top: 130px;
-      font-size: 20px;
-      color: rgb(74, 38, 215);
-      line-height: 40px;
+    .introduce-content {
+      width: 90%;
+      margin-left: 5%;
+      margin-top: 10px;
+      font-weight: 500;
+      letter-spacing: 1px;
       text-align: justify;
-      top: 100px;
 
-      .text-application {
-        color: #3742fa;
-        &::after {
-          content: "";
-          height: 3px;
-          width: 43px;
-          background: #bec7c8;
-          position: absolute;
-          left: 325px;
-          bottom: 550px;
-        }
-      }
-
-      .text-application1 {
-        color: #3742fa;
-      }
-      .text-application2 {
-        color: #009432;
+      .introduce-text {
+        margin-top: 20px;
       }
     }
-  }
-
-  .introduce-right {
-    width: 20%;
   }
 }
