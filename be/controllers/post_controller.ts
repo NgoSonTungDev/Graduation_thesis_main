@@ -19,7 +19,7 @@ const postController = {
   },
   getAll: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { pageNumber, placeId, active , limit} = req.query;
+      const { pageNumber, placeId, active, limit } = req.query;
 
       const SkipNumber = (Number(pageNumber) - 1) * Number(limit);
 
@@ -67,7 +67,8 @@ const postController = {
     try {
       const data = await Posts.find({ userId: req.params.id })
         .populate("placeId", "name")
-        .populate("userId", ["userName", "avt"]).sort({ createdAt: -1 });
+        .populate("userId", ["userName", "avt"])
+        .sort({ createdAt: -1 });
 
       res.json(errorFunction(false, 200, "Lấy thành công !", data));
     } catch (error) {
@@ -81,7 +82,7 @@ const postController = {
     try {
       await Posts.findByIdAndUpdate(req.params.id, {
         public: true,
-        time: Number(new Date())
+        time: Number(new Date()),
       });
 
       res.json(errorFunction(true, 200, "Bài viết đã được công khai !"));

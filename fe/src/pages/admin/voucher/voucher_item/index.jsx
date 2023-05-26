@@ -106,7 +106,7 @@ const VoucherItem = ({ open, handleClose, data, fetchData }) => {
         placeId: dataPlace._id,
         title: data.title,
         price: data.price,
-        startDate: Number(startDay),
+        startDate: Number(startDay ? startDay : new Date()),
         endDate: Number(endDay),
       })
       .then((res) => {
@@ -222,7 +222,7 @@ const VoucherItem = ({ open, handleClose, data, fetchData }) => {
                     marginTop: "12px",
                     border: "1px dashed #d9d9d9",
                     borderRadius: "10px",
-                    cursor:"pointer",
+                    cursor: "pointer",
                   }}
                   onClick={handleOpenModal}
                 >
@@ -276,10 +276,10 @@ const VoucherItem = ({ open, handleClose, data, fetchData }) => {
               style={{
                 width: "100%",
                 display: "flex",
-                alignItems:"center",
+                alignItems: "center",
                 flexDirection: "column",
-                gap:"15px",
-                marginTop:"15px"
+                gap: "15px",
+                marginTop: "15px",
               }}
             >
               <TextField

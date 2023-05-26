@@ -23,10 +23,6 @@ const ModalUpdateImage = ({ open, handleClose, dataPlace, placeId }) => {
     setShowAllImages(true);
   };
 
-  const imageList = showAllImages
-    ? listImageUpdate
-    : listImageUpdate.slice(0, 2);
-
   const handleChangeFileImage = (e) => {
     if (e.target.files.length > 5) {
       toastify("error", "Tối đa bạn thêm được 5 ảnh");
@@ -147,10 +143,45 @@ const ModalUpdateImage = ({ open, handleClose, dataPlace, placeId }) => {
                 flexWrap: "wrap",
               }}
             >
-              {loading ? <LoadingBar loading={loading}/> : _.isEmpty(listImageUpdate) ? (
+              {loading ? (
+                <LoadingBar loading={loading} />
+              ) : _.isEmpty(listImageUpdate) ? (
                 <ErrorEmpty />
+              ) : showAllImages && listImageUpdate.length > 0 ? (
+                listImageUpdate.map((item, index) => {
+                  return (
+                    <div key={index} style={{ position: "relative" }}>
+                      <img
+                        src={item}
+                        width={176}
+                        height={178}
+                        style={{ borderRadius: "5px" }}
+                      />
+                      <Button
+                        type="primary"
+                        danger
+                        style={{
+                          position: "absolute",
+                          top: "5px",
+                          right: "5px",
+                        }}
+                      >
+                        <IconButton
+                          size="small"
+                          sx={{
+                            border: "1px solid",
+                            color: "red",
+                          }}
+                          onClick={() => deleteImage(item)}
+                        >
+                          <CloseOutlined />
+                        </IconButton>
+                      </Button>
+                    </div>
+                  );
+                })
               ) : (
-                imageList.map((item, index) => {
+                listImageUpdate.slice(0, 2).map((item, index) => {
                   return (
                     <div key={index} style={{ position: "relative" }}>
                       <img
