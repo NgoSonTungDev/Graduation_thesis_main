@@ -17,6 +17,7 @@ import { getUserDataLocalStorage } from "../../../utils/localstorage";
 import ModalUpateUser from "../modale-payment";
 
 import "./style.scss";
+import FormDate from "../../../hook-form/form_date";
 
 const validationInput = yup.object().shape({
   numberAdultTicket: yup
@@ -42,7 +43,7 @@ export default function PaymentDetail() {
   const [check, setCheck] = useState(true);
   const { ticketId } = useParams();
   const [dataOrder, setDataOrder] = useState({});
-  const [dateTime, setDateTime] = useState("");
+  const [dateTime, setDateTime] = useState(moment(new Date()).format());
   const [voucher, setVoucher] = useState("");
   const [dataVoucher, setDataVoucher] = useState(0);
   const [content, setContent] = useState("");
@@ -141,8 +142,8 @@ export default function PaymentDetail() {
 
         if (voucher !== "") {
           return getApiVoucher();
-        } else{
-          setDataVoucher(0)
+        } else {
+          setDataVoucher(0);
         }
       }
     }
@@ -167,7 +168,7 @@ export default function PaymentDetail() {
           childTicket: dataOrder.numberChildTicket,
           total: sumTotalPrice,
           description: content ? content : "Không có ghi chú !",
-          dateTime: Number(new Date()),
+          dateTime: Number(dateTime),
           userId: userIdStorage?._id,
           placeId: dataTicket?.placeId?._id,
           salesAgentId: dataTicket?.salesAgentId?._id,
@@ -233,11 +234,12 @@ export default function PaymentDetail() {
         <div
           style={{
             display: "flex",
-            overflow: "hidden",
+            // overflow: "hidden",
             paddingTop: "20px",
+            justifyContent: "space-around",
           }}
         >
-          <div style={{ width: "30%" }}>
+          <div style={{ width: "35%" }}>
             <div
               style={{
                 width: "100%",
@@ -261,7 +263,7 @@ export default function PaymentDetail() {
                   <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
                     <span>Tên Địa Điểm</span>
                   </div>
-                  <div style={{ width: "45%" }}>
+                  <div style={{ width: "50%" }}>
                     <TextField
                       disabled
                       sx={{
@@ -270,6 +272,7 @@ export default function PaymentDetail() {
                         "& label": {
                           color: "red",
                         },
+                        width: "100%",
                       }}
                       size="small"
                       label={dataTicket?.placeId?.name}
@@ -282,11 +285,14 @@ export default function PaymentDetail() {
                   <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
                     <span>Địa Điểm</span>
                   </div>
-                  <div style={{ width: "45%" }}>
+                  <div style={{ width: "50%" }}>
                     <TextField
                       disabled
                       size="small"
                       label={dataTicket?.placeId?.location}
+                      sx={{
+                        width: "100%",
+                      }}
                     />
                   </div>
                 </div>
@@ -296,7 +302,7 @@ export default function PaymentDetail() {
                   <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
                     <span>Vé Người Lớn</span>
                   </div>
-                  <div style={{ width: "45%" }}>
+                  <div style={{ width: "50%" }}>
                     <TextField
                       error={!!errors?.numberAdultTicket}
                       {...register("numberAdultTicket")}
@@ -305,6 +311,7 @@ export default function PaymentDetail() {
                         border: "none",
                         outline: "none",
                         borderColor: "#777",
+                        width: "100%",
                       }}
                       helperText={errors.numberAdultTicket?.message}
                       size="small"
@@ -327,12 +334,12 @@ export default function PaymentDetail() {
                   <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
                     <span>Vé Trẻ Em</span>
                   </div>
-                  <div style={{ width: "45%" }}>
+                  <div style={{ width: "50%" }}>
                     <TextField
                       error={!!errors?.numberChildTicket}
                       {...register("numberChildTicket")}
                       type="number"
-                      sx={{ border: "none", outline: "none" }}
+                      sx={{ border: "none", outline: "none", width: "100%" }}
                       helperText={errors.numberChildTicket?.message}
                       size="small"
                       onChange={(e) => {
@@ -355,24 +362,19 @@ export default function PaymentDetail() {
                   <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
                     <span>Ngày Đi</span>
                   </div>
-                  <div style={{ width: "60%", marginLeft: "10px" }}>
-                    <input
-                      style={{
-                        height: "30px",
-                        width: "75%",
-                        border: "1px solid #c4c4c4",
-                        borderRadius: "5px",
-                        outline: "none",
-                        padding: "5px",
-                        color: "#c4c4c4",
-                      }}
-                      type="date"
-                      name="startDay"
+                  <div
+                    style={{
+                      width: "50%",
+                    }}
+                  >
+                    <FormDate
                       value={dateTime}
-                      min={moment(new Date()).format("yyyy-MM-DD")}
-                      onChange={(e) => {
-                        setDateTime(e.target.value);
+                      minDate={new Date()}
+                      label={"Thời gian đi"}
+                      onChange={(value) => {
+                        setDateTime(value);
                       }}
+                      size="small"
                     />
                   </div>
                 </div>
@@ -382,14 +384,14 @@ export default function PaymentDetail() {
                   <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
                     <span>Mã khuyến mãi</span>
                   </div>
-                  <div style={{ width: "45%" }}>
+                  <div style={{ width: "50%" }}>
                     <TextField
-                      sx={{ border: "none", outline: "none" }}
+                      sx={{ border: "none", outline: "none", width: "100%" }}
                       size="small"
                       value={voucher}
                       onChange={(e) => {
                         setVoucher(e.target.value);
-                        setCheck(true)
+                        setCheck(true);
                       }}
                     />
                   </div>
@@ -400,11 +402,11 @@ export default function PaymentDetail() {
                   <div style={{ width: "40%", margin: "10px 0px 0px 15px" }}>
                     <span>Tổng thành tiền</span>
                   </div>
-                  <div style={{ width: "45%" }}>
+                  <div style={{ width: "50%" }}>
                     <TextField
                       disabled
                       type="number"
-                      sx={{ border: "none", outline: "none" }}
+                      sx={{ border: "none", outline: "none", width: "100%" }}
                       size="small"
                       label={sumTotalPrice ? formatMoney(sumTotalPrice) : "0"}
                     />
@@ -511,7 +513,7 @@ export default function PaymentDetail() {
               </div>
             </div>
           </div>
-          <div style={{ width: "67%", marginLeft: "2%" }}>
+          <div style={{ width: "60%" }}>
             <div>
               <div className="container_payment_body_input">
                 <div className="container_payment_body_input_information">
@@ -619,9 +621,7 @@ export default function PaymentDetail() {
                       <input
                         disabled
                         placeholder={
-                          sumTotalPrice
-                            ? formatMoney(sumTotalPrice)
-                            : "0"
+                          sumTotalPrice ? formatMoney(sumTotalPrice) : "0"
                         }
                       />
                     </div>
